@@ -1,0 +1,93 @@
+{
+  "name": "Finorbit",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-decorators": "7.8.3",
+    "@react-native-community/async-storage": "1.9.0",
+    "@react-native-community/datetimepicker": "2.3.1",
+    "@react-native-community/masked-view": "0.1.7",
+    "@react-native-community/netinfo": "5.7.0",
+    "@react-native-firebase/app": "6.4.0",
+    "@react-native-firebase/messaging": "6.4.0",
+    "@shoutem/ui": "2.0.3",
+    "install": "0.13.0",
+    "lodash": "4.17.15",
+    "mobx": "5.15.4",
+    "mobx-react": "6.1.8",
+    "moment": "2.24.0",
+    "npm": "6.14.4",
+    "prop-types": "15.7.2",
+    "react": "16.13.1",
+    "react-native": "0.62.1",
+    "react-native-app-intro-slider": "4.0.0",
+    "react-native-chart-kit": "5.3.0",
+    "react-native-document-picker": "3.3.3",
+    "react-native-flash-message": "0.1.15",
+    "react-native-gesture-handler": "1.6.1",
+    "react-native-image-picker": "2.3.1",
+    "react-native-linear-gradient": "~2.5.6",
+    "react-native-material-dropdown": "0.11.1",
+    "react-native-navigation-bar-color": "2.0.1",
+    "react-native-paper": "3.7.0",
+    "react-native-pdf": "^6.2.0",
+    "react-native-photo-view": "github:shoutem/react-native-photo-view#0ffa1481f6b6cb8663cb291b7db1d6644440584d",
+    "react-native-progress-circle": "2.1.0",
+    "react-native-push-android": "1.0.0",
+    "react-native-reanimated": "1.7.1",
+    "react-native-restart": "0.0.14",
+    "react-native-safe-area-context": "0.7.3",
+    "react-native-screens": "2.4.0",
+    "react-native-share": "3.1.2",
+    "react-native-snap-carousel": "3.9.0",
+    "react-native-step-indicator": "0.0.11",
+    "react-native-svg": "12.0.3",
+    "react-native-table-component": "^1.2.1",
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-view-slider": "1.1.1",
+    "react-native-webview": "^7.5.0",
+    "react-native-youtube-iframe": "^1.2.4",
+    "react-navigation": "4.3.7",
+    "react-navigation-drawer": "2.4.11",
+    "react-navigation-material-bottom-tabs": "2.2.10",
+    "react-navigation-stack": "2.3.11",
+    "rn-fetch-blob": "^0.12.0",
+    "rn-placeholder": "3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.9.0",
+    "@babel/runtime": "7.9.2",
+    "@react-native-community/eslint-config": "1.0.0",
+    "babel-jest": "25.2.6",
+    "eslint": "6.8.0",
+    "jest": "25.2.7",
+    "metro-react-native-babel-preset": "0.59.0",
+    "react-test-renderer": "16.13.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "babel": {
+    "plugins": [
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
+  }
+}

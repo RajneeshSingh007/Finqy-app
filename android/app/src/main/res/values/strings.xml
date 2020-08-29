@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ERB FinPro</string>
+    <string name="freshchat_file_provider_authority">com.mypackage.provider</string>
+</resources>

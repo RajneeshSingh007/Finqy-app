@@ -1,0 +1,85 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.finorbit">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />           <!-- <- Add this line -->
+    <uses-permission android:name="android.permission.VIBRATE" />                          <!-- <- Add this line -->
+
+    <!--    android:networkSecurityConfig="@xml/network_security_config"-->
+
+    <application
+        android:name=".MainApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <receiver android:name="br.com.helderfarias.pushandroid.LocalMessagingReceiver" />
+
+        <receiver
+            android:name="br.com.helderfarias.pushandroid.SystemBootEventReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="br.com.helderfarias.pushandroid.MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="fcm.ACTION.HELLO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+        <!--        <provider-->
+        <!--            android:name="androidx.core.content.FileProvider"-->
+        <!--            android:authorities="com.mypackage.provider"-->
+        <!--            android:exported="false"-->
+        <!--            android:grantUriPermissions="true">-->
+        <!--            <meta-data-->
+        <!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+        <!--                android:resource="@xml/freshchat_file_provider_paths" />-->
+        <!--        </provider>-->
+
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.NotificationEventReceiver" />   <!-- <- Add this line -->
+        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.NotificationPublisher" />       <!-- <- Add this line -->
+        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.SystemBootEventReceiver">       <!-- <- Add this line -->
+            <intent-filter>                                                                   <!-- <- Add this line -->
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>           <!-- <- Add this line -->
+            </intent-filter>                                                                  <!-- <- Add this line -->
+        </receiver>                                                                         <!-- <- Add this line -->
+
+    </application>
+
+</manifest>
