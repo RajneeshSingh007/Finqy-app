@@ -1,4 +1,4 @@
-import {Subtitle, Title, View} from '@shoutem/ui';
+import {Subtitle, Title, View, Screen} from '@shoutem/ui';
 import React from 'react';
 import {StyleSheet, BackHandler, Dimensions} from 'react-native';
 import {Colors, Card} from 'react-native-paper';
@@ -10,8 +10,8 @@ import BannerCard from '../common/BannerCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import * as Pref from '../../util/Pref';
 import {PieChart} from 'react-native-chart-kit';
-
 import CardVertical from '../common/CardVertical';
+import CScreen from '../component/CScreen';
 
 const data = [
   {
@@ -307,40 +307,13 @@ export default class HomeScreen extends React.PureComponent {
 
   render() {
     return (
-      <CommonScreen
-        title={'Hello, Rajneesh'}
-        loading={false}
-        showAbsolute={false}
-        absoluteBody={
-          <>
-            {/* {this.state.showRefDialog ? <RefDialog isShow={this.state.showRefDialog}  clickedcallback={() =>{
-                            this.setState({showRefDialog:false});
-                            Pref.setVal(Pref.initial, '0');
-                        }}/> : null} */}
-            {/* {this.state.showNotification ? <NotifyDialog isShow={true} clickedcallback={() => {
-                            this.setState({showNotification:false})
-                        }} noteContent={this.state.noteContent} /> : null} */}
-          </>
-        }
+      <CScreen
         body={
           <>
             <LeftHeaders
-              backicon={`align-left`}
               backClicked={() => NavigationActions.openDrawer()}
-              showBack
-              url={require('../../res/images/logo.png')}
-              showAvtar
-              //showBottom
-              title={`${
-                this.state.userData !== undefined &&
-                this.state.userData.rname !== undefined
-                  ? `Hi, ${this.state.userData.rname}`
-                  : 'Hi'
-              }`}
-              style={{marginBottom: 8}}
-              // bottomClicked={() => this.setState({showNotification:true})}
+              title={`Hi,`}
             />
-
             <CardVertical
               url={''}
               title={''}
@@ -373,10 +346,13 @@ export default class HomeScreen extends React.PureComponent {
                   </View>
                   <View
                     styleName="horizontal wrap"
-                    style={{flex: 1, flexDirection: 'column', paddingBottom: 6,flexGrow:1}}>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
+                    style={{
+                      flex: 1,
+                      flexDirection: 'column',
+                      paddingBottom: 6,
+                      flexGrow: 1,
+                    }}>
+                    <View styleName="horizontal" style={{alignSelf: 'center'}}>
                       <Subtitle
                         styleName="v-center h-center"
                         style={{
@@ -399,9 +375,7 @@ export default class HomeScreen extends React.PureComponent {
                           marginStart: 8,
                         }}></View>
                     </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
+                    <View styleName="horizontal" style={{alignSelf: 'center'}}>
                       <Subtitle
                         styleName="v-center h-center"
                         style={{
@@ -462,10 +436,13 @@ export default class HomeScreen extends React.PureComponent {
                   </View>
                   <View
                     styleName="horizontal wrap"
-                    style={{flex: 1, flexDirection: 'row', paddingBottom: 6,flexGrow:1}}>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      paddingBottom: 6,
+                      flexGrow: 1,
+                    }}>
+                    <View styleName="horizontal" style={{alignSelf: 'center'}}>
                       <Subtitle
                         styleName="v-center h-center"
                         style={{
@@ -490,7 +467,7 @@ export default class HomeScreen extends React.PureComponent {
                     </View>
                     <View
                       styleName="horizontal"
-                      style={{alignSelf: 'center',marginEnd:8}}>
+                      style={{alignSelf: 'center', marginEnd: 8}}>
                       <Subtitle
                         styleName="v-center h-center"
                         style={{
@@ -513,9 +490,7 @@ export default class HomeScreen extends React.PureComponent {
                           marginStart: 8,
                         }}></View>
                     </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
+                    <View styleName="horizontal" style={{alignSelf: 'center'}}>
                       <Subtitle
                         styleName="v-center h-center"
                         style={{
@@ -542,147 +517,6 @@ export default class HomeScreen extends React.PureComponent {
                 </View>
               }
             />
-
-            {/* {this.state.bannerList.length > 0 ? <View>
-                            <Carousel
-                                ref={this.crousel}
-                                data={this.state.bannerList}
-                                renderItem={this._renderItem}
-                                sliderWidth={sizeWidth(100)}
-                                itemWidth={sizeWidth(100)}
-                                autoplay
-                                enableSnap
-                                loop
-                                inactiveSlideScale={0.95}
-                                inactiveSlideOpacity={0.8}
-                                scrollEnabled
-                                shouldOptimizeUpdates
-                                layout={'stack'}
-                                onSnapToItem={(slideIndex => this.setState({ pageIndex: slideIndex }))}
-                                onBeforeSnapToItem={(slideIndex => this.setState({ pageIndex: slideIndex }))}
-                                containerCustomStyle={{ marginTop: sizeHeight(0.5) }}
-                            />
-                            <Pagination
-                                carouselRef={this.crousel}
-                                dotColor={Pref.PRIMARY_COLOR}
-                                dotsLength={this.state.bannerList.length}
-                                inactiveDotColor={Colors.grey300}
-                                inactiveDotScale={1}
-                                tappableDots
-                                activeDotIndex={this.state.pageIndex}
-                                containerStyle={{ marginTop: -16, marginBottom: -20 }}
-                            />
-                        </View> : null}
-
-                                            
-                        <CircularCardLeft 
-                            showProgress
-                            color={Pref.JET_BLACK}
-                            title={`Total Lead`}
-                            subtitle={`Your leads so far`}
-                            progress={Number(this.state.leadcount)}
-                            progressTitle={'Total'}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                        />
-
-                        <CardRow
-                            color={Pref.JET_BLACK}
-                            clickName={'FinorbitScreen'}
-                            title={'Apply for a Loan'}
-                            subtitle={'Apply for a loan'}
-                            url={require('../../res/images/businessloan.png')}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                            //titleColor={Pref.WHITE}
-                            //subtitleColor={Pref.WHITE}
-                        />
-
-                        <CardRow
-                            color={Pref.JET_BLACK}
-                            clickName={'FinorbitScreen'}
-                            title={'Apply for a Insurance'}
-                            subtitle={'Apply for a insurance'}
-                            url={require('../../res/images/trending.png')}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                            //titleColor={Pref.WHITE}
-                            //subtitleColor={Pref.WHITE}
-                            //item={{ title: 'Fixed Loan', url: require('../../res/images/demat.png') }}
-                        /> */}
-
-            {/* {this.state.dataList.length > 0 ? <Card style={{ flex: 1,marginTop:sizeHeight(1) }}>
-                            <View style={{ marginVertical: sizeHeight(0.5), paddingVertical: sizeHeight(2), paddingHorizontal: sizeWidth(1) }}>
-                                <Title style={styles.title1}> {'Recent Lead'}</Title>
-
-                                <PlaceholderLoader
-                                    visibilty={this.state.progressloader}
-                                    children={
-                                        <View style={{ flex: 1, marginVertical: 0 }}>
-                                            <View style={{ backgroundColor: Pref.WHITE_LINEN, paddingVertical: sizeHeight(1.5), justifyContent: 'space-around', alignItems: 'center', alignContents: 'center', flexDirection: 'row', marginTop: 16,flex:1,width:sizeWidth(100)}}>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    marginStart: 16,
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.2
-                                                }}> {'Sr No.'}</Subtitle>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.4
-                                                }}> {'Name'}</Subtitle>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    marginEnd: 16,
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.4
-                                                }}> {'Status'}</Subtitle>
-                                            </View>
-
-                                            <FlatList
-                                                data={this.state.dataList}
-                                                renderItem={({ item, index }) => this.renderItems(item, index)}
-                                                nestedScrollEnabled={true}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                showsVerticalScrollIndicator={true}
-                                                showsHorizontalScrollIndicator={false}
-                                                extraData={this.state}
-                                                ItemSeparatorComponent={() => {
-                                                    return <View backgroundColor={Colors.grey300} style={{ height: 0.6 }} />
-                                                }}
-                                            />
-                                        </View>
-                                    }
-                                />
-                            </View>
-                        </Card> : null}
-                         */}
-
-            {/* <Card style={{ flex: 1, marginVertical: sizeHeight(3) }}>
-                            <View style={{ paddingVertical: sizeHeight(2), paddingHorizontal: sizeWidth(1) }}>
-                                <Title style={styles.title1}> {'View More'}</Title>
-                            </View>
-                            <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 8 }}>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('MyOffers')}>
-                                <View style={{ flex: 0.3,paddingVertical:4 }}>
-                                    <View style={styles.circle}>
-                                            <Icon name={"gift"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                    </View>
-                                    <Subtitle style={styles.subtitle}>{`My Offers`}</Subtitle>
-                                </View>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('MyWallet')}>
-                                    <View style={{ flex: 0.3, paddingVertical: 4 }}>
-                                        <View style={styles.circle}>
-                                            <Icons name={"wallet"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                        </View>
-                                        <Subtitle style={styles.subtitle}>{`My Wallets`}</Subtitle>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('ReferEarn')}>
-                                    <View style={{ flex: 0.3, paddingVertical: 4 }}>
-                                        <View style={styles.circle}>
-                                            <Icons name={"rupee-sign"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                        </View>
-                                        <Subtitle style={styles.subtitle}>{`Refer & Earn`}</Subtitle>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </View>
-                        </Card> */}
           </>
         }
       />

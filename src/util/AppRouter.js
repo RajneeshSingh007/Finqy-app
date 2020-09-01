@@ -76,7 +76,7 @@ import Sidebar from './Sidebar';
 
 const {width} = Dimensions.get('window');
 
-const WIDTH_DRAWER = width * 0.78;
+const WIDTH_DRAWER = width * 0.8;
 
 const HomeNav = createStackNavigator(
   {
@@ -321,7 +321,7 @@ const AuthRouter = createStackNavigator(
     OtpScreen: OtpScreen,
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'IntroScreen',
     headerMode: 'none',
   },
 );

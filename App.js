@@ -12,6 +12,8 @@ class App extends React.PureComponent {
         super(props);
         this.backClick = this.backClick.bind(this);
         changeNavigationBarColor('white', true);
+        StatusBar.setBackgroundColor('white', false);
+        StatusBar.setBarStyle('dark-content');
     }
 
     componentDidMount(){
