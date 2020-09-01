@@ -1,60 +1,24 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  Platform,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
   DefaultTheme,
-  FAB,
-  Avatar,
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
-import CustomForm from '../finorbit/CustomForm';
-import FileUploadForm from '../finorbit/FileUploadForm';
-import DocumentPicker from 'react-native-document-picker';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
-import SpecificForm from '../finorbit/SpecificForm';
-import Lodash from 'lodash';
-import Icon from 'react-native-vector-icons/Feather';
 import Loader from '../../util/Loader';
+import AnimatedInputBox from '../component/AnimatedInputBox';
+import CScreen from '../component/CScreen';
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
 
 export default class AddTeam extends React.Component {
   constructor(props) {
@@ -71,10 +35,10 @@ export default class AddTeam extends React.Component {
       utype: '',
       passeye: 'eye',
       cpasseye: 'eye',
-      oldpasseye:'eye',
+      oldpasseye: 'eye',
       showpassword: true,
       cshowpassword: true,
-      oldshowpassword:true,
+      oldshowpassword: true,
     };
     Pref.getVal(Pref.userData, (value) => this.setState({userData: value}));
     Pref.getVal(Pref.saveToken, (value) =>
@@ -125,7 +89,7 @@ export default class AddTeam extends React.Component {
         this.state.token,
         (result) => {
           console.log(`result`, result);
-          const {data, response_header} = result;
+          const {response_header} = result;
           const {res_type, message} = response_header;
           this.setState({loading: false});
           if (res_type === `error`) {
@@ -158,7 +122,7 @@ export default class AddTeam extends React.Component {
     });
   };
 
-    passoldunlock = () => {
+  passoldunlock = () => {
     const toggle = this.state.oldshowpassword;
     const togglename = this.state.oldpasseye;
     this.setState({
@@ -178,290 +142,95 @@ export default class AddTeam extends React.Component {
 
   render() {
     return (
-      <CommonScreen
-        title={''}
-        loading={this.state.loading}
-        backgroundColor={'white'}
-        absoluteBody={<Loader isShow={this.state.loading} />}
+      <CScreen
+        absolute={<Loader isShow={this.state.loading} />}
         body={
           <>
-            {/* <LeftHeaders title={'Change Password'} showBack /> */}
+            <LeftHeaders
+              showBack
+              title={'Change Password'}
+              bottomtext={
+                <>
+                  {`Change `}
+                  <Title style={styles.passText}>{`Password`}</Title>
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 24,
+              }}
+            />
 
-            <View styleName="v-center h-center md-gutter">
-              <TouchableWithoutFeedback
-                onPress={() => NavigationActions.goBack()}>
-                <Icon
-                  name={'arrow-left'}
-                  size={24}
-                  color={'#292929'}
-                  style={{marginTop: sizeHeight(1)}}
-                />
-              </TouchableWithoutFeedback>
-              <View
-                styleName={'v-center h-center'}
-                style={{
-                  marginVertical: sizeHeight(2),
-                  marginHorizontal: sizeWidth(3),
-                }}>
-                <Heading
-                  styleName="v-center h-center"
-                  style={{
-                    fontSize: 24,
-                    fontFamily: 'Rubik',
-                    fontFamily: '700',
-                    letterSpacing: 1,
-                  }}>
-                  {`Change Password`}
-                </Heading>
+            <View styleName="md-gutter">
+              <AnimatedInputBox
+                placeholder={'Old Password'}
+                secureTextEntry={this.state.oldshowpassword}
+                onChangeText={(value) => this.setState({oldpass: value})}
+                value={this.state.oldpass}
+                maxLength={4}
+                keyboardType={'numeric'}
+                showRightIcon
+                leftIconName={this.state.oldpasseye}
+                leftIconColor={
+                  this.state.oldpasseye === 'eye' ? '#555555' : '#6d6a57'
+                }
+                leftTextClick={this.passoldunlock}
+                placecolor={'#555555'}
+                placefont={15}
+              />
 
-                <Image
-                  styleName={'small v-center h-center'}
-                  source={{
-                    uri:
-                      'https://user-images.githubusercontent.com/4661784/56352614-4631a680-61d8-11e9-880d-86ecb053413d.png',
-                  }}
-                  style={{
-                    alignSelf: 'center',
-                    marginVertical: sizeHeight(2),
-                  }}
-                />
+              <AnimatedInputBox
+                placeholder={'New Password'}
+                secureTextEntry={this.state.showpassword}
+                onChangeText={(value) => this.setState({newpass: value})}
+                value={this.state.newpass}
+                maxLength={4}
+                keyboardType={'numeric'}
+                showRightIcon
+                leftIconName={this.state.passeye}
+                leftIconColor={
+                  this.state.passeye === 'eye' ? '#555555' : '#6d6a57'
+                }
+                leftTextClick={this.passunlock}
+                placecolor={'#555555'}
+                placefont={15}
+                containerstyle={{
+                  marginTop: 16,
+                }}
+              />
 
-                <Title
-                  styleName="v-center h-center"
-                  style={{
-                    marginTop: 8,
-                    fontSize: 17,
-                    fontFamily: 'Rubik',
-                    fontFamily: 'Rubik',
-                    fontWeight: '700',
-                    lineHeight: 32,
-                    letterSpacing: 1,
-                  }}>
-                  {`Change password of your account`}
-                </Title>
+              <AnimatedInputBox
+                placeholder={'Confirm Password'}
+                secureTextEntry={this.state.cshowpassword}
+                onChangeText={(value) => this.setState({newpassc: value})}
+                value={this.state.newpassc}
+                maxLength={4}
+                keyboardType={'numeric'}
+                showRightIcon
+                leftIconName={this.state.cpasseye}
+                leftIconColor={
+                  this.state.cpasseye === 'eye' ? '#555555' : '#6d6a57'
+                }
+                leftTextClick={this.passunlockc}
+                placecolor={'#555555'}
+                placefont={15}
+                containerstyle={{
+                  marginTop: 16,
+                }}
+              />
 
-                <View style={{marginTop: sizeHeight(2)}}>
-                  <View styleName="horizontal" style={styles.inputPassStyle}>
-                    <TextInput
-                      mode="flat"
-                      underlineColor={'rgba(0,0,0,0)'}
-                      underlineColorAndroid={'transparent'}
-                      label={'Old Password'}
-                      style={{
-                        borderBottomColor: 'transparent',
-                        flex: 0.9,
-                        backgroundColor: 'white',
-                        color: '#131313',
-                        fontFamily: 'Rubik',
-                        fontSize: 16,
-                        borderBottomWidth: 1,
-                        fontWeight: '400',
-                        letterSpacing: 1,
-                      }}
-                      numberOfLines={1}
-                      placeholder={'Enter old password'}
-                      secureTextEntry={this.state.oldshowpassword}
-                      placeholderTextColor={'#DEDEDE'}
-                      onChangeText={(value) => this.setState({oldpass: value})}
-                      value={this.state.oldpass}
-                      theme={theme}
-                      maxLength={4}
-                      keyboardType={'numeric'}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        alignSelf: 'center',
-                        flex: 0.2,
-                        height: sizeHeight(8),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: -16,
-                      }}
-                      onPress={this.passoldunlock}>
-                      <Icon
-                        name={this.state.oldpasseye}
-                        size={16}
-                        color={
-                          this.state.oldpasseye === 'eye'
-                            ? '#777777'
-                            : '#292929'
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  <View styleName="horizontal" style={styles.inputPassStyle}>
-                    <TextInput
-                      mode="flat"
-                      underlineColor={'rgba(0,0,0,0)'}
-                      underlineColorAndroid={'transparent'}
-                      label={'Password'}
-                      style={{
-                        borderBottomColor: 'transparent',
-                        flex: 0.9,
-                        backgroundColor: 'white',
-                        color: '#131313',
-                        fontFamily: 'Rubik',
-                        fontSize: 16,
-                        borderBottomWidth: 1,
-                        fontWeight: '400',
-                        letterSpacing: 1,
-                      }}
-                      numberOfLines={1}
-                      placeholder={'Enter password'}
-                      secureTextEntry={this.state.showpassword}
-                      placeholderTextColor={'#DEDEDE'}
-                      onChangeText={(value) => this.setState({newpass: value})}
-                      value={this.state.newpass}
-                      theme={theme}
-                      maxLength={4}
-                      keyboardType={'numeric'}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        alignSelf: 'center',
-                        flex: 0.2,
-                        height: sizeHeight(8),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: -16,
-                      }}
-                      onPress={this.passunlock}>
-                      <Icon
-                        name={this.state.passeye}
-                        size={16}
-                        color={
-                          this.state.passeye === 'eye' ? '#777777' : '#292929'
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  <View styleName="horizontal" style={styles.inputPassStyle}>
-                    <TextInput
-                      mode="flat"
-                      underlineColor={'rgba(0,0,0,0)'}
-                      underlineColorAndroid={'transparent'}
-                      label={'Confirm Password'}
-                      style={{
-                        borderBottomColor: 'transparent',
-                        flex: 0.9,
-                        backgroundColor: 'white',
-                        color: '#131313',
-                        fontFamily: 'Rubik',
-                        fontSize: 16,
-                        borderBottomWidth: 1,
-                        fontWeight: '400',
-                        letterSpacing: 1,
-                      }}
-                      maxLength={4}
-                      numberOfLines={1}
-                      placeholder={'Enter confirm password'}
-                      secureTextEntry={this.state.cshowpassword}
-                      placeholderTextColor={'#DEDEDE'}
-                      onChangeText={(value) => this.setState({newpassc: value})}
-                      value={this.state.newpassc}
-                      theme={theme}
-                      keyboardType={'numeric'}
-                    />
-                    <TouchableOpacity
-                      style={{
-                        alignSelf: 'center',
-                        flex: 0.2,
-                        height: sizeHeight(8),
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginRight: -16,
-                      }}
-                      onPress={this.passunlockc}>
-                      <Icon
-                        name={this.state.cpasseye}
-                        size={16}
-                        color={
-                          this.state.cpasseye === 'eye' ? '#777777' : '#292929'
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-
-                  <Button
-                    mode={'flat'}
-                    uppercase={true}
-                    dark={true}
-                    loading={false}
-                    style={[styles.loginButtonStyle]}
-                    onPress={this.submitt}>
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: 16,
-                        letterSpacing: 1,
-                      }}>
-                      {'SUBMIT'}
-                    </Text>
-                  </Button>
-                </View>
+              <View styleName="horizontal v-center h-center md-gutter">
+                <Button
+                  mode={'flat'}
+                  uppercase={true}
+                  dark={true}
+                  loading={false}
+                  style={styles.loginButtonStyle}
+                  onPress={this.submitt}>
+                  <Title style={styles.btntext}>{'Submit'}</Title>
+                </Button>
               </View>
             </View>
-
-            {/* <Card
-              style={{
-                marginHorizontal: sizeWidth(4),
-                marginVertical: sizeHeight(2),
-                paddingHorizontal: sizeWidth(0),
-              }}>
-
-                
-              <CustomForm
-                value={this.state.oldpass}
-                onChange={(v) => this.setState({oldpass: v})}
-                label={`Old Password *`}
-                placeholder={`Enter old password`}
-                keyboardType={'numeric'}
-                maxLength={4}
-                secureTextEntry
-                theme={theme}
-                style={{flex: 0.8}}
-              />
-
-              <CustomForm
-                value={this.state.newpass}
-                onChange={(v) => this.setState({newpass: v})}
-                label={`New Password *`}
-                placeholder={`Enter new password`}
-                keyboardType={'numeric'}
-                maxLength={4}
-                secureTextEntry
-              />
-
-              <CustomForm
-                value={this.state.newpassc}
-                onChange={(v) => this.setState({newpassc: v})}
-                label={`New Confirm Password *`}
-                placeholder={`Enter new confirm password`}
-                keyboardType={'numeric'}
-                maxLength={4}
-                secureTextEntry
-              />
-
-              <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={[styles.loginButtonStyle]}
-                onPress={this.submitt}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    letterSpacing: 1,
-                  }}>
-                  {'SUBMIT'}
-                </Text>
-              </Button>
-            </Card>
-           */}
           </>
         }
       />
@@ -473,6 +242,17 @@ export default class AddTeam extends React.Component {
  * styles
  */
 const styles = StyleSheet.create({
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
@@ -511,13 +291,21 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    marginVertical: sizeHeight(3.5),
     backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    paddingVertical: 4,
+    fontWeight: '700',
+    marginTop:12
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
   },
 });

@@ -1,6 +1,11 @@
 import {Screen, View} from '@shoutem/ui';
 import React from 'react';
-import {ScrollView, StatusBar, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  KeyboardAvoidingView,
+} from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {SafeAreaView} from 'react-navigation';
 import {sizeHeight, sizeWidth} from '../../util/Size';
@@ -16,22 +21,33 @@ export default class CScreen extends React.PureComponent {
   }
 
   render() {
-    const {body, scrollEnable = true} = this.props;
+    const {body, scrollEnable = true, absolute = null} = this.props;
     return (
       <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
         <Screen style={styles.mainContainer}>
           {scrollEnable === true ? (
-            <ScrollView
-              style={styles.scroller}
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps={'handled'}>
-              {body}
-              <Footer />
-            </ScrollView>
+            <KeyboardAvoidingView
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+              behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+              enabled
+              keyboardVerticalOffset={150}>
+              <ScrollView
+                style={styles.scroller}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps={'handled'}>
+                {body}
+                <Footer />
+              </ScrollView>
+            </KeyboardAvoidingView>
           ) : (
             body
           )}
+          {absolute}
         </Screen>
       </SafeAreaView>
     );

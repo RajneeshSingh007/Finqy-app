@@ -267,6 +267,13 @@ const OfferNav2 = createStackNavigator(
   },
 );
 
+const SwitchTranNav = createSwitchNavigator({
+  Training: {screen: Training},
+  Blogs: BlogNav,
+}, {
+  headerMode:'none'
+});
+
 const OtherNav = createDrawerNavigator(
   {
     Home: {screen: HomeScreen},
@@ -279,13 +286,12 @@ const OtherNav = createDrawerNavigator(
     ReferEarn: {screen: ReferEarn},
     AddTeam: {screen: AddTeam},
     ViewTeam: {screen: ViewTeam},
-    Training: {screen: Training},
     Manager: {screen: Manager},
     LinkSharingOption: {screen: LinkSharingOption},
     Samadhan: {screen: Samadhan},
     Qrc: {screen: Qrc},
-    Blogs: BlogNav,
     Invoice: {screen: Invoice},
+    SwitchTranNav:SwitchTranNav,
     As26: {screen: As26},
     Certificate: {screen: Certificate},
     ChangePass: {screen: ChangePass},

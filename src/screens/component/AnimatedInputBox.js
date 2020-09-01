@@ -61,6 +61,8 @@ export default class AnimatedInputBox extends React.PureComponent {
       showPlaceholder = true,
       leftTextFlex = 0.3,
       inputHeight = 0.09,
+      placecolor = '#6d6a57',
+      placefont=14,
       ...prop
     } = this.props;
     const {isFocused} = this.state;
@@ -86,9 +88,9 @@ export default class AnimatedInputBox extends React.PureComponent {
             <Caption
               style={StyleSheet.flatten([
                 {
-                  fontSize: 14,
+                  fontSize: placefont,
                   fontWeight: '700',
-                  color: '#6d6a57',
+                  color: placecolor,
                 },
                 placeholderStyle,
               ])}>{`${placeholder}`}</Caption>

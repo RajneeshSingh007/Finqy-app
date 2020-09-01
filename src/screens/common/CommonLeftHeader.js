@@ -62,6 +62,7 @@ const LeftHeaders = (props) => {
     backColor = `#292929`,
     bottombg = `white`,
     bottomtext = '',
+    bottomtextStyle
   } = props;
 
   return (
@@ -142,7 +143,7 @@ const LeftHeaders = (props) => {
       </View>
       <View style={styles.line} />
       {bottomtext !== '' ? (
-        <Title style={styles.belowtext}>{Lodash.truncate(bottomtext)}</Title>
+        <Title style={StyleSheet.flatten([styles.belowtext, bottomtextStyle])}>{bottomtext}</Title>
       ) : null}
       {bottomBody}
     </View>
