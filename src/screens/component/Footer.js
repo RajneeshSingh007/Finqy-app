@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback, Linking} from 'react-native';
 import {Image, Subtitle, View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 import {Avatar} from 'react-native-paper';
+import NavigationActions from '../../util/NavigationActions';
 
 const Footer = (prop) => {
   const {flex = 0.13, iconClick = () => {}} = prop;
@@ -18,12 +19,14 @@ const Footer = (prop) => {
           paddingVertical: 16,
         }}>
         <TouchableWithoutFeedback>
-          <Subtitle style={styles.centerText}>{`2020`}</Subtitle>
+          <Subtitle style={styles.centerText}>{`© 2020 erevbay`}</Subtitle>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() => Linking.openURL('https://erb.ai')}>
           <Subtitle style={styles.centerText}>{`About FinPro`}</Subtitle>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() => NavigationActions.navigate('Agreement')}>
           <Subtitle style={styles.centerText}>{`Read Term of use`}</Subtitle>
         </TouchableWithoutFeedback>
       </View>
@@ -74,18 +77,18 @@ const styles = StyleSheet.create({
   },
   rightText: {
     color: '#bfb9b4',
-    fontSize: 18,
+    fontSize: 16,
     marginEnd: 8,
     letterSpacing: 0.5,
   },
   centerText: {
     color: '#bfb9b4',
-    fontSize: 18,
+    fontSize: 16,
     marginEnd: 8,
     letterSpacing: 0.5,
-    justifyContent:'center',
-    paddingVertical:8,
-    alignSelf:'center'
+    justifyContent: 'center',
+    paddingVertical: 8,
+    alignSelf: 'center',
   },
   circle: {
     width: 48,
@@ -103,6 +106,6 @@ const styles = StyleSheet.create({
     height: 1.8,
     marginStart: 12,
     marginEnd: 12,
-    marginVertical:8
+    marginVertical: 8,
   },
 });

@@ -17,7 +17,7 @@ export const methodPost = 'POST';
 export const methodGet = 'GET';
 
 //erb Brand Color
-export const RED = '#ea343c';
+export const RED = '#e22126';
 export const CARROT_ORANGE = '#f19e28';
 export const GREY = '#5f5f5d';
 export const HIPPIE_BLUE = '#47a5a5';
@@ -27,7 +27,7 @@ export const WHITE_LINEN = '#ebe7de';
 export const WHITE = 'white';
 
 //colors
-export const PRIMARY_COLOR = '#ea343c';
+export const PRIMARY_COLOR = '#e22126';
 export const ACCENT_COLOR = '#f39f24';
 export const BACKGROUND_COLOR = '#f4f5f8'; //'#f4f5f8';
 export const GREY_COLOR = '#dedede';

@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   Linking,
   Alert,
-  Platform,
 } from 'react-native';
 import {
   TouchableOpacity,
@@ -44,17 +43,10 @@ import CommonScreen from '../screens/common/CommonScreen';
 import * as Pref from './Pref';
 import * as Helper from './Helper';
 import IconChooser from '../screens/common/IconChooser';
-import DrawerTop from '../screens/component/DrawerTop';
-
-const COLOR = '#f9f8f1';
 
 export default class Sidebar extends React.Component {
   constructor(props) {
     super(props);
-    changeNavigationBarColor(COLOR, true, true);
-    StatusBar.setBackgroundColor(COLOR, false);
-    StatusBar.setBarStyle('dark-content');
-
     this.menuheaderClick = this.menuheaderClick.bind(this);
     this.menuSubHeaderClick = this.menuSubHeaderClick.bind(this);
     this.state = {
@@ -659,29 +651,56 @@ export default class Sidebar extends React.Component {
   render() {
     const {menuList, userData} = this.state;
     return (
-      <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
-        <View style={styles.mainContainer}>
-          <DrawerTop />
-          <View style={{flex: 0.87, marginStart: 12, marginEnd: 12}}>
+      <CommonScreen
+        enabelWithScroll={false}
+        headerDis={0.2}
+        bodyDis={0.8}
+        backgroundColor={'white'}
+        header={
+          <View
+            styleName="horizontal v-center md-gutter"
+            style={styles.container}>
+            <View
+              styleName="horizontal v-center"
+              style={{marginStart: 8, marginTop: 16}}>
+              <Avatar.Image
+                source={this.state.pic}
+                style={styles.image}
+                size={64}
+              />
+              <View styleName="v-center h-center">
+                <Title styleName="wrap" style={styles.title}>
+                  {Lodash.truncate(`${this.state.name}`, {
+                    length: 24,
+                    separator: '...',
+                  })}
+                </Title>
+                <Subtitle style={styles.subtitle}>{`${
+                  this.state.type === 'connector'
+                    ? `Connector`
+                    : this.state.type === `referral`
+                    ? 'Referral'
+                    : `Team`
+                } Partner`}</Subtitle>
+              </View>
+            </View>
+          </View>
+        }
+        body={
+          <View>
+            <Divider styleName="light" />
             <ScrollView
               showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={true}>
               {menuList.map((item, index) => {
                 return (
-                  <View styleName="v-center h-center sm-gutter">
+                  <View
+                    styleName="v-center h-center"
+                    style={{backgroundColor: 'white'}}>
                     <TouchableWithoutFeedback
                       onPress={() => this.headingclick(item, index)}>
-                      <View
-                        styleName="horizontal v-center md-gutter space-between"
-                        style={{
-                          backgroundColor: !item.expand
-                            ? 'transparent'
-                            : '#f2f0e4',
-                        }}>
-                        <View styleName="horizontal v-center h-center" style={{
-                          alignItems:'center',
-                          justifyContent:'center'
-                        }}>
+                      <View styleName="horizontal v-center md-gutter space-between">
+                        <View styleName="horizontal v-center space-between">
                           <IconChooser
                             name={item.iconname}
                             size={22}
@@ -692,21 +711,21 @@ export default class Sidebar extends React.Component {
                             styleName="wrap"
                             style={{
                               fontSize: 14,
+                              fontFamily: 'Rubik',
                               letterSpacing: 0.5,
                               color: !item.expand
-                                ? '#97948c'
+                                ? '#292929'
                                 : Pref.PRIMARY_COLOR,
-                              alignSelf: 'center',
+                              alignSelf: 'flex-start',
                               fontWeight: 'bold',
-                              justifyContent:'center',
-                              marginStart:16
+                              marginStart: 10,
                             }}>{`${item.name}`}</Title>
                         </View>
                         {item.heading ? (
                           <Icon
                             name={`chevron-down`}
                             size={22}
-                            color={'#97948c'}
+                            color={'#767676'}
                           />
                         ) : null}
                       </View>
@@ -714,14 +733,7 @@ export default class Sidebar extends React.Component {
                     {item.expand
                       ? item.sub.map((s, i) => {
                           return (
-                            <View
-                              style={{
-                                backgroundColor: s.expand
-                                  ? '#e8e5d7'
-                                  : 'transparent',
-                                marginStart: s.expand ? 0 : 16,
-                                paddingStart: s.expand ? 16 : 0,
-                              }}>
+                            <View style={styles.subMargin}>
                               <TouchableWithoutFeedback
                                 onPress={() =>
                                   this.subClick(item, s, index, i)
@@ -731,16 +743,15 @@ export default class Sidebar extends React.Component {
                                   style={{
                                     marginHorizontal: 16,
                                     marginVertical: 8,
-                                    paddingVertical:10,
                                   }}>
                                   <Title
                                     styleName="wrap"
                                     style={{
                                       fontSize: 14,
-
+                                      fontFamily: 'Rubik',
                                       letterSpacing: 0.5,
                                       color: !s.expand
-                                        ? '#97948c'
+                                        ? '#616161'
                                         : Pref.PRIMARY_COLOR,
                                       alignSelf: 'flex-start',
                                     }}>{`${s.name}`}</Title>
@@ -748,7 +759,7 @@ export default class Sidebar extends React.Component {
                                     <Icon
                                       name={`chevron-down`}
                                       size={22}
-                                      color={'#97948c'}
+                                      color={'#767676'}
                                     />
                                   ) : null}
                                 </View>
@@ -756,16 +767,7 @@ export default class Sidebar extends React.Component {
                               {s.expand
                                 ? s.sub.map((s, i) => {
                                     return (
-                                      <View
-                                        style={{
-                                          marginStart: s.expand ? 0 : 16,
-                                          paddingStart: s.expand ? 16 : 0,
-                                          paddingVertical: 6,
-                                        }}>
-                                        <Divider
-                                          styleName="light"
-                                          style={styles.line}
-                                        />
+                                      <View style={styles.subMargin}>
                                         <TouchableWithoutFeedback
                                           onPress={() =>
                                             NavigationActions.navigate(s.click)
@@ -785,7 +787,7 @@ export default class Sidebar extends React.Component {
                                               <Icon
                                                 name={`chevron-right`}
                                                 size={22}
-                                                color={'#97948c'}
+                                                color={'#767676'}
                                               />
                                             ) : null}
                                           </View>
@@ -798,7 +800,7 @@ export default class Sidebar extends React.Component {
                                 i === s.sub.length - 1 ? null : (
                                   <Divider
                                     styleName="light"
-                                    style={styles.line}
+                                    style={{marginTop: 8}}
                                   />
                                 )
                               ) : null}
@@ -807,43 +809,32 @@ export default class Sidebar extends React.Component {
                         })
                       : null}
                     {index === this.state.menuList.length - 1 ? null : (
-                      <Divider styleName="light" style={styles.line} />
+                      <Divider styleName="light" style={{marginTop: 8}} />
                     )}
                   </View>
                 );
               })}
             </ScrollView>
           </View>
-        </View>
-      </SafeAreaView>
+        }
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  line: {
-    marginTop: 8,
-    backgroundColor: '#d9d8d3',
-    height: 1.2,
-    marginStart: 16,
-    marginEnd: 16,
-  },
-  mainContainer: {
-    flex: 1,
-    backgroundColor: COLOR,
-  },
   subMargin: {marginStart: 16},
   subtitle: {
     fontSize: 14,
-    
+    fontFamily: 'Rubik',
     letterSpacing: 0.5,
-    color: '#97948c',
+    color: '#767676',
     alignSelf: 'flex-start',
     marginStart: 16,
   },
   title: {
     fontSize: 17,
-    
+    fontFamily: 'Rubik',
     letterSpacing: 0.5,
     color: 'black',
     alignSelf: 'flex-start',
@@ -858,19 +849,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  container: {backgroundColor: 'white', flex: 1},
   menutitle: {
     fontSize: 13,
-    
+    fontFamily: 'Rubik',
     letterSpacing: 0.5,
-    color: '#97948c',
+    color: '#767676',
     alignSelf: 'flex-start',
     fontWeight: 'bold',
   },
   menusubtitle: {
     fontSize: 13,
-    
+    fontFamily: 'Rubik',
     letterSpacing: 0.5,
-    color: '#97948c',
+    color: '#767676',
     alignSelf: 'flex-start',
   },
 });

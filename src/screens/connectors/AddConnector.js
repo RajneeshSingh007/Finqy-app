@@ -22,14 +22,14 @@ export default class AddConnector extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({loading: false});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
         this.setState({userData: userData});
         Pref.getVal(Pref.saveToken, (value) => {
           this.setState({token: value}, () => {
-            this.fetchData();
+            //this.fetchData();
           });
         });
       });
@@ -147,6 +147,23 @@ export default class AddConnector extends React.PureComponent {
       location: 'Select Location',
       showCityList: false,
       enbleerror: false,
+      hi_adultp: '',
+      hi_nonp: '',
+      mi_compp: '',
+      mi_thirdp: '',
+      lcipp: '',
+      home_loanp: '',
+      ccp: '',
+      fdp: '',
+      isp: '',
+      inCheckp:'' ,
+      mfp:'' ,
+      tip: '',
+      vpp: '',
+      lapp: '',
+      plp: '',
+      blp: '',
+      alp: '',
     };
   };
 
@@ -178,10 +195,10 @@ export default class AddConnector extends React.PureComponent {
       return false;
     }
 
-    if (body.companyname === '') {
-      Helper.showToastMessage('Company Name empty', 0);
-      return false;
-    }
+    // if (body.companyname === '') {
+    //   Helper.showToastMessage('Company Name empty', 0);
+    //   return false;
+    // }
 
     if (body.profession === '') {
       Helper.showToastMessage('Profession empty', 0);
@@ -309,7 +326,7 @@ export default class AddConnector extends React.PureComponent {
                   <CustomForm
                     value={this.state.companyname}
                     onChange={(v) => this.setState({companyname: v})}
-                    label={`Company Name *`}
+                    label={`Company Name`}
                     placeholder={`Enter company name`}
                     style={{
                       marginBottom: 2,
@@ -394,7 +411,7 @@ export default class AddConnector extends React.PureComponent {
                     ) : null}
                   </View>
 
-                  <View>
+                  {/* <View>
                     <View>
                       <View
                         style={{
@@ -626,6 +643,7 @@ export default class AddConnector extends React.PureComponent {
                       />
                     </View>
                   </View>
+                  */}
                   <Button
                     mode={'flat'}
                     uppercase={true}

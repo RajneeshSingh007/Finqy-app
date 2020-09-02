@@ -1,30 +1,62 @@
 import React from 'react';
 import {
+  StatusBar,
   StyleSheet,
+  ScrollView,
   BackHandler,
+  FlatList,
+  TouchableWithoutFeedback,
+  Linking,
 } from 'react-native';
 import {
+  TouchableOpacity,
   Image,
+  Screen,
+  Subtitle,
   Title,
   View,
+  Heading,
+  NavigationBar,
+  Text,
   Caption,
+  GridView,
+  Video,
   Html,
 } from '@shoutem/ui';
+import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
+  Button,
+  Card,
+  Colors,
+  Snackbar,
+  TextInput,
+  DataTable,
+  Modal,
+  Portal,
+  Avatar,
   ActivityIndicator,
+  Chip,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
+import {SafeAreaView} from 'react-navigation';
+import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import PlaceholderLoader from '../../util/PlaceholderLoader';
+import Icon from 'react-native-vector-icons/Feather';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
+import MenuProvider from '../../util/MenuProvider.js';
+import CommonScreen from '../common/CommonScreen';
+import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import ListError from '../common/ListError';
-import CScreen from '../component/CScreen';
+import IconChooser from '../common/IconChooser';
 
-export default class BlogDetails extends React.PureComponent {
+export default class BlogDetails extends React.Component {
   constructor(props) {
     super(props);
-    this.back = this.back.bind(this);
     this.state = {
       loading: false,
       item: null,
@@ -32,7 +64,6 @@ export default class BlogDetails extends React.PureComponent {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.back);
     const {navigation} = this.props;
     const item = navigation.getParam('item', null);
     this.setState({item: item, loading: false});
@@ -53,12 +84,7 @@ export default class BlogDetails extends React.PureComponent {
     }
   }
 
-  back = () => {
-    NavigationActions.navigate(`Blogs`);
-    return true;
-  };
   componentWillUnMount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.back);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -68,13 +94,8 @@ export default class BlogDetails extends React.PureComponent {
    * @param {*} item
    * @param {*} index
    */
-  renderItems(item) {
-          let url = `https://erb.ai/erevbay_admin/${item.img}`;
-
-    // const url =
-    //   item.category === `newspaper`
-    //     ? `https://erb.ai/erevbay_admin/blogs/newspaper/${item.img}`
-    //     : `https://erb.ai/erevbay_admin/${item.img}`;
+  renderItems(item, index) {
+    // const url = item.category === `newspaper` ? `https://erb.ai/erevbay_admin/blogs/newspaper/${item.img}` : `https://erb.ai/erevbay_admin/${item.img}`;
     const cat = item.category.replace('_', ' ');
     const sp = item.date.split(' ');
     const d = new Date();
@@ -83,91 +104,101 @@ export default class BlogDetails extends React.PureComponent {
     d.setFullYear(dx[0], dx[1], dx[2]);
     d.setHours(time[0], time[1], time[2]);
     const date = moment(d).format('DD-MM-YYYY hh:mm A');
+    let url = `https://erb.ai/erevbay_admin/${item.img}`;
     return (
       <View styleName="vertical" style={{flex: 1}}>
-        <Title
-          styleName="v-center h-center"
-          style={StyleSheet.flatten([
-            styles.passText,
-            {
-              color: '#686868',
-              paddingVertical: 0,
-            },
-          ])}>{`${item.title}`}</Title>
-
-        <View styleName="horizontal v-center h-center">
-          <Caption
-            styleName="v-center h-center"
-            style={StyleSheet.flatten([
-              styles.passText,
-              {
-                color: '#bbb8ac',
-                paddingVertical: 0,
-                fontSize: 13,
-                fontWeight: '400',
-              },
-            ])}>{`${Lodash.capitalize(cat)}`}</Caption>
-          <View style={styles.line}></View>
-          <Caption
-            styleName="v-center h-center"
-            style={StyleSheet.flatten([
-              styles.passText,
-              {
-                color: '#bbb8ac',
-                paddingVertical: 0,
-                fontSize: 13,
-                fontWeight: '400',
-              },
-            ])}>{`${date}`}</Caption>
-        </View>
-
-        <View styleName="md-gutter">
-          <Image
-            styleName="large"
-            source={{uri: `${encodeURI(url)}`}}
+        <ScrollView showsVerticalScrollIndicator={true}>
+          <View style={{width: '100%', height: 172}}>
+            <Image
+              styleName="fill-parent"
+              source={{uri: `${encodeURI(url)}`}}
+              style={{borderRadius: 12, marginHorizontal: 8, elevation: 4}}
+            />
+          </View>
+          <View
             style={{
-              justifyContent: 'center',
-              alignSelf: 'center',
-              width: '90%',
-              height: 224,
-              resizeMode: 'contain',
-            }}
-          />
+              marginHorizontal: 14,
+              marginTop: 16,
+            }}>
+            <Title
+              styleName="v-start h-start"
+              style={{
+                fontSize: 17,
+                fontFamily: 'Rubik',
+                letterSpacing: 1,
+                color: '#292929',
+                fontWeight: '700',
+                marginBottom: 4,
+              }}>{`${item.title}`}</Title>
+            <View styleName="horizontal">
+              <Caption styleName="v-center h-center">{`${Lodash.capitalize(
+                cat,
+              )}`}</Caption>
+              <View
+                style={{
+                  backgroundColor: Colors.grey200,
+                  borderRadius: 8,
+                  width: 8,
+                  height: 8,
+                  alignSelf: 'center',
+                  marginHorizontal: 8,
+                }}></View>
+              <Caption styleName="v-center h-center">{`${date}`}</Caption>
+            </View>
+            <View
+              style={{
+                marginTop: 8,
+                height: 0.7,
+                backgroundColor: Colors.grey200,
+              }}
+            />
+          </View>
           <Html
-            body={`<p style=\"color:#a7a6a6; \"><span class=\"ql-font-serif\">${item.desc}</span></p><p style=\"color:#a7a6a6; \">${item.post}`}
+            body={`<p><span class=\"ql-font-serif\">${item.desc}</span></p><p>${item.post}`}
           />
-        </View>
+        </ScrollView>
       </View>
     );
   }
 
   render() {
     return (
-      <CScreen
+      <CommonScreen
+        title={'Finorbit'}
+        loading={this.state.loading}
+        backgroundColor={`white`}
+        enabelWithScroll={false}
+        header={
+          <LeftHeaders
+            title={''}
+            showBack
+            backClicked={() => NavigationActions.navigate('Blogs')}
+            style={{marginBottom: 8}}
+          />
+        }
+        headerDis={0.15}
+        bodyDis={0.85}
         body={
           <>
-            <LeftHeaders
-              showBack
-              title={'FinNews'}
-              bottomtext={
-                <>
-                  {`Fin`}
-                  <Title style={styles.passText}>{`News`}</Title>
-                </>
-              }
-              bottomtextStyle={{
-                color: '#555555',
-                fontSize: 24,
-              }}
-            />
             {this.state.loading ? (
-              <View style={styles.loader}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  flex: 1,
+                }}>
                 <ActivityIndicator />
               </View>
             ) : this.state.item !== null ? (
-              this.renderItems(this.state.item)
+              this.renderItems(this.state.item, 0)
             ) : (
-              <View style={styles.emptycont}>
+              <View
+                style={{
+                  flex: 0.7,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContents: 'center',
+                }}>
                 <ListError subtitle={'Failed to load data...'} />
               </View>
             )}
@@ -179,28 +210,6 @@ export default class BlogDetails extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-  line: {
-    backgroundColor: '#bbb8ac',
-    width: 1,
-    alignSelf: 'center',
-    marginHorizontal: 12,
-    height: 16,
-  },
-  emptycont: {
-    flex: 0.7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-    marginVertical: 48,
-    paddingVertical: 56,
-  },
-  loader: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    flex: 1,
-    marginVertical: 48,
-    paddingVertical: 48,
-  },
   subtitle: {
     fontSize: 14,
     fontFamily: 'Rubik',
@@ -216,16 +225,5 @@ const styles = StyleSheet.create({
     color: '#292929',
     alignSelf: 'flex-start',
     fontWeight: '700',
-  },
-  passText: {
-    fontSize: 20,
-    letterSpacing: 0.5,
-    color: Pref.RED,
-    fontWeight: '700',
-    lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    paddingVertical: 16,
   },
 });

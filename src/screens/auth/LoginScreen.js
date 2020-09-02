@@ -3,33 +3,49 @@ import {
   StatusBar,
   StyleSheet,
   ScrollView,
+  BackHandler,
   Platform,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {
   Image,
   Screen,
   Subtitle,
   Title,
+  Text,
+  Caption,
   View,
+  Heading,
+  TouchableOpacity,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
+  Card,
   Colors,
+  Snackbar,
+  TextInput,
   DefaultTheme,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import {SafeAreaView} from 'react-navigation';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import Icon from 'react-native-vector-icons/Feather';
 import messaging from '@react-native-firebase/messaging';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
-import Toolbar from '../component/Toolbar';
-import AnimatedInputBox from '../component/AnimatedInputBox';
 
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'transparent',
+    accent: 'transparent',
+    backgroundColor: Colors.white,
+    surface: Colors.white,
+  },
+};
 
 export default class LoginScreen extends React.PureComponent {
   constructor(props) {
@@ -76,7 +92,7 @@ export default class LoginScreen extends React.PureComponent {
               Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
             }
           },
-          () => {
+          (error) => {
             //console.log(`error`, error)
           },
         );
@@ -130,7 +146,7 @@ export default class LoginScreen extends React.PureComponent {
               (result) => {
                 console.log(`result`, result);
                 const {data, response_header} = result;
-                const {res_type, type} = response_header;
+                const {res_type, message,type} = response_header;
                 this.setState({loading: false});
                 if (res_type === `error`) {
                   Helper.showToastMessage('no account found', 0);
@@ -143,7 +159,7 @@ export default class LoginScreen extends React.PureComponent {
                   NavigationActions.navigate('Home');
                 }
               },
-              () => {
+              (error) => {
                 this.setState({loading: false});
                 Helper.showToastMessage('something went wrong', 0);
               },
@@ -164,121 +180,182 @@ export default class LoginScreen extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView style={styles.maincontainer} forceInset={{top: 'never'}}>
-        <Screen style={styles.maincontainer}>
+      <SafeAreaView
+        style={{flex: 1, backgroundColor: 'white'}}
+        forceInset={{top: 'never'}}>
+        <Screen style={{backgroundColor: 'white', flex: 1}}>
           {Platform.OS === 'android' ? (
             <StatusBar barStyle="dark-content" backgroundColor="white" />
           ) : null}
-          <KeyboardAvoidingView
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            enabled
-            keyboardVerticalOffset={150}>
-            <View styleName="fill-parent vertical">
-              <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
-                <View>
-                  <Toolbar />
-                  <View
-                    style={{flex: 0.87}}
-                    styleName="v-center h-center md-gutter">
-                    <Title style={styles.title}>{`Welcome back`}</Title>
-                    <Title
-                      style={
-                        styles.title1
-                      }>{`please sign in\nto continue`}</Title>
-                    <View styleName="md-gutter">
-                      <AnimatedInputBox
-                        onChangeText={(value) => this.setState({userid: value})}
-                        value={this.state.userid}
-                        placeholder={'Enter your mobile number/User ID'}
-                        maxLength={10}
-                        keyboardType={'number-pad'}
-                      />
 
-                      <AnimatedInputBox
-                        onChangeText={(value) =>
-                          this.setState({password: value})
-                        }
-                        value={this.state.password}
-                        placeholder={'Enter your password'}
-                        maxLength={4}
-                        keyboardType={'number-pad'}
-                        showRightIcon
-                        leftIconName={this.state.passeye}
-                        leftIconColor={
-                          this.state.passeye === 'eye' ? '#555555' : '#6d6a57'
-                        }
-                        leftTextClick={this.passunlock}
-                        secureTextEntry={this.state.showpassword}
-                      />
-                    </View>
-                    <View styleName="horizontal space-between md-gutter">
-                      <Button
-                        mode={'flat'}
-                        uppercase={true}
-                        dark={true}
-                        loading={false}
-                        style={styles.loginButtonStyle}
-                        onPress={this.login}>
-                        <Title style={styles.btntext}>{'Sign In'}</Title>
-                      </Button>
-                      <Button
-                        mode={'flat'}
-                        uppercase={true}
-                        dark={true}
-                        loading={false}
-                        style={[
-                          styles.loginButtonStyle,
-                          {
-                            backgroundColor: 'transparent',
-                            borderColor: '#d5d3c1',
-                            borderWidth: 1.3,
-                          },
-                        ]}
-                        onPress={() => NavigationActions.navigate('Register')}>
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.btntext,
-                            {
-                              color: '#b8b28f',
-                            },
-                          ])}>
-                          {'Sign up'}
-                        </Title>
-                      </Button>
-                    </View>
-
-                    <View styleName="horizontal space-between md-gutter">
-                      <TouchableWithoutFeedback
-                        onPress={() =>
-                          NavigationActions.navigate('OtpScreen', {
-                            mode: 1,
-                            forgetMode: true,
-                          })
-                        }>
-                        <Subtitle
-                          style={styles.fgttext}>{`Forgot Password?`}</Subtitle>
-                      </TouchableWithoutFeedback>
-                    </View>
-
-                    <View styleName="horizontal v-center h-center md-gutter">
-                      <Image
-                        source={require('../../res/images/referfriend.png')}
-                        styleName={'medium'}
-                        style={{
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </View>
-                  </View>
+          <View styleName="fill-parent vertical">
+            <ScrollView showsVerticalScrollIndicator={true} style={{flex: 1}}>
+              <View
+                styleName="v-center h-center md-gutter"
+                style={{marginTop: sizeHeight(3)}}>
+                <Image
+                  styleName="medium v-center h-center"
+                  source={require('../../res/images/squarelogo.png')}
+                  style={styles.s}
+                />
+                <View
+                  style={{
+                    marginTop: sizeHeight(4),
+                    marginHorizontal: sizeWidth(3),
+                  }}>
+                  <Heading
+                    styleName="v-start"
+                    style={{
+                      fontSize: 24,
+                      fontFamily: 'Rubik',
+                      fontFamily: '400',
+                      letterSpacing: 1,
+                    }}>
+                    {`Login`}
+                  </Heading>
+                  <Title
+                    styleName="v-start"
+                    style={{
+                      fontSize: 18,
+                      fontFamily: 'Rubik',
+                      fontFamily: 'Rubik',
+                      fontWeight: '700',
+                      lineHeight: 32,
+                      letterSpacing: 1,
+                    }}>
+                    {`Into your account`}
+                  </Title>
                 </View>
-              </ScrollView>
-            </View>
-          </KeyboardAvoidingView>
+                <TextInput
+                  mode="flat"
+                  underlineColor="transparent"
+                  underlineColorAndroid="transparent"
+                  style={[styles.inputStyle, {marginVertical: sizeHeight(2)}]}
+                  label={'Mobile Number/User ID'}
+                  placeholder={'Enter your mobile number/User ID'}
+                  maxLength={10}
+                  keyboardType={'number-pad'}
+                  placeholderTextColor={'#DEDEDE'}
+                  onChangeText={(value) => this.setState({userid: value})}
+                  value={this.state.userid}
+                  theme={theme}
+                />
+                <View styleName="horizontal" style={styles.inputStyle}>
+                  <TextInput
+                    mode="flat"
+                    underlineColor={'rgba(0,0,0,0)'}
+                    underlineColorAndroid={'transparent'}
+                    label={'Password'}
+                    style={{
+                      borderBottomColor: 'transparent',
+                      flex: 0.9,
+                      backgroundColor: 'white',
+                      color: '#131313',
+                      fontFamily: 'Rubik',
+                      fontSize: 16,
+                      borderBottomWidth: 1,
+                      fontWeight: '400',
+                      letterSpacing: 1,
+                    }}
+                    maxLength={4}
+                    numberOfLines={1}
+                    placeholder={'Enter your password'}
+                    secureTextEntry={this.state.showpassword}
+                    placeholderTextColor={'#DEDEDE'}
+                    onChangeText={(value) => this.setState({password: value})}
+                    value={this.state.password}
+                    keyboardType={'numeric'}
+                    theme={theme}
+                  />
+                  <TouchableOpacity
+                    style={{
+                      alignSelf: 'center',
+                      flex: 0.2,
+                      height: sizeHeight(8),
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: -6,
+                      borderBottomColor: this.state.focusedPass
+                        ? '#e21226'
+                        : 'transparent',
+                    }}
+                    onPress={this.passunlock}>
+                    <Icon
+                      name={this.state.passeye}
+                      size={16}
+                      color={
+                        this.state.passeye === 'eye' ? '#777777' : '#292929'
+                      }
+                    />
+                  </TouchableOpacity>
+                </View>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    NavigationActions.navigate('OtpScreen', {
+                      mode: 1,
+                      forgetMode: true,
+                    })
+                  }>
+                  <Subtitle
+                    style={{
+                      fontSize: 15,
+                      marginTop: sizeHeight(1.7),
+                      marginHorizontal: sizeWidth(3),
+                      letterSpacing: 0.7,
+                      color: '#292929',
+                    }}>{`Don't remember your password?`}</Subtitle>
+                </TouchableWithoutFeedback>
+                <Button
+                  mode={'flat'}
+                  uppercase={true}
+                  dark={true}
+                  loading={false}
+                  style={styles.loginButtonStyle}
+                  onPress={this.login}>
+                  <Text
+                    style={{color: 'white', fontSize: 16, letterSpacing: 1}}>
+                    {'Sign In'}
+                  </Text>
+                </Button>
+
+                <View
+                  style={{
+                    marginTop: sizeHeight(4),
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                  }}>
+                  <Title
+                    styleName="v-start"
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'Rubik',
+                      fontFamily: 'Rubik',
+                      fontWeight: '400',
+                      lineHeight: 24,
+                      letterSpacing: 1,
+                    }}>
+                    {`Don't Have Account? `}
+                  </Title>
+                  <TouchableWithoutFeedback
+                    onPress={() => NavigationActions.navigate('Register')}>
+                    <Title
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'Rubik',
+                        fontFamily: 'Rubik',
+                        fontWeight: '700',
+                        lineHeight: 24,
+                        letterSpacing: 1,
+                        color: '#f39f24',
+                      }}>
+                      {`REGISTER`}
+                    </Title>
+                  </TouchableWithoutFeedback>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
 
           <Loader isShow={this.state.loading} />
         </Screen>
@@ -291,21 +368,6 @@ export default class LoginScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
-  fgttext: {
-    fontSize: 15,
-    letterSpacing: 0.5,
-    color: '#0270e3',
-    textDecorationColor: '#0270e3',
-    textDecorationStyle: 'solid',
-    textDecorationLine: 'underline',
-  },
-  btntext: {
-    color: 'white',
-    fontSize: 16,
-    letterSpacing: 0.5,
-    fontWeight: '700',
-  },
-  maincontainer: {flex: 1, backgroundColor: 'white'},
   s: {justifyContent: 'center', alignSelf: 'center'},
   inputStyle: {
     height: sizeHeight(8),
@@ -321,55 +383,13 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle: {
     color: 'white',
+    paddingVertical: sizeHeight(0.5),
+    marginHorizontal: sizeWidth(3),
+    marginTop: sizeHeight(6),
     backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 0.5,
-    borderRadius: 48,
-    width: '40%',
-    paddingVertical: 4,
-    fontWeight: '700',
-  },
-  subtitle: {
-    fontSize: 18,
-    letterSpacing: 0.5,
-    color: '#bbb8ad',
-    alignSelf: 'center',
-    fontWeight: '400',
-    lineHeight: 24,
-    justifyContent: 'center',
-    textAlign: 'center',
-    paddingTop: 12,
-  },
-  subtitle1: {
-    fontSize: 18,
-    letterSpacing: 0.5,
-    color: '#0276ec',
-    alignSelf: 'center',
-    fontWeight: '400',
-    lineHeight: 24,
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: 30,
-    letterSpacing: 0.5,
-    color: '#555555',
-    fontWeight: '700',
-    lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  title1: {
-    fontSize: 32,
-    letterSpacing: 0.5,
-    color: '#ea343c',
-    fontWeight: '700',
-    lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
+    letterSpacing: 1,
   },
 });
