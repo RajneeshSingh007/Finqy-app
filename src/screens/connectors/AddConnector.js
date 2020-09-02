@@ -144,7 +144,7 @@ export default class AddConnector extends React.PureComponent {
       userData: '',
       gstno: '',
       companyname: '',
-      location: 'Select Location',
+      location: '',
       showCityList: false,
       enbleerror: false,
       hi_adultp: '',
@@ -156,8 +156,8 @@ export default class AddConnector extends React.PureComponent {
       ccp: '',
       fdp: '',
       isp: '',
-      inCheckp:'' ,
-      mfp:'' ,
+      inCheckp: '',
+      mfp: '',
       tip: '',
       vpp: '',
       lapp: '',
@@ -188,33 +188,26 @@ export default class AddConnector extends React.PureComponent {
     if (body.name === '') {
       Helper.showToastMessage('Name empty', 0);
       return false;
-    }
-
-    if (body.email === '') {
-      Helper.showToastMessage('Email empty', 0);
-      return false;
-    }
-
-    // if (body.companyname === '') {
-    //   Helper.showToastMessage('Company Name empty', 0);
-    //   return false;
-    // }
-
-    if (body.profession === '') {
-      Helper.showToastMessage('Profession empty', 0);
-      return false;
-    }
-
-    if (body.mobile_no === '') {
+    } else if (body.mobile_no === '') {
       Helper.showToastMessage('Mobile Number empty', 0);
       return false;
-    } else if (body.mobile_no === '9876543210') {
+    } else if (body.mobile_no.length < 10 || body.mobile_no === '9876543210') {
       Helper.showToastMessage('Invalid Mobile Number', 0);
       return false;
-    }
-
-    if (!Helper.checkPanCard(body.pancard)) {
+    } else if (body.email === '') {
+      Helper.showToastMessage('Email empty', 0);
+      return false;
+    } else if (body.email.includes('@') === false) {
+      Helper.showToastMessage('Invalid Email', 0);
+      return false;
+    } else if (body.profession === '') {
+      Helper.showToastMessage('Profession empty', 0);
+      return false;
+    } else if (!Helper.checkPanCard(body.pancard)) {
       Helper.showToastMessage('Invalid Pancard number', 0);
+      return false;
+    } else if (body.location === '') {
+      Helper.showToastMessage('Please, select location', 0);
       return false;
     }
 
@@ -232,7 +225,6 @@ export default class AddConnector extends React.PureComponent {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log(`result`, result);
           const {response_header} = result;
           const {res_type, message} = response_header;
           this.setState({loading: false});
@@ -249,7 +241,7 @@ export default class AddConnector extends React.PureComponent {
               pancard: '',
               gstno: '',
               companyname: '',
-              location: 'Select Location',
+              location: '',
               showCityList: false,
               enbleerror: false,
             });
@@ -302,7 +294,11 @@ export default class AddConnector extends React.PureComponent {
 
                   <CustomForm
                     value={this.state.mobile_no}
-                    onChange={(v) => this.setState({mobile_no: v})}
+                    onChange={(v) => {
+                      if (String(v).match(/^[0-9]*$/g) !== null) {
+                        this.setState({mobile_no: v});
+                      }
+                    }}
                     label={`Mobile Number *`}
                     placeholder={`Enter mobile number`}
                     keyboardType={'numeric'}
@@ -381,12 +377,14 @@ export default class AddConnector extends React.PureComponent {
                             styles.boxsubtitle,
                             {
                               color:
-                                this.state.location === `Select Location`
+                                this.state.location === ``
                                   ? `#767676`
                                   : `#292929`,
                             },
                           ]}>
-                          {this.state.location}
+                          {this.state.location === ''
+                            ? 'Select Location *'
+                            : this.state.location}
                         </Subtitle>
                         <Icon
                           name={'chevron-down'}

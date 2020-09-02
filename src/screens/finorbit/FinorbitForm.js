@@ -307,7 +307,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Loan Against Property` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          commonForms.currentlocation === 'Select Current Location *'
+          commonForms.currentlocation === ''
         ) {
           checkData = false;
           Helper.showToastMessage('Please, Select Current Location', 0);

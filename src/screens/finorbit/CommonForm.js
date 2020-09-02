@@ -80,7 +80,7 @@ export default class CommonForm extends React.PureComponent {
       maxDate: maxDates,
       name: '',
       pincode: '',
-      currentlocation: 'Select Current Location *',
+      currentlocation: '',
       email: '',
       mobile: '',
       gender: '',
@@ -761,13 +761,14 @@ export default class CommonForm extends React.PureComponent {
                     styles.boxsubtitle,
                     {
                       color:
-                        this.state.currentlocation ===
-                        `Select Current Location *`
+                        this.state.currentlocation === ``
                           ? `#767676`
                           : `#292929`,
                     },
                   ]}>
-                  {this.state.currentlocation}
+                  {this.state.currentlocation === ''
+                    ? 'Select Current Location *'
+                    : this.state.currentlocation}
                 </Subtitle>
                 <Icon
                   name={'chevron-down'}

@@ -85,6 +85,9 @@ export default class AddTeam extends React.Component {
     if (body.email === '') {
       Helper.showToastMessage('Email empty', 0);
       return false;
+    } else if (body.email.includes('@') === false) {
+      Helper.showToastMessage('Invalid Email', 0);
+      return false;
     }
 
     if (body.mobile_no === '') {
@@ -96,7 +99,7 @@ export default class AddTeam extends React.Component {
     }
 
     if (body.address === '') {
-      Helper.showToastMessage('Address empty', 0);
+      Helper.showToastMessage('Please, Select location', 0);
       return false;
     }
 
@@ -111,16 +114,14 @@ export default class AddTeam extends React.Component {
     }
 
     const aadharcardNo = spcommons.aadharcardNo;
-    if (aadharcardNo === '') {
-      Helper.showToastMessage('Aadhar card empty', 0);
-      return false;
-    }
+    // if (aadharcardNo === '') {
+    //   Helper.showToastMessage('Aadhar card empty', 0);
+    //   return false;
+    // }
 
-    body.pancard = panCards;
-    body.aadharcard = aadharcardNo;
+    body.pancard = panCards || '';
+    body.aadharcard = aadharcardNo || '';
     body.refercode = refercode;
-
-    console.log(`body`, body);
 
     if (checkData) {
       this.setState({loading: true});
@@ -130,13 +131,14 @@ export default class AddTeam extends React.Component {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log(`result`, result);
+          console.log('result', result);
           const {data, response_header} = result;
           const {res_type, message} = response_header;
           this.setState({loading: false});
           if (res_type === `error`) {
             Helper.showToastMessage(message, 0);
           } else {
+            Helper.showToastMessage(`Added successfully`, 1);
             this.setState({
               name: '',
               mobile_no: '',
@@ -169,7 +171,6 @@ export default class AddTeam extends React.Component {
               '',
               '',
             );
-            Helper.showToastMessage(`Added successfully`, 1);
           }
         },
         (error) => {
@@ -198,18 +199,18 @@ export default class AddTeam extends React.Component {
               <CustomForm
                 value={this.state.name}
                 onChange={(v) => this.setState({name: v})}
-                label={`Name`}
+                label={`Name *`}
                 placeholder={`Enter name`}
               />
 
               <CustomForm
                 value={this.state.mobile_no}
                 onChange={(v) => {
-                  if (v.match(/^[0-9]*$/g) !== null) {
+                  if (String(v).match(/^[0-9]*$/g) !== null) {
                     this.setState({mobile_no: v});
                   }
                 }}
-                label={`Mobile Number`}
+                label={`Mobile Number *`}
                 placeholder={`Enter mobile number`}
                 keyboardType={'numeric'}
                 maxLength={10}
@@ -221,7 +222,7 @@ export default class AddTeam extends React.Component {
               <CustomForm
                 value={this.state.email}
                 onChange={(v) => this.setState({email: v})}
-                label={`Email`}
+                label={`Email *`}
                 placeholder={`Enter email`}
                 keyboardType={'email-address'}
               />
@@ -261,7 +262,7 @@ export default class AddTeam extends React.Component {
                         marginHorizontal: 8,
                       }}>
                       {this.state.address === ''
-                        ? `Select Location`
+                        ? `Select Location *`
                         : this.state.address}
                     </Subtitle>
                     <Icon
