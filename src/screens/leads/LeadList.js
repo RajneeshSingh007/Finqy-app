@@ -34,6 +34,7 @@ import {
   Portal,
   Avatar,
   ActivityIndicator,
+  Searchbar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import {SafeAreaView} from 'react-navigation';
@@ -55,13 +56,15 @@ import Pdf from 'react-native-pdf';
 import Modal from '../../util/Modal';
 import Share from 'react-native-share';
 import CustomForm from './../finorbit/CustomForm';
+import CScreen from './../component/CScreen';
+import Download from './../component/Download';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Cust Moble No,Product,Company,Status,Quote,Cif,Policy\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/erb/finpro/${moment(
   new Date(),
 ).format('DDMMYYYYhhmm')}leadrecord.xlsx`;
 
-export default class As26 extends React.PureComponent {
+export default class LeadList extends React.PureComponent {
   constructor(props) {
     super(props);
     const date = new Date();
@@ -102,6 +105,10 @@ export default class As26 extends React.PureComponent {
       quotemailData: '',
       quotemail: '',
       type: '',
+      itemSize: 6,
+      disableNext: false,
+      disableBack: false,
+      searchQuery: '',
     };
   }
 
@@ -163,133 +170,36 @@ export default class As26 extends React.PureComponent {
         const {data, response_header} = result;
         const {res_type, message} = response_header;
         if (res_type === `success`) {
-          const {dataList} = this.state;
           if (data.length > 0) {
+            // const dummyCheck = [];
+            // for (let index = 0; index < 50; index++) {
+            //   dummyCheck.push(data[0]);
+            // }
             const sorting = data.sort((a, b) => {
               const sp = a.date.split('-');
               const spz = b.date.split('-');
-              return sp[2] - spz[2] || sp[1] - spz[1] || sp[0] - spz[0];
+              return (
+                Number(sp[2]) - Number(spz[2]) ||
+                Number(sp[1]) - Number(spz[1]) ||
+                Number(sp[0]) - Number(spz[0])
+              );
             });
             const sort = sorting.reverse();
-            for (let i = 0; i < sort.length; i += 1) {
-              const item = sort[i];
-              const rowData = [];
-              rowData.push(`${i + 1}`);
-              rowData.push(item.date);
-              rowData.push(item.leadno);
-              rowData.push(item.source_type);
-              rowData.push(item.name);
-              rowData.push(item.mobile);
-              rowData.push(item.product);
-              rowData.push(item.bank === 'null' ? '' : item.bank);
-              rowData.push(item.status);
-              const {quotes, mail, sharewhatsapp, sharemail, policy} = item;
-              const quotesView = (value, mail) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  {value !== '' ? (
-                    <TouchableWithoutFeedback
-                      onPress={() => this.quotesClick(value, 'Quote')}>
-                      <View>
-                        <IconChooser
-                          name={value.includes('png') ? `download` : `file-pdf`}
-                          size={20}
-                          iconType={value.includes('png') ? 0 : 5}
-                          color={Colors.blue400}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                  ) : null}
-                  {mail !== '' ? (
-                    <TouchableWithoutFeedback
-                      onPress={() => this.quotesClick(mail, 'Mail')}>
-                      <View style={{marginStart: 8}}>
-                        <IconChooser
-                          name={'mail'}
-                          size={20}
-                          iconType={0}
-                          color={Colors.blue400}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                  ) : null}
-                </View>
-              );
-              rowData.push(quotesView(quotes, mail));
-
-              const shareView = (value, mail) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  {value !== '' ? (
-                    <TouchableWithoutFeedback
-                      onPress={() => this.cifClick(value)}>
-                      <View>
-                        <IconChooser
-                          name={`whatsapp`}
-                          size={20}
-                          iconType={2}
-                          color={Colors.blue400}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                  ) : null}
-                  {mail !== '' ? (
-                    <TouchableWithoutFeedback
-                      onPress={() => this.cifClick(value)}>
-                      <View style={{marginStart: 8}}>
-                        <IconChooser
-                          name={'mail'}
-                          size={20}
-                          iconType={0}
-                          color={Colors.blue400}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                  ) : null}
-                </View>
-              );
-              rowData.push(shareView(sharewhatsapp, sharemail));
-              const policyView = (value, mail) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <TouchableWithoutFeedback
-                    onPress={() => this.invoiceViewClick(value, 'Policy')}>
-                    <View>
-                      <IconChooser
-                        name={`download`}
-                        size={20}
-                        iconType={2}
-                        color={Colors.blue400}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              );
-              rowData.push(policy === '' ? '' : policyView(policy));
-
-              dataList.push(rowData);
-            }
+            const {itemSize} = this.state;
+            this.setState({
+              cloneList: sort,
+              dataList: this.returnData(sort, 0, sort.length).slice(
+                0,
+                itemSize,
+              ),
+              loading: false,
+              itemSize: sort.length > 6 ? 6 : sort.length,
+            });
+          } else {
+            this.setState({
+              loading: false,
+            });
           }
-          this.setState({
-            cloneList: data,
-            dataList: dataList,
-            loading: false,
-          });
         } else {
           this.setState({loading: false});
         }
@@ -298,6 +208,134 @@ export default class As26 extends React.PureComponent {
         this.setState({loading: false});
       },
     );
+  };
+
+  /**
+   *
+   * @param {*} data
+   */
+  returnData = (sort, start = 0, end) => {
+    const dataList = [];
+    console.log(start, end);
+    if (sort.length > 0) {
+      if (start >= 0) {
+        for (let i = start; i < end; i++) {
+          const item = sort[i];
+          if (item !== undefined && item !== null) {
+            const rowData = [];
+            rowData.push(`${Number(i + 1)}`);
+            rowData.push(item.date);
+            rowData.push(item.leadno);
+            rowData.push(item.source_type);
+            rowData.push(item.name);
+            rowData.push(item.mobile);
+            rowData.push(item.product);
+            rowData.push(item.bank === 'null' ? '' : item.bank);
+            rowData.push(item.status);
+            const {quotes, mail, sharewhatsapp, sharemail, policy} = item;
+            const quotesView = (value, mail) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {value !== '' ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.quotesClick(value, 'Quote')}>
+                    <View>
+                      <IconChooser
+                        name={value.includes('png') ? `download` : `file-pdf`}
+                        size={20}
+                        iconType={value.includes('png') ? 0 : 5}
+                        color={`#9f9880`}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : null}
+                {mail !== '' ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.quotesClick(mail, 'Mail')}>
+                    <View style={{marginStart: 8}}>
+                      <IconChooser
+                        name={'mail'}
+                        size={20}
+                        iconType={0}
+                        color={`#9f9880`}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : null}
+              </View>
+            );
+            rowData.push(quotesView(quotes, mail));
+
+            const shareView = (value, mail) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                {value !== '' ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.cifClick(value)}>
+                    <View>
+                      <IconChooser
+                        name={`whatsapp`}
+                        size={20}
+                        iconType={2}
+                        color={`#1bd741`}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : null}
+                {mail !== '' ? (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.cifClick(value)}>
+                    <View style={{marginStart: 8}}>
+                      <IconChooser
+                        name={'mail'}
+                        size={20}
+                        iconType={0}
+                        color={`#9f9880`}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : null}
+              </View>
+            );
+            rowData.push(shareView(sharewhatsapp, sharemail));
+            const policyView = (value, mail) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.invoiceViewClick(value, 'Policy')}>
+                  <View>
+                    <IconChooser
+                      name={`download`}
+                      size={20}
+                      iconType={2}
+                      color={`#9f9880`}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            );
+            rowData.push(policy === '' ? '' : policyView(policy));
+            dataList.push(rowData);
+          }
+        }
+      }
+    }
+    return dataList;
   };
 
   cifClick = (value, titlex) => {
@@ -427,28 +465,75 @@ export default class As26 extends React.PureComponent {
       });
     }
   };
-  render() {
-    return (
-      <CommonScreen
-        title={'Finorbit'}
-        loading={this.state.loading}
-        enabelWithScroll={false}
-        header={
-          <LeftHeaders
-            title={'My Lead Record'}
-            showAvtar
-            showBack
-            showBottom
-            bottomIconName={'download'}
-            bottomIconTitle={`Excel`}
-            bottombg={Colors.red600}
-            bottomClicked={this.clickedexport}
-          />
+
+  /**
+   *
+   * @param {*} mode true ? next : back
+   */
+  pagination = (mode) => {
+    const {itemSize, cloneList} = this.state;
+    let clone = JSON.parse(JSON.stringify(cloneList));
+    let plus = itemSize;
+    let slicedArray = [];
+    if (mode) {
+      plus += 6;
+      if (itemSize < clone.length) {
+        if (plus > clone.length) {
+          const rem = clone.length - itemSize;
+          plus = itemSize + rem;
         }
-        headerDis={0.15}
-        bodyDis={0.85}
+        slicedArray = this.returnData(clone, itemSize, plus);
+        this.setState({dataList: slicedArray, itemSize: plus});
+      }
+    } else {
+      if (itemSize <= 6) {
+        plus = 0;
+      } else {
+        plus -= 6;
+      }
+      if (plus >= 0 && plus < clone.length) {
+        slicedArray = this.returnData(clone, plus, itemSize);
+        this.setState({dataList: slicedArray, itemSize: plus});
+      }
+    }
+  };
+
+  onChangeSearch = (query) => {
+    this.setState({searchQuery: query});
+    const {dataList} = this.state;
+    if (dataList.length > 0) {
+      const result = Lodash.filter((it) => {
+        const {item} = it;
+        if (React.isValidElement(item) === false) {
+          return String(it).includes(query);
+        }
+      });
+      this.setState({dataList: result});
+    }
+  };
+
+  render() {
+    const {searchQuery} = this.state;
+    return (
+      <CScreen
         body={
           <>
+            <LeftHeaders
+              showBack
+              title={'My Lead Record'}
+              bottomBody={
+                <>
+                  {/* <View styleName="md-gutter">
+                    <Searchbar
+                      placeholder="Search"
+                      onChangeText={this.onChangeSearch}
+                      value={searchQuery}
+                    />
+                  </View> */}
+                </>
+              }
+            />
+
             <Modal
               visible={this.state.modalvis}
               setModalVisible={() =>
@@ -559,13 +644,24 @@ export default class As26 extends React.PureComponent {
                 </View>
               }
             />
-            {this.state.loading ? (
+            <View styleName="horizontal md-gutter">
+              <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                <Title style={styles.itemtopText}>{`Back`}</Title>
+              </TouchableWithoutFeedback>
               <View
                 style={{
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  flex: 1,
-                }}>
+                  height: 16,
+                  marginHorizontal: 12,
+                  backgroundColor: '#0270e3',
+                  width: 1.5,
+                }}
+              />
+              <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
+                <Title style={styles.itemtopText}>{`Next`}</Title>
+              </TouchableWithoutFeedback>
+            </View>
+            {this.state.loading ? (
+              <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
             ) : this.state.dataList.length > 0 ? (
@@ -573,23 +669,184 @@ export default class As26 extends React.PureComponent {
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
-                style={{marginTop: sizeHeight(6)}}
               />
             ) : (
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  alignContents: 'center',
-                  color: '#767676',
-                }}>
+              <View style={styles.emptycont}>
                 <ListError subtitle={'No lead record found...'} />
               </View>
             )}
+            {this.state.dataList.length > 0 ? (
+              <>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Download rightIconClick={this.clickedexport} />
+              </>
+            ) : null}
           </>
         }
       />
+      // <CommonScreen
+      //   title={'Finorbit'}
+      //   loading={this.state.loading}
+      //   enabelWithScroll={false}
+      //   header={
+      // <LeftHeaders
+      //   title={'My Lead Record'}
+      //   showAvtar
+      //   showBack
+      //   showBottom
+      //   bottomIconName={'download'}
+      //   bottomIconTitle={`Excel`}
+      //   bottombg={Colors.red600}
+      //   bottomClicked={this.clickedexport}
+      // />
+      //   }
+      //   headerDis={0.15}
+      //   bodyDis={0.85}
+      //   body={
+      //     <>
+      // <Modal
+      //   visible={this.state.modalvis}
+      //   setModalVisible={() =>
+      //     this.setState({pdfurl: '', modalvis: false})
+      //   }
+      //   ratioHeight={0.87}
+      //   backgroundColor={`white`}
+      //   topCenterElement={
+      //     <Subtitle
+      //       style={{
+      //         color: '#292929',
+      //         fontSize: 17,
+      //         fontWeight: '700',
+      //         letterSpacing: 1,
+      //       }}>
+      //       {this.state.pdfTitle}
+      //     </Subtitle>
+      //   }
+      //   topRightElement={
+      //     <TouchableWithoutFeedback
+      //       onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
+      //       <View>
+      //         <IconChooser
+      //           name="download"
+      //           size={24}
+      //           color={Colors.blue900}
+      //         />
+      //       </View>
+      //     </TouchableWithoutFeedback>
+      //   }
+      //   children={
+      //     <View
+      //       style={{
+      //         flex: 1,
+      //         width: '100%',
+      //         height: '100%',
+      //         backgroundColor: 'white',
+      //       }}>
+      //       <Pdf
+      //         source={{
+      //           uri: this.state.pdfurl,
+      //           cache: true,
+      //         }}
+      //         style={{
+      //           flex: 1,
+      //           width: '100%',
+      //           height: '100%',
+      //         }}
+      //       />
+      //     </View>
+      //   }
+      // />
+
+      // <Modal
+      //   visible={this.state.quotemodalVis}
+      //   setModalVisible={() =>
+      //     this.setState({
+      //       quotemodalVis: false,
+      //       quotemailData: '',
+      //       quotemail: '',
+      //     })
+      //   }
+      //   ratioHeight={0.6}
+      //   backgroundColor={`white`}
+      //   topCenterElement={
+      //     <Subtitle
+      //       style={{
+      //         color: '#292929',
+      //         fontSize: 17,
+      //         fontWeight: '700',
+      //         letterSpacing: 1,
+      //       }}>
+      //       {`Share via E-Mail`}
+      //     </Subtitle>
+      //   }
+      //   topRightElement={null}
+      //   children={
+      //     <View
+      //       style={{
+      //         flex: 1,
+      //         backgroundColor: 'white',
+      //       }}>
+      //       <CustomForm
+      //         label={`Email`}
+      //         placeholder={`Enter email id`}
+      //         value={this.state.quotemail}
+      //         onChange={(v) => this.setState({quotemail: v})}
+      //         keyboardType={'email-address'}
+      //         style={{marginHorizontal: 24}}
+      //       />
+
+      //       <Button
+      //         mode={'flat'}
+      //         uppercase={true}
+      //         dark={true}
+      //         loading={false}
+      //         style={[styles.button]}
+      //         onPress={this.emailSubmit}>
+      //         <Text
+      //           style={{
+      //             color: 'white',
+      //             fontSize: 16,
+      //             letterSpacing: 1,
+      //           }}>
+      //           {`Submit`}
+      //         </Text>
+      //       </Button>
+      //     </View>
+      //   }
+      // />
+      // {this.state.loading ? (
+      //   <View
+      //     style={{
+      //       justifyContent: 'center',
+      //       alignSelf: 'center',
+      //       flex: 1,
+      //     }}>
+      //     <ActivityIndicator />
+      //   </View>
+      // ) : this.state.dataList.length > 0 ? (
+      //   <CommonTable
+      //     dataList={this.state.dataList}
+      //     widthArr={this.state.widthArr}
+      //     tableHead={this.state.tableHead}
+      //     style={{marginTop: sizeHeight(6)}}
+      //   />
+      // ) : (
+      //   <View
+      //     style={{
+      //       flex: 1,
+      //       justifyContent: 'center',
+      //       alignItems: 'center',
+      //       alignContents: 'center',
+      //       color: '#767676',
+      //     }}>
+      //     <ListError subtitle={'No lead record found...'} />
+      //   </View>
+      // )}
+      //     </>
+      //   }
+      // />
     );
   }
 }
@@ -605,5 +862,42 @@ const styles = StyleSheet.create({
     elevation: 0,
     borderRadius: 0,
     letterSpacing: 1,
+  },
+  emptycont: {
+    flex: 0.7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    marginVertical: 48,
+    paddingVertical: 56,
+  },
+  loader: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 1,
+    marginVertical: 48,
+    paddingVertical: 48,
+  },
+  itemtext: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#0270e3',
+    fontSize: 14,
+    paddingVertical: 16,
+    marginTop: 4,
+  },
+  itemtopText: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#0270e3',
+    fontSize: 16,
   },
 });

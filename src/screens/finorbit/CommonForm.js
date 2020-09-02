@@ -761,14 +761,13 @@ export default class CommonForm extends React.PureComponent {
                     styles.boxsubtitle,
                     {
                       color:
-                        this.state.currentlocation === ``
+                        this.state.currentlocation ===
+                        ``
                           ? `#767676`
                           : `#292929`,
                     },
                   ]}>
-                  {this.state.currentlocation === ''
-                    ? 'Select Current Location *'
-                    : this.state.currentlocation}
+                  {this.state.currentlocation === '' ? 'Select Current Location *' : this.state.currentlocation}
                 </Subtitle>
                 <Icon
                   name={'chevron-down'}

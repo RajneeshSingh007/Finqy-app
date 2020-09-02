@@ -76,7 +76,7 @@ import Sidebar from './Sidebar';
 
 const {width} = Dimensions.get('window');
 
-const WIDTH_DRAWER = width * 0.78;
+const WIDTH_DRAWER = width * 0.8;
 
 const HomeNav = createStackNavigator(
   {
@@ -267,16 +267,12 @@ const OfferNav2 = createStackNavigator(
   },
 );
 
-const SwitchTranNav = createSwitchNavigator(
-  {
-    Training: {screen: Training},
-    Blogs: BlogNav,
-  },
-  {
-    headerMode: 'none',
-  },
-);
-
+const SwitchTranNav = createSwitchNavigator({
+  Training: {screen: Training},
+  Blogs: BlogNav,
+}, {
+  headerMode:'none'
+});
 
 const OtherNav = createDrawerNavigator(
   {
@@ -290,12 +286,12 @@ const OtherNav = createDrawerNavigator(
     ReferEarn: {screen: ReferEarn},
     AddTeam: {screen: AddTeam},
     ViewTeam: {screen: ViewTeam},
-    SwitchTranNav:{screen:SwitchTranNav},
     Manager: {screen: Manager},
     LinkSharingOption: {screen: LinkSharingOption},
     Samadhan: {screen: Samadhan},
     Qrc: {screen: Qrc},
     Invoice: {screen: Invoice},
+    SwitchTranNav:SwitchTranNav,
     As26: {screen: As26},
     Certificate: {screen: Certificate},
     ChangePass: {screen: ChangePass},
@@ -331,7 +327,7 @@ const AuthRouter = createStackNavigator(
     OtpScreen: OtpScreen,
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'IntroScreen',
     headerMode: 'none',
   },
 );

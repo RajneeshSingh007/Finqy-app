@@ -1,62 +1,19 @@
 import React from 'react';
-import {
-  StatusBar,
-  StyleSheet,
-  ScrollView,
-  BackHandler,
-  FlatList,
-  TouchableWithoutFeedback,
-  Linking,
-} from 'react-native';
-import {
-  TouchableOpacity,
-  Image,
-  Screen,
-  Subtitle,
-  Title,
-  View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
-  Video,
-} from '@shoutem/ui';
+import {StyleSheet, FlatList, TouchableWithoutFeedback} from 'react-native';
+import {Image, Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Avatar,
-  ActivityIndicator,
-  Chip,
-} from 'react-native-paper';
+import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
 import ListError from '../common/ListError';
-import IconChooser from '../common/IconChooser';
+import CScreen from '../component/CScreen';
 
 export default class Blogs extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.backClick = this.backClick.bind(this);
+    this.back = this.back.bind(this);
     this.renderItems = this.renderItems.bind(this);
     this.renderCatItems = this.renderCatItems.bind(this);
     this.state = {
@@ -72,7 +29,7 @@ export default class Blogs extends React.PureComponent {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    BackHandler.addEventListener('hardwareBackPress', this.back);
     const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true});
@@ -89,17 +46,16 @@ export default class Blogs extends React.PureComponent {
     });
   }
 
-  componentWillUnMount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-    if (this.focusListener !== undefined) this.focusListener.remove();
-    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
-  }
-
-  backClick = () => {
-      console.log('data')
+  back = () => {
     NavigationActions.goBack();
     return true;
   };
+
+  componentWillUnMount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.back);
+    if (this.focusListener !== undefined) this.focusListener.remove();
+    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+  }
 
   fetchData = () => {
     this.setState({loading: true});
@@ -109,7 +65,7 @@ export default class Blogs extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, response_header} = result;
-        const {res_type, message} = response_header;
+        const {res_type} = response_header;
         if (res_type === `success`) {
           let categoryList = this.state.categoryList;
           categoryList = [];
@@ -135,7 +91,7 @@ export default class Blogs extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      (error) => {
+      () => {
         this.setState({loading: false});
       },
     );
@@ -146,57 +102,49 @@ export default class Blogs extends React.PureComponent {
    * @param {*} item
    * @param {*} index
    */
-  renderItems(item, index) {
+  renderItems(item) {
     // let url = item.category === `newspaper` ? `https://erb.ai/erevbay_admin/blogs/newspaper/${item.img}` : `https://erb.ai/erevbay_admin/${item.img}`;
     // if (url.includes('newspaper')){
     //     url = url.replace('/images', '');
     // }
     let url = `https://erb.ai/erevbay_admin/${item.img}`;
     return (
-      <TouchableWithoutFeedback
-        onPress={() => NavigationActions.navigate(`BlogDetails`, {item: item})}>
-        <View
-          styleName="vertical"
-          style={{
-            marginVertical: sizeHeight(1.3),
-            marginStart: 10,
-            marginEnd: 8,
-          }}>
-          <Card elevation={2} style={{borderRadius: 8}}>
-            <Card.Cover source={{uri: `${encodeURI(url)}`}} />
-            <View
+      <View styleName="md-gutter">
+        <TouchableWithoutFeedback
+          onPress={() =>
+            NavigationActions.navigate(`BlogDetails`, {item: item})
+          }>
+          <View styleName="vertical" style={styles.itemContainer}>
+            <Image
+              source={{uri: `${encodeURI(url)}`}}
+              styleName="large"
               style={{
-                marginVertical: 16,
-                marginHorizontal: 12,
-              }}>
-              <Title
-                styleName="v-start h-start"
-                numberOfLines={1}
-                style={{
-                  fontSize: 15,
-                  fontFamily: 'Rubik',
-                  letterSpacing: 1,
-                  color: '#292929',
-                  fontWeight: '700',
-                }}>{`${item.title}`}</Title>
-              <Subtitle
-                styleName="v-start h-start"
-                numberOfLines={3}
-                style={{
-                  fontSize: 14,
-                  fontFamily: 'Rubik',
-                  letterSpacing: 0,
-                  color: '#767676',
-                  fontWeight: '400',
-                }}>{`${item.desc}`}</Subtitle>
-            </View>
-          </Card>
-        </View>
-      </TouchableWithoutFeedback>
+                justifyContent: 'center',
+                alignSelf: 'center',
+                marginTop: 8,
+                width: '90%',
+                height: 200,
+                resizeMode: 'contain',
+              }}
+            />
+            <Title
+              styleName="v-start h-start"
+              numberOfLines={1}
+              style={styles.itemtext}>{`${item.title}`}</Title>
+            <Title
+              styleName="v-start h-start"
+              numberOfLines={3}
+              style={styles.itemdesc}>{`${item.desc}`}</Title>
+            <Title
+              styleName="v-start h-start"
+              style={styles.readmore}>{`Read More >>`}</Title>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     );
   }
 
-  chipclick = (item, index) => {
+  chipclick = (item) => {
     const {categoryList, cloneList} = this.state;
     const sel = item.selected;
     const ok = Lodash.map(categoryList, (io) => {
@@ -235,30 +183,32 @@ export default class Blogs extends React.PureComponent {
 
   render() {
     return (
-      <CommonScreen
-        title={'Finorbit'}
-        loading={this.state.loading}
-        enabelWithScroll={false}
-        header={
-          <LeftHeaders title={'FinNews'} showBack style={{marginBottom: 8}} />
-        }
-        headerDis={0.15}
-        bodyDis={0.85}
+      <CScreen
         body={
           <>
+            <LeftHeaders
+              showBack
+              title={'FinNews'}
+              bottomtext={
+                <>
+                  {`Fin`}
+                  <Title style={styles.passText}>{`News`}</Title>
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 24,
+              }}
+            />
+
             {this.state.loading ? (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  flex: 1,
-                }}>
+              <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
             ) : this.state.dataList.length > 0 ? (
               <FlatList
                 data={this.state.dataList}
-                renderItem={({item, index}) => this.renderItems(item, index)}
+                renderItem={({item, index}) => this.renderItems(item)}
                 nestedScrollEnabled={true}
                 keyExtractor={(item, index) => `${index}`}
                 showsVerticalScrollIndicator={true}
@@ -273,7 +223,7 @@ export default class Blogs extends React.PureComponent {
                       this.renderCatItems(item, index)
                     }
                     nestedScrollEnabled={true}
-                    keyExtractor={(item, index) => `${item.name}`}
+                    keyExtractor={(item) => `${item.name}`}
                     showsVerticalScrollIndicator={true}
                     showsHorizontalScrollIndicator={false}
                     extraData={this.state}
@@ -281,14 +231,8 @@ export default class Blogs extends React.PureComponent {
                 )}
               />
             ) : (
-              <View
-                style={{
-                  flex: 0.7,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  alignContents: 'center',
-                }}>
-                <ListError subtitle={'No Finnews found...'} />
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No FinNews found...'} />
               </View>
             )}
           </>
@@ -299,6 +243,28 @@ export default class Blogs extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  emptycont: {
+    flex: 0.7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    marginVertical: 48,
+    paddingVertical: 56,
+  },
+  loader: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 1,
+    marginVertical: 48,
+    paddingVertical: 48,
+  },
+  itemContainer: {
+    marginVertical: 4,
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 16,
+    marginHorizontal: 16,
+  },
   subtitle: {
     fontSize: 14,
     fontFamily: 'Rubik',
@@ -314,5 +280,57 @@ const styles = StyleSheet.create({
     color: '#292929',
     alignSelf: 'flex-start',
     fontWeight: '700',
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
+  itemtext: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 36,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#686868',
+    fontSize: 16,
+    marginStart: 16,
+    marginEnd: 16,
+    marginTop: 2,
+  },
+  itemdesc: {
+    letterSpacing: 0.5,
+    fontWeight: '400',
+    lineHeight: 20,
+    marginTop: 4,
+    marginBottom: 4,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#bbb8ac',
+    fontSize: 14,
+    marginStart: 16,
+    marginEnd: 16,
+    paddingBottom: 8,
+  },
+  readmore: {
+    letterSpacing: 0.5,
+    fontWeight: '400',
+    lineHeight: 16,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#0271e4',
+    fontSize: 14,
+    marginStart: 16,
+    marginEnd: 16,
+    paddingBottom: 16,
   },
 });

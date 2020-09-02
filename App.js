@@ -10,7 +10,10 @@ let currentScreenx = ''
 class App extends React.PureComponent {
     constructor(props) {
         super(props);
+        this.backClick = this.backClick.bind(this);
         changeNavigationBarColor('white', true);
+        StatusBar.setBackgroundColor('white', false);
+        StatusBar.setBarStyle('dark-content');
     }
 
     componentDidMount(){

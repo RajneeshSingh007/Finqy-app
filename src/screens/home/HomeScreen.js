@@ -1,17 +1,22 @@
 import {Subtitle, Title, View} from '@shoutem/ui';
 import React from 'react';
-import {StyleSheet, BackHandler, Dimensions} from 'react-native';
-import {Colors, Card} from 'react-native-paper';
+import {
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Platform,
+  Alert,
+} from 'react-native';
+import {Colors} from 'react-native-paper';
 import * as Helper from '../../util/Helper';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import {sizeWidth} from '../../util/Size';
 import NavigationActions from '../../util/NavigationActions';
-import CommonScreen from '../common/CommonScreen';
-import BannerCard from '../common/BannerCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import * as Pref from '../../util/Pref';
 import {PieChart} from 'react-native-chart-kit';
-
 import CardVertical from '../common/CardVertical';
+import CScreen from '../component/CScreen';
+import Lodash from 'lodash';
 
 const data = [
   {
@@ -59,7 +64,7 @@ const chartConfig = {
   backgroundGradientFromOpacity: 0,
   backgroundGradientTo: '#08130D',
   backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) => `rgba(26, 255, 146, 0.5)`,
+  color: () => `rgba(26, 255, 146, 0.5)`,
   strokeWidth: 2, // optional, default 3
   barPercentage: 0.5,
   useShadowColorFromDataset: true, // optional
@@ -70,9 +75,7 @@ const screenWidth = Dimensions.get('window').width;
 export default class HomeScreen extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.renderItems = this.renderItems.bind(this);
     this.crousel = React.createRef();
-    this.appluclickedButton = this.appluclickedButton.bind(this);
     this.state = {
       loading: false,
       progressloader: false,
@@ -85,6 +88,8 @@ export default class HomeScreen extends React.PureComponent {
       noteContent: '',
       leadcount: 0,
       token: '',
+      showProfile: false,
+      type: '',
     };
     Pref.getVal(Pref.initial, (value) => {
       const check = Helper.removeQuotes(value);
@@ -135,79 +140,11 @@ export default class HomeScreen extends React.PureComponent {
           this.setState({token: value});
         }
       });
-      // const banndata = new FormData();
-      // banndata.append('mode', 0);
-
-      // Helper.networkHelperContentType(Pref.BannerUrl, banndata, Pref.methodPost, datax => {
-      //     if (!datax.error) {
-      //         const { data } = datax;
-      //         this.setState({ bannerList: data })
-      //     }
-      // }, error => {
-      // });
+      Pref.getVal(Pref.USERTYPE, (v) => {
+        //console.log(v);
+        this.setState({type: v});
+      });
     });
-    // this._notificationEvent = PushNotificationAndroid.addEventListener(
-    //     "notification",
-    //     details => {
-    //         PushNotificationAndroid.notify(details);
-    //         this.setState({ noteContent:'You got 500₹ in your wallet'})
-    //     }
-    // );
-
-    // Pref.getVal(Pref.userID, userID =>{
-    //     const id = Helper.removeQuotes(userID);
-    //     console.log('id', id);
-    //     if (id !== ''){
-    //         Helper.networkHelper(Pref.FetchAccountUrl, JSON.stringify({
-    //             userid: id,
-    //             mode:'0'
-    //         }), Pref.methodPost, value => {
-    //             //console.log('value', value);
-    //             if(!value.error){
-    //                 Pref.setVal(Pref.userData, value);
-    //                 this.setState({ userData:value});
-    //             }else{
-    //                 NavigationActions.navigate('Login')
-    //             }
-    //         }, error => {
-
-    //         });
-
-    //         const datess = new Date();
-    //         //datess.setFullYear(2020,2,16);
-    //         const date = moment(datess).format('DD/MM/YYYY');
-    //         const leadData = new FormData();
-    //         const oldDate = new Date();
-    //         oldDate.setFullYear(2020,1,10);
-    //         const oldDatex = moment(oldDate).format('DD/MM/YYYY');
-
-    //         leadData.append('uni', id);
-    //         leadData.append('date', oldDatex);
-    //         leadData.append('frdate', date)
-
-    //         Helper.networkHelperContentType(Pref.FetchLeadsUrl, leadData,Pref.methodPost, result =>{
-    //             if(!result.error){
-    //                 const { data, leadcount} = result;
-    //                 if(data.length > 5){
-    //                     data.length = 5;
-    //                 }
-    //                 this.setState({ dataList: data, leadcount: leadcount});
-    //             }
-    //         }, error =>{
-    //             this.setState({ dataList: [], leadcount: 0});
-    //         })
-    //     }else{
-    //         NavigationActions.navigate('Login')
-    //     }
-    // })
-
-    // this.unsubscribe = firestore().collection('refreshApp').doc('finrefCode')
-    //     .onSnapshot({
-    //         error: (e) => console.error(e),
-    //         next: (documentSnapshot) => {
-    //             console.log('ckcck');
-    //         },
-    //     });
   }
 
   componentWillUnMount() {
@@ -215,462 +152,362 @@ export default class HomeScreen extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  /**
-   *
-   * @param {*} item
-   * @param {*} index
-   */
-  renderItems(item, index) {
-    const count = index + 1;
-    return (
-      <View
-        styleName="horizontal"
-        style={{
-          marginVertical: sizeHeight(1),
-          justifyContent: 'space-between',
-          paddingVertical: sizeHeight(0.5),
-          flex: 1,
-          flexDirection: 'row',
-        }}>
-        <Title
-          styleName="v-start h-start"
-          style={{
-            marginStart: 16,
-            fontSize: 15,
-            fontFamily: 'Rubik',
-            color: '#292929',
-            padding: 4,
-            fontWeight: '700',
-            flex: 0.2,
-          }}>
-          {count + '. '}
-        </Title>
-        <Subtitle
-          styleName="v-start h-start"
-          numberOfLines={1}
-          style={{
-            fontSize: 15,
-            fontFamily: 'Rubik',
-            color: '#292929',
-            padding: 4,
-            fontWeight: '400',
-            flex: 0.4,
-          }}>
-          {item.customer_name}
-        </Subtitle>
-        <Subtitle
-          styleName="v-start h-start"
-          numberOfLines={1}
-          style={{
-            marginEnd: 16,
-            fontSize: 15,
-            fontFamily: 'Rubik',
-            color: '#292929',
-            padding: 4,
-            fontWeight: '400',
-            flex: 0.4,
-          }}>
-          {item.status}
-        </Subtitle>
-      </View>
-    );
-  }
-
-  appluclickedButton = () => {};
-
-  _renderItem = () => {
-    //bannerList
-    //`${Pref.FOLDERPATH}${item.url}`
-    return (
-      <BannerCard
-        url={{
-          uri: `https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTAUcHhG-sD8AZ3foP2ho4DubmgCLKT5xtu4nWXkN6thZW0OPiK&usqp=CAU`,
-        }}
-      />
-    );
-  };
-
   render() {
+    const {showProfile, type, userData} = this.state;
+    let name = '';
+    if (Helper.nullCheck(userData) === false) {
+      name = userData.rname === undefined ? userData.username : userData.rname;
+    }
     return (
-      <CommonScreen
-        title={'Hello, Rajneesh'}
-        loading={false}
-        showAbsolute={false}
-        absoluteBody={
+      <CScreen
+        absolute={
           <>
-            {/* {this.state.showRefDialog ? <RefDialog isShow={this.state.showRefDialog}  clickedcallback={() =>{
-                            this.setState({showRefDialog:false});
-                            Pref.setVal(Pref.initial, '0');
-                        }}/> : null} */}
-            {/* {this.state.showNotification ? <NotifyDialog isShow={true} clickedcallback={() => {
-                            this.setState({showNotification:false})
-                        }} noteContent={this.state.noteContent} /> : null} */}
+            {showProfile === true ? (
+              <View styleName="vertical md-gutter" style={styles.filtercont}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.passText,
+                    {
+                      lineHeight: 24,
+                      fontSize: 18,
+                    },
+                  ])}>
+                  {Lodash.truncate(name, {
+                    length: 24,
+                    separator: '...',
+                  })}
+                </Title>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.passText,
+                    {
+                      color: '#555',
+                      fontSize: 16,
+                      lineHeight: 20,
+                      paddingVertical: 0,
+                      marginBottom: 8,
+                      marginTop: 4,
+                    },
+                  ])}>
+                  {`${
+                    type === 'connector'
+                      ? `Connector`
+                      : type === `referral`
+                      ? 'Referral'
+                      : `Team`
+                  } Partner`}
+                </Title>
+
+                <View style={styles.line}></View>
+
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    Alert.alert('Logout', 'Are you sure want to Logout?', [
+                      {
+                        text: 'Cancel',
+                      },
+                      {
+                        text: 'Ok',
+                        onPress: () => {
+                          Pref.setVal(Pref.saveToken, null);
+                          Pref.setVal(Pref.userData, null);
+                          Pref.setVal(Pref.userID, null);
+                          Pref.setVal(Pref.loggedStatus, false);
+                          NavigationActions.navigate('IntroScreen');
+                        },
+                      },
+                    ]);
+                  }}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.passText,
+                      {
+                        marginTop: 8,
+                        color: '#0270e3',
+                        fontSize: 14,
+                        lineHeight: 20,
+                        paddingVertical: 0,
+                        textDecorationColor: '#0270e3',
+                        textDecorationStyle: 'solid',
+                        textDecorationLine: 'underline',
+                      },
+                    ])}>
+                    {`Logout`}
+                  </Title>
+                </TouchableWithoutFeedback>
+              </View>
+            ) : null}
           </>
         }
         body={
-          <>
-            <LeftHeaders
-              backicon={`align-left`}
-              backClicked={() => NavigationActions.openDrawer()}
-              showBack
-              url={require('../../res/images/logo.png')}
-              showAvtar
-              //showBottom
-              title={`${
-                this.state.userData !== undefined &&
-                this.state.userData.rname !== undefined
-                  ? `Hi, ${this.state.userData.rname}`
-                  : 'Hi'
-              }`}
-              style={{marginBottom: 8}}
-              // bottomClicked={() => this.setState({showNotification:true})}
-            />
-
-            <CardVertical
-              url={''}
-              title={''}
-              subtitle={'Sourcing Chart'}
-              subtitleColor={'#292929'}
-              innerstyle={{paddingTop: 8}}
-              bottom={
-                <View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      height: 200,
-                    }}>
-                    <View style={{flex: 0.2}}></View>
-                    <View style={{flex: 0.6}}>
-                      <PieChart
-                        data={data}
-                        width={screenWidth}
-                        height={200}
-                        chartConfig={chartConfig}
-                        accessor="population"
-                        backgroundColor="transparent"
-                        paddingLeft="5"
-                        hasLegend={false}
-                        //absolute
-                      />
-                    </View>
-                    <View style={{flex: 0.2}}></View>
-                  </View>
-                  <View
-                    styleName="horizontal wrap"
-                    style={{flex: 1, flexDirection: 'column', paddingBottom: 6,flexGrow:1}}>
+          <TouchableWithoutFeedback
+            onPress={() => this.setState({showProfile: false})}>
+            <View>
+              <LeftHeaders
+                profile={() => this.setState({showProfile: !showProfile})}
+                backClicked={() => NavigationActions.openDrawer()}
+                title={`Hi,`}
+              />
+              <CardVertical
+                url={''}
+                title={''}
+                subtitle={'Sourcing Chart'}
+                subtitleColor={'#292929'}
+                innerstyle={{paddingTop: 8}}
+                bottom={
+                  <View>
                     <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          fontSize: 13,
-                          fontFamily: 'Rubik',
-                          letterSpacing: 1,
-                          color: '#292929',
-                          fontWeight: '400',
-                          alignSelf: 'center',
-                        }}>
-                        {`Link Sourcing(${`85%`})`}
-                      </Subtitle>
-                      <View
-                        styleName="v-center h-center"
-                        style={{
-                          backgroundColor: Colors.green500,
-                          height: 12,
-                          width: 24,
-                          alignSelf: 'center',
-                          marginStart: 8,
-                        }}></View>
-                    </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          fontSize: 13,
-                          fontFamily: 'Rubik',
-                          letterSpacing: 1,
-                          color: '#292929',
-                          fontWeight: '400',
-                          alignSelf: 'center',
-                        }}>
-                        {`Self Sourcing(${`15%`})`}
-                      </Subtitle>
-                      <View
-                        styleName="v-center h-center"
-                        style={{
-                          backgroundColor: Colors.blue500,
-                          height: 12,
-                          width: 24,
-                          alignSelf: 'center',
-                          marginStart: 8,
-                        }}></View>
-                    </View>
-                    <View style={{flex: 0.1}}></View>
-                  </View>
-                </View>
-              }
-            />
-
-            <CardVertical
-              url={''}
-              title={''}
-              subtitle={'Status Chart'}
-              subtitleColor={'#292929'}
-              innerstyle={{paddingTop: 8}}
-              bottom={
-                <View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      height: 200,
-                    }}>
-                    <View style={{flex: 0.2}}></View>
-                    <View style={{flex: 0.6}}>
-                      <PieChart
-                        data={data1}
-                        width={screenWidth}
-                        height={200}
-                        chartConfig={chartConfig}
-                        accessor="population"
-                        backgroundColor="transparent"
-                        paddingLeft="5"
-                        hasLegend={false}
-                        //absolute
-                      />
-                    </View>
-                    <View style={{flex: 0.2}}></View>
-                  </View>
-                  <View
-                    styleName="horizontal wrap"
-                    style={{flex: 1, flexDirection: 'row', paddingBottom: 6,flexGrow:1}}>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          fontSize: 13,
-                          fontFamily: 'Rubik',
-                          letterSpacing: 1,
-                          color: '#292929',
-                          fontWeight: '400',
-                          alignSelf: 'center',
-                        }}>
-                        {`Pending Confirmation(${`55%`})`}
-                      </Subtitle>
-                      <View
-                        styleName="v-center h-center"
-                        style={{
-                          backgroundColor: Colors.green500,
-                          height: 12,
-                          width: 24,
-                          alignSelf: 'center',
-                          marginStart: 8,
-                        }}></View>
-                    </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center',marginEnd:8}}>
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          fontSize: 13,
-                          fontFamily: 'Rubik',
-                          letterSpacing: 1,
-                          color: '#292929',
-                          fontWeight: '400',
-                          alignSelf: 'center',
-                        }}>
-                        {`Quote Sent(${`25%`})`}
-                      </Subtitle>
-                      <View
-                        styleName="v-center h-center"
-                        style={{
-                          backgroundColor: Colors.blue500,
-                          height: 12,
-                          width: 24,
-                          alignSelf: 'center',
-                          marginStart: 8,
-                        }}></View>
-                    </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center'}}>
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          fontSize: 13,
-                          fontFamily: 'Rubik',
-                          letterSpacing: 1,
-                          color: '#292929',
-                          fontWeight: '400',
-                          alignSelf: 'center',
-                        }}>
-                        {`Payment Link Sent(${`20%`})`}
-                      </Subtitle>
-                      <View
-                        styleName="v-center h-center"
-                        style={{
-                          backgroundColor: Colors.blue500,
-                          height: 12,
-                          width: 24,
-                          alignSelf: 'center',
-                          marginStart: 8,
-                        }}></View>
-                    </View>
-                  </View>
-                </View>
-              }
-            />
-
-            {/* {this.state.bannerList.length > 0 ? <View>
-                            <Carousel
-                                ref={this.crousel}
-                                data={this.state.bannerList}
-                                renderItem={this._renderItem}
-                                sliderWidth={sizeWidth(100)}
-                                itemWidth={sizeWidth(100)}
-                                autoplay
-                                enableSnap
-                                loop
-                                inactiveSlideScale={0.95}
-                                inactiveSlideOpacity={0.8}
-                                scrollEnabled
-                                shouldOptimizeUpdates
-                                layout={'stack'}
-                                onSnapToItem={(slideIndex => this.setState({ pageIndex: slideIndex }))}
-                                onBeforeSnapToItem={(slideIndex => this.setState({ pageIndex: slideIndex }))}
-                                containerCustomStyle={{ marginTop: sizeHeight(0.5) }}
-                            />
-                            <Pagination
-                                carouselRef={this.crousel}
-                                dotColor={Pref.PRIMARY_COLOR}
-                                dotsLength={this.state.bannerList.length}
-                                inactiveDotColor={Colors.grey300}
-                                inactiveDotScale={1}
-                                tappableDots
-                                activeDotIndex={this.state.pageIndex}
-                                containerStyle={{ marginTop: -16, marginBottom: -20 }}
-                            />
-                        </View> : null}
-
-                                            
-                        <CircularCardLeft 
-                            showProgress
-                            color={Pref.JET_BLACK}
-                            title={`Total Lead`}
-                            subtitle={`Your leads so far`}
-                            progress={Number(this.state.leadcount)}
-                            progressTitle={'Total'}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        height: 200,
+                      }}>
+                      <View style={{flex: 0.2}}></View>
+                      <View style={{flex: 0.6}}>
+                        <PieChart
+                          data={data}
+                          width={screenWidth}
+                          height={200}
+                          chartConfig={chartConfig}
+                          accessor="population"
+                          backgroundColor="transparent"
+                          paddingLeft="5"
+                          hasLegend={false}
+                          //absolute
                         />
+                      </View>
+                      <View style={{flex: 0.2}}></View>
+                    </View>
+                    <View
+                      styleName="horizontal wrap"
+                      style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        paddingBottom: 6,
+                        flexGrow: 1,
+                      }}>
+                      <View
+                        styleName="horizontal"
+                        style={{alignSelf: 'center'}}>
+                        <Subtitle
+                          styleName="v-center h-center"
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'Rubik',
+                            letterSpacing: 1,
+                            color: '#292929',
+                            fontWeight: '400',
+                            alignSelf: 'center',
+                          }}>
+                          {`Link Sourcing(${`85%`})`}
+                        </Subtitle>
+                        <View
+                          styleName="v-center h-center"
+                          style={{
+                            backgroundColor: Colors.green500,
+                            height: 12,
+                            width: 24,
+                            alignSelf: 'center',
+                            marginStart: 8,
+                          }}></View>
+                      </View>
+                      <View
+                        styleName="horizontal"
+                        style={{alignSelf: 'center'}}>
+                        <Subtitle
+                          styleName="v-center h-center"
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'Rubik',
+                            letterSpacing: 1,
+                            color: '#292929',
+                            fontWeight: '400',
+                            alignSelf: 'center',
+                          }}>
+                          {`Self Sourcing(${`15%`})`}
+                        </Subtitle>
+                        <View
+                          styleName="v-center h-center"
+                          style={{
+                            backgroundColor: Colors.blue500,
+                            height: 12,
+                            width: 24,
+                            alignSelf: 'center',
+                            marginStart: 8,
+                          }}></View>
+                      </View>
+                      <View style={{flex: 0.1}}></View>
+                    </View>
+                  </View>
+                }
+              />
 
-                        <CardRow
-                            color={Pref.JET_BLACK}
-                            clickName={'FinorbitScreen'}
-                            title={'Apply for a Loan'}
-                            subtitle={'Apply for a loan'}
-                            url={require('../../res/images/businessloan.png')}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                            //titleColor={Pref.WHITE}
-                            //subtitleColor={Pref.WHITE}
+              <CardVertical
+                url={''}
+                title={''}
+                subtitle={'Status Chart'}
+                subtitleColor={'#292929'}
+                innerstyle={{paddingTop: 8}}
+                bottom={
+                  <View>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        height: 200,
+                      }}>
+                      <View style={{flex: 0.2}}></View>
+                      <View style={{flex: 0.6}}>
+                        <PieChart
+                          data={data1}
+                          width={screenWidth}
+                          height={200}
+                          chartConfig={chartConfig}
+                          accessor="population"
+                          backgroundColor="transparent"
+                          paddingLeft="5"
+                          hasLegend={false}
+                          //absolute
                         />
-
-                        <CardRow
-                            color={Pref.JET_BLACK}
-                            clickName={'FinorbitScreen'}
-                            title={'Apply for a Insurance'}
-                            subtitle={'Apply for a insurance'}
-                            url={require('../../res/images/trending.png')}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                            //titleColor={Pref.WHITE}
-                            //subtitleColor={Pref.WHITE}
-                            //item={{ title: 'Fixed Loan', url: require('../../res/images/demat.png') }}
-                        /> */}
-
-            {/* {this.state.dataList.length > 0 ? <Card style={{ flex: 1,marginTop:sizeHeight(1) }}>
-                            <View style={{ marginVertical: sizeHeight(0.5), paddingVertical: sizeHeight(2), paddingHorizontal: sizeWidth(1) }}>
-                                <Title style={styles.title1}> {'Recent Lead'}</Title>
-
-                                <PlaceholderLoader
-                                    visibilty={this.state.progressloader}
-                                    children={
-                                        <View style={{ flex: 1, marginVertical: 0 }}>
-                                            <View style={{ backgroundColor: Pref.WHITE_LINEN, paddingVertical: sizeHeight(1.5), justifyContent: 'space-around', alignItems: 'center', alignContents: 'center', flexDirection: 'row', marginTop: 16,flex:1,width:sizeWidth(100)}}>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    marginStart: 16,
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.2
-                                                }}> {'Sr No.'}</Subtitle>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.4
-                                                }}> {'Name'}</Subtitle>
-                                                <Subtitle styleName='v-start h-start' style={{
-                                                    marginEnd: 16,
-                                                    fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', fontWeight: '700', flex: 0.4
-                                                }}> {'Status'}</Subtitle>
-                                            </View>
-
-                                            <FlatList
-                                                data={this.state.dataList}
-                                                renderItem={({ item, index }) => this.renderItems(item, index)}
-                                                nestedScrollEnabled={true}
-                                                keyExtractor={(item, index) => index.toString()}
-                                                showsVerticalScrollIndicator={true}
-                                                showsHorizontalScrollIndicator={false}
-                                                extraData={this.state}
-                                                ItemSeparatorComponent={() => {
-                                                    return <View backgroundColor={Colors.grey300} style={{ height: 0.6 }} />
-                                                }}
-                                            />
-                                        </View>
-                                    }
-                                />
-                            </View>
-                        </Card> : null}
-                         */}
-
-            {/* <Card style={{ flex: 1, marginVertical: sizeHeight(3) }}>
-                            <View style={{ paddingVertical: sizeHeight(2), paddingHorizontal: sizeWidth(1) }}>
-                                <Title style={styles.title1}> {'View More'}</Title>
-                            </View>
-                            <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 8 }}>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('MyOffers')}>
-                                <View style={{ flex: 0.3,paddingVertical:4 }}>
-                                    <View style={styles.circle}>
-                                            <Icon name={"gift"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                    </View>
-                                    <Subtitle style={styles.subtitle}>{`My Offers`}</Subtitle>
-                                </View>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('MyWallet')}>
-                                    <View style={{ flex: 0.3, paddingVertical: 4 }}>
-                                        <View style={styles.circle}>
-                                            <Icons name={"wallet"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                        </View>
-                                        <Subtitle style={styles.subtitle}>{`My Wallets`}</Subtitle>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback onPress={() => NavigationActions.navigate('ReferEarn')}>
-                                    <View style={{ flex: 0.3, paddingVertical: 4 }}>
-                                        <View style={styles.circle}>
-                                            <Icons name={"rupee-sign"} size={24} color={Colors.red400} style={{ alignSelf: 'center' }} />
-                                        </View>
-                                        <Subtitle style={styles.subtitle}>{`Refer & Earn`}</Subtitle>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </View>
-                        </Card> */}
-          </>
+                      </View>
+                      <View style={{flex: 0.2}}></View>
+                    </View>
+                    <View
+                      styleName="horizontal wrap"
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        paddingBottom: 6,
+                        flexGrow: 1,
+                      }}>
+                      <View
+                        styleName="horizontal"
+                        style={{alignSelf: 'center'}}>
+                        <Subtitle
+                          styleName="v-center h-center"
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'Rubik',
+                            letterSpacing: 1,
+                            color: '#292929',
+                            fontWeight: '400',
+                            alignSelf: 'center',
+                          }}>
+                          {`Pending Confirmation(${`55%`})`}
+                        </Subtitle>
+                        <View
+                          styleName="v-center h-center"
+                          style={{
+                            backgroundColor: Colors.green500,
+                            height: 12,
+                            width: 24,
+                            alignSelf: 'center',
+                            marginStart: 8,
+                          }}></View>
+                      </View>
+                      <View
+                        styleName="horizontal"
+                        style={{alignSelf: 'center', marginEnd: 8}}>
+                        <Subtitle
+                          styleName="v-center h-center"
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'Rubik',
+                            letterSpacing: 1,
+                            color: '#292929',
+                            fontWeight: '400',
+                            alignSelf: 'center',
+                          }}>
+                          {`Quote Sent(${`25%`})`}
+                        </Subtitle>
+                        <View
+                          styleName="v-center h-center"
+                          style={{
+                            backgroundColor: Colors.blue500,
+                            height: 12,
+                            width: 24,
+                            alignSelf: 'center',
+                            marginStart: 8,
+                          }}></View>
+                      </View>
+                      <View
+                        styleName="horizontal"
+                        style={{alignSelf: 'center'}}>
+                        <Subtitle
+                          styleName="v-center h-center"
+                          style={{
+                            fontSize: 13,
+                            fontFamily: 'Rubik',
+                            letterSpacing: 1,
+                            color: '#292929',
+                            fontWeight: '400',
+                            alignSelf: 'center',
+                          }}>
+                          {`Payment Link Sent(${`20%`})`}
+                        </Subtitle>
+                        <View
+                          styleName="v-center h-center"
+                          style={{
+                            backgroundColor: Colors.blue500,
+                            height: 12,
+                            width: 24,
+                            alignSelf: 'center',
+                            marginStart: 8,
+                          }}></View>
+                      </View>
+                    </View>
+                  </View>
+                }
+              />
+            </View>
+          </TouchableWithoutFeedback>
         }
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  filtercont: {
+    position: 'absolute',
+    zIndex: 99,
+    borderColor: '#dbdacd',
+    borderWidth: 0.8,
+    backgroundColor: Pref.WHITE,
+    width: '60%',
+    right: sizeWidth(18.5),
+    borderRadius: 8,
+    top: 24,
+    ...Platform.select({
+      android: {
+        elevation: 4,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: '#555555',
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  line: {
+    backgroundColor: '#f2f1e6',
+    height: 1.2,
+    marginStart: 12,
+    marginEnd: 12,
+    marginTop: 8,
+  },
+});

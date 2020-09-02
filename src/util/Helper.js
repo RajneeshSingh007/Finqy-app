@@ -133,10 +133,10 @@ export const networkHelper = (
 };
 
 /**
- * 
- * @param {*} url 
- * @param {*} callback 
- * @param {*} errorCallback 
+ *
+ * @param {*} url
+ * @param {*} callback
+ * @param {*} errorCallback
  */
 export const networkHelperGet = (
   url,
@@ -552,8 +552,8 @@ export const maxminDateMonth = (minMonth = 3, maxAge = 25) => {
 };
 
 /**
- * 
- * @param {*} url 
+ *
+ * @param {*} url
  */
 export const base64Imageencode = (url) => {
   let imagePath = '';
@@ -569,4 +569,52 @@ export const base64Imageencode = (url) => {
       return imagePath;
     });
   return imagePath;
+};
+
+/**
+ *
+ * @param {*} data
+ */
+export const nullCheck = (data) => {
+  return data === undefined || data === null ? true : false;
+};
+
+/**
+ * string check
+ * @param {*} data
+ */
+export const nullStringCheck = (data) => {
+  return data === undefined || data === null || data == '' ? true : false;
+};
+
+/**
+ * string check
+ * @param {*} data
+ */
+export const nullStringMultiCheck = (...data) => {
+  let result = false;
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index];
+    if (element === undefined || element === null || element == '') {
+      result = true;
+      break;
+    }
+  }
+  return result;
+};
+
+/**
+ *
+ * @param {*} dt date
+ * @param {*} delimeter  date separator
+ */
+export const dateObj = (dt, delimeter) => {
+  if (nullStringCheck(dt) === false) {
+    let sp = dt.split('-');
+    const db = new Date();
+    db.setFullYear(Number(sp[2]), Number(sp[1])-1, Number(sp[0]));
+    return db;
+  } else {
+    return new Date();
+  }
 };
