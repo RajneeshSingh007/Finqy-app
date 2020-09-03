@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-  StyleSheet,
-  BackHandler,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import {
-  Title,
-  View,
-} from '@shoutem/ui';
+import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
+import {Title, View, Image} from '@shoutem/ui';
 import * as Pref from '../../util/Pref';
-import {
-  Portal,
-} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
@@ -86,7 +77,7 @@ export default class FinorbitScreen extends React.PureComponent {
                   style={StyleSheet.flatten([
                     styles.itemtext1,
                     {
-                      marginStart:8,
+                      marginStart: 8,
                       color: selectedText === title ? '#0270e3' : '#97948c',
                     },
                   ])}>
@@ -117,7 +108,7 @@ export default class FinorbitScreen extends React.PureComponent {
   getFilterList = () => {
     const {selectedText, dataList} = this.state;
     const clone = JSON.parse(JSON.stringify(dataList));
-    const filter = Lodash.filter(clone, io => io.name.includes(selectedText));
+    const filter = Lodash.filter(clone, (io) => io.name.includes(selectedText));
     return filter;
   };
 
@@ -158,6 +149,14 @@ export default class FinorbitScreen extends React.PureComponent {
             {this.renderFinProItems('credit-card', 'Loan')}
             {this.renderFinProItems('credit-card', 'Insurance')}
             {this.renderFinProItems('credit-card', 'Investment')}
+
+            <Image
+              source={require('../../res/images/finpro.jpg')}
+              styleName="large"
+              style={{
+                resizeMode:'contain'
+              }}
+            />
           </>
         }
       />

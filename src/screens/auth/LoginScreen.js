@@ -267,8 +267,8 @@ export default class LoginScreen extends React.PureComponent {
 
                     <View styleName="horizontal v-center h-center md-gutter">
                       <Image
-                        source={require('../../res/images/referfriend.png')}
-                        styleName={'medium'}
+                        source={require('../../res/images/login.jpg')}
+                        styleName={'large'}
                         style={{
                           resizeMode: 'contain',
                         }}

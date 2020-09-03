@@ -17,7 +17,7 @@ const slides = [
     text: 'Financial Needs!',
     sub: `Cards, loans, insurance &\ninvestment,`,
     colorsub: `all in one place`,
-    image: require('../../res/images/squarelogo.png'),
+    image: require('../../res/images/first_intro.jpg'),
     backgroundColor: 'white',
   },
   {
@@ -26,7 +26,7 @@ const slides = [
     text: 'Anywhere anytime',
     sub: ` from lead\n management to final payouts`,
     colorsub: `100% online process`,
-    image: {uri: `https://erb.ai/images/about/about.jpg`},
+    image: require('../../res/images/second_intro.jpg'),
     backgroundColor: 'white',
   },
   {
@@ -35,7 +35,7 @@ const slides = [
     text: 'get better rewards',
     sub: `Industry's best payouts and\n`,
     colorsub: `transparent incentive system`,
-    image: {uri: `https://erb.ai/images/about/about.jpg`},
+    image: require('../../res/images/third_intro.jpg'),
     backgroundColor: 'white',
   },
 ];
@@ -85,7 +85,7 @@ export default class IntroScreen extends React.PureComponent {
           </View>
           <Image
             source={item.image}
-            styleName="medium"
+            styleName="large"
             style={{
               flex: 0.5,
               resizeMode: 'contain',
