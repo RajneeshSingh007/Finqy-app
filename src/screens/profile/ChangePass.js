@@ -161,7 +161,12 @@ export default class AddTeam extends React.Component {
               }}
             />
 
-            <View styleName="md-gutter">
+            <View
+              styleName="md-gutter"
+              style={{
+                marginStart: 16,
+                marginEnd: 16,
+              }}>
               <AnimatedInputBox
                 placeholder={'Old Password'}
                 secureTextEntry={this.state.oldshowpassword}

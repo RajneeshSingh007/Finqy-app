@@ -62,7 +62,9 @@ export default class AnimatedInputBox extends React.PureComponent {
       leftTextFlex = 0.3,
       inputHeight = 0.09,
       placecolor = '#6d6a57',
+      changecolor=false,
       placefont=14,
+      boldinputText = false,
       ...prop
     } = this.props;
     const {isFocused} = this.state;
@@ -90,7 +92,7 @@ export default class AnimatedInputBox extends React.PureComponent {
                 {
                   fontSize: placefont,
                   fontWeight: '700',
-                  color: placecolor,
+                  color: changecolor && isFocused ? Pref.RED : placecolor,
                 },
                 placeholderStyle,
               ])}>{`${placeholder}`}</Caption>
@@ -117,16 +119,19 @@ export default class AnimatedInputBox extends React.PureComponent {
           ) : null}
           <TextInput
             {...prop}
+            underlineColorAndroid={'rgba(0,0,0,0)'}
             value={value}
             onChangeText={onChangeText}
             style={StyleSheet.flatten([
               styles.input,
               {
                 flex: 1,
-                marginTop: !isFocused ? 16 : 24,
-                marginBottom: isFocused ? 16 : 0,
-                fontWeight: '400',
-                color: '#000',
+                marginTop: !isFocused ? 10 : 24,
+                marginBottom: isFocused ? 10 : 0,
+                fontWeight: boldinputText ? '700' : '400',
+                color: '#555555',
+                fontSize: 16,
+                marginStart: -4,
               },
             ])}
             onFocus={this.handleFocus}
@@ -203,6 +208,7 @@ const styles = StyleSheet.create({
     height: 56,
     flex: 0.8,
     color: 'black',
+    letterSpacing:0.5
   },
   input1: {
     marginTop: sizeHeight(2.5),

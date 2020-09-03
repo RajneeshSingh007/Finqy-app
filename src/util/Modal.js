@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import IconChooser from '../screens/common/IconChooser';
-import { Colors } from 'react-native-paper';
+import {Colors} from 'react-native-paper';
 
 const {height: heightWindow} = Dimensions.get('window');
 
@@ -29,23 +29,23 @@ class ModalComponent extends React.PureComponent {
   }
 
   animation = (type = 'open', cb = () => {}) => {
-        const {
-          topLeftElement,
-          topRightElement,
-          underTopElement,
-          ratioHeight,
-          children,
-          setModalVisible,
-          backgroundColor,
-          topCenterElement,
-        } = this.props;
+    const {
+      topLeftElement,
+      topRightElement,
+      underTopElement,
+      ratioHeight,
+      children,
+      setModalVisible,
+      backgroundColor,
+      topCenterElement,
+    } = this.props;
 
     const toValue = type === 'open' ? 0.5 : 0;
     const duration = 100;
     Animated.timing(this.state.opacity, {
       toValue: toValue,
-      duration:duration,
-      useNativeDriver:false
+      duration: duration,
+      useNativeDriver: false,
     }).start(cb);
   };
 
@@ -84,12 +84,12 @@ class ModalComponent extends React.PureComponent {
       <TouchableOpacity
         onPress={() => setModalVisible(false)}
         style={{padding: 2}}>
-        <IconChooser name={'x'} size={24} iconType={1} color={'#292929'} />
+        <IconChooser name={'x'} size={24} iconType={1} color={'#555'} />
       </TouchableOpacity>
     );
 
     const topRight = topRightElement ? topRightElement : null;
-    const topCenter = topCenterElement ?  topCenterElement : null;
+    const topCenter = topCenterElement ? topCenterElement : null;
 
     const bottom = opacity.interpolate({
       inputRange: [0, 0.5],

@@ -43,6 +43,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const theme = {
   ...DefaultTheme,
@@ -210,19 +211,35 @@ export default class CommonForm extends React.PureComponent {
         : false;
     return (
       <View>
-        <View
+        {/* <View
           style={{
             marginTop: sizeHeight(2),
             marginBottom: sizeHeight(1),
           }}
           styleName="horizontal">
-          {/* <Icons name={'npm'} size={24} style={{ color: '#e21226', padding: 4, alignSelf: 'center', marginStart: sizeWidth(1) }} /> */}
           <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Subtitle style={styles.title}> {heading}</Subtitle>
+            <Title style={styles.title}> {heading}</Title>
           </View>
         </View>
-        <View style={styles.line} />
-        <TextInput
+        <View style={styles.line} /> */}
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({name: value})}
+          value={this.state.name}
+          placeholder={
+            title === 'Profile'
+              ? 'Name'
+              : newform === true
+              ? 'First Name *'
+              : 'Full Name *'
+          }
+          editable={editable}
+          disabled={title === 'Profile' ? true : disabled}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
+        {/* <TextInput
           mode="flat"
           underlineColor="transparent"
           underlineColorAndroid="transparent"
@@ -247,26 +264,53 @@ export default class CommonForm extends React.PureComponent {
           editable={editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
-        />
+        /> */}
         {newform === true ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              // { marginVertical: sizeHeight(1) },
-            ]}
-            label={'Last Name *'}
-            placeholder={'Enter last name'}
-            placeholderTextColor={'#DEDEDE'}
+          <AnimatedInputBox
             onChangeText={(value) => this.setState({lastName: value})}
             value={this.state.lastName}
-            theme={theme}
+            placeholder={'Last Name *'}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
-        <TextInput
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     // { marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={'Last Name *'}
+        //   placeholder={'Enter last name'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //   onChangeText={(value) => this.setState({lastName: value})}
+        //   value={this.state.lastName}
+        //   theme={theme}
+        //   returnKeyType={'next'}
+        // />
+        null}
+
+        <AnimatedInputBox
+          placeholder={
+            title === `Profile` ? `Mobile Number` : 'Mobile Number *'
+          }
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          maxLength={10}
+          keyboardType={'number-pad'}
+          onChangeText={(value) => {
+            if (String(value).match(/^[0-9]*$/g) !== null) {
+              this.setState({mobile: value});
+            }
+          }}
+          value={this.state.mobile}
+          editable={editable}
+          disabled={title === 'Profile' ? true : disabled}
+          returnKeyType={'next'}
+        />
+        {/* <TextInput
           mode="flat"
           underlineColor="transparent"
           underlineColorAndroid="transparent"
@@ -275,22 +319,43 @@ export default class CommonForm extends React.PureComponent {
             // { marginVertical: sizeHeight(1) },
           ]}
           label={title === `Profile` ? `Mobile Number` : 'Mobile Number *'}
-          maxLength={10}
-          keyboardType={'number-pad'}
           placeholder={'Enter mobile number'}
           placeholderTextColor={'#DEDEDE'}
+          maxLength={10}
+          keyboardType={'number-pad'}
           onChangeText={(value) => {
             if (value.match(/^[0-9]*$/g) !== null) {
               this.setState({mobile: value});
             }
           }}
           value={this.state.mobile}
+          editable={editable}
+          disabled={title === 'Profile' ? true : disabled}
+          returnKeyType={'next'}
           theme={theme}
+        /> */}
+        <AnimatedInputBox
+          placeholder={
+            title === `Home Loan`
+              ? 'Email *'
+              : title === 'Fixed Deposit' ||
+                title === 'Health Insurance' ||
+                title === `Life Cum Invt. Plan` ||
+                title === `Motor Insurance` ||
+                title === `Mutual Fund` ||
+                title === `Profile`
+              ? 'Email'
+              : 'Email *'
+          }
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          onChangeText={(value) => this.setState({email: value})}
+          value={this.state.email}
           editable={editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
-        <TextInput
+        {/* <TextInput
           mode="flat"
           underlineColor="transparent"
           underlineColorAndroid="transparent"
@@ -314,43 +379,49 @@ export default class CommonForm extends React.PureComponent {
           placeholderTextColor={'#DEDEDE'}
           onChangeText={(value) => this.setState({email: value})}
           value={this.state.email}
-          theme={theme}
           editable={editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
-        />
+        /> */}
 
         {newform === true ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              // { marginVertical: sizeHeight(1) },
-            ]}
-            label={'Nominee Name *'}
-            placeholder={'Enter nominee name'}
-            placeholderTextColor={'#DEDEDE'}
+          <AnimatedInputBox
             onChangeText={(value) => this.setState({nomineename: value})}
             value={this.state.nomineename}
-            theme={theme}
+            placeholder={'Nominee Name *'}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     // { marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={'Nominee Name *'}
+        //   placeholder={'Enter nominee name'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //   onChangeText={(value) => this.setState({nomineename: value})}
+        //   value={this.state.nomineename}
+        //   theme={theme}
+        //   returnKeyType={'next'}
+        // />
+        null}
 
         {title === 'Profile' ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
+          <AnimatedInputBox
+            placeholder={'Office Address'}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={StyleSheet.flatten([
+              styles.animatedInputCont,
               {
                 height: this.state.ofc_add === '' ? 56 : layheight,
               },
-            ]}
-            label={'Office Address'}
+            ])}
             multiline
             onContentSizeChange={(event) => {
               layheight =
@@ -358,90 +429,148 @@ export default class CommonForm extends React.PureComponent {
                   ? 56
                   : event.nativeEvent.contentSize.height;
             }}
-            placeholder={'Enter address'}
-            placeholderTextColor={'#DEDEDE'}
             onChangeText={(value) => this.setState({ofc_add: value})}
             value={this.state.ofc_add}
-            theme={theme}
             editable={editable}
             disabled={disabled}
-            returnKeyType={'next'}
           />
-        ) : null}
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     {
+        //       height: this.state.ofc_add === '' ? 56 : layheight,
+        //     },
+        //   ]}
+        //   label={'Office Address'}
+        //   placeholder={'Enter address'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //               multiline
+        //   onContentSizeChange={(event) => {
+        //     layheight =
+        //       this.state.ofc_add === ''
+        //         ? 56
+        //         : event.nativeEvent.contentSize.height;
+        //   }}
+        //   onChangeText={(value) => this.setState({ofc_add: value})}
+        //   value={this.state.ofc_add}
+        //   editable={editable}
+        //   disabled={disabled}
+        //   returnKeyType={'next'}
+        //               theme={theme}
+
+        // />
+        null}
 
         {title === 'Profile' ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[styles.inputStyle]}
-            label={'GST Number'}
-            placeholder={'Enter gst number'}
-            placeholderTextColor={'#DEDEDE'}
+          <AnimatedInputBox
             onChangeText={(value) => this.setState({gst_no: value})}
             value={this.state.gst_no}
-            theme={theme}
+            placeholder={'GST Number'}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
             maxLength={15}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[styles.inputStyle]}
+        //   label={'GST Number'}
+        //   placeholder={'Enter gst number'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //   onChangeText={(value) => this.setState({gst_no: value})}
+        //   value={this.state.gst_no}
+        //   theme={theme}
+        //   editable={editable}
+        //   disabled={disabled}
+        //   returnKeyType={'next'}
+        //   maxLength={15}
+        // />
+        null}
 
         {title !== 'Profile' && newform === false ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              // { marginVertical: sizeHeight(1) },
-            ]}
-            label={'Current Residence Pincode'}
-            placeholder={'Enter residence pincode'}
-            placeholderTextColor={'#DEDEDE'}
+          <AnimatedInputBox
             onChangeText={(value) => {
-              if (value.match(/^[0-9]*$/g) !== null) {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
                 this.setState({pincode: value});
               }
             }}
             maxLength={6}
             keyboardType={'number-pad'}
             value={this.state.pincode}
-            theme={theme}
+            placeholder={'Current Residence Pincode'}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     // { marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={'Current Residence Pincode'}
+        //   placeholder={'Enter residence pincode'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //   onChangeText={(value) => {
+        //     if (value.match(/^[0-9]*$/g) !== null) {
+        //       this.setState({pincode: value});
+        //     }
+        //   }}
+        //   maxLength={6}
+        //   keyboardType={'number-pad'}
+        //   value={this.state.pincode}
+        //   theme={theme}
+        //   editable={editable}
+        //   disabled={disabled}
+        //   returnKeyType={'next'}
+        // />
+        null}
 
         {title === `Term Insurance` || title === `Health Insurance` ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              // { marginVertical: sizeHeight(1) },
-            ]}
-            label={`Qualification *`}
-            placeholder={'Enter qualification'}
-            placeholderTextColor={'#DEDEDE'}
+          <AnimatedInputBox
             onChangeText={(value) => this.setState({qualification: value})}
             value={this.state.qualification}
-            theme={theme}
+            placeholder={'Qualification *'}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <TextInput
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     // { marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={`Qualification *`}
+        //   placeholder={'Enter qualification'}
+        //   placeholderTextColor={'#DEDEDE'}
+        //   onChangeText={(value) => this.setState({qualification: value})}
+        //   value={this.state.qualification}
+        //   theme={theme}
+        //   editable={editable}
+        //   disabled={disabled}
+        //   returnKeyType={'next'}
+        // />
+        null}
 
         {title !== 'Profile' ? (
           <View>
-            <View
-              style={{
-                marginHorizontal: sizeWidth(3),
-              }}>
+            <View style={styles.radiocont}>
               <TouchableWithoutFeedback
                 onPress={() =>
                   this.setState({
@@ -449,23 +578,23 @@ export default class CommonForm extends React.PureComponent {
                   })
                 }>
                 <View style={styles.dropdownbox}>
-                  <Subtitle
+                  <Title
                     style={[
                       styles.boxsubtitle,
                       {
                         color:
                           this.state.dob === `Date of Birth *` ||
                           'Date of Birth'
-                            ? `#767676`
-                            : `#292929`,
+                            ? `#6d6a57`
+                            : `#555555`,
                       },
                     ]}>
                     {this.state.dob}
-                  </Subtitle>
+                  </Title>
                   <Icon
                     name={'calendar'}
                     size={24}
-                    color={'#767676'}
+                    color={'#6d6a57'}
                     style={styles.downIcon}
                   />
                 </View>
@@ -474,117 +603,156 @@ export default class CommonForm extends React.PureComponent {
 
             {title === 'Vector Plus' ? (
               <View>
-                <View
-                  style={{
-                    marginStart: 8,
-                    borderBottomColor: Colors.grey300,
-                    borderRadius: 2,
-                    borderBottomWidth: 0.6,
-                    alignContents: 'center',
-                  }}>
-                  <Subtitle
-                    style={styles.bbstyle}>{`Select Contact Type *`}</Subtitle>
+                <View style={styles.radiocont}>
+                  <View style={styles.radiodownbox}>
+                    <Title
+                      style={styles.bbstyle}>{`Select Contact Type *`}</Title>
 
-                  <RadioButton.Group
-                    onValueChange={(value) =>
-                      this.setState({contactTypeCd: value})
-                    }
-                    value={this.state.contactTypeCd}>
-                    <View styleName="horizontal" style={{marginBottom: 8}}>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center', alignItems: 'center'}}>
-                        <RadioButton
-                          value="MOBILE"
-                          style={{alignSelf: 'center'}}
-                        />
-                        <Subtitle styleName="v-center h-center">{`Mobile`}</Subtitle>
+                    <RadioButton.Group
+                      onValueChange={(value) =>
+                        this.setState({contactTypeCd: value})
+                      }
+                      value={this.state.contactTypeCd}>
+                      <View styleName="horizontal" style={{marginBottom: 8}}>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="MOBILE"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`Mobile`}</Title>
+                        </View>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="RESIDENTIAL"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`Residential`}</Title>
+                        </View>
                       </View>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center', alignItems: 'center'}}>
-                        <RadioButton
-                          value="RESIDENTIAL"
-                          style={{alignSelf: 'center'}}
-                        />
-                        <Subtitle styleName="v-center h-center">{`Residential`}</Subtitle>
-                      </View>
-                    </View>
-                  </RadioButton.Group>
+                    </RadioButton.Group>
+                  </View>
                 </View>
 
-                <View
-                  style={{
-                    marginStart: 8,
-                    borderBottomColor: Colors.grey300,
-                    borderRadius: 2,
-                    borderBottomWidth: 0.6,
-                    alignContents: 'center',
-                  }}>
-                  <Subtitle
-                    style={styles.bbstyle}>{`Select Email Type *`}</Subtitle>
-
-                  <RadioButton.Group
-                    onValueChange={(value) =>
-                      this.setState({emailTypeCd: value})
-                    }
-                    value={this.state.emailTypeCd}>
-                    <View styleName="horizontal" style={{marginBottom: 8}}>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center', alignItems: 'center'}}>
-                        <RadioButton
-                          value="PERSONAL"
-                          style={{alignSelf: 'center'}}
-                        />
-                        <Subtitle styleName="v-center h-center">{`Personal`}</Subtitle>
+                <View style={styles.radiocont}>
+                  <View style={styles.radiodownbox}>
+                    <Title
+                      style={styles.bbstyle}>{`Select Email Type *`}</Title>
+                    <RadioButton.Group
+                      onValueChange={(value) =>
+                        this.setState({emailTypeCd: value})
+                      }
+                      value={this.state.emailTypeCd}>
+                      <View styleName="horizontal" style={{marginBottom: 8}}>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="PERSONAL"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`Personal`}</Title>
+                        </View>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="OFFICIAL"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`Official`}</Title>
+                        </View>
                       </View>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center', alignItems: 'center'}}>
-                        <RadioButton
-                          value="OFFICIAL"
-                          style={{alignSelf: 'center'}}
-                        />
-                        <Subtitle styleName="v-center h-center">{`Official`}</Subtitle>
-                      </View>
-                    </View>
-                  </RadioButton.Group>
+                    </RadioButton.Group>
+                  </View>
                 </View>
               </View>
             ) : null}
 
-            <View
-              style={{
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>{`Select Gender *`}</Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Select Gender *`}</Title>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({gender: value})}
+                  value={this.state.gender}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="Male" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Male`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Female"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Female`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Other"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Other`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+          </View>
+        ) : null}
 
+        {showemploy ? (
+          <View style={styles.radiocont}>
+            <View style={styles.radiodownbox}>
+              <Title style={styles.bbstyle}>{`Select Employment Type *`}</Title>
               <RadioButton.Group
-                onValueChange={(value) => this.setState({gender: value})}
-                value={this.state.gender}>
+                onValueChange={(value) => this.setState({employ: value})}
+                value={this.state.employ}>
                 <View styleName="horizontal" style={{marginBottom: 8}}>
                   <View
                     styleName="horizontal"
                     style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Male" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Male`}</Subtitle>
+                    <RadioButton
+                      value="Self Employed"
+                      style={{alignSelf: 'center'}}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Self Employed`}</Title>
                   </View>
                   <View
                     styleName="horizontal"
                     style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Female" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Female`}</Subtitle>
-                  </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Other" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Other`}</Subtitle>
+                    <RadioButton
+                      value="Salaried"
+                      style={{alignSelf: 'center'}}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Salaried`}</Title>
                   </View>
                 </View>
               </RadioButton.Group>
@@ -592,56 +760,9 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {showemploy ? (
-          <View
-            style={{
-              marginStart: 8,
-              marginVertical: sizeHeight(0.5),
-              borderBottomColor: Colors.grey300,
-              borderRadius: 2,
-              borderBottomWidth: 0.6,
-              alignContents: 'center',
-            }}>
-            <Subtitle style={styles.bbstyle}>
-              {`Select Employment Type *`}
-            </Subtitle>
-
-            <RadioButton.Group
-              onValueChange={(value) => this.setState({employ: value})}
-              value={this.state.employ}>
-              <View styleName="horizontal" style={{marginBottom: 8}}>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton
-                    value="Self Employed"
-                    style={{alignSelf: 'center'}}
-                  />
-                  <Subtitle styleName="v-center h-center">{`Self Employed`}</Subtitle>
-                </View>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="Salaried" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Salaried`}</Subtitle>
-                </View>
-              </View>
-            </RadioButton.Group>
-          </View>
-        ) : null}
-
         {newform === true ? (
-          <View
-            style={{
-              marginStart: 8,
-              marginVertical: sizeHeight(0.5),
-              borderBottomColor: Colors.grey300,
-              borderRadius: 2,
-              borderBottomWidth: 0.6,
-              alignContents: 'center',
-            }}>
-            <Subtitle style={styles.bbstyle}>{`Nominee Relation *`}</Subtitle>
-
+          <View style={styles.radiocont}>
+            <Title style={styles.bbstyle}>{`Nominee Relation *`}</Title>
             <RadioButton.Group
               onValueChange={(value) => this.setState({nrelation: value})}
               value={this.state.nrelation}>
@@ -650,25 +771,33 @@ export default class CommonForm extends React.PureComponent {
                   styleName="horizontal"
                   style={{alignSelf: 'center', alignItems: 'center'}}>
                   <RadioButton value="SPOUSE" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Spouse`}</Subtitle>
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Spouse`}</Title>
                 </View>
                 <View
                   styleName="horizontal"
                   style={{alignSelf: 'center', alignItems: 'center'}}>
                   <RadioButton value="MOTHER" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Mother`}</Subtitle>
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Mother`}</Title>
                 </View>
                 <View
                   styleName="horizontal"
                   style={{alignSelf: 'center', alignItems: 'center'}}>
                   <RadioButton value="FATHER" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Father`}</Subtitle>
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Father`}</Title>
                 </View>
                 <View
                   styleName="horizontal"
                   style={{alignSelf: 'center', alignItems: 'center'}}>
                   <RadioButton value="SON" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Son`}</Subtitle>
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Son`}</Title>
                 </View>
               </View>
               <View styleName="horizontal" style={{marginBottom: 8}}>
@@ -676,7 +805,9 @@ export default class CommonForm extends React.PureComponent {
                   styleName="horizontal"
                   style={{alignSelf: 'center', alignItems: 'center'}}>
                   <RadioButton value="DAUGHTER" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Daughter`}</Subtitle>
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Daughter`}</Title>
                 </View>
                 {title === 'Vector Plus' ? null : (
                   <>
@@ -687,7 +818,9 @@ export default class CommonForm extends React.PureComponent {
                         value="BROTHER"
                         style={{alignSelf: 'center'}}
                       />
-                      <Subtitle styleName="v-center h-center">{`Brother`}</Subtitle>
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Brother`}</Title>
                     </View>
                     <View
                       styleName="horizontal"
@@ -696,7 +829,9 @@ export default class CommonForm extends React.PureComponent {
                         value="SISTER"
                         style={{alignSelf: 'center'}}
                       />
-                      <Subtitle styleName="v-center h-center">{`Sister`}</Subtitle>
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Sister`}</Title>
                     </View>
                   </>
                 )}
@@ -723,18 +858,18 @@ export default class CommonForm extends React.PureComponent {
                         <View
                             style={styles.dropdownbox}
                         >
-                            <Subtitle
+                            <Title
                                 style={styles.boxsubtitle}
                             >
 
                                 {this.state.gender === ""
                                     ? `Select Gender`
                                     : this.state.gender}
-                            </Subtitle>
+                            </Title>
                             <Icon
                                 name={"chevron-down"}
                                 size={24}
-                                color={"#292929"}
+                                color={"#555555"}
                                 style={styles.downIcon}
                             />
                         </View>
@@ -743,10 +878,7 @@ export default class CommonForm extends React.PureComponent {
                 </View> */}
 
         {title !== `Profile` && newform === false ? (
-          <View
-            style={{
-              marginHorizontal: sizeWidth(3),
-            }}>
+          <View style={styles.radiocont}>
             <TouchableWithoutFeedback
               onPress={() =>
                 this.setState({
@@ -756,23 +888,24 @@ export default class CommonForm extends React.PureComponent {
                 })
               }>
               <View style={styles.dropdownbox}>
-                <Subtitle
+                <Title
                   style={[
                     styles.boxsubtitle,
                     {
                       color:
-                        this.state.currentlocation ===
-                        ``
-                          ? `#767676`
-                          : `#292929`,
+                        this.state.currentlocation === ``
+                          ? `#6d6a57`
+                          : `#555555`,
                     },
                   ]}>
-                  {this.state.currentlocation === '' ? 'Select Current Location *' : this.state.currentlocation}
-                </Subtitle>
+                  {this.state.currentlocation === ''
+                    ? 'Select Current Location *'
+                    : this.state.currentlocation}
+                </Title>
                 <Icon
                   name={'chevron-down'}
                   size={24}
-                  color={'#767676'}
+                  color={'#6d6a57'}
                   style={styles.downIcon}
                 />
               </View>
@@ -805,18 +938,18 @@ export default class CommonForm extends React.PureComponent {
                             <View
                                 style={styles.dropdownbox}
                             >
-                                <Subtitle
+                                <Title
                                     style={styles.boxsubtitle}
                                 >
 
                                     {this.state.employ === ""
                                         ? `Select Employment Type`
                                         : this.state.employ}
-                                </Subtitle>
+                                </Title>
                                 <Icon
                                     name={"chevron-down"}
                                     size={24}
-                                    color={"#292929"}
+                                    color={"#555555"}
                                     style={styles.downIcon}
                                 />
                             </View>
@@ -844,6 +977,18 @@ export default class CommonForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
   line: {
     backgroundColor: Pref.RED,
     height: 1.2,
@@ -856,7 +1001,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Rubik',
     fontFamily: 'bold',
     letterSpacing: 1,
-    color: '#292929',
+    color: '#555555',
     alignSelf: 'center',
   },
   title: {
@@ -864,14 +1009,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Rubik',
     fontFamily: 'bold',
     letterSpacing: 1,
-    color: '#292929',
+    color: '#555555',
     alignSelf: 'flex-start',
     fontWeight: 'bold',
   },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
-    color: '#292929',
+    color: '#555555',
     borderBottomColor: '#dedede',
     fontFamily: 'Rubik',
     fontSize: 16,
@@ -883,7 +1028,7 @@ const styles = StyleSheet.create({
   inputPassStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
-    color: '#292929',
+    color: '#555555',
     borderBottomColor: Colors.grey300,
     fontFamily: 'Rubik',
     fontSize: 16,
@@ -896,7 +1041,7 @@ const styles = StyleSheet.create({
   inputPass1Style: {
     height: sizeHeight(8),
     backgroundColor: 'white',
-    color: '#292929',
+    color: '#555555',
     fontFamily: 'Rubik',
     fontSize: 16,
     fontWeight: '400',
@@ -917,36 +1062,41 @@ const styles = StyleSheet.create({
   },
   dropdownbox: {
     flexDirection: 'row',
-    height: 48,
-    borderBottomColor: Colors.grey300,
-    borderRadius: 2,
-    borderBottomWidth: 0.6,
-    marginVertical: sizeHeight(1),
+    height: 56,
     justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
   },
   boxsubtitle: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#767676',
-    lineHeight: 25,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
     alignSelf: 'center',
-    padding: 4,
+    marginStart: 4,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
     alignSelf: 'center',
-    marginHorizontal: 8,
+    marginStart: 4,
   },
   downIcon: {
-    padding: 4,
     alignSelf: 'center',
-    marginHorizontal: 1,
   },
   bbstyle: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#767676',
-    lineHeight: 25,
-    padding: 4,
-    marginHorizontal: 8,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
   },
 });

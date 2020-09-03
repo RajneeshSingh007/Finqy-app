@@ -1,34 +1,24 @@
 import React from 'react';
 import {
   StyleSheet,
-  FlatList,
   View,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {TouchableOpacity, Image, Screen, Subtitle, Title} from '@shoutem/ui';
-import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Searchbar,
-} from 'react-native-paper';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import {Title} from '@shoutem/ui';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import DocumentPicker from 'react-native-document-picker';
 import * as Pref from '../../util/Pref';
+import Lodash from 'lodash';
 
 class CommonFileUpload extends React.PureComponent {
   constructor(props) {
     super(props);
     this.filePicker = this.filePicker.bind(this);
-    const {title, mode = false} = this.props;
+    const {title} = this.props;
     this.state = {
       title: title,
       mode: false,
+      pickedName: '',
     };
   }
 
@@ -57,12 +47,10 @@ class CommonFileUpload extends React.PureComponent {
             res.name.includes('jpeg') ||
             res.name.includes('jpg')
           ) {
-            const sp = res.name.split('.');
-            let nameTrim = sp[0].trim();
-            if (nameTrim.length > 23) {
-              nameTrim = nameTrim.slice(0, 23) + '...';
-            }
-            this.setState({title: nameTrim});
+            this.setState({pickedName: Lodash.truncate(res.name,{
+              length:40,
+              separator:'...'
+            })});
           }
         }
         this.props.pickedCallback(res.name !== '' ? false : true, res);
@@ -77,35 +65,38 @@ class CommonFileUpload extends React.PureComponent {
   };
 
   render() {
-    const {containerStyle, leftText = 'Browse', mode = false} = this.props;
+    const {pickedName} = this.state;
     return (
-      <View style={[styles.container, containerStyle]}>
-        <View
-          style={[
-            styles.insideContainer,
-            {
-              height: this.state.mode ? 42 : 44,
-            },
-          ]}>
-          <TouchableWithoutFeedback onPress={this.filePicker}>
-            <View
-              style={[
-                styles.inincontainer,
+      <TouchableWithoutFeedback onPress={this.filePicker}>
+        <View style={styles.insideContainer}>
+          <View>
+            <Title
+              style={StyleSheet.flatten([
+                styles.title,
                 {
-                  flex: this.state.mode ? 0.5 : 0.3,
+                  bottom: pickedName !== '' ? 2 : 0,
+                  color: pickedName !== '' ? Pref.RED : '#555555',
                 },
-              ]}>
-              <Subtitle style={styles.title}>{leftText}</Subtitle>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <View style={{flex: 0.7}}>
-            <Subtitle styleName={'v-start h-start'} style={styles.subtitle}>
-              {this.state.title}
-            </Subtitle>
+              ])}>
+              {pickedName === ''
+                ? `Upload ${this.state.title} File Type:`
+                : `${this.state.title}`}
+              <Title
+                style={StyleSheet.flatten([
+                  styles.title,
+                  {
+                    color: '#bbbbbb',
+                  },
+                ])}>
+                {pickedName === '' ? ` PDF/Image`:''}
+              </Title>
+            </Title>
+            {pickedName !== '' ? (
+              <Title style={styles.subtitle}>{pickedName}</Title>
+            ) : null}
           </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -116,35 +107,34 @@ const styles = StyleSheet.create({
     marginHorizontal: sizeWidth(3),
   },
   subtitle: {
-    fontSize: 15,
-    marginStart: 10,
-    fontFamily: 'Rubik',
+    fontSize: 14,
     fontWeight: '400',
     alignItems: 'center',
-    justifyContent: 'center',
     color: '#767676',
-    padding: 4,
   },
   title: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: 'white',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#555555',
+    letterSpacing: 0.5,
   },
   insideContainer: {
     flexDirection: 'row',
     flex: 1,
-    borderRadius: 2,
-    marginVertical: sizeHeight(1),
-    backgroundColor: Colors.grey200,
     alignItems: 'center',
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    marginStart: 16,
+    marginEnd: 16,
+    paddingVertical: 10,
+    height: 56,
+    marginVertical:4
   },
   inincontainer: {
     flexDirection: 'row',
     height: 42,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#292929',
     borderTopEndRadius: 2,
     borderBottomLeftRadius: 2,
     borderTopStartRadius: 2,

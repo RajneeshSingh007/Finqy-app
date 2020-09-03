@@ -26,15 +26,15 @@ export default class CScreen extends React.PureComponent {
       <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
         <Screen style={styles.mainContainer}>
           {scrollEnable === true ? (
-            <KeyboardAvoidingView
-              style={{
-                flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-              behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-              enabled
-              keyboardVerticalOffset={150}>
+            // <KeyboardAvoidingView
+            //   style={{
+            //     flex: 1,
+            //     flexDirection: 'column',
+            //     justifyContent: 'center',
+            //   }}
+            //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+            //   enabled
+            //   keyboardVerticalOffset={150}>
               <ScrollView
                 style={styles.scroller}
                 showsVerticalScrollIndicator={false}
@@ -43,7 +43,7 @@ export default class CScreen extends React.PureComponent {
                 {body}
                 <Footer />
               </ScrollView>
-            </KeyboardAvoidingView>
+          //  </KeyboardAvoidingView> 
           ) : (
             body
           )}

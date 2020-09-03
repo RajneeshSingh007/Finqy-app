@@ -70,7 +70,7 @@ export default class FileUploadForm extends React.PureComponent {
     const {title, heading = `File Upload`} = this.props;
     return (
       <View>
-        <View
+        {/* <View
           style={{
             marginTop: sizeHeight(2),
             marginBottom: sizeHeight(1),
@@ -80,7 +80,7 @@ export default class FileUploadForm extends React.PureComponent {
             <Subtitle style={styles.title}> {heading}</Subtitle>
           </View>
         </View>
-        <View style={styles.line} />
+        <View style={styles.line} /> */}
 
         <CommonFileUpload
           title={'Pan Card'}

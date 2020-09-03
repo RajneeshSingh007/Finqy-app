@@ -40,7 +40,7 @@ import SpecificForm from './SpecificForm';
 import CommonScreen from '../common/CommonScreen';
 import CardRow from '../common/CommonCard';
 import FileUploadForm from './FileUploadForm';
-import StepIndicator from 'react-native-step-indicator';
+//import StepIndicator from 'react-native-step-indicator';
 import ApptForm from './ApptForm';
 import Lodash from 'lodash';
 import Loader from '../../util/Loader';
@@ -49,30 +49,32 @@ import BannerCard from '../common/BannerCard';
 import Carousel from 'react-native-snap-carousel';
 import {Pagination} from 'react-native-snap-carousel';
 import FormProgress from '../../util/FormProgress';
+import CScreen from '../component/CScreen';
+import StepIndicator from '../component/StepIndicator';
 
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize: 30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: Pref.RED,
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: Pref.RED,
-  stepStrokeUnFinishedColor: Colors.grey300,
-  separatorFinishedColor: '#02c26a',
-  separatorUnFinishedColor: Colors.grey300,
-  stepIndicatorFinishedColor: Pref.RED,
-  stepIndicatorUnFinishedColor: Pref.WHITE,
-  stepIndicatorCurrentColor: Pref.WHITE,
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: Pref.RED,
-  stepIndicatorLabelFinishedColor: Pref.WHITE,
-  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-  labelColor: '#292929',
-  labelSize: 12,
-  currentStepLabelColor: Pref.RED,
-};
+// const customStyles = {
+//   stepIndicatorSize: 25,
+//   currentStepIndicatorSize: 30,
+//   separatorStrokeWidth: 2,
+//   currentStepStrokeWidth: 3,
+//   stepStrokeCurrentColor: Pref.RED,
+//   stepStrokeWidth: 3,
+//   stepStrokeFinishedColor: Pref.RED,
+//   stepStrokeUnFinishedColor: Colors.grey300,
+//   separatorFinishedColor: '#02c26a',
+//   separatorUnFinishedColor: Colors.grey300,
+//   stepIndicatorFinishedColor: Pref.RED,
+//   stepIndicatorUnFinishedColor: Pref.WHITE,
+//   stepIndicatorCurrentColor: Pref.WHITE,
+//   stepIndicatorLabelFontSize: 13,
+//   currentStepIndicatorLabelFontSize: 13,
+//   stepIndicatorLabelCurrentColor: Pref.RED,
+//   stepIndicatorLabelFinishedColor: Pref.WHITE,
+//   stepIndicatorLabelUnFinishedColor: '#aaaaaa',
+//   labelColor: '#292929',
+//   labelSize: 12,
+//   currentStepLabelColor: Pref.RED,
+// };
 
 export default class FinorbitForm extends React.PureComponent {
   constructor(props) {
@@ -95,6 +97,7 @@ export default class FinorbitForm extends React.PureComponent {
       bannerList: [],
       token: '',
       userData: '',
+      title: '',
     };
   }
 
@@ -103,21 +106,21 @@ export default class FinorbitForm extends React.PureComponent {
     const {navigation} = this.props;
     const url = navigation.getParam('url', '');
     const title = navigation.getParam('title', '');
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
-          Pref.getVal(Pref.userData, (userData) => {
-            this.setState({
-              userData: userData,
-              imageUrl: url,
-              title: title,
-              isMounted: true,
-              currentPosition: 0,
-            });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.saveToken, (value) => {
+      this.setState({token: value}, () => {
+        Pref.getVal(Pref.userData, (userData) => {
+          this.setState({
+            userData: userData,
+            imageUrl: url,
+            title: title,
+            isMounted: true,
+            currentPosition: 3,
           });
         });
       });
     });
+    //});
   }
 
   backClick = () => {
@@ -751,158 +754,285 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   render() {
+    const {title} = this.state;
+    const split =
+      title !== '' ? (title.includes(' ') ? title.split(' ') : [title]) : [''];
     return (
-      <CommonScreen
-        // showTopBar
-        // showRightIcon={true}
-        showProfile={false}
-        title={''}
-        loading={this.state.loading}
-        absoluteBody={
+      <CScreen
+        absolute={
           <>
             <Loader isShow={this.state.progressLoader} />
-
-            {/* <FormProgress isShow={true} clickedcallback={()=>{
-
-                        }} />
- */}
           </>
         }
         body={
           <>
             <LeftHeaders
-              showAvtar
               showBack
-              rightImage
-              title={this.state.title}
-              rightUrl={this.findImage()}
-              style={{marginBottom: 8}}
-              // bottomBody={
-              //     <View style={{marginStart:sizeWidth(10)}}>
-              //         <Title style={{
-              //             fontSize: 17, fontFamily: 'Rubik', letterSpacing: 1, color: 'white', alignSelf: 'flex-start', fontWeight: '400', paddingVertical: sizeHeight(0.5),
-              //         }}> {'Apply for a loan'}</Title>
-              //     </View>
-              // }
+              title={
+                split.length === 2
+                  ? `${split[0]} ${split[1]}`
+                  : split.length === 3
+                  ? `${split[1]} ${split[2]}`
+                  : split[0]
+              }
+              bottomtext={
+                <>
+                  {`${split[0]} `}
+                  {split.length === 2 ? (
+                    <Title style={styles.passText}>{`${split[1]}`}</Title>
+                  ) : split.length === 3 ? (
+                    <Title
+                      style={
+                        styles.passText
+                      }>{`${split[1]} ${split[2]}`}</Title>
+                  ) : null}
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 24,
+              }}
             />
-            <View style={{flex: 1}}>
-              {this.state.bannerList.length > 0 ? (
-                <View style={{flex: 0.2}}>
-                  <Carousel
-                    ref={this.crousel}
-                    data={this.state.bannerList}
-                    renderItem={this._renderItem}
-                    sliderWidth={sizeWidth(100)}
-                    itemWidth={sizeWidth(100)}
-                    autoplay
-                    enableSnap
-                    loop
-                    inactiveSlideScale={0.95}
-                    inactiveSlideOpacity={0.8}
-                    scrollEnabled
-                    shouldOptimizeUpdates
-                    onSnapToItem={(slideIndex) =>
-                      this.setState({pageIndex: slideIndex})
-                    }
-                    onBeforeSnapToItem={(slideIndex) =>
-                      this.setState({pageIndex: slideIndex})
-                    }
-                    containerCustomStyle={{marginTop: sizeHeight(0.5)}}
-                  />
-                  <Pagination
-                    carouselRef={this.crousel}
-                    dotColor={Pref.PRIMARY_COLOR}
-                    dotsLength={this.state.bannerList.length}
-                    inactiveDotColor={Colors.grey300}
-                    inactiveDotScale={1}
-                    tappableDots
-                    activeDotIndex={this.state.pageIndex}
-                    containerStyle={{marginTop: -16, marginBottom: -20}}
-                  />
-                </View>
+            <StepIndicator
+              activeCounter={this.state.currentPosition}
+              stepCount={4}
+            />
+
+            {/* <StepIndicator
+                customStyles={customStyles}
+                //labels={['Personal', 'Corporate', 'Upload', 'Submit']}
+                currentPosition={this.state.currentPosition}
+                labels={['', '']}
+                //onPress={(pos) => this.onPageChange(pos)}
+                //stepCount={4}
+                stepCount={2}
+              /> */}
+
+            <View styleName="md-gutter">
+              {this.state.currentPosition === 0 ? (
+                <CommonForm
+                  ref={this.commonFormRef}
+                  showemploy={
+                    this.state.title !== 'Fixed Deposit' &&
+                    this.state.title !== 'Vector Plus' &&
+                    this.state.title !== 'Business Loan' &&
+                    this.state.title !== 'Mutual Fund' &&
+                    this.state.title !== 'Motor Insurance'
+                  }
+                  saveData={this.state.dataArray[0]}
+                  title={this.state.title}
+                />
+              ) : this.state.currentPosition === 1 ? (
+                <SpecificForm
+                  ref={this.specificFormRef}
+                  saveData={this.state.dataArray[1]}
+                  title={this.state.title}
+                />
+              ) : this.state.currentPosition === 2 ? (
+                <FileUploadForm
+                  ref={this.FileUploadFormRef}
+                  title={this.state.title}
+                  saveData={this.state.dataArray[2]}
+                />
+              ) : this.state.currentPosition === 3 ? (
+                <ApptForm
+                  ref={this.ApptFormRef}
+                  title={this.state.title}
+                  saveData={this.state.dataArray[3]}
+                />
               ) : null}
-
-              <View style={{flex: 0.8}}>
-                <View
-                  style={{
-                    marginHorizontal: sizeWidth(2),
-                    marginBottom: sizeHeight(1),
-                    marginTop: sizeHeight(2),
-                  }}>
-                  <StepIndicator
-                    customStyles={customStyles}
-                    labels={['Personal', 'Corporate', 'Upload', 'Submit']}
-                    currentPosition={this.state.currentPosition}
-                    //onPress={(pos) => this.onPageChange(pos)}
-                    stepCount={4}
-                  />
-                </View>
-
-                <Card
-                  style={{
-                    marginHorizontal: sizeWidth(2),
-                    marginVertical: sizeHeight(1),
-                    paddingHorizontal: sizeWidth(1),
-                  }}>
-                  <ScrollView
-                    showsVerticalScrollIndicator={true}
-                    style={{flex: 1}}>
-                    {this.state.currentPosition === 0 ? (
-                      <CommonForm
-                        ref={this.commonFormRef}
-                        showemploy={
-                          this.state.title !== 'Fixed Deposit' &&
-                          this.state.title !== 'Vector Plus' &&
-                          this.state.title !== 'Business Loan' &&
-                          this.state.title !== 'Mutual Fund' &&
-                          this.state.title !== 'Motor Insurance'
-                        }
-                        saveData={this.state.dataArray[0]}
-                        title={this.state.title}
-                      />
-                    ) : this.state.currentPosition === 1 ? (
-                      <SpecificForm
-                        ref={this.specificFormRef}
-                        saveData={this.state.dataArray[1]}
-                        title={this.state.title}
-                      />
-                    ) : this.state.currentPosition === 2 ? (
-                      <FileUploadForm
-                        ref={this.FileUploadFormRef}
-                        title={this.state.title}
-                        saveData={this.state.dataArray[2]}
-                      />
-                    ) : this.state.currentPosition === 3 ? (
-                      <ApptForm
-                        ref={this.ApptFormRef}
-                        title={this.state.title}
-                        saveData={this.state.dataArray[3]}
-                      />
-                    ) : null}
-
-                    <Button
-                      mode={'flat'}
-                      uppercase={true}
-                      dark={true}
-                      loading={false}
-                      style={[styles.loginButtonStyle]}
-                      onPress={this.submitt}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 16,
-                          letterSpacing: 1,
-                        }}>
-                        {this.state.bottontext}
-                      </Text>
-                    </Button>
-                  </ScrollView>
-                </Card>
-              </View>
             </View>
+
+            <View styleName="horizontal space-between md-gutter v-end h-end">
+              {/* <Button
+                mode={'flat'}
+                uppercase={true}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
+                onPress={this.login}>
+                <Title style={styles.btntext}>{'Sign In'}</Title>
+              </Button> */}
+              <Button
+                mode={'flat'}
+                uppercase={false}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
+                onPress={this.submitt}>
+                <Title style={styles.btntext}>{this.state.bottontext}</Title>
+              </Button>
+            </View>
+            {/* <Button
+              mode={'flat'}
+              uppercase={true}
+              dark={true}
+              loading={false}
+              style={[styles.loginButtonStyle]}
+              onPress={this.submitt}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: 16,
+                  letterSpacing: 1,
+                }}>
+                {this.state.bottontext}
+              </Text>
+            </Button> */}
           </>
         }
       />
+      //       <CommonScreen
+      //         // showTopBar
+      //         // showRightIcon={true}
+      //         showProfile={false}
+      //         title={''}
+      //         loading={this.state.loading}
+      //         absoluteBody={
+      //           <>
+      //             <Loader isShow={this.state.progressLoader} />
+
+      //             {/* <FormProgress isShow={true} clickedcallback={()=>{
+
+      //                         }} />
+      //  */}
+      //           </>
+      //         }
+      //         body={
+      //           <>
+      //             <LeftHeaders
+      //               showAvtar
+      //               showBack
+      //               rightImage
+      //               title={this.state.title}
+      //               rightUrl={this.findImage()}
+      //               style={{marginBottom: 8}}
+      //               // bottomBody={
+      //               //     <View style={{marginStart:sizeWidth(10)}}>
+      //               //         <Title style={{
+      //               //             fontSize: 17, fontFamily: 'Rubik', letterSpacing: 1, color: 'white', alignSelf: 'flex-start', fontWeight: '400', paddingVertical: sizeHeight(0.5),
+      //               //         }}> {'Apply for a loan'}</Title>
+      //               //     </View>
+      //               // }
+      //             />
+      //             <View style={{flex: 1}}>
+      //               {this.state.bannerList.length > 0 ? (
+      //                 <View style={{flex: 0.2}}>
+      //                   <Carousel
+      //                     ref={this.crousel}
+      //                     data={this.state.bannerList}
+      //                     renderItem={this._renderItem}
+      //                     sliderWidth={sizeWidth(100)}
+      //                     itemWidth={sizeWidth(100)}
+      //                     autoplay
+      //                     enableSnap
+      //                     loop
+      //                     inactiveSlideScale={0.95}
+      //                     inactiveSlideOpacity={0.8}
+      //                     scrollEnabled
+      //                     shouldOptimizeUpdates
+      //                     onSnapToItem={(slideIndex) =>
+      //                       this.setState({pageIndex: slideIndex})
+      //                     }
+      //                     onBeforeSnapToItem={(slideIndex) =>
+      //                       this.setState({pageIndex: slideIndex})
+      //                     }
+      //                     containerCustomStyle={{marginTop: sizeHeight(0.5)}}
+      //                   />
+      //                   <Pagination
+      //                     carouselRef={this.crousel}
+      //                     dotColor={Pref.PRIMARY_COLOR}
+      //                     dotsLength={this.state.bannerList.length}
+      //                     inactiveDotColor={Colors.grey300}
+      //                     inactiveDotScale={1}
+      //                     tappableDots
+      //                     activeDotIndex={this.state.pageIndex}
+      //                     containerStyle={{marginTop: -16, marginBottom: -20}}
+      //                   />
+      //                 </View>
+      //               ) : null}
+
+      // <View style={{flex: 0.8}}>
+      //   <View
+      //     style={{
+      //       marginHorizontal: sizeWidth(2),
+      //       marginBottom: sizeHeight(1),
+      //       marginTop: sizeHeight(2),
+      //     }}>
+      //     <StepIndicator
+      //       customStyles={customStyles}
+      //       labels={['Personal', 'Corporate', 'Upload', 'Submit']}
+      //       currentPosition={this.state.currentPosition}
+      //       //onPress={(pos) => this.onPageChange(pos)}
+      //       stepCount={4}
+      //     />
+      //   </View>
+
+      //   <Card
+      //     style={{
+      //       marginHorizontal: sizeWidth(2),
+      //       marginVertical: sizeHeight(1),
+      //       paddingHorizontal: sizeWidth(1),
+      //     }}>
+      //     <ScrollView
+      //       showsVerticalScrollIndicator={true}
+      //       style={{flex: 1}}>
+      //       {this.state.currentPosition === 0 ? (
+      //         <CommonForm
+      //           ref={this.commonFormRef}
+      //           showemploy={
+      //             this.state.title !== 'Fixed Deposit' &&
+      //             this.state.title !== 'Vector Plus' &&
+      //             this.state.title !== 'Business Loan' &&
+      //             this.state.title !== 'Mutual Fund' &&
+      //             this.state.title !== 'Motor Insurance'
+      //           }
+      //           saveData={this.state.dataArray[0]}
+      //           title={this.state.title}
+      //         />
+      //       ) : this.state.currentPosition === 1 ? (
+      //         <SpecificForm
+      //           ref={this.specificFormRef}
+      //           saveData={this.state.dataArray[1]}
+      //           title={this.state.title}
+      //         />
+      //       ) : this.state.currentPosition === 2 ? (
+      //         <FileUploadForm
+      //           ref={this.FileUploadFormRef}
+      //           title={this.state.title}
+      //           saveData={this.state.dataArray[2]}
+      //         />
+      //       ) : this.state.currentPosition === 3 ? (
+      //         <ApptForm
+      //           ref={this.ApptFormRef}
+      //           title={this.state.title}
+      //           saveData={this.state.dataArray[3]}
+      //         />
+      //       ) : null}
+
+      //       <Button
+      //         mode={'flat'}
+      //         uppercase={true}
+      //         dark={true}
+      //         loading={false}
+      //         style={[styles.loginButtonStyle]}
+      //         onPress={this.submitt}>
+      //         <Text
+      //           style={{
+      //             color: 'white',
+      //             fontSize: 16,
+      //             letterSpacing: 1,
+      //           }}>
+      //           {this.state.bottontext}
+      //         </Text>
+      //       </Button>
+      //     </ScrollView>
+      //   </Card>
+      // </View>
+      //             </View>
+      //           </>
+      //         }
+      //       />
     );
   }
 }
@@ -911,6 +1041,17 @@ export default class FinorbitForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
@@ -949,13 +1090,20 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    marginVertical: sizeHeight(3.5),
-    backgroundColor: '#e21226',
+    backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    paddingVertical: 4,
+    fontWeight: '700',
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
   },
 });

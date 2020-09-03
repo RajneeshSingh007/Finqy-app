@@ -42,6 +42,7 @@ export default class LinkSharingOption extends React.PureComponent {
         {value: 'Fixed Deposit'},
         {value: 'Home Loan'},
         {value: 'Health Insurance'},
+        {value: 'Motor Insurance'},
         {value: 'Insurance Samadhan'},
         {value: 'Insure Check'},
         {value: 'Loan Against Property'},

@@ -59,9 +59,9 @@ class DropDown extends React.PureComponent {
           }
         });
         if (fil !== undefined && fil.length > 0) {
-        //   if (fil.length > 7) {
-        //     fil.length = 7;
-        //   }
+          //   if (fil.length > 7) {
+          //     fil.length = 7;
+          //   }
           const filter = Lodash.orderBy(fil, ['value'], ['asc']);
           this.setState({listItem: filter, error: false});
         } else {
@@ -75,13 +75,14 @@ class DropDown extends React.PureComponent {
 
   renderItems(item, index) {
     return (
-      <TouchableOpacity onPress={() => {
+      <TouchableOpacity
+        onPress={() => {
           this.props.itemCallback(item.value);
-          this.setState({modalvis:false})
-      }}>
+          this.setState({modalvis: false});
+        }}>
         <View style={styles.cardContainer}>
           {item !== undefined && item.value !== undefined ? (
-            <Subtitle> {item.value}</Subtitle>
+            <Title style={styles.title}> {item.value}</Title>
           ) : null}
         </View>
       </TouchableOpacity>
@@ -89,7 +90,13 @@ class DropDown extends React.PureComponent {
   }
 
   render() {
-    const {enableSearch, autoFocus = false, isCityList, ratioHeight = 0.7, title=''} = this.props;
+    const {
+      enableSearch,
+      autoFocus = false,
+      isCityList,
+      ratioHeight = 0.7,
+      title = '',
+    } = this.props;
     return (
       <Modal
         visible={this.state.modalvis}
@@ -97,39 +104,19 @@ class DropDown extends React.PureComponent {
         ratioHeight={ratioHeight}
         backgroundColor={`white`}
         topCenterElement={
-          <Subtitle
-            style={{
-              color: '#292929',
-              fontSize: 17,
-              fontWeight: '700',
-              letterSpacing: 1,
-            }}>
+          <Title style={styles.heading}>
             {isCityList ? `Select Location` : `${title}`}
-          </Subtitle>
+          </Title>
         }
         children={
-          <View
-            style={{
-              flex: 1,
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'white',
-              marginStart: 16,
-              marginEnd: 16,
-            }}>
+          <View style={styles.continr}>
             {enableSearch ? (
               <Searchbar
                 placeholder="Search"
                 onChangeText={(text) => this.filterData(text)}
                 value={this.state.firstQuery}
                 elevation={0}
-                style={{
-                  elevation: 0,
-                  width: '94%',
-                  borderBottomColor: '#dedede',
-                  borderBottomWidth: 0.5,
-                  marginBottom: 8,
-                }}
+                style={styles.search}
               />
             ) : null}
             {!this.state.error &&
@@ -147,43 +134,39 @@ class DropDown extends React.PureComponent {
                 }}
               />
             ) : (
-              <Subtitle styleName="v-center h-center sm-gutter">
-                {'no data found...'}
-              </Subtitle>
+              <Title styleName="v-center h-center sm-gutter" style={StyleSheet.flatten([styles.heading, {
+                fontSize:14,
+                color:'#555'
+              }])}>{'No data found...'}</Title>
             )}
           </View>
         }
       />
-      // <Card style={styles.card} elevation={3}>
-      //     <View style={{flex:1}}>
-      //   {enableSearch ? <Searchbar
-      //       placeholder="Search"
-      //       onChangeText={text => this.filterData(text)}
-      //       value={this.state.firstQuery}
-      //       elevation={0}
-      //       autoFocus={autoFocus}
-      //       style={{elevation: 0, width: '100%' }}
-      //   /> : null}
-      //   {!this.state.error && this.state.listItem !== undefined && this.state.listItem.length > 0 ? <FlatList
-      //       data={this.state.listItem}
-      //       renderItem={({ item, index }) => this.renderItems(item, index)}
-      //       keyExtractor={(item, index) => index.toString()}
-      //       showsVerticalScrollIndicator={true}
-      //       nestedScrollEnabled={true}
-      //       showsHorizontalScrollIndicator={false}
-      //       ItemSeparatorComponent={() => {
-      //           return (
-      //               <View style={styles.line} />
-      //           )
-      //       }}
-      //   />  : <Subtitle styleName='v-center h-center sm-gutter'> {'no data found...'}</Subtitle>}
-      //     </View>
-      // </Card>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  search: {
+    elevation: 0,
+    width: '94%',
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    marginBottom: 8,
+  },
+  continr: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    marginStart: 16,
+    marginEnd: 16,
+  },
+  heading: {
+    color: '#6d6a57',
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
   card: {
     flex: 1,
     marginVertical: -sizeHeight(1),
@@ -219,17 +202,17 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   title: {
-    fontSize: 18,
-    fontFamily: 'Rubik',
-    letterSpacing: 1,
-    color: '#292929',
+    fontSize: 15,
+    letterSpacing: 0.5,
+    color: '#555',
     alignSelf: 'flex-start',
     fontWeight: '700',
+    paddingVertical:4
   },
   line: {
     marginHorizontal: sizeWidth(1.5),
     height: 0.6,
-    backgroundColor: Colors.grey300,
+    backgroundColor: '#f2f1e6',
   },
 });
 

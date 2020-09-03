@@ -6,6 +6,7 @@ import {
   BackHandler,
   Platform,
   TouchableWithoutFeedback,
+  FlatList,
 } from 'react-native';
 import {
   Image,
@@ -42,7 +43,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
-import {FlatList} from 'react-native-gesture-handler';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 let itemData = null;
 let curpos = -1;
@@ -378,101 +379,85 @@ export default class SpecificForm extends React.PureComponent {
             }}
             styleName="horizontal">
             <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-              <Subtitle style={styles.title}> {`Member Details *`}</Subtitle>
+              <Title style={styles.title}> {`Member Details *`}</Title>
             </View>
           </View>
           <View style={styles.line} />
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              //{ marginVertical: sizeHeight(1) },
-            ]}
-            label={'Full Name'}
-            placeholder={'Enter full name'}
+          <AnimatedInputBox
+            placeholder={'Full Name'}
             onChangeText={(value) =>
               this.onFloatitemChange(value, item, 0, index)
             }
             value={item.name}
-            theme={theme}
+            changecolor
+            containerstyle={styles.animatedInputCont}
             returnKeyType={'next'}
           />
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              //{ marginVertical: sizeHeight(1) },
-            ]}
-            label={'Relation'}
-            placeholder={'Enter relation'}
+          <AnimatedInputBox
+            placeholder={'Relation'}
             onChangeText={(value) =>
               this.onFloatitemChange(value, item, 3, index)
             }
             value={item.relation}
-            theme={theme}
+            changecolor
+            containerstyle={styles.animatedInputCont}
             returnKeyType={'done'}
           />
-          <View
-            style={{
-              marginStart: 8,
-              borderBottomColor: Colors.grey300,
-              borderRadius: 2,
-              borderBottomWidth: 0.6,
-              alignContents: 'center',
-            }}>
-            <Subtitle style={styles.bbstyle}>{`Select Gender`}</Subtitle>
+          <View style={styles.radiocont}>
+            <View style={styles.radiodownbox}>
+              <Title style={styles.bbstyle}>{`Select Gender`}</Title>
 
-            <RadioButton.Group
-              onValueChange={(value) =>
-                this.onFloatitemChange(value, item, 1, index)
-              }
-              value={item.gender}>
-              <View styleName="horizontal" style={{marginBottom: 8}}>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="Male" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Male`}</Subtitle>
+              <RadioButton.Group
+                onValueChange={(value) =>
+                  this.onFloatitemChange(value, item, 1, index)
+                }
+                value={item.gender}>
+                <View styleName="horizontal" style={{marginBottom: 8}}>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton value="Male" style={{alignSelf: 'center'}} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Male`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton value="Female" style={{alignSelf: 'center'}} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Female`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton value="Other" style={{alignSelf: 'center'}} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Other`}</Title>
+                  </View>
                 </View>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="Female" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Female`}</Subtitle>
-                </View>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="Other" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Other`}</Subtitle>
-                </View>
-              </View>
-            </RadioButton.Group>
+              </RadioButton.Group>
+            </View>
           </View>
-          <View
-            style={{
-              marginHorizontal: sizeWidth(3),
-            }}>
+          <View style={styles.radiocont}>
             <TouchableWithoutFeedback
               onPress={() => this.enableCalendar(item, index)}>
               <View style={styles.dropdownbox}>
-                <Subtitle
+                <Title
                   style={[
                     styles.boxsubtitle,
                     {
-                      color: item.dob === `` ? `#767676` : `#292929`,
+                      color: item.dob === `` ? `#6d6a57` : `#292929`,
                     },
                   ]}>
                   {item.dob === '' ? `Date of Birth` : item.dob}
-                </Subtitle>
+                </Title>
                 <Icon
                   name={'calendar'}
                   size={24}
-                  color={'#767676'}
+                  color={'#6d6a57'}
                   style={styles.downIcon}
                 />
               </View>
@@ -491,7 +476,7 @@ export default class SpecificForm extends React.PureComponent {
     } = this.props;
     return (
       <View>
-        {showHeader ? (
+        {/* {showHeader ? (
           <View>
             <View
               style={{
@@ -499,14 +484,13 @@ export default class SpecificForm extends React.PureComponent {
                 marginBottom: sizeHeight(1),
               }}
               styleName="horizontal">
-              {/* <Icons name={'npm'} size={24} style={{ color: '#e21226', padding: 4, alignSelf: 'center', marginStart: sizeWidth(1) }} /> */}
               <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-                <Subtitle style={styles.title}> {heading}</Subtitle>
+                <Title style={styles.title}> {heading}</Title>
               </View>
             </View>
             <View style={styles.line} />
           </View>
-        ) : null}
+        ) : null} */}
 
         {title !== 'Vector Plus' &&
         title !== 'Mutual Fund' &&
@@ -517,7 +501,16 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' ? (
           <View>
-            <TextInput
+            <AnimatedInputBox
+              onChangeText={(value) => this.setState({company: value})}
+              value={this.state.company}
+              placeholder={'Company Name'}
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+            />
+
+            {/* <AnimatedInputBox
               mode="flat"
               underlineColor="transparent"
               underlineColorAndroid="transparent"
@@ -531,8 +524,29 @@ export default class SpecificForm extends React.PureComponent {
               value={this.state.company}
               theme={theme}
               returnKeyType={'next'}
+            /> */}
+            <AnimatedInputBox
+              keyboardType={'number-pad'}
+              onChangeText={(value) => {
+                if (String(value).match(/^[0-9]*$/g) !== null) {
+                  this.setState({turnover: value});
+                }
+              }}
+              value={this.state.turnover}
+              placeholder={
+                title === `Home Loan` ||
+                title === `Loan Against Property` ||
+                title === `Personal Loan` ||
+                title === `Business Loan` ||
+                title === `Auto Loan`
+                  ? 'Annual Turnover/CTC *'
+                  : 'Annual Turnover/CTC'
+              }
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
             />
-            <TextInput
+            {/* <AnimatedInputBox
               mode="flat"
               underlineColor="transparent"
               underlineColorAndroid="transparent"
@@ -549,8 +563,8 @@ export default class SpecificForm extends React.PureComponent {
                   ? 'Annual Turnover/CTC *'
                   : 'Annual Turnover/CTC'
               }
-              keyboardType={'number-pad'}
               placeholder={'Enter annual turnover/ctc'}
+              keyboardType={'number-pad'}
               onChangeText={(value) => {
                 if (value.match(/^[0-9]*$/g) !== null) {
                   this.setState({turnover: value});
@@ -559,32 +573,45 @@ export default class SpecificForm extends React.PureComponent {
               value={this.state.turnover}
               theme={theme}
               returnKeyType={'next'}
-            />
+            /> */}
           </View>
         ) : null}
 
         {title === 'Term Insurance' || title === `Health Insurance` ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              //{ marginVertical: sizeHeight(1) },
-            ]}
-            label={'Annual Turnover/CTC *'}
+          <AnimatedInputBox
             keyboardType={'number-pad'}
-            placeholder={'Enter annual turnover/ctc'}
             onChangeText={(value) => {
-              if (value.match(/^[0-9]*$/g) !== null) {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
                 this.setState({turnover: value});
               }
             }}
             value={this.state.turnover}
-            theme={theme}
+            placeholder={'Annual Turnover/CTC *'}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <AnimatedInputBox
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     //{ marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={'Annual Turnover/CTC *'}
+        //   keyboardType={'number-pad'}
+        //   placeholder={'Enter annual turnover/ctc'}
+        //   onChangeText={(value) => {
+        //     if (value.match(/^[0-9]*$/g) !== null) {
+        //       this.setState({turnover: value});
+        //     }
+        //   }}
+        //   value={this.state.turnover}
+        //   theme={theme}
+        //   returnKeyType={'next'}
+        // />
+        null}
 
         {title !== 'Vector Plus' &&
         title !== 'Credit Card' &&
@@ -592,15 +619,15 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Motor Insurance' &&
         title != 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              //{ marginVertical: sizeHeight(1) },
-            ]}
-            label={
+          <AnimatedInputBox
+            keyboardType={'number-pad'}
+            onChangeText={(value) => {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
+                this.setState({amount: value});
+              }
+            }}
+            value={this.state.amount}
+            placeholder={
               title === 'Term Insurance'
                 ? 'Required Cover *'
                 : title === 'Home Loan' ||
@@ -611,34 +638,49 @@ export default class SpecificForm extends React.PureComponent {
                 ? 'Desired Amount *'
                 : 'Investment Amount *'
             }
-            placeholder={
-              title === 'Term Insurance'
-                ? 'Enter required cover'
-                : 'Enter amount'
-            }
-            onChangeText={(value) => {
-              if (value.match(/^[0-9]*$/g) !== null) {
-                this.setState({amount: value});
-              }
-            }}
-            keyboardType={'number-pad'}
-            value={this.state.amount}
-            theme={theme}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
-        ) : null}
+        ) : // <AnimatedInputBox
+        //   mode="flat"
+        //   underlineColor="transparent"
+        //   underlineColorAndroid="transparent"
+        //   style={[
+        //     styles.inputStyle,
+        //     //{ marginVertical: sizeHeight(1) },
+        //   ]}
+        //   label={
+        //     title === 'Term Insurance'
+        //       ? 'Required Cover *'
+        //       : title === 'Home Loan' ||
+        //         title === 'Loan Against Property' ||
+        //         title === `Personal Loan` ||
+        //         title === `Business Loan` ||
+        //         title === `Business Loan`
+        //       ? 'Desired Amount *'
+        //       : 'Investment Amount *'
+        //   }
+        //   placeholder={
+        //     title === 'Term Insurance'
+        //       ? 'Enter required cover'
+        //       : 'Enter amount'
+        //   }
+        //   onChangeText={(value) => {
+        //     if (value.match(/^[0-9]*$/g) !== null) {
+        //       this.setState({amount: value});
+        //     }
+        //   }}
+        //   keyboardType={'number-pad'}
+        //   value={this.state.amount}
+        //   theme={theme}
+        //   returnKeyType={'next'}
+        // />
+        null}
 
         {title === 'Health Insurance' ? (
-          <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              //{ marginVertical: sizeHeight(1) },
-            ]}
-            label={'Required Cover *'}
-            placeholder={'Enter required cover'}
+          <AnimatedInputBox
+            placeholder={'Required Cover *'}
             onChangeText={(value) => {
               if (value.match(/^[0-9]*$/g) !== null) {
                 this.setState({required_cover: value});
@@ -646,54 +688,41 @@ export default class SpecificForm extends React.PureComponent {
             }}
             keyboardType={'number-pad'}
             value={this.state.required_cover}
-            theme={theme}
             returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
           />
         ) : null}
 
         {title === 'Life Cum Invt. Plan' ? (
           <View>
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                //{ marginVertical: sizeHeight(1) },
-              ]}
-              label={'Profession'}
-              placeholder={'Enter profession'}
+            <AnimatedInputBox
+              placeholder={'Profession'}
               onChangeText={(value) => this.setState({profession: value})}
               value={this.state.profession}
-              theme={theme}
+              changecolor
+              containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
             />
 
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                //{ marginVertical: sizeHeight(1) },
-              ]}
-              label={'Investment Amount *'}
-              placeholder={'Enter investment amount'}
+            <AnimatedInputBox
+              placeholder={'Investment Amount *'}
               onChangeText={(value) => {
-                if (value.match(/^[0-9]*$/g) !== null) {
+                if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({investment_amount: value});
                 }
               }}
               keyboardType={'number-pad'}
               value={this.state.investment_amount}
-              theme={theme}
+              changecolor
+              containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
             />
           </View>
         ) : null}
 
         {/* {title === 'Motor Insurance' ? <View>
-                    <TextInput
+                    <AnimatedInputBox
                         mode="flat"
                         underlineColor="transparent"
                         underlineColorAndroid="transparent"
@@ -712,7 +741,7 @@ export default class SpecificForm extends React.PureComponent {
                         returnKeyType={"next"}
                     />
 
-                    <TextInput
+                    <AnimatedInputBox
                         mode="flat"
                         underlineColor="transparent"
                         underlineColorAndroid="transparent"
@@ -731,7 +760,7 @@ export default class SpecificForm extends React.PureComponent {
                         returnKeyType={"next"}
                     />
 
-                    <TextInput
+                    <AnimatedInputBox
                         mode="flat"
                         underlineColor="transparent"
                         underlineColorAndroid="transparent"
@@ -750,7 +779,7 @@ export default class SpecificForm extends React.PureComponent {
                         returnKeyType={"next"}
                     />
 
-                    <TextInput
+                    <AnimatedInputBox
                         mode="flat"
                         underlineColor="transparent"
                         underlineColorAndroid="transparent"
@@ -772,116 +801,94 @@ export default class SpecificForm extends React.PureComponent {
 
                 </View> : null} */}
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            //{ marginVertical: sizeHeight(1) },
-          ]}
-          label={'PAN Card Number'}
-          placeholder={'Enter pan card number'}
+        <AnimatedInputBox
+          placeholder={'PAN Card Number'}
           onChangeText={(value) => this.setState({pancardNo: value})}
           value={this.state.pancardNo}
-          theme={theme}
+          changecolor
+          containerstyle={styles.animatedInputCont}
           maxLength={10}
           returnKeyType={'next'}
         />
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            //{ marginVertical: sizeHeight(1) },
-          ]}
-          label={'Aadhar Card Number'}
-          placeholder={'Enter aadhar card number'}
+        <AnimatedInputBox
+          placeholder={'Aadhar Card Number'}
           maxLength={12}
           keyboardType={'number-pad'}
           onChangeText={(value) => {
-            if (value.match(/^[0-9]*$/g) !== null) {
+            if (String(value).match(/^[0-9]*$/g) !== null) {
               this.setState({aadharcardNo: value});
             }
           }}
           value={this.state.aadharcardNo}
-          theme={theme}
+          changecolor
+          containerstyle={styles.animatedInputCont}
           returnKeyType={'next'}
         />
 
         {title === 'Motor Insurance' ? (
           <View>
-            <View
-              style={{
-                marginTop: 8,
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Any Claim Last Year *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Any Claim Last Year *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({insurance: value})}
-                value={this.state.insurance}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Comprehensive"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Comprehensive`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({insurance: value})}
+                  value={this.state.insurance}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Comprehensive"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Comprehensive`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Third Party"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Third Party`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Third Party"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Third Party`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
-            <View
-              style={{
-                marginTop: 8,
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Types of Insurance *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Types of Insurance *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({claim_type: value})}
-                value={this.state.claim_type}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="YES" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Yes`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({claim_type: value})}
+                  value={this.state.claim_type}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="YES" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Yes`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="NO" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`No`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="NO" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`No`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
             {/* <View
                             style={{
@@ -903,18 +910,18 @@ export default class SpecificForm extends React.PureComponent {
                                 <View
                                     style={styles.dropdownbox}
                                 >
-                                    <Subtitle
+                                    <Title
                                         style={styles.boxsubtitle}
                                     >
 
                                         {this.state.insurance === ""
                                             ? `Select Insurance Type`
                                             : this.state.insurance}
-                                    </Subtitle>
+                                    </Title>
                                     <Icon
                                         name={"chevron-down"}
                                         size={24}
-                                        color={"#767676"}
+                                        color={"#6d6a57"}
                                         style={styles.downIcon}
                                     />
                                 </View>
@@ -928,39 +935,41 @@ export default class SpecificForm extends React.PureComponent {
         title === 'Term Insurance' ||
         title === 'Health Insurance' ? (
           <View>
-            <View
-              style={{
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>{`Marital Status`}</Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Marital Status`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) =>
-                  this.setState({marital_status: value})
-                }
-                value={this.state.marital_status}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Single" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Single`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({marital_status: value})
+                  }
+                  value={this.state.marital_status}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Single"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Single`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Married"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Married`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Married"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Married`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
             {/* <View
@@ -984,18 +993,18 @@ export default class SpecificForm extends React.PureComponent {
                                 <View
                                     style={styles.dropdownbox}
                                 >
-                                    <Subtitle
+                                    <Title
                                         style={styles.boxsubtitle}
                                     >
 
                                         {this.state.marital_status === ""
                                             ? `Select Marital Status`
                                             : this.state.marital_status}
-                                    </Subtitle>
+                                    </Title>
                                     <Icon
                                         name={"chevron-down"}
                                         size={24}
-                                        color={"#767676"}
+                                        color={"#6d6a57"}
                                         style={styles.downIcon}
                                     />
                                 </View>
@@ -1008,202 +1017,196 @@ export default class SpecificForm extends React.PureComponent {
 
         {title === 'Term Insurance' || title === `Health Insurance` ? (
           <View>
-            <View
-              style={{
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Type Of Lifestyle *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Type Of Lifestyle *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({lifestyle: value})}
-                value={this.state.lifestyle}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Smoker" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Smoker`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({lifestyle: value})}
+                  value={this.state.lifestyle}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Smoker"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Smoker`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Non Smoker"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Non Smoker`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Non Smoker"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Non Smoker`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Type Of Lifestyle *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Type Of Lifestyle *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({lifestyle2: value})}
-                value={this.state.lifestyle2}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Alcoholic"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Alcoholic`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({lifestyle2: value})}
+                  value={this.state.lifestyle2}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Alcoholic"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Alcoholic`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Non Alcoholic"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Non Alcoholic`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Non Alcoholic"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Non Alcoholic`}</Subtitle>
+                </RadioButton.Group>
+              </View>
+            </View>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>
+                  {`Any Pre Existing Diseases *`}
+                </Title>
+
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({existing_diseases: value})
+                  }
+                  value={this.state.existing_diseases}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="YES" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Yes`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="NO" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`No`}</Title>
+                    </View>
                   </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                alignContents: 'center',
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Any Pre Existing Diseases *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Preferred Payment Mode`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) =>
-                  this.setState({existing_diseases: value})
-                }
-                value={this.state.existing_diseases}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="YES" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Yes`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({payment_mode: value})
+                  }
+                  value={this.state.payment_mode}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Monthly"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Monthly`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Quartley"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Quartley`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Yearly"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Yearly`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="NO" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`No`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
-            </View>
-
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                alignContents: 'center',
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Preferred Payment Mode`}
-              </Subtitle>
-
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({payment_mode: value})}
-                value={this.state.payment_mode}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Monthly"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Monthly`}</Subtitle>
-                  </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Quartley"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Quartley`}</Subtitle>
-                  </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="Yearly" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Yearly`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
           </View>
         ) : null}
         {title === 'Health Insurance' || title === 'Vector Plus' ? (
           <View>
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                alignContents: 'center',
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Type of Insurance *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Type of Insurance *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({claim_type: value})}
-                value={this.state.claim_type}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value={title === 'Vector Plus' ? 'Individual' : 'Single'}
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">
-                      {title === 'Vector Plus' ? 'Individual' : 'Single'}
-                    </Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({claim_type: value})}
+                  value={this.state.claim_type}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value={
+                          title === 'Vector Plus' ? 'Individual' : 'Single'
+                        }
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>
+                        {title === 'Vector Plus' ? 'Individual' : 'Single'}
+                      </Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Family Floater"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Family Floater`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Family Floater"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Family Floater`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
             {/* <View
@@ -1227,16 +1230,16 @@ export default class SpecificForm extends React.PureComponent {
                                 <View
                                     style={styles.dropdownbox}
                                 >
-                                    <Subtitle
-                                        style={[styles.boxsubtitle, { color: this.state.claim_type === `Select Insurance Type *`? `#767676` : `#292929`}]}
+                                    <Title
+                                        style={[styles.boxsubtitle, { color: this.state.claim_type === `Select Insurance Type *`? `#6d6a57` : `#292929`}]}
                                     >
 
                                         {this.state.claim_type}
-                                    </Subtitle>
+                                    </Title>
                                     <Icon
                                         name={"chevron-down"}
                                         size={24}
-                                        color={"#767676"}
+                                        color={"#6d6a57"}
                                         style={styles.downIcon}
                                     />
                                 </View>
@@ -1249,37 +1252,38 @@ export default class SpecificForm extends React.PureComponent {
 
         {title === 'Vector Plus' ? (
           <View>
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                alignContents: 'center',
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-              }}>
-              <Subtitle style={styles.bbstyle}>{`Required Cover *`}</Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Required Cover *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) =>
-                  this.setState({required_cover: value})
-                }
-                value={this.state.required_cover}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="50K" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`50K`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({required_cover: value})
+                  }
+                  value={this.state.required_cover}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="50K" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`50K`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="1 Lac"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`1 Lac`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="1 Lac" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`1 Lac`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
             {/* <View
@@ -1301,13 +1305,13 @@ export default class SpecificForm extends React.PureComponent {
                   })
                 }>
                 <View style={styles.dropdownbox}>
-                  <Subtitle style={styles.boxsubtitle}>
+                  <Title style={styles.boxsubtitle}>
                     {this.state.vectorCover}
-                  </Subtitle>
+                  </Title>
                   <Icon
                     name={'chevron-down'}
                     size={24}
-                    color={'#767676'}
+                    color={'#6d6a57'}
                     style={styles.downIcon}
                   />
                 </View>
@@ -1349,13 +1353,13 @@ export default class SpecificForm extends React.PureComponent {
                   })
                 }>
                 <View style={styles.dropdownbox}>
-                  <Subtitle style={styles.boxsubtitle}>
+                  <Title style={styles.boxsubtitle}>
                     {this.state.vectorTypeIns}
-                  </Subtitle>
+                  </Title>
                   <Icon
                     name={'chevron-down'}
                     size={24}
-                    color={'#767676'}
+                    color={'#6d6a57'}
                     style={styles.downIcon}
                   />
                 </View>
@@ -1379,58 +1383,52 @@ export default class SpecificForm extends React.PureComponent {
         (title === 'Health Insurance' &&
           this.state.claim_type === 'Family Floater') ? (
           <View>
-            <View
-              style={{
-                marginStart: 8,
-                marginVertical: sizeHeight(0.5),
-                alignContents: 'center',
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-              }}>
-              <Subtitle style={styles.bbstyle}>{`Family Floater *`}</Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Family Floater *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => {
-                  const clone = JSON.parse(JSON.stringify(floatCloneList));
-                  if (value === `2 Adult` || value === `1 Adult 1 Child`) {
-                    clone.length = 1;
-                  } else if (
-                    value === `2 Adult 1 Child` ||
-                    value === `1 Adult 2 Children`
-                  ) {
-                    clone.length = 2;
-                  } else if (
-                    value === `2 Adult 2 Children` ||
-                    value === `1 Adult 3 Children`
-                  ) {
-                    clone.length = 3;
-                  } else if (value === `2 Adult 3 Children`) {
-                    clone.length = 4;
-                  }
-                  this.setState({
-                    family_floater: value,
-                    floaterItemList: clone,
-                  });
-                }}
-                value={this.state.family_floater}>
-                <View styleName="vertical" style={{marginBottom: 8}}>
-                  {this.state.healthFList.map((e) => (
-                    <View styleName="horizontal">
-                      <RadioButton
-                        value={`${e.value}`}
-                        style={{alignSelf: 'center', justifyContent: 'center'}}
-                      />
-                      <Subtitle
-                        styleName="v-center h-center"
-                        style={{
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                        }}>{`${e.value}`}</Subtitle>
-                    </View>
-                  ))}
-                </View>
-              </RadioButton.Group>
+                <RadioButton.Group
+                  onValueChange={(value) => {
+                    const clone = JSON.parse(JSON.stringify(floatCloneList));
+                    if (value === `2 Adult` || value === `1 Adult 1 Child`) {
+                      clone.length = 1;
+                    } else if (
+                      value === `2 Adult 1 Child` ||
+                      value === `1 Adult 2 Children`
+                    ) {
+                      clone.length = 2;
+                    } else if (
+                      value === `2 Adult 2 Children` ||
+                      value === `1 Adult 3 Children`
+                    ) {
+                      clone.length = 3;
+                    } else if (value === `2 Adult 3 Children`) {
+                      clone.length = 4;
+                    }
+                    this.setState({
+                      family_floater: value,
+                      floaterItemList: clone,
+                    });
+                  }}
+                  value={this.state.family_floater}>
+                  <View styleName="vertical" style={{marginBottom: 8}}>
+                    {this.state.healthFList.map((e) => (
+                      <View styleName="horizontal">
+                        <RadioButton
+                          value={`${e.value}`}
+                          style={{
+                            alignSelf: 'center',
+                            justifyContent: 'center',
+                          }}
+                        />
+                        <Title
+                          styleName="v-center h-center"
+                          style={styles.textopen}>{`${e.value}`}</Title>
+                      </View>
+                    ))}
+                  </View>
+                </RadioButton.Group>
+              </View>
             </View>
             {this.state.floaterItemList.length > 0 ? (
               <FlatList
@@ -1462,22 +1460,22 @@ export default class SpecificForm extends React.PureComponent {
                   })
                 }>
                 <View style={styles.dropdownbox}>
-                  <Subtitle
+                  <Title
                     style={[
                       styles.boxsubtitle,
                       {
                         color:
                           this.state.family_floater === `Select Family Floater`
-                            ? `#767676`
+                            ? `#6d6a57`
                             : `#292929`,
                       },
                     ]}>
                     {this.state.family_floater}
-                  </Subtitle>
+                  </Title>
                   <Icon
                     name={'chevron-down'}
                     size={24}
-                    color={'#767676'}
+                    color={'#6d6a57'}
                     style={styles.downIcon}
                   />
                 </View>
@@ -1500,72 +1498,56 @@ export default class SpecificForm extends React.PureComponent {
 
         {title === 'Auto Loan' ? (
           <View>
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                //{ marginVertical: sizeHeight(1) },
-              ]}
-              label={'Car RC Number'}
-              placeholder={'Enter car rc number'}
+            <AnimatedInputBox
+              placeholder={'Car RC Number'}
               onChangeText={(value) => this.setState({rcbook: value})}
               value={this.state.rcbook}
-              theme={theme}
+              changecolor
+              containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
             />
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                //{ marginVertical: sizeHeight(1) },
-              ]}
-              label={'Car Model Number'}
-              placeholder={'Enter car model number'}
+            <AnimatedInputBox
+              placeholder={'Car Model Number'}
               onChangeText={(value) => this.setState({model: value})}
               value={this.state.model}
-              theme={theme}
+              changecolor
+              containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
             />
 
-            <View
-              style={{
-                marginTop: 8,
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>{`Type Of Car *`}</Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Type Of Car *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({nooldcard: value})}
-                value={this.state.nooldcard}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="New Car"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`New Car`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) => this.setState({nooldcard: value})}
+                  value={this.state.nooldcard}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="New Car"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`New Car`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Old Car"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Old Car`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton
-                      value="Old Car"
-                      style={{alignSelf: 'center'}}
-                    />
-                    <Subtitle styleName="v-center h-center">{`Old Car`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
 
             {/* <View
@@ -1587,18 +1569,18 @@ export default class SpecificForm extends React.PureComponent {
                                 <View
                                     style={styles.dropdownbox}
                                 >
-                                    <Subtitle
+                                    <Title
                                         style={styles.boxsubtitle}
                                     >
 
                                         {this.state.nooldcard === ""
                                             ? `Select Car Type`
                                             : this.state.nooldcard}
-                                    </Subtitle>
+                                    </Title>
                                     <Icon
                                         name={"chevron-down"}
                                         size={24}
-                                        color={"#767676"}
+                                        color={"#6d6a57"}
                                         style={styles.downIcon}
                                     />
                                 </View>
@@ -1613,44 +1595,44 @@ export default class SpecificForm extends React.PureComponent {
         title === `Loan Against Property` ||
         title === `Personal Loan` ||
         title === `Business Loan` ? (
-          <View
-            style={{
-              marginTop: 8,
-              marginStart: 8,
-              borderBottomColor: Colors.grey300,
-              borderRadius: 2,
-              borderBottomWidth: 0.6,
-              alignContents: 'center',
-            }}>
-            <Subtitle style={styles.bbstyle}>{`Types Of Loan *`}</Subtitle>
+          <View style={styles.radiocont}>
+            <View style={styles.radiodownbox}>
+              <Title style={styles.bbstyle}>{`Types Of Loan *`}</Title>
 
-            <RadioButton.Group
-              onValueChange={(value) => this.setState({type_loan: value})}
-              value={this.state.type_loan}>
-              <View styleName="horizontal" style={{marginBottom: 8}}>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="Fresh" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`Fresh`}</Subtitle>
+              <RadioButton.Group
+                onValueChange={(value) => this.setState({type_loan: value})}
+                value={this.state.type_loan}>
+                <View styleName="horizontal" style={{marginBottom: 8}}>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton value="Fresh" style={{alignSelf: 'center'}} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Fresh`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton value="BT" style={{alignSelf: 'center'}} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`BT`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{alignSelf: 'center', alignItems: 'center'}}>
+                    <RadioButton
+                      value="BT Top Up"
+                      style={{alignSelf: 'center'}}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`BT Top Up`}</Title>
+                  </View>
                 </View>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton value="BT" style={{alignSelf: 'center'}} />
-                  <Subtitle styleName="v-center h-center">{`BT`}</Subtitle>
-                </View>
-                <View
-                  styleName="horizontal"
-                  style={{alignSelf: 'center', alignItems: 'center'}}>
-                  <RadioButton
-                    value="BT Top Up"
-                    style={{alignSelf: 'center'}}
-                  />
-                  <Subtitle styleName="v-center h-center">{`BT Top Up`}</Subtitle>
-                </View>
-              </View>
-            </RadioButton.Group>
+              </RadioButton.Group>
+            </View>
           </View>
         ) : null}
 
@@ -1663,37 +1645,35 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' ? (
           <View>
-            <View
-              style={{
-                marginTop: 8,
-                marginStart: 8,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                alignContents: 'center',
-              }}>
-              <Subtitle style={styles.bbstyle}>
-                {`Existing Card/Loan *`}
-              </Subtitle>
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Existing Card/Loan *`}</Title>
 
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({existingcard: value})}
-                value={this.state.existingcard}>
-                <View styleName="horizontal" style={{marginBottom: 8}}>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="YES" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`Yes`}</Subtitle>
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({existingcard: value})
+                  }
+                  value={this.state.existingcard}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="YES" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Yes`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton value="NO" style={{alignSelf: 'center'}} />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`No`}</Title>
+                    </View>
                   </View>
-                  <View
-                    styleName="horizontal"
-                    style={{alignSelf: 'center', alignItems: 'center'}}>
-                    <RadioButton value="NO" style={{alignSelf: 'center'}} />
-                    <Subtitle styleName="v-center h-center">{`No`}</Subtitle>
-                  </View>
-                </View>
-              </RadioButton.Group>
+                </RadioButton.Group>
+              </View>
             </View>
             {/* <View
                         style={{
@@ -1714,18 +1694,18 @@ export default class SpecificForm extends React.PureComponent {
                             <View
                                 style={styles.dropdownbox}
                             >
-                                <Subtitle
+                                <Title
                                     style={styles.boxsubtitle}
                                 >
 
                                     {this.state.existingcard === ""
                                         ? `Select Existing Card/Loan`
                                         : this.state.existingcard}
-                                </Subtitle>
+                                </Title>
                                 <Icon
                                     name={"chevron-down"}
                                     size={24}
-                                    color={"#767676"}
+                                    color={"#6d6a57"}
                                     style={styles.downIcon}
                                 />
                             </View>
@@ -1733,10 +1713,7 @@ export default class SpecificForm extends React.PureComponent {
                         {this.state.showExisitingList ? <DropDown itemCallback={value => this.setState({ showExisitingList: false, existingcard: value })} list={this.state.exisitingList} /> : null}
                     </View> */}
 
-            <View
-              style={{
-                marginHorizontal: sizeWidth(3),
-              }}>
+            <View style={styles.radiocont}>
               <TouchableWithoutFeedback
                 onPress={() =>
                   this.setState({
@@ -1747,15 +1724,15 @@ export default class SpecificForm extends React.PureComponent {
                   })
                 }>
                 <View style={styles.dropdownbox}>
-                  <Subtitle style={styles.boxsubtitle}>
+                  <Title style={styles.boxsubtitle}>
                     {this.state.companylocation === ''
                       ? `Select Company Location`
                       : this.state.companylocation}
-                  </Subtitle>
+                  </Title>
                   <Icon
                     name={'chevron-down'}
                     size={24}
-                    color={'#767676'}
+                    color={'#6d6a57'}
                     style={styles.downIcon}
                   />
                 </View>
@@ -1789,10 +1766,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' &&
         title !== 'Auto Loan' ? (
-          <View
-            style={{
-              marginHorizontal: sizeWidth(3),
-            }}>
+          <View style={styles.radiocont}>
             <TouchableWithoutFeedback
               onPress={() =>
                 this.setState({
@@ -1803,13 +1777,13 @@ export default class SpecificForm extends React.PureComponent {
                 })
               }>
               <View style={styles.dropdownbox}>
-                <Subtitle style={styles.boxsubtitle}>
+                <Title style={styles.boxsubtitle}>
                   {this.state.loan_property_city}
-                </Subtitle>
+                </Title>
                 <Icon
                   name={'chevron-down'}
                   size={24}
-                  color={'#767676'}
+                  color={'#6d6a57'}
                   style={styles.downIcon}
                 />
               </View>
@@ -1860,6 +1834,18 @@ export default class SpecificForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
   line: {
     backgroundColor: Pref.RED,
     height: 1.2,
@@ -1872,7 +1858,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Rubik',
     fontFamily: 'bold',
     letterSpacing: 1,
-    color: '#767676',
+    color: '#6d6a57',
     alignSelf: 'center',
   },
   title: {
@@ -1887,7 +1873,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     height: sizeHeight(7.5),
     backgroundColor: 'white',
-    color: '#767676',
+    color: '#6d6a57',
     borderBottomColor: Colors.grey300,
     fontFamily: 'Rubik',
     fontSize: 16,
@@ -1909,36 +1895,41 @@ const styles = StyleSheet.create({
   },
   dropdownbox: {
     flexDirection: 'row',
-    height: 48,
-    borderBottomColor: Colors.grey300,
-    borderRadius: 2,
-    borderBottomWidth: 0.6,
-    marginVertical: sizeHeight(1),
+    height: 56,
     justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
   },
   boxsubtitle: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#767676',
-    lineHeight: 25,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
     alignSelf: 'center',
-    padding: 4,
+    marginStart: 4,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
     alignSelf: 'center',
-    marginHorizontal: 8,
+    marginStart: 4,
   },
   bbstyle: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#767676',
-    lineHeight: 25,
-    padding: 4,
-    marginHorizontal: 8,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
   },
   downIcon: {
-    padding: 4,
     alignSelf: 'center',
-    marginHorizontal: 1,
   },
 });

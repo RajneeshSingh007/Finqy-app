@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Subtitle, View} from '@shoutem/ui';
+import {Subtitle, Title, View} from '@shoutem/ui';
 import {Colors} from 'react-native-paper';
 import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
@@ -63,64 +63,46 @@ export default class ApptForm extends React.PureComponent {
     const {title} = this.props;
     return (
       <View>
-        <View
+        {/* <View
           style={{
             marginTop: sizeHeight(2),
             marginBottom: sizeHeight(1),
           }}
           styleName="horizontal">
           <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Subtitle style={styles.title}> {`Appointment`}</Subtitle>
+            <Title style={styles.title}> {`Appointment`}</Title>
           </View>
         </View>
-        <View style={styles.line} />
+        <View style={styles.line} /> */}
 
-        <View
-          style={{
-            paddingVertical: sizeHeight(1),
-            marginHorizontal: sizeWidth(3),
-          }}>
+        <View style={styles.radiocont}>
           <TouchableWithoutFeedback
             onPress={() =>
               this.setState({
                 showCalendar: true,
               })
             }>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: 48,
-                borderBottomColor: Colors.grey300,
-                borderRadius: 2,
-                borderBottomWidth: 0.6,
-                marginVertical: sizeHeight(1),
-                justifyContent: 'space-between',
-              }}>
-              <Subtitle
+            <View style={styles.dropdownbox}>
+              <Title
                 style={{
-                  fontSize: 16,
-                  fontFamily: 'Rubik',
-                  fontWeight: '400',
+                  fontSize: 15,
+                  fontWeight: '700',
+                  lineHeight: 20,
+                  alignSelf: 'center',
                   color:
                     this.state.baa === `Schedule an Appointment`
-                      ? '#767676'
-                      : `#292929`,
-                  lineHeight: 25,
+                      ? '#6d6a57'
+                      : `#555555`,
                   alignSelf: 'center',
-                  padding: 4,
-                  alignSelf: 'center',
-                  marginHorizontal: 8,
                 }}>
                 {this.state.baa}
-              </Subtitle>
+              </Title>
               <Icon
                 name={'calendar'}
                 size={24}
-                color={'#767676'}
+                color={'#6d6a57'}
                 style={{
-                  padding: 4,
                   alignSelf: 'center',
-                  marginHorizontal: 1,
                 }}
               />
             </View>
@@ -155,6 +137,20 @@ export default class ApptForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  dropdownbox: {
+    flexDirection: 'row',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
   line: {
     backgroundColor: Pref.RED,
     height: 1.2,
