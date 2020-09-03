@@ -95,16 +95,16 @@ export default class ViewTeam extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, (userData) => {
-      this.setState({userData: userData});
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
-          this.fetchData();
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, (userData) => {
+        this.setState({userData: userData});
+        Pref.getVal(Pref.saveToken, (value) => {
+          this.setState({token: value}, () => {
+            this.fetchData();
+          });
         });
       });
     });
-    //});
   }
 
   componentWillUnMount() {
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     color: '#0270e3',
     fontSize: 14,
     paddingVertical: 16,
-    marginTop:4
+    marginTop: 4,
   },
   itemtopText: {
     letterSpacing: 0.5,

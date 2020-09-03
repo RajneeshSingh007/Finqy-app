@@ -171,10 +171,6 @@ export default class LeadList extends React.PureComponent {
         const {res_type, message} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
-            // const dummyCheck = [];
-            // for (let index = 0; index < 50; index++) {
-            //   dummyCheck.push(data[0]);
-            // }
             const sorting = data.sort((a, b) => {
               const sp = a.date.split('-');
               const spz = b.date.split('-');

@@ -1,79 +1,34 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
-  Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
-import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
   Portal,
-  Avatar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
-
-const colorList = [
-  '#d0f2f1',
-  '#e4dcf5',
-  '#f8edca',
-  '#8ee6df',
-  '#6abc2e',
-  '#6c757d',
-  '#28a745',
-];
+import CScreen from '../component/CScreen';
+import IconChooser from '../common/IconChooser';
+import FinProSideBar from '../common/FinProSideBar';
 
 export default class FinorbitScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.backClick = this.backClick.bind(this);
-    this.renderItems = this.renderItems.bind(this);
     this.state = {
       dataList: Pref.productList,
       loading: false,
+      selectedText: '',
     };
   }
-
-  //      {
-  //     name: 'Demat',
-  //         url: require('./../../res/images/demat.png')
-  // }, {
-  //     name: 'Fast Tag',
-  //         url: require('./../../res/images/fasttag.png')
-  // }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
@@ -97,147 +52,112 @@ export default class FinorbitScreen extends React.PureComponent {
     return true;
   };
 
-  /**
-   *
-   * @param {*} color
-   * @param {*} clickName
-   * @param {*} title
-   * @param {*} subtitle
-   * @param {*} url
-   * @param {*} textColor
-   */
-  cardviewRender(color, clickName, title, subtitle, url, item = {}) {
+  renderFinProItems = (iconName, title) => {
+    const {selectedText} = this.state;
     return (
-      <Card
-        elevation={2}
-        style={{
-          flex: 1,
-          backgroundColor: color,
-          marginVertical: sizeHeight(1.5),
-          marginStart: 4,
-          marginEnd: 4,
-          paddingVertical: sizeHeight(1),
-        }}
-        onPress={() => {
-          if (title === 'Fast Tag') {
-            Linking.openURL(
-              `https://digipay.axisbank.co.in/fastag/customer?utm_source=payerevbay&utm_medium=affiliates&utm_campaign=freefastag-affiliates&utm_content=pay&fbclid=IwAR3lZ53fZdh6aOlldFewCdink9mDEvaguAA3JahnI99lSWsDi7609tljbWY`,
-            );
-          } else {
-            console.log('title', title);
-            if (title === 'Vector Plus') {
-              NavigationActions.navigate(`VectorForm`, item);
-            } else if (title.includes('Samadhan')) {
-              NavigationActions.navigate(`Samadhan`);
-            } else if (
-              title.includes('Hello') ||
-              title.includes('Sabse') ||
-              title.includes('Asaan')
-            ) {
-              NavigationActions.navigate('NewForm', item);
-            } else {
-              NavigationActions.navigate(clickName, item);
-            }
-          }
-        }}>
-        <View
-          style={{
-            marginVertical: sizeHeight(0.5),
-            marginHorizontal: sizeWidth(2),
-            alignItems: 'center',
-            alignContents: 'center',
-          }}>
-          <Image
-            source={url}
-            styleName="medium"
-            style={{
-              resizeMode: 'contain',
-              alignSelf: 'center',
-              marginVertical: sizeHeight(1),
-            }}
-          />
-          <Title
-            style={{
-              color: '#292929',
-              fontWeight: '700',
-              fontSize: 14,
-              fontFamily: 'Rubik',
-              //paddingVertical: sizeHeight(1.2),
-              alignSelf: 'center',
-              justifyContent: 'center',
-              marginTop: 8,
-              letterSpacing: 0.5,
-              paddingBottom: 4,
-            }}>
-            {title}
-          </Title>
-        </View>
-      </Card>
-    );
-  }
-
-  renderItems(item, index) {
-    //const random = Math.floor(Math.random(0, 6) * 6);
-    //colorList[random]
-    //Pref.GREY_COLOR
-    //Pref.WHITE_LINEN
-    return (
-      <View
-        style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
-        {this.cardviewRender('white', 'FinorbitForm', item.name, '', item.url, {
-          title: item.name,
-          url: item.url,
-        })}
+      <View style={styles.mainconx}>
+        <View style={styles.dummy} />
+        <TouchableWithoutFeedback
+          onPress={() => this.setState({selectedText: title})}>
+          <View
+            styleName="v-center h-center horizontal"
+            style={styles.itemcont}>
+            <View style={styles.mainconx}>
+              <View style={{flex: 0.05}} />
+              <View style={{flex: 0.25}}>
+                <View
+                  style={StyleSheet.flatten([
+                    styles.circle,
+                    {
+                      backgroundColor:
+                        selectedText === title ? '#0270e3' : Pref.RED,
+                    },
+                  ])}>
+                  <IconChooser
+                    name={iconName}
+                    size={17}
+                    color={'white'}
+                    style={styles.icon}
+                  />
+                </View>
+              </View>
+              <View style={{flex: 0.5, flexDirection: 'row'}}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.itemtext1,
+                    {
+                      marginStart:8,
+                      color: selectedText === title ? '#0270e3' : '#97948c',
+                    },
+                  ])}>
+                  {title}
+                </Title>
+              </View>
+              <View
+                style={{
+                  flex: 0.2,
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                }}>
+                <IconChooser
+                  name="chevron-right"
+                  size={20}
+                  color={selectedText === title ? '#0270e3' : '#97948c'}
+                  //style={styles.icon}
+                />
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        <View style={styles.dummy} />
       </View>
     );
-  }
+  };
+
+  getFilterList = () => {
+    const {selectedText, dataList} = this.state;
+    const clone = JSON.parse(JSON.stringify(dataList));
+    const filter = Lodash.filter(clone, io => io.name.includes(selectedText));
+    return filter;
+  };
 
   render() {
+    const {selectedText} = this.state;
     return (
-      <CommonScreen
-        title={'Finorbit'}
-        loading={this.state.loading}
-        enabelWithScroll={false}
-        header={
-          <LeftHeaders
-            showAvtar
-            showBack
-            rightImage
-            title={'Add Single Lead'}
-            style={{marginBottom: 8}}
-            rightUrl={require('../../res/images/logo.png')}
-          />
+      <CScreen
+        absolute={
+          <>
+            {selectedText !== '' ? (
+              <Portal>
+                <FinProSideBar
+                  list={this.getFilterList()}
+                  backClicked={() => this.setState({selectedText: ''})}
+                />
+              </Portal>
+            ) : null}
+          </>
         }
-        headerDis={0.17}
-        bodyDis={0.83}
         body={
           <>
-            {/* <CardRow 
-                            color={Pref.JET_BLACK}
-                            title={'Apply for a Loan or Insurance'}
-                            subtitle={'One stop shop for all your financial needs!'}
-                            //url={require('../../res/images/personalloan.png')}
-                            showImage={false}
-                            //titleColor={'white'}
-                            //subtitleColor={'#dedede'}
-                            titleColor={'#292929'}
-                            subtitleColor={'#292929'}
-                        /> */}
-            {this.state.dataList.length > 0 ? (
-              <FlatList
-                style={{
-                  marginHorizontal: sizeWidth(2),
-                  paddingHorizontal: sizeWidth(1),
-                }}
-                data={this.state.dataList}
-                numColumns={2}
-                renderItem={({item, index}) => this.renderItems(item, index)}
-                keyExtractor={(item, index) => item.name.toString()}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                extraData={this.state}
-              />
-            ) : null}
+            <LeftHeaders
+              title={'Add New Lead'}
+              showBack
+              bottomtext={
+                <>
+                  {`Add Single `}
+                  <Title style={styles.passText}>{`Lead`}</Title>
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 24,
+              }}
+            />
+
+            {this.renderFinProItems('credit-card', 'Credit Card')}
+            {this.renderFinProItems('credit-card', 'Loan')}
+            {this.renderFinProItems('credit-card', 'Insurance')}
+            {this.renderFinProItems('credit-card', 'Investment')}
           </>
         }
       />
@@ -246,6 +166,59 @@ export default class FinorbitScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  sideItem: {
+    color: '#6e6852',
+    fontWeight: '400',
+    fontSize: 14,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    letterSpacing: 0.5,
+  },
+  dummy: {flex: 0.2},
+  mainconx: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemcont: {
+    backgroundColor: '#f9f8f1',
+    borderColor: '#bbbbba',
+    borderWidth: 1,
+    borderRadius: 56,
+    marginVertical: 10,
+    paddingVertical: 12,
+    flex: 0.6,
+  },
+  divider: {
+    backgroundColor: '#dedede',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 8,
+  },
+  itemContainer: {
+    marginVertical: 10,
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 16,
+    marginHorizontal: 16,
+  },
+  emptycont: {
+    flex: 0.7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    marginVertical: 48,
+    paddingVertical: 56,
+  },
+  loader: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 1,
+    marginVertical: 48,
+    paddingVertical: 48,
+  },
   subtitle: {
     fontSize: 14,
     fontFamily: 'Rubik',
@@ -261,5 +234,68 @@ const styles = StyleSheet.create({
     color: '#292929',
     alignSelf: 'flex-start',
     fontWeight: '700',
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+    marginBottom: 12,
+  },
+  gap: {
+    marginHorizontal: 8,
+  },
+  image: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 8,
+    width: '90%',
+    height: 156,
+    resizeMode: 'contain',
+  },
+  footerCon: {
+    paddingBottom: 12,
+    paddingHorizontal: 12,
+    paddingTop: 4,
+  },
+  icon: {
+    alignSelf: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  itemtext: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#686868',
+    fontSize: 16,
+    marginStart: 16,
+    marginEnd: 16,
+  },
+  itemtext1: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#97948c',
+    fontSize: 16,
+  },
+  circle: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 4,
+    borderRadius: 36 / 2,
   },
 });
