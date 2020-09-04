@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, FlatList, TouchableWithoutFeedback} from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  TouchableWithoutFeedback,
+  BackHandler,
+} from 'react-native';
 import {Image, Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';

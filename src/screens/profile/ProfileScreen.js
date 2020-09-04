@@ -45,6 +45,8 @@ import SpecificForm from '../finorbit/SpecificForm';
 import Lodash from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../../util/Loader';
+import CScreen from '../component/CScreen';
+import StepIndicator from '../component/StepIndicator';
 
 export default class ProfileScreen extends React.PureComponent {
   constructor(props) {
@@ -68,6 +70,8 @@ export default class ProfileScreen extends React.PureComponent {
       aadharcardupload: '',
       res: {},
       utype: '',
+      currentposition: 0,
+      btnText: 'Next',
     };
   }
 
@@ -95,14 +99,6 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   updateData = (userData) => {
-    this.bankFormRef.current.saveData(
-      '',
-      userData.bank_ifsc,
-      userData.account_no,
-      userData.bank_account_name,
-      userData.account_branch,
-      userData.account_type,
-    );
     this.commonFormRef.current.saveData(
       userData.rname,
       userData.pincode,
@@ -139,7 +135,30 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   submitt = () => {
-    const {token, res, userData, utype} = this.state;
+    const {token, res, userData, utype, currentposition} = this.state;
+    if (currentposition < 2) {
+      this.setState(
+        (prevProp) => {
+          return {
+            currentposition: prevProp.currentposition + 1,
+            btnText: currentposition === 1 ? 'Submit' : 'Next',
+          };
+        },
+        () => {
+          if (this.state.currentposition === 1) {
+            this.bankFormRef.current.saveData(
+              '',
+              userData.bank_ifsc,
+              userData.account_no,
+              userData.bank_account_name,
+              userData.account_branch,
+              userData.account_type,
+            );
+          }
+        },
+      );
+      return false;
+    }
     let checkData = true;
     console.log(`utype`, utype);
 
@@ -303,85 +322,170 @@ export default class ProfileScreen extends React.PureComponent {
 
   render() {
     return (
-      <CommonScreen
-        title={''}
-        loading={this.state.loading}
-        absoluteBody={<Loader isShow={this.state.loading} />}
+      <CScreen
+        absolute={<Loader isShow={this.state.loading} />}
         body={
           <>
             <LeftHeaders
-              //showAvtar
-              //rightImage={false}
-              //url={require('../../res/images/moneywallets.png')}
-              title={'My Profile'}
+              title={`Edit My Profile`}
+              bottomtext={
+                <>
+                  {`User `}
+                  {<Title style={styles.passText}>{`Details`}</Title>}
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 20,
+              }}
               showBack
             />
 
-            <Card
-              style={{
-                marginHorizontal: sizeWidth(4),
-                marginVertical: sizeHeight(2),
-                paddingHorizontal: sizeWidth(0),
-              }}>
-              <TouchableWithoutFeedback onPress={() => this.filePicker()}>
-                <View
-                  style={{
-                    marginVertical: sizeHeight(2),
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'transparent',
-                  }}>
-                  <Avatar.Image
-                    source={this.state.imageUrl}
-                    style={{backgroundColor: Colors.grey300}}
-                    size={96}
-                    backgroundColor={'transparent'}
+            <TouchableWithoutFeedback onPress={() => this.filePicker()}>
+              <View
+                style={{
+                  marginVertical: sizeHeight(1),
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'transparent',
+                }}>
+                <Avatar.Image
+                  source={this.state.imageUrl}
+                  style={{backgroundColor: 'transparent'}}
+                  size={124}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+
+            <StepIndicator
+              stepCount={3}
+              activeCounter={this.state.currentposition}
+            />
+
+            <View styleName="md-gutter">
+              {this.state.currentposition === 0 ? (
+                <>
+                  <CommonForm title="Profile" ref={this.commonFormRef} />
+
+                  <SpecificForm
+                    title="Demat"
+                    heading={`Other Information`}
+                    ref={this.specificFormRef}
                   />
-                </View>
-              </TouchableWithoutFeedback>
+                </>
+              ) : this.state.currentposition === 1 ? (
+                <BankForm ref={this.bankFormRef} />
+              ) : this.state.currentposition === 2 ? (
+                <FileUploadForm
+                  title="Profile"
+                  ref={this.FileUploadFormRef}
+                  heading={`File Upload`}
+                />
+              ) : null}
+            </View>
 
-              <CommonForm title="Profile" ref={this.commonFormRef} />
-
-              <SpecificForm
-                title="Demat"
-                heading={`Other Information`}
-                ref={this.specificFormRef}
-              />
-
-              <BankForm ref={this.bankFormRef} />
-
-              <FileUploadForm
-                title="Profile"
-                ref={this.FileUploadFormRef}
-                heading={`File Upload`}
-              />
-
-              {/* <View style={{marginVertical:sizeHeight(1),justifyContent:'center',alignContents:'center',alignItems:'center'}}>
-                            {this.state.pancardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.pancardupload}` }} style={{margin:16}} /> : null}
-                            {this.state.aadharcardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.aadharcardupload}` }} /> : null}
-                            {this.state.addressupload !== '' ? <Icon name='pdf' size={56} source={{ uri: `${Pref.FOLDERPATH}${this.state.addressupload}` }} /> : null}
-                        </View> */}
-
-              <Button
+            <View styleName="horizontal space-between md-gutter v-end h-end">
+              {/* <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}
                 loading={false}
-                style={[styles.loginButtonStyle]}
+                style={styles.loginButtonStyle}
+                onPress={this.login}>
+                <Title style={styles.btntext}>{'Sign In'}</Title>
+              </Button> */}
+              <Button
+                mode={'flat'}
+                uppercase={false}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
                 onPress={this.submitt}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    letterSpacing: 1,
-                  }}>
-                  {'Save Profile'}
-                </Text>
+                <Title style={styles.btntext}>{this.state.btnText}</Title>
               </Button>
-            </Card>
+            </View>
           </>
         }
       />
+      // <CommonScreen
+      //   title={''}
+      //   loading={this.state.loading}
+      //   absoluteBody={<Loader isShow={this.state.loading} />}
+      //   body={
+      //     <>
+      //       <LeftHeaders
+      //         //showAvtar
+      //         //rightImage={false}
+      //         //url={require('../../res/images/moneywallets.png')}
+      //         title={'My Profile'}
+      //         showBack
+      //       />
+
+      //       <Card
+      //         style={{
+      //           marginHorizontal: sizeWidth(4),
+      //           marginVertical: sizeHeight(2),
+      //           paddingHorizontal: sizeWidth(0),
+      //         }}>
+      // <TouchableWithoutFeedback onPress={() => this.filePicker()}>
+      //   <View
+      //     style={{
+      //       marginVertical: sizeHeight(2),
+      //       alignSelf: 'center',
+      //       justifyContent: 'center',
+      //       backgroundColor: 'transparent',
+      //     }}>
+      //     <Avatar.Image
+      //       source={this.state.imageUrl}
+      //       style={{backgroundColor: Colors.grey300}}
+      //       size={96}
+      //       backgroundColor={'transparent'}
+      //     />
+      //   </View>
+      // </TouchableWithoutFeedback>
+
+      //         <CommonForm title="Profile" ref={this.commonFormRef} />
+
+      // <SpecificForm
+      //   title="Demat"
+      //   heading={`Other Information`}
+      //   ref={this.specificFormRef}
+      // />
+
+      //         <BankForm ref={this.bankFormRef} />
+
+      // <FileUploadForm
+      //   title="Profile"
+      //   ref={this.FileUploadFormRef}
+      //   heading={`File Upload`}
+      // />
+
+      //         {/* <View style={{marginVertical:sizeHeight(1),justifyContent:'center',alignContents:'center',alignItems:'center'}}>
+      //                       {this.state.pancardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.pancardupload}` }} style={{margin:16}} /> : null}
+      //                       {this.state.aadharcardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.aadharcardupload}` }} /> : null}
+      //                       {this.state.addressupload !== '' ? <Icon name='pdf' size={56} source={{ uri: `${Pref.FOLDERPATH}${this.state.addressupload}` }} /> : null}
+      //                   </View> */}
+
+      //         <Button
+      //           mode={'flat'}
+      //           uppercase={true}
+      //           dark={true}
+      //           loading={false}
+      //           style={[styles.loginButtonStyle]}
+      //           onPress={this.submitt}>
+      //           <Text
+      //             style={{
+      //               color: 'white',
+      //               fontSize: 16,
+      //               letterSpacing: 1,
+      //             }}>
+      //             {'Save Profile'}
+      //           </Text>
+      //         </Button>
+      //       </Card>
+      //     </>
+      //   }
+      // />
     );
   }
 }
@@ -390,6 +494,45 @@ export default class ProfileScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  dropdownbox: {
+    flexDirection: 'row',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
@@ -401,6 +544,15 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
+  },
+  boxstyle: {
+    flexDirection: 'row',
+    height: 48,
+    borderBottomColor: Colors.grey300,
+    borderRadius: 2,
+    borderBottomWidth: 0.6,
+    marginVertical: sizeHeight(1),
+    justifyContent: 'space-between',
   },
   inputPassStyle: {
     height: sizeHeight(8),
@@ -428,13 +580,43 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    marginVertical: sizeHeight(3.5),
     backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    paddingVertical: 4,
+    fontWeight: '700',
+  },
+  boxsubtitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+  },
+  bbstyle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+    letterSpacing: 0.5,
+    paddingVertical: 10,
+  },
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  copy: {
+    marginStart: 10,
+    marginEnd: 10,
+    alignContent: 'center',
+    paddingVertical: 10,
   },
 });

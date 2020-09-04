@@ -43,6 +43,7 @@ import moment from 'moment';
 import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
 import CommonFileUpload from '../common/CommonFileUpload';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const theme = {
   ...DefaultTheme,
@@ -89,19 +90,19 @@ export default class BankForm extends React.PureComponent {
   render() {
     return (
       <View>
-        <View
+        {/* <View
           style={{
             marginTop: sizeHeight(2),
             marginBottom: sizeHeight(1),
           }}
           styleName="horizontal">
           <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Subtitle style={styles.title}> {`Bank Information`}</Subtitle>
+            <Title style={styles.title}> {`Bank Information`}</Title>
           </View>
         </View>
-        <View style={styles.line} />
+        <View style={styles.line} /> */}
 
-        {/* <TextInput
+        {/* <AnimatedInputBox
                     mode="flat"
                     underlineColor="transparent"
                     underlineColorAndroid="transparent"
@@ -120,81 +121,49 @@ export default class BankForm extends React.PureComponent {
                     returnKeyType={"next"}
                 /> */}
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[styles.inputStyle]}
-          label={'Account Holder Name'}
-          placeholder={'Enter account holder name'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Account Holder Name'}
           onChangeText={(value) => this.setState({bank_account_name: value})}
           value={this.state.bank_account_name}
-          theme={theme}
           returnKeyType={'next'}
         />
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[styles.inputStyle]}
-          label={'Account Number'}
-          placeholder={'Enter account number'}
-          placeholderTextColor={'#DEDEDE'}
-          onChangeText={(value) => this.setState({account_no: value})}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Account Number'}
+          onChangeText={(value) => {
+            if (String(value).match(/^[0-9]*$/g) !== null) {
+              this.setState({account_no: value});
+            }
+          }}
           keyboardType={'number-pad'}
           value={this.state.account_no}
-          theme={theme}
           returnKeyType={'next'}
         />
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[styles.inputStyle]}
-          label={'Branch Name'}
-          placeholder={'Enter branch name'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Branch Name'}
           onChangeText={(value) => this.setState({account_branch: value})}
           value={this.state.account_branch}
-          theme={theme}
           returnKeyType={'next'}
         />
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[styles.inputStyle]}
-          label={'IFSC code'}
-          placeholder={'Enter ifsc code'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'IFSC code'}
           onChangeText={(value) => this.setState({bank_ifsc: value})}
           value={this.state.bank_ifsc}
-          theme={theme}
           returnKeyType={'next'}
         />
 
-        <View
-          style={{
-            marginStart: 8,
-            borderBottomColor: Colors.grey300,
-            borderRadius: 2,
-            borderBottomWidth: 0.6,
-            alignContents: 'center',
-          }}>
-          <Subtitle
-            style={{
-              fontSize: 16,
-              fontFamily: 'Rubik',
-              fontWeight: '400',
-              color: '#767676',
-              lineHeight: 25,
-              padding: 4,
-              marginHorizontal: 8,
-            }}>{`Type of Account`}</Subtitle>
+        <View style={styles.radiocont}>
+          <Title style={styles.boxsubtitle}>{`Type of Account`}</Title>
 
           <RadioButton.Group
             onValueChange={(value) => this.setState({account_type: value})}
@@ -207,7 +176,9 @@ export default class BankForm extends React.PureComponent {
                   alignItems: 'center',
                 }}>
                 <RadioButton value="Saving" style={{alignSelf: 'center'}} />
-                <Subtitle styleName="v-center h-center">{`Saving Account`}</Subtitle>
+                <Title
+                  styleName="v-center h-center"
+                  style={styles.textopen}>{`Saving Account`}</Title>
               </View>
               <View
                 styleName="horizontal"
@@ -216,7 +187,9 @@ export default class BankForm extends React.PureComponent {
                   alignItems: 'center',
                 }}>
                 <RadioButton value="Current" style={{alignSelf: 'center'}} />
-                <Subtitle styleName="v-center h-center">{`Current Account`}</Subtitle>
+                <Title
+                  styleName="v-center h-center"
+                  style={styles.textopen}>{`Current Account`}</Title>
               </View>
             </View>
           </RadioButton.Group>
@@ -236,14 +209,14 @@ export default class BankForm extends React.PureComponent {
                         <View
                             style={styles.dropdownbox}
                         >
-                            <Subtitle
+                            <Title
                                 style={styles.boxsubtitle}
                             >
 
                                 {this.state.account_type === ""
                                     ? `Select Account Type`
                                     : this.state.account_type}
-                            </Subtitle>
+                            </Title>
                             <Icon
                                 name={"chevron-down"}
                                 size={24}
@@ -265,6 +238,34 @@ export default class BankForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
   line: {
     backgroundColor: Pref.RED,
     height: 1.2,
@@ -324,15 +325,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   boxsubtitle: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#292929',
-    lineHeight: 25,
-    alignSelf: 'center',
-    padding: 4,
-    alignSelf: 'center',
-    marginHorizontal: 8,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+    letterSpacing: 0.5,
   },
   downIcon: {
     padding: 4,

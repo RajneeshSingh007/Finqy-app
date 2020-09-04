@@ -24,7 +24,6 @@ import CScreen from '../component/CScreen';
 export default class BlogDetails extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.back = this.back.bind(this);
     this.state = {
       loading: false,
       item: null,
@@ -32,7 +31,6 @@ export default class BlogDetails extends React.PureComponent {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.back);
     const {navigation} = this.props;
     const item = navigation.getParam('item', null);
     this.setState({item: item, loading: false});
