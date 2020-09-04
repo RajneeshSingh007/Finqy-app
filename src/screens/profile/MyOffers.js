@@ -176,7 +176,7 @@ export default class MyOffers extends React.PureComponent {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
 

@@ -37,9 +37,18 @@ export default class AnimatedInputBox extends React.PureComponent {
     }).start();
   };
 
+  componentDidUpdate() {
+    if (this.state.isFocused === false) {
+      Animated.timing(this._animatedIsFocused, {
+        toValue: this.props.value !== '' ? 1 : 0,
+        duration: 400,
+      }).start();
+    }
+  }
+
   render() {
     const {
-      value,
+      value = '',
       onChangeText = () => {},
       leftTextClick = () => {},
       placeholder,
@@ -62,17 +71,21 @@ export default class AnimatedInputBox extends React.PureComponent {
       leftTextFlex = 0.3,
       inputHeight = 0.09,
       placecolor = '#6d6a57',
-      changecolor=false,
-      placefont=14,
+      changecolor = false,
+      placefont = 14,
       boldinputText = false,
       ...prop
     } = this.props;
+    const contentExists = String(value).trim().length > 0 ? true : false;
     const {isFocused} = this.state;
     return (
       <View
         styleName="sm-gutter"
         style={StyleSheet.flatten([
-          {backgroundColor: 'white', height: height * inputHeight},
+          {
+            backgroundColor: 'white',
+            height: height * inputHeight,
+          },
           containerstyle,
         ])}>
         {showPlaceholder ? (
@@ -92,7 +105,10 @@ export default class AnimatedInputBox extends React.PureComponent {
                 {
                   fontSize: placefont,
                   fontWeight: '700',
-                  color: changecolor && isFocused ? Pref.RED : placecolor,
+                  color:
+                    changecolor && (isFocused || contentExists)
+                      ? Pref.RED
+                      : placecolor,
                 },
                 placeholderStyle,
               ])}>{`${placeholder}`}</Caption>
@@ -208,7 +224,7 @@ const styles = StyleSheet.create({
     height: 56,
     flex: 0.8,
     color: 'black',
-    letterSpacing:0.5
+    letterSpacing: 0.5,
   },
   input1: {
     marginTop: sizeHeight(2.5),

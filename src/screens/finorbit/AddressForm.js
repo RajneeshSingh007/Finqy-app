@@ -44,6 +44,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const theme = {
   ...DefaultTheme,
@@ -111,32 +112,36 @@ export default class AddressForm extends React.PureComponent {
   };
 
   fetchcityCurrentstate = (value) => {
-    if (value !== '' && value.length === 6) {
-      this.setState({pinCodec: value});
-      const url = `${Pref.FindCityState}?pincode=${value}`;
-      //console.log(`url`, url);
-      Helper.getNetworkHelper(
-        url,
-        Pref.methodGet,
-        (result) => {
-          //console.log(`result`, result);
-          if (result === 'no data found') {
-            this.setState({
-              cityCdc: '',
-              stateCdc: '',
-              pinCodec: '',
-            });
-          } else {
-            const sp = result.split('@');
-            const state = String(sp[0]).trim();
-            const city = String(sp[1]).trim();
-            this.setState({cityCdc: state, stateCdc: city});
-          }
-        },
-        (error) => {
-          //console.log(`error`, error);
-        },
-      );
+    if (String(value) !== '' && String(value).match(/^[0-9]*$/g) !== null) {
+      if (value.length === 6) {
+        this.setState({pinCodec: value});
+        const url = `${Pref.FindCityState}?pincode=${value}`;
+        //console.log(`url`, url);
+        Helper.getNetworkHelper(
+          url,
+          Pref.methodGet,
+          (result) => {
+            //console.log(`result`, result);
+            if (result === 'no data found') {
+              this.setState({
+                cityCdc: '',
+                stateCdc: '',
+                pinCodec: '',
+              });
+            } else {
+              const sp = result.split('@');
+              const state = String(sp[0]).trim();
+              const city = String(sp[1]).trim();
+              this.setState({cityCdc: state, stateCdc: city});
+            }
+          },
+          (error) => {
+            //console.log(`error`, error);
+          },
+        );
+      } else {
+        this.setState({cityCdc: '', stateCdc: '', pinCodec: value});
+      }
     } else {
       this.setState({cityCdc: '', stateCdc: '', pinCodec: value});
     }
@@ -153,112 +158,66 @@ export default class AddressForm extends React.PureComponent {
     const ispolicy = title && title === 'Vector Plus' ? true : false;
     return (
       <View>
-        <View
+        {/* <View
           style={{
             marginTop: sizeHeight(2),
             marginBottom: sizeHeight(1),
           }}
           styleName="horizontal">
-          {/* <Icons name={'npm'} size={24} style={{ color: '#e21226', padding: 4, alignSelf: 'center', marginStart: sizeWidth(1) }} /> */}
           <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Subtitle style={styles.title}> {`Address Information`}</Subtitle>
+            <Title style={styles.title}> {`Address Information`}</Title>
           </View>
         </View>
-        <View style={styles.line} />
+        <View style={styles.line} /> */}
         {ispolicy ? (
-          <View
-            styleName="vertical"
-            style={{marginStart: sizeWidth(2), paddingVertical: 10}}>
-            <Subtitle
-              style={StyleSheet.flatten([styles.title, {fontSize: 15}])}>
-              {`Permanent Address`}
-            </Subtitle>
+          <View styleName="vertical" style={styles.radiocont}>
+            <Title style={styles.title}>{`Permanent Address`}</Title>
           </View>
         ) : null}
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={'Address Line 1*'}
-          placeholder={'Enter address line 1'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Address Line 1*'}
           onChangeText={(value) => this.setState({addressLine1Lang1p: value})}
           value={this.state.addressLine1Lang1p}
-          theme={theme}
           returnKeyType={'next'}
         />
 
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={'Address Line 2*'}
-          placeholder={'Enter address line 2'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Address Line 2*'}
           onChangeText={(value) => this.setState({addressLine2Lang1p: value})}
           value={this.state.addressLine2Lang1p}
-          theme={theme}
           returnKeyType={'next'}
         />
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={`Pincode *`}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={`Pincode *`}
           maxLength={6}
           keyboardType={'number-pad'}
-          placeholder={'Enter pincode'}
-          placeholderTextColor={'#DEDEDE'}
           onChangeText={this.fetchcitystate}
           value={this.state.pinCodep}
-          theme={theme}
           returnKeyType={'next'}
         />
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={`City`}
-          placeholder={'Enter pincode'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={`City`}
           onChangeText={(value) => this.setState({cityCdp: value})}
           value={this.state.cityCdp}
-          theme={theme}
           editable={false}
           disabled={true}
           returnKeyType={'next'}
         />
-        <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={`State`}
-          placeholder={'Enter state'}
-          placeholderTextColor={'#DEDEDE'}
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={`State`}
           onChangeText={(value) => this.setState({stateCdp: value})}
           value={this.state.stateCdp}
-          theme={theme}
           returnKeyType={'next'}
           editable={false}
           disabled={true}
@@ -266,13 +225,7 @@ export default class AddressForm extends React.PureComponent {
 
         {ispolicy ? (
           <View>
-            <View
-              styleName="vertical"
-              style={{
-                marginStart: sizeWidth(2),
-                paddingVertical: 10,
-                marginVertical: 4,
-              }}>
+            <View styleName="vertical" style={styles.radiocont}>
               <View styleName="horizontal" style={{marginBottom: 16}}>
                 <Checkbox.Android
                   status={
@@ -316,132 +269,83 @@ export default class AddressForm extends React.PureComponent {
                     });
                   }}
                 />
-                <Subtitle
+                <Title
                   style={StyleSheet.flatten([
                     styles.title,
                     {
-                      fontSize: 15,
-                      fontWeight: '400',
-                      letterSpacing: 0,
+                      fontSize: 14,
                       alignSelf: 'center',
+                      color: '#555555',
                     },
                   ])}>
                   {`Permanent address same as current address *`}
-                </Subtitle>
+                </Title>
               </View>
 
-              <Subtitle
-                style={StyleSheet.flatten([styles.title, {fontSize: 15}])}>
+              <Title style={StyleSheet.flatten([styles.title])}>
                 {`Current Address`}
-              </Subtitle>
+              </Title>
             </View>
 
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={'Address Line 1*'}
-              placeholder={'Enter address line 1'}
-              placeholderTextColor={'#DEDEDE'}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={'Address Line 1*'}
               onChangeText={(value) =>
                 this.setState({addressLine1Lang1c: value})
               }
               value={this.state.addressLine1Lang1c}
-              theme={theme}
               returnKeyType={'next'}
             />
 
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={'Address Line 2*'}
-              placeholder={'Enter address line 2'}
-              placeholderTextColor={'#DEDEDE'}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={'Address Line 2*'}
               onChangeText={(value) =>
                 this.setState({addressLine2Lang1c: value})
               }
               value={this.state.addressLine2Lang1c}
-              theme={theme}
               returnKeyType={'next'}
             />
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={`Pincode *`}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={`Pincode *`}
               maxLength={6}
               keyboardType={'number-pad'}
-              placeholder={'Enter pincode'}
               placeholderTextColor={'#DEDEDE'}
               onChangeText={this.fetchcityCurrentstate}
               value={this.state.pinCodec}
-              theme={theme}
               returnKeyType={'next'}
             />
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={`City`}
-              placeholder={'Enter pincode'}
-              placeholderTextColor={'#DEDEDE'}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={`City`}
               onChangeText={(value) => this.setState({cityCdc: value})}
               value={this.state.cityCdc}
-              theme={theme}
               editable={false}
               disabled={true}
               returnKeyType={'next'}
             />
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={`State`}
-              placeholder={'Enter state'}
-              placeholderTextColor={'#DEDEDE'}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={`State`}
               onChangeText={(value) => this.setState({stateCdc: value})}
               value={this.state.stateCdc}
-              theme={theme}
               returnKeyType={'next'}
               editable={false}
               disabled={true}
             />
 
-            <TextInput
-              mode="flat"
-              underlineColor="transparent"
-              underlineColorAndroid="transparent"
-              style={[
-                styles.inputStyle,
-                // { marginVertical: sizeHeight(1) },
-              ]}
-              label={'Referral Code'}
-              placeholder={'Enter referral code'}
-              placeholderTextColor={'#DEDEDE'}
+            <AnimatedInputBox
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              placeholder={'Referral Code'}
               onChangeText={(value) => this.setState({ref: value})}
               value={this.state.ref}
-              theme={theme}
               returnKeyType={'next'}
             />
           </View>
@@ -472,12 +376,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: 'Rubik',
-    fontFamily: 'bold',
-    letterSpacing: 1,
-    color: '#292929',
-    alignSelf: 'flex-start',
-    fontWeight: 'bold',
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+    paddingVertical:4
   },
   inputStyle: {
     height: sizeHeight(8),
@@ -559,5 +462,16 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     padding: 4,
     marginHorizontal: 8,
+  },
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    alignContent: 'center',
+    paddingVertical: 10,
+  },
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
   },
 });

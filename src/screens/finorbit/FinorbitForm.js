@@ -106,21 +106,21 @@ export default class FinorbitForm extends React.PureComponent {
     const {navigation} = this.props;
     const url = navigation.getParam('url', '');
     const title = navigation.getParam('title', '');
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, (value) => {
-      this.setState({token: value}, () => {
-        Pref.getVal(Pref.userData, (userData) => {
-          this.setState({
-            userData: userData,
-            imageUrl: url,
-            title: title,
-            isMounted: true,
-            currentPosition: 3,
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({token: value}, () => {
+          Pref.getVal(Pref.userData, (userData) => {
+            this.setState({
+              userData: userData,
+              imageUrl: url,
+              title: title,
+              isMounted: true,
+              currentPosition: 0,
+            });
           });
         });
       });
     });
-    //});
   }
 
   backClick = () => {
@@ -772,7 +772,9 @@ export default class FinorbitForm extends React.PureComponent {
                 split.length === 2
                   ? `${split[0]} ${split[1]}`
                   : split.length === 3
-                  ? `${split[1]} ${split[2]}`
+                  ? `${split[0]} ${split[1]} ${split[2]}`
+                  : split.length === 4
+                  ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
                   : split[0]
               }
               bottomtext={
@@ -785,12 +787,17 @@ export default class FinorbitForm extends React.PureComponent {
                       style={
                         styles.passText
                       }>{`${split[1]} ${split[2]}`}</Title>
+                  ) : split.length === 4 ? (
+                    <Title
+                      style={
+                        styles.passText
+                      }>{`${split[1]} ${split[2]} ${split[3]}`}</Title>
                   ) : null}
                 </>
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
             <StepIndicator

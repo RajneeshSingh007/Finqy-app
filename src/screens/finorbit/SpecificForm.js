@@ -372,7 +372,7 @@ export default class SpecificForm extends React.PureComponent {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View>
-          <View
+          {/* <View
             style={{
               marginTop: sizeHeight(2),
               marginBottom: sizeHeight(1),
@@ -382,7 +382,7 @@ export default class SpecificForm extends React.PureComponent {
               <Title style={styles.title}> {`Member Details *`}</Title>
             </View>
           </View>
-          <View style={styles.line} />
+          <View style={styles.line} /> */}
           <AnimatedInputBox
             placeholder={'Full Name'}
             onChangeText={(value) =>
@@ -1384,7 +1384,9 @@ export default class SpecificForm extends React.PureComponent {
           this.state.claim_type === 'Family Floater') ? (
           <View>
             <View style={styles.radiocont}>
-              <View style={styles.radiodownbox}>
+              <View style={StyleSheet.flatten([styles.radiodownbox,{
+                height:264
+              }])}>
                 <Title style={styles.bbstyle}>{`Family Floater *`}</Title>
 
                 <RadioButton.Group
@@ -1847,9 +1849,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   line: {
-    backgroundColor: Pref.RED,
-    height: 1.2,
-    marginHorizontal: sizeWidth(3),
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
     marginTop: 4,
     marginBottom: 4,
   },
@@ -1862,13 +1866,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontFamily: 'bold',
-    letterSpacing: 1,
-    color: '#292929',
-    alignSelf: 'flex-start',
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
   },
   inputStyle: {
     height: sizeHeight(7.5),
@@ -1921,6 +1924,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     alignSelf: 'center',
     marginStart: 4,
+    letterSpacing: 0.5,
   },
   bbstyle: {
     fontSize: 14,

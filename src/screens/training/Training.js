@@ -264,7 +264,7 @@ export default class Training extends React.PureComponent {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
             <View styleName="horizontal v-end h-end md-gutter">

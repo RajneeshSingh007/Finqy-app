@@ -48,6 +48,8 @@ import Lodash from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../../util/Loader';
 import DropDown from '../common/CommonDropDown';
+import CScreen from '../component/CScreen';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 export default class Samadhan extends React.Component {
   constructor(props) {
@@ -81,13 +83,13 @@ export default class Samadhan extends React.Component {
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (value) =>
-        this.setState({userData: value, ref: value.refercode}, () => {
-          Pref.getVal(Pref.saveToken, (tt) => this.setState({token: tt}));
-        }),
-      );
-    });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, (value) =>
+      this.setState({userData: value, ref: value.refercode}, () => {
+        Pref.getVal(Pref.saveToken, (tt) => this.setState({token: tt}));
+      }),
+    );
+    //});
   }
 
   componentWillUnMount() {
@@ -129,8 +131,6 @@ export default class Samadhan extends React.Component {
     }
 
     if (checkData && this.state.isTermSelected) {
-      console.log(`result`, this.state.token);
-
       this.setState({loading: true});
       Helper.networkHelperTokenContentType(
         `${Pref.FinOrbitFormUrl}insurance_samadhan.php`,
@@ -138,7 +138,6 @@ export default class Samadhan extends React.Component {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log(`result`, result);
           const {response_header} = result;
           const {res_type} = response_header;
           this.setState({loading: false});
@@ -168,25 +167,26 @@ export default class Samadhan extends React.Component {
 
   render() {
     return (
-      <CommonScreen
-        title={''}
-        loading={this.state.loading}
-        absoluteBody={<Loader isShow={this.state.loading} />}
+      <CScreen
+        absolute={<Loader isShow={this.state.loading} />}
         body={
           <>
             <LeftHeaders
-              title={'Insurance Samadhan'}
+              title={`Insurance Samadhan`}
+              bottomtext={
+                <>
+                  {`Insurance `}
+                  {<Title style={styles.passText}>{`Samadhan`}</Title>}
+                </>
+              }
+              bottomtextStyle={{
+                color: '#555555',
+                fontSize: 20,
+              }}
               showBack
-              url={require('../../res/images/samadhan.png')}
-              showAvtar
             />
 
-            <Card
-              style={{
-                marginHorizontal: sizeWidth(4),
-                marginVertical: sizeHeight(2),
-                paddingHorizontal: sizeWidth(0),
-              }}>
+            <View styleName="md-gutter">
               <CustomForm
                 value={this.state.name}
                 onChange={(v) => this.setState({name: v})}
@@ -196,11 +196,15 @@ export default class Samadhan extends React.Component {
 
               <CustomForm
                 value={this.state.mobile}
-                onChange={(v) => this.setState({mobile: v})}
                 label={`Mobile Number *`}
                 placeholder={`Enter mobile number`}
                 keyboardType={'numeric'}
                 maxLength={10}
+                onChange={(value) => {
+                  if (String(value).match(/^[0-9]*$/g) !== null) {
+                    this.setState({mobile: value});
+                  }
+                }}
               />
 
               <CustomForm
@@ -211,17 +215,8 @@ export default class Samadhan extends React.Component {
                 keyboardType={'email-address'}
               />
 
-              <View
-                style={{
-                  marginTop: 8,
-                  marginBottom: 8,
-                  marginStart: 8,
-                  borderBottomColor: Colors.grey300,
-                  borderRadius: 2,
-                  borderBottomWidth: 0.6,
-                  alignContents: 'center',
-                }}>
-                <Subtitle style={styles.bbstyle}>{`Policy Type *`}</Subtitle>
+              <View style={styles.radiocont}>
+                <Title style={styles.bbstyle}>{`Policy Type *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={(value) => {
@@ -269,55 +264,39 @@ export default class Samadhan extends React.Component {
                         value="Life Insurance"
                         style={{alignSelf: 'center', justifyContent: 'center'}}
                       />
-                      <Subtitle
+                      <Title
                         styleName="v-center h-center"
                         style={{
                           alignSelf: 'center',
                           justifyContent: 'center',
-                        }}>{`Life Insurance`}</Subtitle>
+                        }}
+                        style={styles.textopen}>{`Life Insurance`}</Title>
                     </View>
                     <View styleName="horizontal">
                       <RadioButton
                         value="Health Insurance"
                         style={{alignSelf: 'center', justifyContent: 'center'}}
                       />
-                      <Subtitle
+                      <Title
                         styleName="v-center h-center"
-                        style={{
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                        }}>{`Health Insurance`}</Subtitle>
+                        style={styles.textopen}>{`Health Insurance`}</Title>
                     </View>
                     <View styleName="horizontal">
                       <RadioButton
                         value="General Insurance"
                         style={{alignSelf: 'center', justifyContent: 'center'}}
                       />
-                      <Subtitle
+                      <Title
                         styleName="v-center h-center"
-                        style={{
-                          alignSelf: 'center',
-                          justifyContent: 'center',
-                        }}>{`General Insurance`}</Subtitle>
+                        style={styles.textopen}>{`General Insurance`}</Title>
                     </View>
                   </View>
                 </RadioButton.Group>
               </View>
 
               {this.state.showCompType ? (
-                <View
-                  style={{
-                    marginTop: 8,
-                    marginBottom: 8,
-                    marginStart: 8,
-                    borderBottomColor: Colors.grey300,
-                    borderRadius: 2,
-                    borderBottomWidth: 0.6,
-                    alignContents: 'center',
-                  }}>
-                  <Subtitle style={styles.bbstyle}>
-                    {`Complaint Type *`}
-                  </Subtitle>
+                <View style={styles.radiocont}>
+                  <Title style={styles.bbstyle}>{`Complaint Type *`}</Title>
 
                   <RadioButton.Group
                     onValueChange={(value) =>
@@ -335,12 +314,9 @@ export default class Samadhan extends React.Component {
                                 justifyContent: 'center',
                               }}
                             />
-                            <Subtitle
+                            <Title
                               styleName="v-center h-center"
-                              style={{
-                                alignSelf: 'center',
-                                justifyContent: 'center',
-                              }}>{`${e.value}`}</Subtitle>
+                              style={styles.textopen}>{`${e.value}`}</Title>
                           </View>
                         );
                       })}
@@ -349,12 +325,7 @@ export default class Samadhan extends React.Component {
                 </View>
               ) : null}
 
-              <View
-                styleName="horizontal"
-                style={{
-                  marginHorizontal: sizeWidth(2),
-                  alignContent: 'center',
-                }}>
+              <View styleName="horizontal" style={styles.copy}>
                 <Checkbox.Android
                   status={this.state.isTermSelected ? 'checked' : 'unchecked'}
                   selectedColor={Pref.PRIMARY_COLOR}
@@ -364,43 +335,277 @@ export default class Samadhan extends React.Component {
                 />
                 <TouchableWithoutFeedback
                   onPress={() => Linking.openURL(Pref.TCondition)}>
-                  <Subtitle
-                    style={{
-                      fontSize: 16,
-                      color: '#292929',
-                      alignSelf: 'center',
-                    }}>
+                  <Title style={styles.textopen}>
                     {`I Accept `}
-                    <Subtitle
-                      style={{
-                        fontSize: 16,
-                        color: Pref.CARROT_ORANGE,
-                        alignSelf: 'center',
-                      }}>{`Terms & Conditions`}</Subtitle>
-                  </Subtitle>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.textopen,
+                        {
+                          color: Pref.CARROT_ORANGE,
+                          alignSelf: 'center',
+                        },
+                      ])}>{`Terms & Conditions`}</Title>
+                  </Title>
                 </TouchableWithoutFeedback>
               </View>
+            </View>
 
-              <Button
+            <View styleName="horizontal space-between md-gutter v-end h-end">
+              {/* <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}
                 loading={false}
-                style={[styles.loginButtonStyle]}
+                style={styles.loginButtonStyle}
+                onPress={this.login}>
+                <Title style={styles.btntext}>{'Sign In'}</Title>
+              </Button> */}
+              <Button
+                mode={'flat'}
+                uppercase={false}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
                 onPress={this.submitt}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    letterSpacing: 1,
-                  }}>
-                  {'SUBMIT'}
-                </Text>
+                <Title style={styles.btntext}>{`Submit`}</Title>
               </Button>
-            </Card>
+            </View>
           </>
         }
       />
+      // <CommonScreen
+      //   title={''}
+      //   loading={this.state.loading}
+      //   absoluteBody={<Loader isShow={this.state.loading} />}
+      //   body={
+      //     <>
+      // <LeftHeaders
+      //   title={'Insurance Samadhan'}
+      //   showBack
+      //   url={require('../../res/images/samadhan.png')}
+      //   showAvtar
+      // />
+
+      //       <Card
+      //         style={{
+      //           marginHorizontal: sizeWidth(4),
+      //           marginVertical: sizeHeight(2),
+      //           paddingHorizontal: sizeWidth(0),
+      //         }}>
+      // <CustomForm
+      //   value={this.state.name}
+      //   onChange={(v) => this.setState({name: v})}
+      //   label={`Full Name *`}
+      //   placeholder={`Enter full name`}
+      // />
+
+      // <CustomForm
+      //   value={this.state.mobile}
+      //   onChange={(v) => this.setState({mobile: v})}
+      //   label={`Mobile Number *`}
+      //   placeholder={`Enter mobile number`}
+      //   keyboardType={'numeric'}
+      //   maxLength={10}
+      // />
+
+      // <CustomForm
+      //   value={this.state.email}
+      //   onChange={(v) => this.setState({email: v})}
+      //   label={`Email`}
+      //   placeholder={`Enter email`}
+      //   keyboardType={'email-address'}
+      // />
+
+      // <View
+      //   style={{
+      //     marginTop: 8,
+      //     marginBottom: 8,
+      //     marginStart: 8,
+      //     borderBottomColor: Colors.grey300,
+      //     borderRadius: 2,
+      //     borderBottomWidth: 0.6,
+      //     alignContents: 'center',
+      //   }}>
+      //   <Title style={styles.bbstyle}>{`Policy Type *`}</Title>
+
+      //   <RadioButton.Group
+      //     onValueChange={(value) => {
+      //       let clist = [];
+      //       if (value === `Health Insurance`) {
+      //         clist = [
+      //           {value: `Claim is rejected`},
+      //           {value: `Claim is delayed`},
+      //           {value: `Policy is cancelled`},
+      //           {value: `No response on the claim status`},
+      //           {value: `Group insurance claim`},
+      //           {value: `Other`},
+      //         ];
+      //       } else if (value === `Life Insurance`) {
+      //         clist = [
+      //           {value: `Death claim rejected`},
+      //           {value: `Death claim delayed`},
+      //           {value: `Maturity claim not paid`},
+      //           {value: `Moneyback not paid`},
+      //           {value: `Misselling and Fraud sales`},
+      //           {value: `Policy Bond not received`},
+      //           {value: `Free Look claim not received`},
+      //           {value: `Other`},
+      //         ];
+      //       } else if (value === `General Insurance`) {
+      //         clist = [
+      //           {value: `Motor Insurance claim`},
+      //           {value: `Travel Insurance claim`},
+      //           {value: `Fidelity claim`},
+      //           {value: `Commercial claim`},
+      //           {value: `Property claim`},
+      //           {value: `Other`},
+      //         ];
+      //       }
+      //       this.setState({
+      //         policy_type: value,
+      //         showCompType: true,
+      //         compTypeList: clist,
+      //       });
+      //     }}
+      //     value={this.state.policy_type}>
+      //     <View styleName="vertical" style={{marginBottom: 8}}>
+      //       <View styleName="horizontal">
+      //         <RadioButton
+      //           value="Life Insurance"
+      //           style={{alignSelf: 'center', justifyContent: 'center'}}
+      //         />
+      //         <Title
+      //           styleName="v-center h-center"
+      //           style={{
+      //             alignSelf: 'center',
+      //             justifyContent: 'center',
+      //           }}>{`Life Insurance`}</Title>
+      //       </View>
+      //       <View styleName="horizontal">
+      //         <RadioButton
+      //           value="Health Insurance"
+      //           style={{alignSelf: 'center', justifyContent: 'center'}}
+      //         />
+      //         <Title
+      //           styleName="v-center h-center"
+      //           style={{
+      //             alignSelf: 'center',
+      //             justifyContent: 'center',
+      //           }}>{`Health Insurance`}</Title>
+      //       </View>
+      //       <View styleName="horizontal">
+      //         <RadioButton
+      //           value="General Insurance"
+      //           style={{alignSelf: 'center', justifyContent: 'center'}}
+      //         />
+      //         <Title
+      //           styleName="v-center h-center"
+      //           style={{
+      //             alignSelf: 'center',
+      //             justifyContent: 'center',
+      //           }}>{`General Insurance`}</Title>
+      //       </View>
+      //     </View>
+      //   </RadioButton.Group>
+      // </View>
+
+      // {this.state.showCompType ? (
+      //   <View
+      //     style={{
+      //       marginTop: 8,
+      //       marginBottom: 8,
+      //       marginStart: 8,
+      //       borderBottomColor: Colors.grey300,
+      //       borderRadius: 2,
+      //       borderBottomWidth: 0.6,
+      //       alignContents: 'center',
+      //     }}>
+      //     <Title style={styles.bbstyle}>
+      //       {`Complaint Type *`}
+      //     </Title>
+
+      //     <RadioButton.Group
+      //       onValueChange={(value) =>
+      //         this.setState({complaint_type: value})
+      //       }
+      //       value={this.state.complaint_type}>
+      //       <View styleName="vertical" style={{marginBottom: 8}}>
+      //         {this.state.compTypeList.map((e) => {
+      //           return (
+      //             <View styleName="horizontal">
+      //               <RadioButton
+      //                 value={`${e.value}`}
+      //                 style={{
+      //                   alignSelf: 'center',
+      //                   justifyContent: 'center',
+      //                 }}
+      //               />
+      //               <Title
+      //                 styleName="v-center h-center"
+      //                 style={{
+      //                   alignSelf: 'center',
+      //                   justifyContent: 'center',
+      //                 }}>{`${e.value}`}</Title>
+      //             </View>
+      //           );
+      //         })}
+      //       </View>
+      //     </RadioButton.Group>
+      //   </View>
+      // ) : null}
+
+      // <View
+      //   styleName="horizontal"
+      //   style={{
+      //     marginHorizontal: sizeWidth(2),
+      //     alignContent: 'center',
+      //   }}>
+      //   <Checkbox.Android
+      //     status={this.state.isTermSelected ? 'checked' : 'unchecked'}
+      //     selectedColor={Pref.PRIMARY_COLOR}
+      //     onPress={() =>
+      //       this.setState({isTermSelected: !this.state.isTermSelected})
+      //     }
+      //   />
+      //   <TouchableWithoutFeedback
+      //     onPress={() => Linking.openURL(Pref.TCondition)}>
+      //     <Title
+      //       style={{
+      //         fontSize: 16,
+      //         color: '#292929',
+      //         alignSelf: 'center',
+      //       }}>
+      //       {`I Accept `}
+      //       <Title
+      //         style={{
+      //           fontSize: 16,
+      //           color: Pref.CARROT_ORANGE,
+      //           alignSelf: 'center',
+      //         }}>{`Terms & Conditions`}</Title>
+      //     </Title>
+      //   </TouchableWithoutFeedback>
+      // </View>
+
+      //         <Button
+      //           mode={'flat'}
+      //           uppercase={true}
+      //           dark={true}
+      //           loading={false}
+      //           style={[styles.loginButtonStyle]}
+      //           onPress={this.submitt}>
+      //           <Text
+      //             style={{
+      //               color: 'white',
+      //               fontSize: 16,
+      //               letterSpacing: 1,
+      //             }}>
+      //             {'SUBMIT'}
+      //           </Text>
+      //         </Button>
+      //       </Card>
+      //     </>
+      //   }
+      // />
     );
   }
 }
@@ -409,6 +614,39 @@ export default class Samadhan extends React.Component {
  * styles
  */
 const styles = StyleSheet.create({
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: Pref.RED,
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
@@ -456,14 +694,15 @@ const styles = StyleSheet.create({
   },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    marginVertical: sizeHeight(3.5),
     backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    paddingVertical: 4,
+    fontWeight: '700',
   },
   boxsubtitle: {
     fontSize: 16,
@@ -478,11 +717,25 @@ const styles = StyleSheet.create({
   },
   bbstyle: {
     fontSize: 16,
-    fontFamily: 'Rubik',
-    fontWeight: '400',
-    color: '#767676',
-    lineHeight: 25,
-    padding: 4,
-    marginHorizontal: 8,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+    letterSpacing: 0.5,
+    paddingVertical: 10,
+  },
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+    paddingVertical: 10,
+  },
+  copy: {
+    marginStart: 10,
+    marginEnd: 10,
+    alignContent: 'center',
+    paddingVertical: 10,
   },
 });

@@ -761,7 +761,7 @@ export default class CommonForm extends React.PureComponent {
         ) : null}
 
         {newform === true ? (
-          <View style={styles.radiocont}>
+          <View style={StyleSheet.flatten([styles.radiocont,{marginTop:8}])}>
             <Title style={styles.bbstyle}>{`Nominee Relation *`}</Title>
             <RadioButton.Group
               onValueChange={(value) => this.setState({nrelation: value})}
@@ -1088,6 +1088,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     alignSelf: 'center',
     marginStart: 4,
+    letterSpacing: 0.5,
   },
   downIcon: {
     alignSelf: 'center',

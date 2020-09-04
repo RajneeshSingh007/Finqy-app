@@ -154,7 +154,7 @@ export default class FileUploadForm extends React.PureComponent {
 
         {title === 'Motor Insurance' ? (
           <View>
-            <View style={styles.line1} />
+            {/* <View style={styles.line1} /> */}
 
             <CommonFileUpload
               title={'RC Copy *'}
@@ -236,7 +236,7 @@ export default class FileUploadForm extends React.PureComponent {
         title === 'Loan Against Property' ||
         title === 'Home Loan' ? (
           <View>
-            <View style={styles.line1} />
+            {/* <View style={styles.line1} /> */}
 
             <View
               styleName="vertical"
@@ -315,7 +315,7 @@ export default class FileUploadForm extends React.PureComponent {
               </View>
             ) : null}
 
-            <View style={styles.line1} />
+            {/* <View style={styles.line1} /> */}
 
             <CommonFileUpload
               title={
@@ -371,11 +371,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   title1: {
-    fontSize: 16,
-    fontFamily: 'Rubik',
-    fontFamily: '400',
-    letterSpacing: 1,
-    color: '#242424',
-    alignSelf: 'flex-start',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+    marginVertical:8
   },
 });

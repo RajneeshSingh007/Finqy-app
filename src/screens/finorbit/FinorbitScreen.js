@@ -108,7 +108,16 @@ export default class FinorbitScreen extends React.PureComponent {
   getFilterList = () => {
     const {selectedText, dataList} = this.state;
     const clone = JSON.parse(JSON.stringify(dataList));
-    const filter = Lodash.filter(clone, (io) => io.name.includes(selectedText));
+    let filter = Lodash.filter(clone, (io) => io.name.includes(selectedText));
+    if(selectedText.includes('Investment')){
+     filter = Lodash.filter(
+       clone,
+       (io) =>
+         !io.name.includes('Loan') &&
+         !io.name.includes('Insurance') &&
+         !io.name.includes('Credit'),
+     );
+    }
     return filter;
   };
 
@@ -141,7 +150,7 @@ export default class FinorbitScreen extends React.PureComponent {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
 
@@ -154,7 +163,7 @@ export default class FinorbitScreen extends React.PureComponent {
               source={require('../../res/images/finpro.jpg')}
               styleName="large"
               style={{
-                resizeMode:'contain'
+                resizeMode: 'contain',
               }}
             />
           </>

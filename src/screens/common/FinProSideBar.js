@@ -59,7 +59,9 @@ export default class FinProSideBar extends React.PureComponent {
     const size = list.length;
     return (
       <View style={{flex: 1, flexDirection: 'row'}}>
-        <View style={{flex: 0.4, overflow: 'hidden'}} />
+        <TouchableWithoutFeedback onPress={backClicked}>
+          <View style={{flex: 0.4, overflow: 'hidden', opactiy: 0}} />
+        </TouchableWithoutFeedback>
         <View style={styles.mainContainer}>
           <DrawerTop backClicked={backClicked} />
           <View styleName="v-center h-center sm-gutter" style={styles.maiscons}>

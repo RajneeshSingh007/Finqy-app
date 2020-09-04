@@ -157,7 +157,7 @@ export default class AddTeam extends React.Component {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
 

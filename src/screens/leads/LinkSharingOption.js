@@ -143,14 +143,15 @@ export default class LinkSharingOption extends React.PureComponent {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
 
-            <View style={{
-              marginStart:16,
-              marginEnd:16
-            }}>
+            <View
+              style={{
+                marginStart: 16,
+                marginEnd: 16,
+              }}>
               <View styleName="md-gutter">
                 <Title
                   style={{

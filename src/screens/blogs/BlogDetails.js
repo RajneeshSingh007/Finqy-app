@@ -152,7 +152,7 @@ export default class BlogDetails extends React.PureComponent {
               }
               bottomtextStyle={{
                 color: '#555555',
-                fontSize: 24,
+                fontSize: 20,
               }}
             />
             {this.state.loading ? (
