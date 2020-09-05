@@ -59,6 +59,7 @@ const theme = {
 export default class BankForm extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.saveData = this.saveData.bind(this);
     this.state = {
       bank: '',
       bank_ifsc: '',
@@ -67,6 +68,20 @@ export default class BankForm extends React.PureComponent {
       account_branch: '',
       account_type: '',
     };
+  }
+
+  componentDidMount() {
+    const {saveData, title} = this.props;
+    if (saveData !== undefined && saveData !== null) {
+      this.saveData(
+        saveData.bank,
+        saveData.bank_ifsc,
+        saveData.account_no,
+        saveData.bank_account_name,
+        saveData.account_branch,
+        saveData.account_type,
+      );
+    }
   }
 
   saveData = (

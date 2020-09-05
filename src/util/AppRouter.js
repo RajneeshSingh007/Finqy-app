@@ -67,12 +67,75 @@ import Manager from './../screens/relmanager/Manager';
 import Qrc from './../screens/helpdesk/Qrc';
 import TCondition from './../screens/auth/TCondition';
 
+import FinishScreen from '../screens/common/FinishScreen';
+
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 import {Colors, IconButton} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import {BACKGROUND_COLOR} from './Pref';
-import {Platform, Dimensions, I18nManager} from 'react-native';
+import {Platform, Dimensions, I18nManager,  Animated,
+  Easing
+} from 'react-native';
 import Sidebar from './Sidebar';
+
+let SlideFromRight = (index, position, width) => {
+  const translateX = position.interpolate({
+    inputRange: [index - 1, index],
+    outputRange: [width, 0],
+  });
+
+  return {transform: [{translateX}]};
+};
+
+let SlideFromBottom = (index, position, height) => {
+  const translateY = position.interpolate({
+    inputRange: [index - 1, index],
+    outputRange: [height, 0],
+  });
+
+  return {transform: [{translateY}]};
+};
+
+let CollapseTransition = (index, position) => {
+  const opacity = position.interpolate({
+    inputRange: [index - 1, index, index + 1],
+    outputRange: [0, 1, 1],
+  });
+
+  const scaleY = position.interpolate({
+    inputRange: [index - 1, index, index + 1],
+    outputRange: [0, 1, 1],
+  });
+
+  return {
+    opacity,
+    transform: [{scaleY}],
+  };
+};
+
+const handleCustomTransition = (nav) => {
+  return {
+    transitionSpec: {
+      duration: 750,
+      easing: Easing.out(Easing.poly(10)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: (sceneProps) => {
+      const {layout, position, scene} = sceneProps;
+      const width = layout.initWidth;
+      const height = layout.initHeight;
+      const {index, route} = scene;
+      const params = route.params || {}; // <- That's new
+      const transition = params.transition || 'default'; // <- That's new
+      return {
+        default: CollapseTransition(index, position, width),
+        bottomTransition: SlideFromBottom(index, position, height),
+        collapseTransition: CollapseTransition(index, position),
+      }[transition];
+    },
+  };
+};
 
 const {width} = Dimensions.get('window');
 
@@ -85,6 +148,7 @@ const HomeNav = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: 'HomeScreen',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -95,6 +159,7 @@ const FinNav = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: 'FinorbitScreen',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -105,12 +170,14 @@ const ProNav = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: 'ProfScreen',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
 const LeadNav = createStackNavigator(
   {
     LeadList: {screen: LeadList},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
@@ -196,6 +263,7 @@ const AppNav = createMaterialBottomTabNavigator(
     sceneAnimationEnabled: true,
     barStyle: {backgroundColor: Colors.white},
     resetOnBlur: true,
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -207,6 +275,7 @@ const WalletNav = createStackNavigator(
   {
     headerMode: 'none',
     initialRouteName: 'MyWallet',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -218,6 +287,7 @@ const FinOrbitNav = createStackNavigator(
     Payment: {screen: Payment},
     VectorForm: {screen: VectorForm},
     VectorPayment: {screen: VectorPayment},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
@@ -229,6 +299,7 @@ const BlogNav = createStackNavigator(
   {
     Blogs: {screen: Blogs},
     BlogDetails: {screen: BlogDetails},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
@@ -240,6 +311,7 @@ const OfferNav = createStackNavigator(
   {
     MyOffers: {screen: MyOffers},
     OffersDetails: {screen: OffersDetails},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
@@ -251,6 +323,7 @@ const OfferNav1 = createStackNavigator(
   {
     PopularPlan: {screen: PopularPlan},
     OffersDetails: {screen: OffersDetails},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
@@ -261,18 +334,23 @@ const OfferNav2 = createStackNavigator(
   {
     MarketingTool: {screen: MarketingTool},
     OffersDetails: {screen: OffersDetails},
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
     headerMode: 'none',
   },
 );
 
-const SwitchTranNav = createSwitchNavigator({
-  Training: {screen: Training},
-  Blogs: BlogNav,
-}, {
-  headerMode:'none'
-});
+const SwitchTranNav = createSwitchNavigator(
+  {
+    Training: {screen: Training},
+    Blogs: BlogNav,
+  },
+  {
+    headerMode: 'none',
+    transitionConfig: (nav) => handleCustomTransition(nav),
+  },
+);
 
 const OtherNav = createDrawerNavigator(
   {
@@ -281,8 +359,8 @@ const OtherNav = createDrawerNavigator(
     ProfileScreen: {screen: ProfileScreen},
     MyWallet: WalletNav,
     OfferNav: OfferNav,
-    OfferNav1:OfferNav1,
-    OfferNav2:OfferNav2,
+    OfferNav1: OfferNav1,
+    OfferNav2: OfferNav2,
     ReferEarn: {screen: ReferEarn},
     AddTeam: {screen: AddTeam},
     ViewTeam: {screen: ViewTeam},
@@ -291,7 +369,7 @@ const OtherNav = createDrawerNavigator(
     Samadhan: {screen: Samadhan},
     Qrc: {screen: Qrc},
     Invoice: {screen: Invoice},
-    SwitchTranNav:SwitchTranNav,
+    SwitchTranNav: SwitchTranNav,
     As26: {screen: As26},
     Certificate: {screen: Certificate},
     ChangePass: {screen: ChangePass},
@@ -301,6 +379,7 @@ const OtherNav = createDrawerNavigator(
     TCondition: {screen: TCondition},
     Payout: {screen: Payout},
     AddConnector: {screen: AddConnector},
+    Finish: {screen: FinishScreen},
   },
   {
     initialRouteName: 'Home',
@@ -316,6 +395,7 @@ const OtherNav = createDrawerNavigator(
     minSwipeDistance: width,
     drawerWidth: WIDTH_DRAWER,
     contentComponent: (props) => <Sidebar {...props} />,
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -329,6 +409,7 @@ const AuthRouter = createStackNavigator(
   {
     initialRouteName: 'IntroScreen',
     headerMode: 'none',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 
@@ -344,6 +425,7 @@ const Navigation = createSwitchNavigator(
   {
     initialRouteName: 'AuthPage',
     headerMode: 'none',
+    transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
 

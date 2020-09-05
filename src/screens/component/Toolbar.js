@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Image, Subtitle, View} from '@shoutem/ui';
+import {Image, Title, View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 
 const Toolbar = (prop) => {
@@ -25,10 +25,10 @@ const Toolbar = (prop) => {
             />
           </View>
           <View style={styles.rightcon}>
-            <Subtitle style={styles.rightText}>
+            <Title style={styles.rightText}>
               {`Login `}
               <IconChooser name={'arrow-right'} size={20} color={'#bbb8ac'} />
-            </Subtitle>
+            </Title>
             <TouchableWithoutFeedback onPress={iconClick}>
               <View style={styles.circle}>
                 <IconChooser

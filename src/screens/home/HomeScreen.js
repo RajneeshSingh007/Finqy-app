@@ -141,7 +141,6 @@ export default class HomeScreen extends React.PureComponent {
         }
       });
       Pref.getVal(Pref.USERTYPE, (v) => {
-        //console.log(v);
         this.setState({type: v});
       });
     });
@@ -151,6 +150,25 @@ export default class HomeScreen extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
+
+  logout = () => {
+    Alert.alert('Logout', 'Are you sure want to Logout?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'Ok',
+        onPress: () => {
+          Pref.setVal(Pref.saveToken, null);
+          Pref.setVal(Pref.userData, null);
+          Pref.setVal(Pref.userID, null);
+          Pref.setVal(Pref.USERTYPE, '');
+          Pref.setVal(Pref.loggedStatus, false);
+          NavigationActions.navigate('IntroScreen');
+        },
+      },
+    ]);
+  };
 
   render() {
     const {showProfile, type, userData} = this.state;
@@ -164,6 +182,7 @@ export default class HomeScreen extends React.PureComponent {
           <>
             {showProfile === true ? (
               <View styleName="vertical md-gutter" style={styles.filtercont}>
+                {/* <View style={styles.tri}></View> */}
                 <Title
                   style={StyleSheet.flatten([
                     styles.passText,
@@ -181,7 +200,7 @@ export default class HomeScreen extends React.PureComponent {
                   style={StyleSheet.flatten([
                     styles.passText,
                     {
-                      color: '#555',
+                      color: Pref.RED,
                       fontSize: 16,
                       lineHeight: 20,
                       paddingVertical: 0,
@@ -200,24 +219,7 @@ export default class HomeScreen extends React.PureComponent {
 
                 <View style={styles.line}></View>
 
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    Alert.alert('Logout', 'Are you sure want to Logout?', [
-                      {
-                        text: 'Cancel',
-                      },
-                      {
-                        text: 'Ok',
-                        onPress: () => {
-                          Pref.setVal(Pref.saveToken, null);
-                          Pref.setVal(Pref.userData, null);
-                          Pref.setVal(Pref.userID, null);
-                          Pref.setVal(Pref.loggedStatus, false);
-                          NavigationActions.navigate('IntroScreen');
-                        },
-                      },
-                    ]);
-                  }}>
+                <TouchableWithoutFeedback onPress={this.logout}>
                   <Title
                     style={StyleSheet.flatten([
                       styles.passText,
@@ -468,6 +470,21 @@ export default class HomeScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  tri: {
+    //position: 'absolute',
+    backgroundColor: 'transparent',
+    borderTopWidth: 36 / 2.0,
+    borderRightWidth: 0,
+    borderBottomWidth: 36 / 2.0,
+    borderLeftWidth: 24,
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: 'white',
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    right: -28,
+  },
   filtercont: {
     position: 'absolute',
     zIndex: 99,

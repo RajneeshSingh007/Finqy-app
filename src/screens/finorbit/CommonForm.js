@@ -125,6 +125,8 @@ export default class CommonForm extends React.PureComponent {
         saveData.nrelation || '',
         saveData.lastName || '',
         saveData.nomineename || '',
+        saveData.gst_no || '',
+        saveData.ofc_add || '',
       );
     }
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
@@ -174,6 +176,8 @@ export default class CommonForm extends React.PureComponent {
     nrelation,
     lastName,
     nomineename,
+    gst_no = '',
+    ofc_add = '',
   ) => {
     this.setState({
       name: name,
@@ -184,9 +188,9 @@ export default class CommonForm extends React.PureComponent {
       gender: gender,
       dob: dob,
       employ: employ,
-      ofc_add: address,
+      ofc_add: ofc_add || address,
       qualification: qualification,
-      gst_no: gst || '',
+      gst_no: gst_no || gst,
       nrelation: nrelation || '',
       lastName: lastName || '',
       nomineename: nomineename || '',
@@ -419,16 +423,16 @@ export default class CommonForm extends React.PureComponent {
             containerstyle={StyleSheet.flatten([
               styles.animatedInputCont,
               {
-                height: this.state.ofc_add === '' ? 56 : layheight,
+                //height: this.state.ofc_add === '' ? 64 : layheight,
               },
             ])}
-            multiline
-            onContentSizeChange={(event) => {
-              layheight =
-                this.state.ofc_add === ''
-                  ? 56
-                  : event.nativeEvent.contentSize.height;
-            }}
+            // multiline
+            // onContentSizeChange={(event) => {
+            //   layheight =
+            //     this.state.ofc_add === ''
+            //       ? 64
+            //       : event.nativeEvent.contentSize.height;
+            // }}
             onChangeText={(value) => this.setState({ofc_add: value})}
             value={this.state.ofc_add}
             editable={editable}
@@ -761,7 +765,7 @@ export default class CommonForm extends React.PureComponent {
         ) : null}
 
         {newform === true ? (
-          <View style={StyleSheet.flatten([styles.radiocont,{marginTop:8}])}>
+          <View style={StyleSheet.flatten([styles.radiocont, {marginTop: 8}])}>
             <Title style={styles.bbstyle}>{`Nominee Relation *`}</Title>
             <RadioButton.Group
               onValueChange={(value) => this.setState({nrelation: value})}

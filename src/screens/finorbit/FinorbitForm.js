@@ -210,7 +210,6 @@ export default class FinorbitForm extends React.PureComponent {
       delete commons.currentTime;
       delete commons.currentDate;
       delete commons.intervaltime;
-      console.log('commons', commons);
     }
     let result = false;
     if (commons !== null) {
@@ -726,6 +725,13 @@ export default class FinorbitForm extends React.PureComponent {
               if (res_type === 'success') {
                 Helper.showToastMessage('Form submitted successfully', 1);
                 NavigationActions.navigate('FinorbitScreen');
+                NavigationActions.navigate('Finish', {
+                  top: 'Edit Profile',
+                  red: 'Success',
+                  grey: 'Details uploaded',
+                  blue: 'Add another lead?',
+                  back: 'FinorbitScreen',
+                });
               } else {
                 Helper.showToastMessage('failed to submit form', 0);
               }
@@ -733,7 +739,14 @@ export default class FinorbitForm extends React.PureComponent {
             (error) => {
               this.setState({progressLoader: false});
               Helper.showToastMessage('Form submitted successfully', 1);
-              NavigationActions.navigate('FinorbitScreen');
+              //NavigationActions.navigate('FinorbitScreen');
+              NavigationActions.navigate('Finish', {
+                top: 'Edit Profile',
+                red: 'Success',
+                grey: 'Details uploaded',
+                blue: 'Add another lead?',
+                back: 'FinorbitScreen',
+              });
               // Helper.showToastMessage('form submitted successfully', 1);
               //Helper.showToastMessage('something wents wrong...', 0);
             },

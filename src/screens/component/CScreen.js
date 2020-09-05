@@ -5,20 +5,30 @@ import {
   StatusBar,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {SafeAreaView} from 'react-navigation';
 import {sizeHeight, sizeWidth} from '../../util/Size';
 import * as Pref from '../../util/Pref';
 import Footer from '../component/Footer';
+import IconChooser from '../common/IconChooser';
 
 export default class CScreen extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.scrollViewRef = React.createRef();
     changeNavigationBarColor(Pref.PRIMARY_COLOR, true, true);
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
   }
+
+  scrollToTop = () => {
+    const ref = this.scrollViewRef.current;
+    if (ref && ref.scrollTo) {
+      ref.scrollTo({x: 0, y: 0, animated: true});
+    }
+  };
 
   render() {
     const {body, scrollEnable = true, absolute = null} = this.props;
@@ -35,16 +45,24 @@ export default class CScreen extends React.PureComponent {
             //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             //   enabled
             //   keyboardVerticalOffset={150}>
-              <ScrollView
-                style={styles.scroller}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                keyboardShouldPersistTaps={'handled'}>
-                {body}
+            <ScrollView
+              ref={this.scrollViewRef}
+              style={styles.scroller}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps={'handled'}>
+              {body}
+              <View>
+                <TouchableWithoutFeedback onPress={this.scrollToTop}>
+                  <View styleName="v-start h-start" style={styles.topcon}>
+                    <IconChooser name={'arrow-up'} size={28} color={Pref.RED} style={styles.icon} />
+                  </View>
+                </TouchableWithoutFeedback>
                 <Footer />
-              </ScrollView>
-          //  </KeyboardAvoidingView> 
+              </View>
+            </ScrollView>
           ) : (
+            //  </KeyboardAvoidingView>
             body
           )}
           {absolute}
@@ -55,9 +73,19 @@ export default class CScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  topcon: {
+    margin: 16,
+    //position: 'absolute',
+    //right: 0,
+    //bottom: 0,
+    flexDirection:'row-reverse'
+  },
   scroller: {flex: 1},
   mainContainer: {
     flex: 1,
     backgroundColor: Pref.WHITE,
   },
+  icon:{
+    alignItems:'center'
+  }
 });

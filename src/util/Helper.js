@@ -277,7 +277,9 @@ export const networkHelperToken = (
       'Content-Type': 'application/json',
     },
   })
-    .then((response) => response.json())
+    .then((response) => {
+      return response.json();
+    })
     .then((responseJson) => {
       callback(responseJson);
     })

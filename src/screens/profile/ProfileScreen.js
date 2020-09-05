@@ -68,10 +68,12 @@ export default class ProfileScreen extends React.PureComponent {
       pancardupload: '',
       addressupload: '',
       aadharcardupload: '',
-      res: {},
+      res: null,
       utype: '',
       currentposition: 0,
       btnText: 'Next',
+      dataArray: [],
+      fileName: '',
     };
   }
 
@@ -85,10 +87,17 @@ export default class ProfileScreen extends React.PureComponent {
             const url = {
               uri: pp === '' ? Pref.profileDefaultPic : `${pp}`,
             };
+            let fileName = '';
+            if (pp !== '') {
+              const sp = pp.split('/');
+              fileName = sp[sp.length - 1];
+            }
+            //console.log('url', url, fileName);
 
             this.setState({
               userData: parseda,
               imageUrl: url,
+              fileName: fileName,
             });
             this.updateData(parseda);
           });
@@ -99,34 +108,38 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   updateData = (userData) => {
-    this.commonFormRef.current.saveData(
-      userData.rname,
-      userData.pincode,
-      userData.location,
-      userData.email,
-      userData.rcontact,
-      '',
-      '',
-      '',
-      userData.office_add,
-      '',
-      userData.gst_no,
-    );
-    this.specificFormRef.current.saveData(
-      '',
-      '',
-      '',
-      userData.aadharno,
-      userData.panno,
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-      '',
-    );
+    if (this.commonFormRef.current !== null) {
+      this.commonFormRef.current.saveData(
+        userData.rname,
+        userData.pincode,
+        userData.location,
+        userData.email,
+        userData.rcontact,
+        '',
+        '',
+        '',
+        userData.office_add,
+        '',
+        userData.gst_no,
+      );
+    }
+    if (this.specificFormRef.current !== null) {
+      this.specificFormRef.current.saveData(
+        '',
+        '',
+        '',
+        userData.aadharno,
+        userData.panno,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      );
+    }
   };
 
   componentWillUnMount() {
@@ -135,8 +148,81 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   submitt = () => {
-    const {token, res, userData, utype, currentposition} = this.state;
+    const {token, res, userData, utype, currentposition, fileName} = this.state;
     if (currentposition < 2) {
+      if (currentposition === 0) {
+        let commons = JSON.parse(
+          JSON.stringify(this.commonFormRef.current.state),
+        );
+        delete commons.genderList;
+        delete commons.employList;
+        delete commons.cityList;
+        delete commons.showCityList;
+        delete commons.showGenderList;
+        delete commons.showCalendar;
+        delete commons.showEmployList;
+        delete commons.currentDate;
+        delete commons.maxDate;
+        delete commons.gender;
+        delete commons.dob;
+        delete commons.employ;
+
+        let spcommons = JSON.parse(
+          JSON.stringify(this.specificFormRef.current.state),
+        );
+        delete spcommons.cityList;
+        delete spcommons.showCarList;
+        delete spcommons.showExisitingList;
+        delete spcommons.showCalendar;
+        delete spcommons.showLoanCityList;
+        delete spcommons.motorInsList;
+        delete spcommons.exisitingList;
+        delete spcommons.employList;
+        delete spcommons.carList;
+        delete spcommons.termInsList;
+        delete spcommons.showmotorInsList;
+        delete spcommons.showtermInsList;
+        delete spcommons.healthFList;
+        delete spcommons.showHealthFlist;
+        delete spcommons.maritalList;
+        delete spcommons.showmaritalList;
+        delete spcommons.showCompanyCityList;
+        delete spcommons.currentDate;
+        delete spcommons.maxDate;
+        delete spcommons.vectorInsuList;
+        delete spcommons.showvectorCoverList;
+        delete spcommons.showvectorInsuList;
+        delete spcommons.vectorCoverList;
+        delete spcommons.vectorTypeIns;
+        delete spcommons.vectorCover;
+        delete spcommons.qualification;
+        delete spcommons.company;
+        delete spcommons.amount;
+        delete spcommons.companylocation;
+        delete spcommons.turnover;
+        delete spcommons.nooldcard;
+        delete spcommons.existingcard;
+        delete spcommons.loan_property_city;
+        delete spcommons.rcbook;
+        delete spcommons.model;
+        delete spcommons.car_brand;
+        delete spcommons.car_value;
+        delete spcommons.floaterItemList;
+
+        if (commons != null) {
+          this.state.dataArray[0] = commons;
+        }
+        if (spcommons != null) {
+          this.state.dataArray[1] = spcommons;
+        }
+      } else if (currentposition === 1) {
+        let commons = JSON.parse(
+          JSON.stringify(this.bankFormRef.current.state),
+        );
+        if (commons != null) {
+          this.state.dataArray[2] = commons;
+        }
+      }
       this.setState(
         (prevProp) => {
           return {
@@ -160,25 +246,25 @@ export default class ProfileScreen extends React.PureComponent {
       return false;
     }
     let checkData = true;
-    console.log(`utype`, utype);
 
     let formData = new FormData();
     formData.append('user_id', userData.id);
     formData.append('type', utype);
 
-    let commons = JSON.parse(JSON.stringify(this.commonFormRef.current.state));
-    delete commons.genderList;
-    delete commons.employList;
-    delete commons.cityList;
-    delete commons.showCityList;
-    delete commons.showGenderList;
-    delete commons.showCalendar;
-    delete commons.showEmployList;
-    delete commons.currentDate;
-    delete commons.maxDate;
-    delete commons.gender;
-    delete commons.dob;
-    delete commons.employ;
+    let commons = this.state.dataArray[0];
+    //JSON.parse(JSON.stringify(this.commonFormRef.current.state));
+    // delete commons.genderList;
+    // delete commons.employList;
+    // delete commons.cityList;
+    // delete commons.showCityList;
+    // delete commons.showGenderList;
+    // delete commons.showCalendar;
+    // delete commons.showEmployList;
+    // delete commons.currentDate;
+    // delete commons.maxDate;
+    // delete commons.gender;
+    // delete commons.dob;
+    // delete commons.employ;
 
     for (var key in commons) {
       const value = commons[key];
@@ -187,47 +273,47 @@ export default class ProfileScreen extends React.PureComponent {
       }
     }
 
-    let spcommons = JSON.parse(
-      JSON.stringify(this.specificFormRef.current.state),
-    );
-    delete spcommons.cityList;
-    delete spcommons.showCarList;
-    delete spcommons.showExisitingList;
-    delete spcommons.showCalendar;
-    delete spcommons.showLoanCityList;
-    delete spcommons.motorInsList;
-    delete spcommons.exisitingList;
-    delete spcommons.employList;
-    delete spcommons.carList;
-    delete spcommons.termInsList;
-    delete spcommons.showmotorInsList;
-    delete spcommons.showtermInsList;
-    delete spcommons.healthFList;
-    delete spcommons.showHealthFlist;
-    delete spcommons.maritalList;
-    delete spcommons.showmaritalList;
-    delete spcommons.showCompanyCityList;
-    delete spcommons.currentDate;
-    delete spcommons.maxDate;
-    delete spcommons.vectorInsuList;
-    delete spcommons.showvectorCoverList;
-    delete spcommons.showvectorInsuList;
-    delete spcommons.vectorCoverList;
-    delete spcommons.vectorTypeIns;
-    delete spcommons.vectorCover;
-    delete spcommons.qualification;
-    delete spcommons.company;
-    delete spcommons.amount;
-    delete spcommons.companylocation;
-    delete spcommons.turnover;
-    delete spcommons.nooldcard;
-    delete spcommons.existingcard;
-    delete spcommons.loan_property_city;
-    delete spcommons.rcbook;
-    delete spcommons.model;
-    delete spcommons.car_brand;
-    delete spcommons.car_value;
-    delete spcommons.floaterItemList;
+    let spcommons = this.state.dataArray[1];
+
+    //JSON.parse(JSON.stringify(this.specificFormRef.current.state));
+    // delete spcommons.cityList;
+    // delete spcommons.showCarList;
+    // delete spcommons.showExisitingList;
+    // delete spcommons.showCalendar;
+    // delete spcommons.showLoanCityList;
+    // delete spcommons.motorInsList;
+    // delete spcommons.exisitingList;
+    // delete spcommons.employList;
+    // delete spcommons.carList;
+    // delete spcommons.termInsList;
+    // delete spcommons.showmotorInsList;
+    // delete spcommons.showtermInsList;
+    // delete spcommons.healthFList;
+    // delete spcommons.showHealthFlist;
+    // delete spcommons.maritalList;
+    // delete spcommons.showmaritalList;
+    // delete spcommons.showCompanyCityList;
+    // delete spcommons.currentDate;
+    // delete spcommons.maxDate;
+    // delete spcommons.vectorInsuList;
+    // delete spcommons.showvectorCoverList;
+    // delete spcommons.showvectorInsuList;
+    // delete spcommons.vectorCoverList;
+    // delete spcommons.vectorTypeIns;
+    // delete spcommons.vectorCover;
+    // delete spcommons.qualification;
+    // delete spcommons.company;
+    // delete spcommons.amount;
+    // delete spcommons.companylocation;
+    // delete spcommons.turnover;
+    // delete spcommons.nooldcard;
+    // delete spcommons.existingcard;
+    // delete spcommons.loan_property_city;
+    // delete spcommons.rcbook;
+    // delete spcommons.model;
+    // delete spcommons.car_brand;
+    // delete spcommons.car_value;
+    // delete spcommons.floaterItemList;
 
     if (spcommons.pancardNo !== '') {
       if (!Helper.checkPanCard(spcommons.pancardNo)) {
@@ -240,6 +326,15 @@ export default class ProfileScreen extends React.PureComponent {
             formData.append(keys, spcommons[keys]);
           }
         }
+      }
+    }
+
+    let bankformCommons = this.state.dataArray[2];
+
+    for (var keys in bankformCommons) {
+      const value = bankformCommons[keys];
+      if (value !== undefined) {
+        formData.append(keys, bankformCommons[keys]);
       }
     }
 
@@ -259,20 +354,11 @@ export default class ProfileScreen extends React.PureComponent {
       });
     }
 
-    let bankformCommons = JSON.parse(
-      JSON.stringify(this.bankFormRef.current.state),
-    );
-    for (var keys in bankformCommons) {
-      const value = bankformCommons[keys];
-      if (value !== undefined) {
-        formData.append(keys, bankformCommons[keys]);
-      }
-    }
-
-    if (res.length !== 0) {
+    if (res != null) {
       formData.append('user_prof', res);
+    } else if (fileName !== '') {
+      formData.append('user_prof', fileName);
     }
-
     //console.log(`formData`, formData, token);
 
     if (checkData) {
@@ -288,12 +374,18 @@ export default class ProfileScreen extends React.PureComponent {
           const {res_type, message} = response_header;
           this.setState({loading: false});
           if (res_type === `success`) {
-            Helper.showToastMessage('Profile updated successfully', 1);
+            //Helper.showToastMessage('Profile updated successfully', 1);
             const {id} = data[0];
             Pref.setVal(Pref.userID, id);
             Pref.setVal(Pref.userData, data[0]);
             this.setState({userData: data[0]});
-            this.updateData(data[0]);
+            NavigationActions.navigate('Finish', {
+              top: 'Edit Profile',
+              red: 'Success',
+              grey: 'Details updated',
+              blue: 'Back to main menu',
+            });
+            //this.updateData(data[0]);
           } else {
             Helper.showToastMessage('Failed to update profile', 0);
           }
@@ -317,6 +409,18 @@ export default class ProfileScreen extends React.PureComponent {
       } else {
         //
       }
+    }
+  };
+
+  backNav = () => {
+    const {currentposition} = this.state;
+    if (currentposition > 0) {
+      this.setState((prev) => {
+        return {
+          currentposition: prev.currentposition - 1,
+          btnText: 'Next',
+        };
+      });
     }
   };
 
@@ -365,16 +469,24 @@ export default class ProfileScreen extends React.PureComponent {
             <View styleName="md-gutter">
               {this.state.currentposition === 0 ? (
                 <>
-                  <CommonForm title="Profile" ref={this.commonFormRef} />
+                  <CommonForm
+                    title="Profile"
+                    ref={this.commonFormRef}
+                    saveData={this.state.dataArray[0]}
+                  />
 
                   <SpecificForm
                     title="Demat"
                     heading={`Other Information`}
                     ref={this.specificFormRef}
+                    saveData={this.state.dataArray[1]}
                   />
                 </>
               ) : this.state.currentposition === 1 ? (
-                <BankForm ref={this.bankFormRef} />
+                <BankForm
+                  ref={this.bankFormRef}
+                  saveData={this.state.dataArray[2]}
+                />
               ) : this.state.currentposition === 2 ? (
                 <FileUploadForm
                   title="Profile"
@@ -384,16 +496,37 @@ export default class ProfileScreen extends React.PureComponent {
               ) : null}
             </View>
 
-            <View styleName="horizontal space-between md-gutter v-end h-end">
-              {/* <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
+            <View
+              styleName={`horizontal space-between md-gutter ${
+                this.state.currentposition === 0 ? `v-end h-end` : ``
+              }`}>
+              {this.state.currentposition === 1 ||
+              this.state.currentposition === 2 ? (
+                <Button
+                  mode={'flat'}
+                  uppercase={true}
+                  dark={true}
+                  loading={false}
+                  style={[
+                    styles.loginButtonStyle,
+                    {
+                      backgroundColor: 'transparent',
+                      borderColor: '#d5d3c1',
+                      borderWidth: 1.3,
+                    },
+                  ]}
+                  onPress={this.backNav}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.btntext,
+                      {
+                        color: '#b8b28f',
+                      },
+                    ])}>
+                    {'Back'}
+                  </Title>
+                </Button>
+              ) : null}
               <Button
                 mode={'flat'}
                 uppercase={false}

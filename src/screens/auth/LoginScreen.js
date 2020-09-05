@@ -179,7 +179,9 @@ export default class LoginScreen extends React.PureComponent {
             enabled
             keyboardVerticalOffset={150}>
             <View styleName="fill-parent vertical">
-              <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={{flex: 1}}>
                 <View>
                   <Toolbar />
                   <View
@@ -197,6 +199,7 @@ export default class LoginScreen extends React.PureComponent {
                         placeholder={'Enter your mobile number/User ID'}
                         maxLength={10}
                         keyboardType={'number-pad'}
+                        changecolor
                       />
 
                       <AnimatedInputBox
@@ -214,6 +217,7 @@ export default class LoginScreen extends React.PureComponent {
                         }
                         leftTextClick={this.passunlock}
                         secureTextEntry={this.state.showpassword}
+                        changecolor
                       />
                     </View>
                     <View styleName="horizontal space-between md-gutter">
