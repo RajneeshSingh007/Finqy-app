@@ -1,4 +1,4 @@
-import {Subtitle, Title, View} from '@shoutem/ui';
+import {Title, View} from '@shoutem/ui';
 import React from 'react';
 import {
   StyleSheet,
@@ -6,72 +6,84 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Alert,
-  Modal,
 } from 'react-native';
-import {Colors, Portal} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import * as Helper from '../../util/Helper';
 import {sizeWidth} from '../../util/Size';
 import NavigationActions from '../../util/NavigationActions';
 import LeftHeaders from '../common/CommonLeftHeader';
 import * as Pref from '../../util/Pref';
-import {PieChart} from 'react-native-chart-kit';
-import CardVertical from '../common/CardVertical';
 import CScreen from '../component/CScreen';
 import Lodash from 'lodash';
+import IconChooser from '../common/IconChooser';
+import Purechart from 'react-native-pure-chart';
 
-const data = [
+let pieData = [
   {
-    name: 'Link Sourcing',
-    population: 10,
-    color: Colors.green400,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 14,
+    value: 59,
+    label: 'Credit Card',
+    color: '#87c1fc',
   },
   {
-    name: 'Self Sourcing',
-    population: 20,
-    color: Colors.blue400,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 14,
+    value: 30,
+    label: 'Insurance',
+    color: '#fe8c8c',
+  },
+  {
+    value: 20,
+    label: 'Investment',
+    color: '#77e450',
+  },
+  {
+    value: 9,
+    label: 'Loan',
+    color: '#ffe251',
   },
 ];
 
-const data1 = [
+let sampleData = [
   {
-    name: 'Pending Confirmation',
-    population: 8,
-    color: Colors.indigo400,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 14,
+    seriesName: 'series1',
+    data: [
+      {x: 'Jan - 20', y: 10},
+      {x: 'Feb - 20', y: 40},
+      {x: 'March - 20', y: 60},
+      {x: 'April - 20', y: 75},
+    ],
+    color: '#87c1fc',
   },
   {
-    name: 'Quote Sent',
-    population: 10,
-    color: Colors.lightGreen400,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 14,
+    seriesName: 'series2',
+    data: [
+      {x: 'Jan - 20', y: 20},
+      {x: 'Feb - 20', y: 40},
+      {x: 'March - 20', y: 60},
+      {x: 'April - 20', y: 70},
+    ],
+    color: '#ffe251',
   },
   {
-    name: 'Payment Link Sent',
-    population: 4,
-    color: Colors.brown400,
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 14,
+    seriesName: 'series3',
+    data: [
+      {x: 'Jan - 20', y: 30},
+      {x: 'Feb - 20', y: 40},
+      {x: 'March - 20', y: 34},
+      {x: 'April - 20', y: 120},
+    ],
+    color: '#fe8c8c',
+  },
+  {
+    seriesName: 'series4',
+    data: [
+      {x: 'Jan - 20', y: 17},
+      {x: 'Feb - 20', y: 20},
+      {x: 'March - 20', y: 40},
+      {x: 'April - 20', y: 200},
+    ],
+    color: '#77e450',
   },
 ];
 
-const chartConfig = {
-  backgroundGradientFrom: '#1E2923',
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: '#08130D',
-  backgroundGradientToOpacity: 0.5,
-  color: () => `rgba(26, 255, 146, 0.5)`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: true, // optional
-};
-
-const screenWidth = Dimensions.get('window').width;
 
 export default class HomeScreen extends React.PureComponent {
   constructor(props) {
@@ -175,6 +187,92 @@ export default class HomeScreen extends React.PureComponent {
     this.setState({showProfile: false});
   };
 
+  /**
+   *
+   * @param {*} count
+   * @param {*} title
+   * @param {*} icon
+   * @param {*} iconClick
+   */
+  renderCircleItem = (
+    count = 0,
+    title = '',
+    icon = 'bell',
+    iconClick = () => {},
+    type = 1,
+  ) => {
+    return (
+      <View
+        styleName="md-gutter vertical  v-center h-center"
+        style={styles.leadcircle}>
+        <TouchableWithoutFeedback onPress={iconClick}>
+          <View style={styles.circle} styleName="v-center h-center">
+            <IconChooser
+              name={icon}
+              size={20}
+              color={'white'}
+              style={styles.iconcenter}
+              iconType={type}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+        <Title
+          style={StyleSheet.flatten([
+            styles.passText,
+            {
+              fontSize: 30,
+              lineHeight: 30,
+              color: '#6e6e6e',
+              marginBottom: 10,
+            },
+          ])}>{`${count}`}</Title>
+        <Title
+          style={StyleSheet.flatten([
+            styles.passText,
+            {
+              fontSize: 18,
+              lineHeight: 18,
+              color: '#6e6e6e',
+            },
+          ])}>{`${title}`}</Title>
+      </View>
+    );
+  };
+
+  renderFooter = (title, color) => {
+    return (
+      <View
+        styleName="horizontal"
+        style={{
+          marginHorizontal: 16,
+          flex: 1,
+        }}>
+        <View
+          style={StyleSheet.flatten([
+            styles.circle1,
+            {
+              backgroundColor: `${color}`,
+            },
+          ])}
+        />
+        <Title
+          style={StyleSheet.flatten([
+            styles.passText,
+            {
+              color: `${color}`,
+              fontSize: 17,
+              lineHeight: 20,
+              fontWeight: '400',
+              fontFamily: Pref.getFontName(4),
+              marginStart: 16,
+              textAlign: 'left',
+              flex: 1,
+            },
+          ])}>{`${title}`}</Title>
+      </View>
+    );
+  };
+
   render() {
     const {showProfile, type, userData} = this.state;
     let name = '';
@@ -185,85 +283,87 @@ export default class HomeScreen extends React.PureComponent {
       <CScreen
         absolute={
           <>
-            {showProfile ? <Portal>
-              <TouchableWithoutFeedback onPress={this.dismisssProfile}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    backgroundColor: 'transparent',
-                  }}
-                  onPress={this.dismisssProfile}>
-                  <View style={{flex: 0.13}} />
-                  <View style={{flex: 0.1}}>
-                    <View style={{flex: 1, flexDirection: 'row'}}>
-                      <View style={{flex: 0.2}} />
-                      <View
-                        styleName="vertical md-gutter"
-                        style={styles.filtercont}>
-                        {/* <View style={styles.tri}></View> */}
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.passText,
-                            {
-                              lineHeight: 24,
-                              fontSize: 18,
-                            },
-                          ])}>
-                          {Lodash.truncate(name, {
-                            length: 24,
-                            separator: '...',
-                          })}
-                        </Title>
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.passText,
-                            {
-                              color: Pref.RED,
-                              fontSize: 16,
-                              lineHeight: 20,
-                              paddingVertical: 0,
-                              marginBottom: 8,
-                              marginTop: 4,
-                            },
-                          ])}>
-                          {`${
-                            type === 'connector'
-                              ? `Connector`
-                              : type === `referral`
-                              ? 'Referral'
-                              : `Team`
-                          } Partner`}
-                        </Title>
-
-                        <View style={styles.line}></View>
-
-                        <TouchableWithoutFeedback onPress={this.logout}>
+            {showProfile ? (
+              <Portal>
+                <TouchableWithoutFeedback onPress={this.dismisssProfile}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'column',
+                      backgroundColor: 'transparent',
+                    }}
+                    onPress={this.dismisssProfile}>
+                    <View style={{flex: 0.13}} />
+                    <View style={{flex: 0.1}}>
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <View style={{flex: 0.2}} />
+                        <View
+                          styleName="vertical md-gutter"
+                          style={styles.filtercont}>
+                          {/* <View style={styles.tri}></View> */}
                           <Title
                             style={StyleSheet.flatten([
                               styles.passText,
                               {
-                                marginTop: 8,
-                                color: '#0270e3',
-                                fontSize: 14,
-                                lineHeight: 20,
-                                paddingVertical: 0,
-                                textDecorationColor: '#0270e3',
-                                textDecorationStyle: 'solid',
-                                textDecorationLine: 'underline',
+                                lineHeight: 24,
+                                fontSize: 18,
                               },
                             ])}>
-                            {`Logout`}
+                            {Lodash.truncate(name, {
+                              length: 24,
+                              separator: '...',
+                            })}
                           </Title>
-                        </TouchableWithoutFeedback>
+                          <Title
+                            style={StyleSheet.flatten([
+                              styles.passText,
+                              {
+                                color: Pref.RED,
+                                fontSize: 16,
+                                lineHeight: 20,
+                                paddingVertical: 0,
+                                marginBottom: 8,
+                                marginTop: 4,
+                              },
+                            ])}>
+                            {`${
+                              type === 'connector'
+                                ? `Connector`
+                                : type === `referral`
+                                ? 'Referral'
+                                : `Team`
+                            } Partner`}
+                          </Title>
+
+                          <View style={styles.line}></View>
+
+                          <TouchableWithoutFeedback onPress={this.logout}>
+                            <Title
+                              style={StyleSheet.flatten([
+                                styles.passText,
+                                {
+                                  marginTop: 8,
+                                  color: '#0270e3',
+                                  fontSize: 14,
+                                  lineHeight: 20,
+                                  paddingVertical: 0,
+                                  textDecorationColor: '#0270e3',
+                                  textDecorationStyle: 'solid',
+                                  textDecorationLine: 'underline',
+                                },
+                              ])}>
+                              {`Logout`}
+                            </Title>
+                          </TouchableWithoutFeedback>
+                        </View>
+                        <View style={{flex: 0.2}} />
                       </View>
-                      <View style={{flex: 0.2}} />
                     </View>
+                    <View style={{flex: 0.77}} />
                   </View>
-                  <View style={{flex: 0.77}} />
-                </View>
-              </TouchableWithoutFeedback>
-            </Portal> : null}
+                </TouchableWithoutFeedback>
+              </Portal>
+            ) : null}
           </>
         }
         body={
@@ -274,217 +374,81 @@ export default class HomeScreen extends React.PureComponent {
                 backClicked={() => NavigationActions.openDrawer()}
                 title={`Hi,`}
               />
-              <CardVertical
-                url={''}
-                title={''}
-                subtitle={'Sourcing Chart'}
-                subtitleColor={'#292929'}
-                innerstyle={{paddingTop: 8}}
-                bottom={
-                  <View>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 200,
-                      }}>
-                      <View style={{flex: 0.2}}></View>
-                      <View style={{flex: 0.6}}>
-                        <PieChart
-                          data={data}
-                          width={screenWidth}
-                          height={200}
-                          chartConfig={chartConfig}
-                          accessor="population"
-                          backgroundColor="transparent"
-                          paddingLeft="5"
-                          hasLegend={false}
-                          //absolute
-                        />
-                      </View>
-                      <View style={{flex: 0.2}}></View>
-                    </View>
-                    <View
-                      styleName="horizontal wrap"
-                      style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        paddingBottom: 6,
-                        flexGrow: 1,
-                      }}>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center'}}>
-                        <Subtitle
-                          styleName="v-center h-center"
-                          style={{
-                            fontSize: 13,
-                            fontFamily: 'Rubik',
-                            letterSpacing: 1,
-                            color: '#292929',
-                            fontWeight: '400',
-                            alignSelf: 'center',
-                          }}>
-                          {`Link Sourcing(${`85%`})`}
-                        </Subtitle>
-                        <View
-                          styleName="v-center h-center"
-                          style={{
-                            backgroundColor: Colors.green500,
-                            height: 12,
-                            width: 24,
-                            alignSelf: 'center',
-                            marginStart: 8,
-                          }}></View>
-                      </View>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center'}}>
-                        <Subtitle
-                          styleName="v-center h-center"
-                          style={{
-                            fontSize: 13,
-                            fontFamily: 'Rubik',
-                            letterSpacing: 1,
-                            color: '#292929',
-                            fontWeight: '400',
-                            alignSelf: 'center',
-                          }}>
-                          {`Self Sourcing(${`15%`})`}
-                        </Subtitle>
-                        <View
-                          styleName="v-center h-center"
-                          style={{
-                            backgroundColor: Colors.blue500,
-                            height: 12,
-                            width: 24,
-                            alignSelf: 'center',
-                            marginStart: 8,
-                          }}></View>
-                      </View>
-                      <View style={{flex: 0.1}}></View>
-                    </View>
-                  </View>
-                }
+
+              <View
+                styleName="md-gutter vertical v-center h-center"
+                style={styles.leadercont}>
+                {this.renderCircleItem(
+                  100,
+                  'Total\nLeads',
+                  'bell',
+                  () => {},
+                  1,
+                )}
+                {this.renderCircleItem(
+                  40,
+                  'Total Converted\nLeads',
+                  'filter',
+                  () => {},
+                )}
+                {this.renderCircleItem(
+                  '40%',
+                  'Total Converted\nPercentage',
+                  'percent',
+                  () => {},
+                )}
+              </View>
+
+              <Purechart
+                data={sampleData}
+                type="bar"
+                yAxisGridLineColor={'#d5d5d5'}
+                yAxislabelColor={'#656565'}
+                labelColor={'#656565'}
+                showEvenNumberXaxisLabel={false}
+                backgroundColor={'white'}
+                height={250}
+                defaultColumnWidth={60}
+                defaultColumnMargin={10}
               />
 
-              <CardVertical
-                url={''}
-                title={''}
-                subtitle={'Status Chart'}
-                subtitleColor={'#292929'}
-                innerstyle={{paddingTop: 8}}
-                bottom={
-                  <View>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        height: 200,
-                      }}>
-                      <View style={{flex: 0.2}}></View>
-                      <View style={{flex: 0.6}}>
-                        <PieChart
-                          data={data1}
-                          width={screenWidth}
-                          height={200}
-                          chartConfig={chartConfig}
-                          accessor="population"
-                          backgroundColor="transparent"
-                          paddingLeft="5"
-                          hasLegend={false}
-                          //absolute
-                        />
-                      </View>
-                      <View style={{flex: 0.2}}></View>
-                    </View>
-                    <View
-                      styleName="horizontal wrap"
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        paddingBottom: 6,
-                        flexGrow: 1,
-                      }}>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center'}}>
-                        <Subtitle
-                          styleName="v-center h-center"
-                          style={{
-                            fontSize: 13,
-                            fontFamily: 'Rubik',
-                            letterSpacing: 1,
-                            color: '#292929',
-                            fontWeight: '400',
-                            alignSelf: 'center',
-                          }}>
-                          {`Pending Confirmation(${`55%`})`}
-                        </Subtitle>
-                        <View
-                          styleName="v-center h-center"
-                          style={{
-                            backgroundColor: Colors.green500,
-                            height: 12,
-                            width: 24,
-                            alignSelf: 'center',
-                            marginStart: 8,
-                          }}></View>
-                      </View>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center', marginEnd: 8}}>
-                        <Subtitle
-                          styleName="v-center h-center"
-                          style={{
-                            fontSize: 13,
-                            fontFamily: 'Rubik',
-                            letterSpacing: 1,
-                            color: '#292929',
-                            fontWeight: '400',
-                            alignSelf: 'center',
-                          }}>
-                          {`Quote Sent(${`25%`})`}
-                        </Subtitle>
-                        <View
-                          styleName="v-center h-center"
-                          style={{
-                            backgroundColor: Colors.blue500,
-                            height: 12,
-                            width: 24,
-                            alignSelf: 'center',
-                            marginStart: 8,
-                          }}></View>
-                      </View>
-                      <View
-                        styleName="horizontal"
-                        style={{alignSelf: 'center'}}>
-                        <Subtitle
-                          styleName="v-center h-center"
-                          style={{
-                            fontSize: 13,
-                            fontFamily: 'Rubik',
-                            letterSpacing: 1,
-                            color: '#292929',
-                            fontWeight: '400',
-                            alignSelf: 'center',
-                          }}>
-                          {`Payment Link Sent(${`20%`})`}
-                        </Subtitle>
-                        <View
-                          styleName="v-center h-center"
-                          style={{
-                            backgroundColor: Colors.blue500,
-                            height: 12,
-                            width: 24,
-                            alignSelf: 'center',
-                            marginStart: 8,
-                          }}></View>
-                      </View>
-                    </View>
-                  </View>
-                }
-              />
+              <View styleName="h-center v-center">
+                <View
+                  styleName="horizontal h-center v-center"
+                  style={{
+                    marginVertical: 16,
+                  }}>
+                  <Purechart data={pieData} type="pie" size={200} />
+                </View>
+              </View>
+              <View
+                style={{
+                  paddingVertical: 10,
+                }}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.passText,
+                    {
+                      color: '#555555',
+                      fontSize: 24,
+                      lineHeight: 24,
+                      marginVertical: 8,
+                      paddingVertical: 10,
+                    },
+                  ])}>{`Sales By Category`}</Title>
+                <View styleName="horizontal space-between v-center h-center">
+                  {this.renderFooter('Credit Card', '#87c1fc')}
+                  {this.renderFooter('Insurance', '#fe8c8c')}
+                </View>
+                <View
+                  styleName="horizontal space-between v-center h-center"
+                  style={{
+                    marginTop: 10,
+                  }}>
+                  {this.renderFooter('Loan', '#ffe251')}
+                  {this.renderFooter('Investment', '#77e450')}
+                </View>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         }
@@ -494,6 +458,45 @@ export default class HomeScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  iconcenter: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
+  circle: {
+    width: 42,
+    height: 42,
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+    borderRadius: 42 / 2,
+    backgroundColor: '#0270e3',
+    marginEnd: 16,
+    marginBottom: 8,
+  },
+  circle1: {
+    width: 16,
+    height: 16,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    borderRadius: 16 / 2,
+    backgroundColor: '#0270e3',
+  },
+  leadercont: {
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  leadcircle: {
+    borderColor: '#dbd9cc',
+    width: sizeWidth(56),
+    height: sizeWidth(56),
+    borderRadius: sizeWidth(56) / 2.0,
+    borderWidth: 1.5,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 16,
+  },
   tri: {
     //position: 'absolute',
     backgroundColor: 'transparent',

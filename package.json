@@ -42,6 +42,7 @@
     "react-native-pdf": "^6.2.0",
     "react-native-photo-view": "github:shoutem/react-native-photo-view#0ffa1481f6b6cb8663cb291b7db1d6644440584d",
     "react-native-progress-circle": "2.1.0",
+    "react-native-pure-chart": "0.0.24",
     "react-native-push-android": "1.0.0",
     "react-native-reanimated": "1.7.1",
     "react-native-restart": "0.0.14",

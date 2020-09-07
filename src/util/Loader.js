@@ -39,18 +39,17 @@ export default class Loader extends React.PureComponent{
                 <Spinner
                   size="large"
                   style={{
-                    margin: 8,
                     color: PRIMARY_COLOR,
                   }}
                 />
                 <Subtitle
                   style={{
-                    fontSize: 18,
-                    margin: 2,
-                    fontWeight: '400',
-                    color: '#555',
-                    letterSpacing:0.5,
-                    fontFamily: Pref.getFontName(4),
+                    fontSize: 16,
+                    fontWeight: '700',
+                    color: '#555555',
+                    letterSpacing: 0.5,
+                    marginTop: 24,
+                    fontFamily: Pref.getFontName(3),
                   }}>{`Please Wait...`}</Subtitle>
               </View>
               <View style={{flex: 0.4}}></View>
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.6)',
+        backgroundColor: 'rgba(0,0,0,0.4)',
         alignContent: 'center',
         alignSelf: 'center',
         alignItems: 'center'
