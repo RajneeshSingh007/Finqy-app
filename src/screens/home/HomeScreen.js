@@ -6,8 +6,9 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Alert,
+  Modal,
 } from 'react-native';
-import {Colors} from 'react-native-paper';
+import {Colors, Portal} from 'react-native-paper';
 import * as Helper from '../../util/Helper';
 import {sizeWidth} from '../../util/Size';
 import NavigationActions from '../../util/NavigationActions';
@@ -170,6 +171,10 @@ export default class HomeScreen extends React.PureComponent {
     ]);
   };
 
+  dismisssProfile = () => {
+    this.setState({showProfile: false});
+  };
+
   render() {
     const {showProfile, type, userData} = this.state;
     let name = '';
@@ -180,70 +185,89 @@ export default class HomeScreen extends React.PureComponent {
       <CScreen
         absolute={
           <>
-            {showProfile === true ? (
-              <View styleName="vertical md-gutter" style={styles.filtercont}>
-                {/* <View style={styles.tri}></View> */}
-                <Title
-                  style={StyleSheet.flatten([
-                    styles.passText,
-                    {
-                      lineHeight: 24,
-                      fontSize: 18,
-                    },
-                  ])}>
-                  {Lodash.truncate(name, {
-                    length: 24,
-                    separator: '...',
-                  })}
-                </Title>
-                <Title
-                  style={StyleSheet.flatten([
-                    styles.passText,
-                    {
-                      color: Pref.RED,
-                      fontSize: 16,
-                      lineHeight: 20,
-                      paddingVertical: 0,
-                      marginBottom: 8,
-                      marginTop: 4,
-                    },
-                  ])}>
-                  {`${
-                    type === 'connector'
-                      ? `Connector`
-                      : type === `referral`
-                      ? 'Referral'
-                      : `Team`
-                  } Partner`}
-                </Title>
+            {showProfile ? <Portal>
+              <TouchableWithoutFeedback onPress={this.dismisssProfile}>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    backgroundColor: 'transparent',
+                  }}
+                  onPress={this.dismisssProfile}>
+                  <View style={{flex: 0.13}} />
+                  <View style={{flex: 0.1}}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
+                      <View style={{flex: 0.2}} />
+                      <View
+                        styleName="vertical md-gutter"
+                        style={styles.filtercont}>
+                        {/* <View style={styles.tri}></View> */}
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.passText,
+                            {
+                              lineHeight: 24,
+                              fontSize: 18,
+                            },
+                          ])}>
+                          {Lodash.truncate(name, {
+                            length: 24,
+                            separator: '...',
+                          })}
+                        </Title>
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.passText,
+                            {
+                              color: Pref.RED,
+                              fontSize: 16,
+                              lineHeight: 20,
+                              paddingVertical: 0,
+                              marginBottom: 8,
+                              marginTop: 4,
+                            },
+                          ])}>
+                          {`${
+                            type === 'connector'
+                              ? `Connector`
+                              : type === `referral`
+                              ? 'Referral'
+                              : `Team`
+                          } Partner`}
+                        </Title>
 
-                <View style={styles.line}></View>
+                        <View style={styles.line}></View>
 
-                <TouchableWithoutFeedback onPress={this.logout}>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        marginTop: 8,
-                        color: '#0270e3',
-                        fontSize: 14,
-                        lineHeight: 20,
-                        paddingVertical: 0,
-                        textDecorationColor: '#0270e3',
-                        textDecorationStyle: 'solid',
-                        textDecorationLine: 'underline',
-                      },
-                    ])}>
-                    {`Logout`}
-                  </Title>
-                </TouchableWithoutFeedback>
-              </View>
-            ) : null}
+                        <TouchableWithoutFeedback onPress={this.logout}>
+                          <Title
+                            style={StyleSheet.flatten([
+                              styles.passText,
+                              {
+                                marginTop: 8,
+                                color: '#0270e3',
+                                fontSize: 14,
+                                lineHeight: 20,
+                                paddingVertical: 0,
+                                textDecorationColor: '#0270e3',
+                                textDecorationStyle: 'solid',
+                                textDecorationLine: 'underline',
+                              },
+                            ])}>
+                            {`Logout`}
+                          </Title>
+                        </TouchableWithoutFeedback>
+                      </View>
+                      <View style={{flex: 0.2}} />
+                    </View>
+                  </View>
+                  <View style={{flex: 0.77}} />
+                </View>
+              </TouchableWithoutFeedback>
+            </Portal> : null}
           </>
         }
         body={
-          <TouchableWithoutFeedback
-            onPress={() => this.setState({showProfile: false})}>
+          <TouchableWithoutFeedback onPress={this.dismisssProfile}>
             <View>
               <LeftHeaders
                 profile={() => this.setState({showProfile: !showProfile})}
@@ -486,15 +510,15 @@ const styles = StyleSheet.create({
     right: -28,
   },
   filtercont: {
-    position: 'absolute',
-    zIndex: 99,
+    flex: 0.6,
+    //position: 'absolute',
+    //zIndex: 99,
     borderColor: '#dbdacd',
     borderWidth: 0.8,
     backgroundColor: Pref.WHITE,
-    width: '60%',
-    right: sizeWidth(18.5),
+    alignSelf: 'flex-end',
     borderRadius: 8,
-    top: 24,
+    //top: 24,
     ...Platform.select({
       android: {
         elevation: 4,

@@ -24,7 +24,7 @@ const slides = [
     key: 2,
     title: 'Manage\nyour business',
     text: 'Anywhere anytime',
-    sub: ` from lead\n management to final payouts`,
+    sub: `from lead\n management to final payouts`,
     colorsub: `100% online process`,
     image: require('../../res/images/second_intro.jpg'),
     backgroundColor: 'white',
@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     paddingTop: 12,
+    fontFamily: Pref.getFontName(2),
   },
   subtitle1: {
     fontSize: 18,
@@ -193,6 +194,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: Pref.getFontName(2),
   },
   title: {
     fontSize: 30,
@@ -203,6 +205,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
   },
   title1: {
     fontSize: 32,
@@ -213,6 +216,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
   },
   buttonCircle: {
     width: 40,

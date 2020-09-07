@@ -109,6 +109,7 @@ export default class AnimatedInputBox extends React.PureComponent {
                     changecolor && (isFocused || contentExists)
                       ? Pref.RED
                       : placecolor,
+                  fontFamily: Pref.getFontName(4),
                 },
                 placeholderStyle,
               ])}>{`${placeholder}`}</Caption>
@@ -148,6 +149,7 @@ export default class AnimatedInputBox extends React.PureComponent {
                 color: '#555555',
                 fontSize: 16,
                 marginStart: -4,
+                fontFamily: Pref.getFontName(4),
               },
             ])}
             onFocus={this.handleFocus}

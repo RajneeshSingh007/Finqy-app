@@ -2,39 +2,27 @@ import React from 'react';
 import {
   StatusBar,
   StyleSheet,
-  ScrollView,
-  Platform,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
 } from 'react-native';
-import {
-  Image,
-  Screen,
-  Subtitle,
-  Title,
-  View,
-} from '@shoutem/ui';
+import {Image, Subtitle, Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  Button,
-  Colors,
-  DefaultTheme,
-} from 'react-native-paper';
+import {Button, Colors} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
 import {sizeHeight, sizeWidth} from '../../util/Size';
 import messaging from '@react-native-firebase/messaging';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
-import Toolbar from '../component/Toolbar';
+import IntroHeader from '../intro/IntroHeader';
+import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
-
 
 export default class LoginScreen extends React.PureComponent {
   constructor(props) {
     super(props);
-    changeNavigationBarColor('white', true);
+    changeNavigationBarColor(Pref.WHITE, true);
+    StatusBar.setBackgroundColor(Pref.WHITE, false);
+    StatusBar.setBarStyle('dark-content');
     this.login = this.login.bind(this);
     this.passunlock = this.passunlock.bind(this);
     this.state = {
@@ -57,7 +45,6 @@ export default class LoginScreen extends React.PureComponent {
       console.log(e);
     }
     Pref.getVal(Pref.saveToken, (value) => {
-      console.log(`value`, value);
       if (value === undefined || value === null) {
         const body = JSON.stringify({
           username: `ERBFinPro`,
@@ -68,7 +55,6 @@ export default class LoginScreen extends React.PureComponent {
           body,
           Pref.methodPost,
           (result) => {
-            console.log(`result`, result);
             const {data, response_header} = result;
             const {res_type} = response_header;
             if (res_type === `success`) {
@@ -164,129 +150,111 @@ export default class LoginScreen extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView style={styles.maincontainer} forceInset={{top: 'never'}}>
-        <Screen style={styles.maincontainer}>
-          {Platform.OS === 'android' ? (
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-          ) : null}
-          <KeyboardAvoidingView
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-            behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            enabled
-            keyboardVerticalOffset={150}>
-            <View styleName="fill-parent vertical">
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={{flex: 1}}>
-                <View>
-                  <Toolbar />
-                  <View
-                    style={{flex: 0.87}}
-                    styleName="v-center h-center md-gutter">
-                    <Title style={styles.title}>{`Welcome back`}</Title>
-                    <Title
-                      style={
-                        styles.title1
-                      }>{`please sign in\nto continue`}</Title>
-                    <View styleName="md-gutter">
-                      <AnimatedInputBox
-                        onChangeText={(value) => this.setState({userid: value})}
-                        value={this.state.userid}
-                        placeholder={'Enter your mobile number/User ID'}
-                        maxLength={10}
-                        keyboardType={'number-pad'}
-                        changecolor
-                      />
+      <CScreen
+        showfooter={false}
+        absolute={
+          <>
+            <Loader isShow={this.state.loading} />
+          </>
+        }
+        body={
+          <>
+            <IntroHeader />
+            <View style={{flex: 0.87}} styleName="v-center h-center md-gutter">
+              <Title style={styles.title}>{`Welcome back`}</Title>
+              <Title
+                style={styles.title1}>{`please sign in\nto continue`}</Title>
+              <View styleName="md-gutter">
+                <AnimatedInputBox
+                  onChangeText={(value) => this.setState({userid: value})}
+                  value={this.state.userid}
+                  placeholder={'Enter your mobile number/User ID'}
+                  maxLength={10}
+                  keyboardType={'number-pad'}
+                  changecolor
+                  containerstyle={{
+                    marginBottom: 8,
+                  }}
+                />
 
-                      <AnimatedInputBox
-                        onChangeText={(value) =>
-                          this.setState({password: value})
-                        }
-                        value={this.state.password}
-                        placeholder={'Enter your password'}
-                        maxLength={4}
-                        keyboardType={'number-pad'}
-                        showRightIcon
-                        leftIconName={this.state.passeye}
-                        leftIconColor={
-                          this.state.passeye === 'eye' ? '#555555' : '#6d6a57'
-                        }
-                        leftTextClick={this.passunlock}
-                        secureTextEntry={this.state.showpassword}
-                        changecolor
-                      />
-                    </View>
-                    <View styleName="horizontal space-between md-gutter">
-                      <Button
-                        mode={'flat'}
-                        uppercase={true}
-                        dark={true}
-                        loading={false}
-                        style={styles.loginButtonStyle}
-                        onPress={this.login}>
-                        <Title style={styles.btntext}>{'Sign In'}</Title>
-                      </Button>
-                      <Button
-                        mode={'flat'}
-                        uppercase={true}
-                        dark={true}
-                        loading={false}
-                        style={[
-                          styles.loginButtonStyle,
-                          {
-                            backgroundColor: 'transparent',
-                            borderColor: '#d5d3c1',
-                            borderWidth: 1.3,
-                          },
-                        ]}
-                        onPress={() => NavigationActions.navigate('Register')}>
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.btntext,
-                            {
-                              color: '#b8b28f',
-                            },
-                          ])}>
-                          {'Sign up'}
-                        </Title>
-                      </Button>
-                    </View>
+                <AnimatedInputBox
+                  onChangeText={(value) => this.setState({password: value})}
+                  value={this.state.password}
+                  placeholder={'Enter your password'}
+                  maxLength={4}
+                  keyboardType={'number-pad'}
+                  showRightIcon
+                  leftIconName={this.state.passeye}
+                  leftIconColor={
+                    this.state.passeye === 'eye' ? '#555555' : '#6d6a57'
+                  }
+                  leftTextClick={this.passunlock}
+                  secureTextEntry={this.state.showpassword}
+                  changecolor
+                />
+              </View>
+              <View styleName="horizontal space-between md-gutter">
+                <Button
+                  mode={'flat'}
+                  uppercase={true}
+                  dark={true}
+                  loading={false}
+                  style={styles.loginButtonStyle}
+                  onPress={this.login}>
+                  <Title style={styles.btntext}>{'Sign In'}</Title>
+                </Button>
+                <Button
+                  mode={'flat'}
+                  uppercase={true}
+                  dark={true}
+                  loading={false}
+                  style={[
+                    styles.loginButtonStyle,
+                    {
+                      backgroundColor: 'transparent',
+                      borderColor: '#d5d3c1',
+                      borderWidth: 1.3,
+                    },
+                  ]}
+                  onPress={() => NavigationActions.navigate('Register')}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.btntext,
+                      {
+                        color: '#b8b28f',
+                      },
+                    ])}>
+                    {'Sign up'}
+                  </Title>
+                </Button>
+              </View>
 
-                    <View styleName="horizontal space-between md-gutter">
-                      <TouchableWithoutFeedback
-                        onPress={() =>
-                          NavigationActions.navigate('OtpScreen', {
-                            mode: 1,
-                            forgetMode: true,
-                          })
-                        }>
-                        <Subtitle
-                          style={styles.fgttext}>{`Forgot Password?`}</Subtitle>
-                      </TouchableWithoutFeedback>
-                    </View>
+              <View styleName="horizontal space-between md-gutter">
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    NavigationActions.navigate('OtpScreen', {
+                      mode: 1,
+                      forgetMode: true,
+                    })
+                  }>
+                  <Subtitle
+                    style={styles.fgttext}>{`Forgot Password?`}</Subtitle>
+                </TouchableWithoutFeedback>
+              </View>
 
-                    <View styleName="horizontal v-center h-center md-gutter">
-                      <Image
-                        source={require('../../res/images/login.jpg')}
-                        styleName={'large'}
-                        style={{
-                          resizeMode: 'contain',
-                        }}
-                      />
-                    </View>
-                  </View>
-                </View>
-              </ScrollView>
+              <View styleName="horizontal v-center h-center md-gutter">
+                <Image
+                  source={require('../../res/images/login.jpg')}
+                  styleName={'large'}
+                  style={{
+                    resizeMode: 'contain',
+                  }}
+                />
+              </View>
             </View>
-          </KeyboardAvoidingView>
-
-          <Loader isShow={this.state.loading} />
-        </Screen>
-      </SafeAreaView>
+          </>
+        }
+      />
     );
   }
 }
@@ -302,6 +270,7 @@ const styles = StyleSheet.create({
     textDecorationColor: '#0270e3',
     textDecorationStyle: 'solid',
     textDecorationLine: 'underline',
+    fontFamily: Pref.getFontName(4),
   },
   btntext: {
     color: 'white',
@@ -332,7 +301,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     borderRadius: 48,
     width: '40%',
-    paddingVertical: 4,
     fontWeight: '700',
   },
   subtitle: {
@@ -365,6 +333,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
   },
   title1: {
     fontSize: 32,
@@ -375,5 +344,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
   },
 });

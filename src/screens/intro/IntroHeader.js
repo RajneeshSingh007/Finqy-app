@@ -1,7 +1,8 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Image, Subtitle, View} from '@shoutem/ui';
+import {Image, Subtitle,Title, View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
+import * as Pref from '../../util/Pref';
 
 const IntroHeader = (prop) => {
   const {flex = 0.13, iconClick = () =>{}} = prop;
@@ -25,10 +26,10 @@ const IntroHeader = (prop) => {
             />
           </View>
           <View style={styles.rightcon}>
-            <Subtitle style={styles.rightText}>
+            <Title style={styles.rightText}>
               {`Login `}
               <IconChooser name={'arrow-right'} size={20} color={'#bbb8ac'} />
-            </Subtitle>
+            </Title>
             <TouchableWithoutFeedback onPress={iconClick}>
               <View style={styles.circle}>
                 <IconChooser
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginEnd: 8,
     letterSpacing: 0.5,
+    fontFamily:Pref.getFontName(4)
   },
   circle: {
     width: 48,

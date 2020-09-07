@@ -8,14 +8,7 @@ import {
   TouchableWithoutFeedback,
   Linking,
 } from 'react-native';
-import {
-  Screen,
-  Subtitle,
-  Title,
-  Text,
-  View,
-  Heading,
-} from '@shoutem/ui';
+import {Screen, Subtitle, Title, Text, View, Heading, Image} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
@@ -33,6 +26,9 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DropDown from '../common/CommonDropDown';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
+import IntroHeader from '../intro/IntroHeader';
+import CScreen from '../component/CScreen';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const theme = {
   ...DefaultTheme,
@@ -248,133 +244,62 @@ export default class RegisterScreen extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: 'white'}}
-        forceInset={{top: 'never'}}>
-        <Screen style={{backgroundColor: 'white', flex: 1}}>
-          {Platform.OS === 'android' ? (
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-          ) : null}
-          <View styleName="fill-parent vertical">
-            <ScrollView showsVerticalScrollIndicator={true} style={{flex: 1}}>
-              <View styleName="v-center h-center md-gutter">
-                <TouchableWithoutFeedback
-                  onPress={() => NavigationActions.goBack()}>
-                  <Icon
-                    name={'arrow-left'}
-                    size={24}
-                    color={'#292929'}
-                    style={{marginTop: sizeHeight(1)}}
-                  />
-                </TouchableWithoutFeedback>
-                <View
-                  styleName={'v-center h-center'}
-                  style={{
-                    marginHorizontal: sizeWidth(3),
-                  }}>
-                  <Heading
-                    styleName="v-center h-center"
-                    style={{
-                      fontSize: 24,
-                      fontFamily: 'Rubik',
-                      letterSpacing: 1,
-                    }}>
-                    {`Register`}
-                  </Heading>
+      <CScreen
+        showfooter={false}
+        absolute={
+          <>
+            <Loader isShow={this.state.loading} />
+          </>
+        }
+        body={
+          <>
+            <IntroHeader />
+            <View style={{flex: 0.87}} styleName="v-center h-center md-gutter">
+              <Title style={styles.title}>{`Register`}</Title>
+              <Title
+                style={
+                  styles.title1
+                }>{`please fill form to create your account`}</Title>
 
-                  {/* <Image
-                                        styleName={'small v-center h-center'}
-                                        source={require('../../res/images/logo.png')}
-                                        style={{ alignSelf: 'center', marginVertical: sizeHeight(2) }}
-
-                                    /> */}
-
-                  <Title
-                    styleName="v-center h-center"
-                    style={{
-                      fontSize: 18,
-                      fontFamily: 'Rubik',
-                      fontFamily: 'Rubik',
-                      fontWeight: '700',
-                      lineHeight: 32,
-                      letterSpacing: 1,
-                      marginVertical: 8,
-                    }}>
-                    {`Fill form to create your account`}
-                  </Title>
-                </View>
-
-                <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginTop: sizeHeight(0.1)}]}
-                  label={'Your Name *'}
-                  placeholder={'Enter your name'}
-                  placeholderTextColor={'#DEDEDE'}
+              <View styleName="md-gutter">
+                <AnimatedInputBox
                   onChangeText={(value) => this.setState({name: value})}
                   value={this.state.name}
-                  theme={theme}
+                  placeholder={'Your Name *'}
                   returnKeyType={'next'}
+                  changecolor
+                  containerstyle={{
+                    marginBottom: 8,
+                  }}
                 />
-                {/* <TextInput
-                                    mode="flat"
-                                    underlineColor="transparent"
-                                    underlineColorAndroid="transparent"
-                                    style={[
-                                        styles.inputStyle,
-                                        { marginVertical: sizeHeight(1) },
-                                    ]}
-                                    label={"Last Name"}
-                                    placeholder={"Enter last name"}
-                                    placeholderTextColor={"#DEDEDE"}
-                                    onChangeText={(value) =>
-                                        this.setState({ lastName: value })
-                                    }
-                                    value={this.state.lastName}
-                                    theme={theme}
-                                    returnKeyType={"next"}
-                                /> */}
-                <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginVertical: sizeHeight(0.5)}]}
-                  label={'Your Email *'}
-                  placeholder={'Enter your email'}
-                  placeholderTextColor={'#DEDEDE'}
+                <AnimatedInputBox
+                  changecolor
+                  containerstyle={{
+                    marginBottom: 8,
+                  }}
+                  placeholder={'Your Email *'}
                   onChangeText={(value) => this.setState({email: value})}
                   value={this.state.email}
-                  theme={theme}
                   returnKeyType={'next'}
                 />
-                <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginVertical: sizeHeight(0.5)}]}
-                  label={'Your Mobile Number *'}
-                  placeholder={'Enter your mobile number'}
-                  placeholderTextColor={'#DEDEDE'}
+                <AnimatedInputBox
+                  changecolor
+                  containerstyle={{
+                    marginBottom: 8,
+                  }}
+                  placeholder={'Your Mobile Number *'}
                   onChangeText={(value) => {
-                    if (value.match(/^[0-9]*$/g) !== null) {
+                    if (String(value).match(/^[0-9]*$/g) !== null) {
                       this.setState({contact: value});
                     }
                   }}
                   maxLength={10}
                   keyboardType={'number-pad'}
                   value={this.state.contact}
-                  theme={theme}
-                  maxLength={10}
-                  keyboardType={'number-pad'}
                   returnKeyType={'next'}
                 />
 
-                <View
-                  style={{
-                    paddingVertical: sizeHeight(0),
-                    marginHorizontal: sizeWidth(3),
-                  }}>
+                <View style={styles.radiocont}>
                   <TouchableWithoutFeedback
                     onPress={() =>
                       this.setState({
@@ -385,31 +310,26 @@ export default class RegisterScreen extends React.PureComponent {
                         showprofession: false,
                       })
                     }>
-                    <View style={styles.boxstyle}>
-                      <Subtitle
-                        style={{
-                          fontSize: 16,
-                          fontFamily: 'Rubik',
-                          fontWeight: '400',
-                          color:
-                            this.state.modetext ===
-                            'Are You An Individual Or A Company? *'
-                              ? '#767676'
-                              : '#292929',
-                          lineHeight: 25,
-                          alignSelf: 'center',
-                          padding: 4,
-                          alignSelf: 'center',
-                          marginHorizontal: 8,
-                        }}>
+                    <View style={styles.dropdownbox}>
+                      <Title
+                        style={StyleSheet.flatten([
+                          styles.boxsubtitle,
+                          {
+                            color:
+                              this.state.modetext ===
+                              'Are You An Individual Or A Company? *'
+                                ? `#6d6a57`
+                                : `#555555`,
+                            marginStart: -4,
+                          },
+                        ])}>
                         {this.state.modetext}
-                      </Subtitle>
+                      </Title>
                       <Icon
                         name={'chevron-down'}
                         size={24}
-                        color={'#767676'}
+                        color={'#6d6a57'}
                         style={{
-                          padding: 4,
                           alignSelf: 'center',
                         }}
                       />
@@ -436,27 +356,20 @@ export default class RegisterScreen extends React.PureComponent {
                 </View>
 
                 {this.state.modetext === 'Company' ? (
-                  <TextInput
-                    mode="flat"
-                    underlineColor="transparent"
-                    underlineColorAndroid="transparent"
-                    style={[styles.inputStyle, {marginTop: sizeHeight(0.5)}]}
-                    label={'Company Name *'}
-                    placeholder={'Enter company name'}
-                    placeholderTextColor={'#DEDEDE'}
+                  <AnimatedInputBox
+                    changecolor
+                    containerstyle={{
+                      marginBottom: 8,
+                    }}
+                    placeholder={'Company Name *'}
                     onChangeText={(value) =>
                       this.setState({companyname: value})
                     }
                     value={this.state.companyname}
-                    theme={theme}
                     returnKeyType={'next'}
                   />
                 ) : this.state.modetext === 'Individual' ? (
-                  <View
-                    style={{
-                      paddingVertical: sizeHeight(0),
-                      marginHorizontal: sizeWidth(3),
-                    }}>
+                  <View style={styles.radiocont}>
                     <TouchableWithoutFeedback
                       onPress={() =>
                         this.setState({
@@ -465,30 +378,25 @@ export default class RegisterScreen extends React.PureComponent {
                           showCityList: false,
                         })
                       }>
-                      <View style={styles.boxstyle}>
-                        <Subtitle
-                          style={{
-                            fontSize: 16,
-                            fontFamily: 'Rubik',
-                            fontWeight: '400',
-                            color:
-                              this.state.profession === 'Select Profession *'
-                                ? '#767676'
-                                : '#292929',
-                            lineHeight: 25,
-                            alignSelf: 'center',
-                            padding: 4,
-                            alignSelf: 'center',
-                            marginHorizontal: 8,
-                          }}>
+                      <View style={styles.dropdownbox}>
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.boxsubtitle,
+                            {
+                              color:
+                                this.state.profession === 'Select Profession *'
+                                  ? `#6d6a57`
+                                  : `#555555`,
+                              marginStart: -4,
+                            },
+                          ])}>
                           {this.state.profession}
-                        </Subtitle>
+                        </Title>
                         <Icon
                           name={'chevron-down'}
                           size={24}
-                          color={'#767676'}
+                          color={'#6d6a57'}
                           style={{
-                            padding: 4,
                             alignSelf: 'center',
                           }}
                         />
@@ -512,56 +420,18 @@ export default class RegisterScreen extends React.PureComponent {
                     ) : null}
                   </View>
                 ) : null}
-
-                {/* <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginTop: sizeHeight(0.5)}]}
-                  label={'Profession'}
-                  placeholder={'Enter profession'}
-                  placeholderTextColor={'#DEDEDE'}
-                  onChangeText={(value) => this.setState({profession: value})}
-                  value={this.state.profession}
-                  theme={theme}
-                  returnKeyType={'next'}
-                /> */}
-
-                <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginTop: sizeHeight(0.5)}]}
-                  label={'PAN Details *'}
-                  placeholder={'Enter pan details'}
-                  placeholderTextColor={'#DEDEDE'}
+                <AnimatedInputBox
+                  changecolor
+                  containerstyle={{
+                    marginBottom: 8,
+                  }}
+                  placeholder={'PAN Details *'}
                   onChangeText={(value) => this.setState({panno: value})}
                   value={this.state.panno}
                   maxLength={10}
-                  theme={theme}
                   returnKeyType={'next'}
                 />
-
-                {/* <TextInput
-                  mode="flat"
-                  underlineColor="transparent"
-                  underlineColorAndroid="transparent"
-                  style={[styles.inputStyle, {marginTop: sizeHeight(0.5)}]}
-                  label={'GST Number'}
-                  placeholder={'Enter gst number'}
-                  placeholderTextColor={'#DEDEDE'}
-                  onChangeText={(value) => this.setState({gst: value})}
-                  maxLength={15}
-                  value={this.state.gst}
-                  theme={theme}
-                  returnKeyType={'done'}
-                /> */}
-
-                <View
-                  style={{
-                    paddingVertical: sizeHeight(0),
-                    marginHorizontal: sizeWidth(3),
-                  }}>
+                <View style={styles.radiocont}>
                   <TouchableWithoutFeedback
                     onPress={() =>
                       this.setState({
@@ -570,30 +440,27 @@ export default class RegisterScreen extends React.PureComponent {
                         showCityList: !this.state.showCityList,
                       })
                     }>
-                    <View style={styles.boxstyle}>
-                      <Subtitle
-                        style={{
-                          fontSize: 16,
-                          fontFamily: 'Rubik',
-                          fontWeight: '400',
-                          color:
-                            this.state.location === '' ? '#767676' : '#292929',
-                          lineHeight: 25,
-                          alignSelf: 'center',
-                          padding: 4,
-                          alignSelf: 'center',
-                          marginHorizontal: 8,
-                        }}>
+                    <View style={styles.dropdownbox}>
+                      <Title
+                        style={StyleSheet.flatten([
+                          styles.boxsubtitle,
+                          {
+                            color:
+                              this.state.location === ''
+                                ? `#6d6a57`
+                                : `#555555`,
+                            marginStart: -4,
+                          },
+                        ])}>
                         {this.state.location === ''
                           ? `Select Location *`
                           : this.state.location}
-                      </Subtitle>
+                      </Title>
                       <Icon
                         name={'chevron-down'}
                         size={24}
-                        color={'#767676'}
+                        color={'#6d6a57'}
                         style={{
-                          padding: 4,
                           alignSelf: 'center',
                         }}
                       />
@@ -602,7 +469,10 @@ export default class RegisterScreen extends React.PureComponent {
                   {this.state.showCityList ? (
                     <DropDown
                       itemCallback={(value) =>
-                        this.setState({showCityList: false, location: value})
+                        this.setState({
+                          showCityList: false,
+                          location: value,
+                        })
                       }
                       list={this.state.cityList}
                       isCityList
@@ -612,12 +482,7 @@ export default class RegisterScreen extends React.PureComponent {
                   ) : null}
                 </View>
 
-                <View
-                  styleName="horizontal"
-                  style={{
-                    marginHorizontal: sizeWidth(2),
-                    alignContent: 'center',
-                  }}>
+                <View styleName="horizontal" style={styles.copy}>
                   <Checkbox.Android
                     status={this.state.isTermSelected ? 'checked' : 'unchecked'}
                     selectedColor={Pref.PRIMARY_COLOR}
@@ -629,45 +494,61 @@ export default class RegisterScreen extends React.PureComponent {
                   />
                   <TouchableWithoutFeedback
                     onPress={() => Linking.openURL(Pref.TCondition)}>
-                    <Subtitle
-                      style={{
-                        fontSize: 16,
-                        color: '#292929',
-                        alignSelf: 'center',
-                      }}>
+                    <Title style={styles.textopen}>
                       {`I Accept `}
-                      <Subtitle
-                        style={{
-                          fontSize: 16,
-                          color: Pref.CARROT_ORANGE,
-                          alignSelf: 'center',
-                        }}>{`Terms & Conditions`}</Subtitle>
-                    </Subtitle>
+                      <Title
+                        style={StyleSheet.flatten([
+                          styles.textopen,
+                          {
+                            color: Pref.CARROT_ORANGE,
+                          },
+                        ])}>{`Terms & Conditions`}</Title>
+                    </Title>
                   </TouchableWithoutFeedback>
                 </View>
-
-                <Button
-                  mode={'flat'}
-                  uppercase={true}
-                  dark={true}
-                  loading={false}
-                  style={styles.loginButtonStyle}
-                  onPress={this.register}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 16,
-                      letterSpacing: 1,
-                    }}>
-                    {'Next'}
-                  </Text>
-                </Button>
               </View>
-            </ScrollView>
-          </View>
-          <Loader isShow={this.state.loading} />
-        </Screen>
-      </SafeAreaView>
+            </View>
+
+            <View
+              styleName="horizontal md-gutter v-center v-center"
+              style={{
+                marginStart: 16,
+                marginTop:-24
+              }}>
+              {/* <Button
+                mode={'flat'}
+                uppercase={true}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
+                onPress={this.login}>
+                <Title style={styles.btntext}>{'Sign In'}</Title>
+              </Button> */}
+              <Button
+                mode={'flat'}
+                uppercase={true}
+                dark={true}
+                loading={false}
+                style={[styles.loginButtonStyle]}
+                onPress={this.register}>
+                <Title style={StyleSheet.flatten([styles.btntext])}>
+                  {'Next'}
+                </Title>
+              </Button>
+            </View>
+
+            <View styleName="horizontal v-center h-center md-gutter">
+              <Image
+                source={require('../../res/images/login.jpg')}
+                styleName={'large'}
+                style={{
+                  resizeMode: 'contain',
+                }}
+              />
+            </View>
+          </>
+        }
+      />
     );
   }
 }
@@ -676,8 +557,25 @@ export default class RegisterScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  fgttext: {
+    fontSize: 15,
+    letterSpacing: 0.5,
+    color: '#0270e3',
+    textDecorationColor: '#0270e3',
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    fontFamily: Pref.getFontName(4),
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
+  },
+  maincontainer: {flex: 1, backgroundColor: 'white'},
+  s: {justifyContent: 'center', alignSelf: 'center'},
   inputStyle: {
-    height: 48,
+    height: sizeHeight(8),
     backgroundColor: 'white',
     color: '#292929',
     borderBottomColor: Colors.grey300,
@@ -687,49 +585,93 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
-  },
-  boxstyle: {
-    flexDirection: 'row',
-    height: 48,
-    borderBottomColor: Colors.grey300,
-    borderRadius: 2,
-    borderBottomWidth: 0.6,
-    marginVertical: sizeHeight(1),
-    justifyContent: 'space-between',
-  },
-  inputPassStyle: {
-    height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    borderBottomColor: '#dedede',
-    fontFamily: 'Rubik',
-    fontSize: 16,
-    borderBottomWidth: 1,
-    fontWeight: '400',
-    marginHorizontal: sizeWidth(3),
-    letterSpacing: 1,
-    marginVertical: sizeHeight(1),
-  },
-  inputPass1Style: {
-    height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    fontFamily: 'Rubik',
-    fontSize: 16,
-    fontWeight: '400',
-    marginHorizontal: sizeWidth(3),
-    letterSpacing: 1,
-    marginTop: -7,
   },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    marginVertical: sizeHeight(3.5),
-    backgroundColor: '#e61e25',
+    backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    fontWeight: '700',
+  },
+  subtitle: {
+    fontSize: 18,
+    letterSpacing: 0.5,
+    color: '#bbb8ad',
+    alignSelf: 'center',
+    fontWeight: '400',
+    lineHeight: 24,
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingTop: 12,
+  },
+  subtitle1: {
+    fontSize: 18,
+    letterSpacing: 0.5,
+    color: '#0276ec',
+    alignSelf: 'center',
+    fontWeight: '400',
+    lineHeight: 24,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: 30,
+    letterSpacing: 0.5,
+    color: '#555555',
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
+  },
+  title1: {
+    fontSize: 32,
+    letterSpacing: 0.5,
+    color: '#ea343c',
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
+  },
+  copy: {
+    alignContent: 'center',
+    paddingVertical: 10,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  boxsubtitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+  },
+  dropdownbox: {
+    flexDirection: 'row',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
   },
 });

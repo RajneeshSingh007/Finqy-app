@@ -2619,3 +2619,22 @@ export const returnCheckNumber = (text) => {
   const checkIsNumber = '/[^0-9]/g';
   return checkIsNumber.test(text);
 };
+
+export const getFontName = (type) =>{
+  switch (type) {
+    case 1:
+      return 'Roboto-Regular';
+    case 2:
+      return 'Roboto-Light';
+    case 3:
+      return 'Roboto-Black';
+    case 4:
+      return 'Roboto-Medium';
+    case 5:
+      return 'Roboto-Bold';
+    case 6:
+      return 'Roboto-Thin';
+    default:
+      return 'Roboto-Regular';
+  }
+}

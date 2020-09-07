@@ -3,6 +3,7 @@ import { Colors, Modal, Portal,} from "react-native-paper";
 import { Spinner, Subtitle,Image } from "@shoutem/ui";
 import { StyleSheet, View,BackHandler } from "react-native";
 import { ACCENT_COLOR, PRIMARY_COLOR } from "./Pref";
+import * as Pref from './Pref';
 
 export default class Loader extends React.PureComponent{
 
@@ -30,34 +31,32 @@ export default class Loader extends React.PureComponent{
 
     render(){
         const {isShow}  = this.props;
-        return (
-            isShow !== undefined && isShow !== null && isShow ? <Portal>
-                <View style={styles.topContainer}>
-
-                    <View style={{ flex: 0.4 }}></View>
-                    <View
-                        style={styles.container}
-                    >
-                        <Spinner
-                            size="large"
-                            style={{
-                                margin: 8,
-                                color: PRIMARY_COLOR
-                            }}
-                        />
-                        <Subtitle
-                            style={{
-                                fontSize: 18,
-                                margin: 2,
-                                fontWeight: "400",
-                                color: Colors.grey700
-                            }}
-                        >{`Please Wait...`}</Subtitle>
-                    </View>
-                    <View style={{ flex: 0.4 }}></View>
-                </View>
-            </Portal> : null
-        )
+        return isShow !== undefined && isShow !== null && isShow ? (
+          <Portal>
+            <View style={styles.topContainer}>
+              <View style={{flex: 0.4}}></View>
+              <View style={styles.container}>
+                <Spinner
+                  size="large"
+                  style={{
+                    margin: 8,
+                    color: PRIMARY_COLOR,
+                  }}
+                />
+                <Subtitle
+                  style={{
+                    fontSize: 18,
+                    margin: 2,
+                    fontWeight: '400',
+                    color: '#555',
+                    letterSpacing:0.5,
+                    fontFamily: Pref.getFontName(4),
+                  }}>{`Please Wait...`}</Subtitle>
+              </View>
+              <View style={{flex: 0.4}}></View>
+            </View>
+          </Portal>
+        ) : null;
     }
 }    
 

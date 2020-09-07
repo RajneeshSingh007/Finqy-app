@@ -18,7 +18,7 @@ export default class CScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.scrollViewRef = React.createRef();
-    changeNavigationBarColor(Pref.PRIMARY_COLOR, true, true);
+    changeNavigationBarColor(Pref.WHITE, true, true);
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
   }
@@ -31,7 +31,7 @@ export default class CScreen extends React.PureComponent {
   };
 
   render() {
-    const {body, scrollEnable = true, absolute = null} = this.props;
+    const {body, scrollEnable = true, absolute = null, showfooter =true} = this.props;
     return (
       <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
         <Screen style={styles.mainContainer}>
@@ -52,14 +52,20 @@ export default class CScreen extends React.PureComponent {
               showsHorizontalScrollIndicator={false}
               keyboardShouldPersistTaps={'handled'}>
               {body}
+              {showfooter === true ?
               <View>
                 <TouchableWithoutFeedback onPress={this.scrollToTop}>
                   <View styleName="v-start h-start" style={styles.topcon}>
-                    <IconChooser name={'arrow-up'} size={28} color={Pref.RED} style={styles.icon} />
+                    <IconChooser
+                      name={'arrow-up'}
+                      size={28}
+                      color={Pref.RED}
+                      style={styles.icon}
+                    />
                   </View>
                 </TouchableWithoutFeedback>
                 <Footer />
-              </View>
+              </View> : null}
             </ScrollView>
           ) : (
             //  </KeyboardAvoidingView>

@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, FlatList, Platform} from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  Platform,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
@@ -11,7 +16,6 @@ import ListError from '../common/ListError';
 import IconChooser from '../common/IconChooser';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import CScreen from '../component/CScreen';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export default class Training extends React.PureComponent {
   constructor(props) {
