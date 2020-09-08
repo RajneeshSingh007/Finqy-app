@@ -2,50 +2,32 @@ import React from 'react';
 import {
   StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {
   Image,
-  Screen,
   Title,
-  Text,
   View,
-  Heading,
-  TouchableOpacity,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  Button,
-  Colors,
-  TextInput,
-  DefaultTheme,
-} from 'react-native-paper';
+import {Button, Colors, DefaultTheme} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
 import {sizeHeight, sizeWidth} from '../../util/Size';
-import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
+import IntroHeader from '../intro/IntroHeader';
+import CScreen from '../component/CScreen';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
 
 export default class OtpScreen extends React.PureComponent {
   constructor(props) {
     super(props);
-    changeNavigationBarColor('white', true);
+    changeNavigationBarColor(Pref.WHITE, true);
+    StatusBar.setBackgroundColor(Pref.WHITE, false);
+    StatusBar.setBarStyle('dark-content');
     this.backClick = this.backClick.bind(this);
     this.otpVerify = this.otpVerify.bind(this);
     this.passunlock = this.passunlock.bind(this);
@@ -92,14 +74,6 @@ export default class OtpScreen extends React.PureComponent {
         this.startTimer();
       }
     }
-    // this.signOut = auth().signOut();
-    // this.unsubscribe = auth().onAuthStateChanged(user => {
-    //     if (user) {
-    //         if (this.state.isFirstTime === true){
-    //             this.apiCallback();
-    //         }
-    //     }
-    // });
   }
 
   componentWillUnmount() {
@@ -186,27 +160,30 @@ export default class OtpScreen extends React.PureComponent {
         Helper.showToastMessage('Invalid mobile number', 0);
       }
       if (checkData) {
-                        this.setState({loading: true});
+        this.setState({loading: true});
         let formdata = new FormData();
         formdata.append('submit', 'sub');
-                formdata.append('email', this.state.otp);
+        formdata.append('email', this.state.otp);
         formdata.append('form', 'first_register');
         Helper.networkHelperContentType(
           Pref.ForgotUrl,
           formdata,
           Pref.methodPost,
           (result) => {
-              console.log(`result`, result);
-              const {type} = result;
-                        this.setState({loading: false,otp:''});
-                        if(type ==='success'){
-            Helper.showToastMessage(`Password sent successfully on registered mail`, 1);
-                        }else{
-                                        Helper.showToastMessage(`Failed to find account`, 0);
-                        }
+            console.log(`result`, result);
+            const {type} = result;
+            this.setState({loading: false, otp: ''});
+            if (type === 'success') {
+              Helper.showToastMessage(
+                `Password sent successfully on registered mail`,
+                1,
+              );
+            } else {
+              Helper.showToastMessage(`Failed to find account`, 0);
+            }
           },
           () => {
-                        this.setState({loading: false});
+            this.setState({loading: false});
           },
         );
       }
@@ -299,224 +276,96 @@ export default class OtpScreen extends React.PureComponent {
 
   render() {
     return (
-      <SafeAreaView
-        style={{flex: 1, backgroundColor: 'white'}}
-        forceInset={{top: 'never'}}>
-        <Screen style={{backgroundColor: 'white', flex: 1}}>
-          {Platform.OS === 'android' ? (
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-          ) : null}
-          <View styleName="fill-parent vertical">
-            <ScrollView showsVerticalScrollIndicator={true} style={{flex: 1}}>
-              <View styleName="v-center h-center md-gutter">
-                <TouchableWithoutFeedback
-                  onPress={() => NavigationActions.goBack()}>
-                  <Icon
-                    name={'arrow-left'}
-                    size={24}
-                    color={'#292929'}
-                    style={{marginTop: sizeHeight(1)}}
-                  />
-                </TouchableWithoutFeedback>
-                <View
-                  styleName={'v-center h-center'}
-                  style={{
-                    marginVertical: sizeHeight(2),
-                    marginHorizontal: sizeWidth(3),
-                  }}>
-                  <Heading
-                    styleName="v-center h-center"
-                    style={{
-                      fontSize: 24,
-                      fontFamily: 'Rubik',
-                      fontFamily: '700',
-                      letterSpacing: 1,
-                    }}>
-                    {this.state.mode == 0 ? `Verification` : `Forgot`}
-                  </Heading>
+      <CScreen
+        showfooter={false}
+        body={
+          <>
+            <IntroHeader />
+            <View styleName="v-center h-center md-gutter">
+              <Title style={styles.title}>{`${
+                this.state.mode == 0 ? `Verification` : `Forgot`
+              }`}</Title>
+              <Title style={styles.title1}>{`${
+                this.state.mode == 0
+                  ? `Verify to create your account`
+                  : `Enter you mobile number to Reset Account`
+              }`}</Title>
 
-                  <Image
-                    styleName={'small v-center h-center'}
-                    source={{
-                      uri:
-                        'https://user-images.githubusercontent.com/4661784/56352614-4631a680-61d8-11e9-880d-86ecb053413d.png',
-                    }}
-                    style={{
-                      alignSelf: 'center',
-                      marginVertical: sizeHeight(2),
-                    }}
-                  />
-
-                  <Title
-                    styleName="v-center h-center"
-                    style={{
-                      marginTop: 8,
-                      fontSize: 17,
-                      fontFamily: 'Rubik',
-                      fontFamily: 'Rubik',
-                      fontWeight: '700',
-                      lineHeight: 32,
-                      letterSpacing: 1,
-                    }}>
-                    {`${
-                      this.state.mode == 0
-                        ? `Verify to create your account`
-                        : `Enter you mobile number\nto Reset Account`
-                    }`}
-                  </Title>
-                </View>
+              <View styleName="md-gutter">
                 {this.state.mode === 0 ? (
                   <View>
-                    <TextInput
-                      mode="flat"
-                      underlineColor="transparent"
-                      underlineColorAndroid="transparent"
-                      style={[
-                        styles.inputStyle,
-                        {marginVertical: sizeHeight(1)},
-                      ]}
-                      label={'OTP'}
-                      placeholder={'Enter OTP'}
-                      placeholderTextColor={'#DEDEDE'}
+                    <AnimatedInputBox
+                      changecolor
+                      containerstyle={{
+                        marginBottom: 8,
+                      }}
+                      placeholder={'OTP'}
                       onChangeText={(value) => this.setState({otp: value})}
                       keyboardType={'number-pad'}
                       value={this.state.otp}
-                      theme={theme}
                       returnKeyType={'next'}
                     />
-                    <View styleName="horizontal" style={styles.inputPassStyle}>
-                      <TextInput
-                        mode="flat"
-                        underlineColor={'rgba(0,0,0,0)'}
-                        underlineColorAndroid={'transparent'}
-                        label={'Password'}
-                        style={{
-                          borderBottomColor: 'transparent',
-                          flex: 0.9,
-                          backgroundColor: 'white',
-                          color: '#131313',
-                          fontFamily: 'Rubik',
-                          fontSize: 16,
-                          borderBottomWidth: 1,
-                          fontWeight: '400',
-                          letterSpacing: 1,
-                        }}
-                        numberOfLines={1}
-                        placeholder={'Enter password'}
-                        secureTextEntry={this.state.showpassword}
-                        placeholderTextColor={'#DEDEDE'}
-                        onChangeText={(value) =>
-                          this.setState({password: value})
-                        }
-                        value={this.state.password}
-                        theme={theme}
-                        maxLength={4}
-                        keyboardType={'numeric'}
-                      />
-                      <TouchableOpacity
-                        style={{
-                          alignSelf: 'center',
-                          flex: 0.2,
-                          height: sizeHeight(8),
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: -16,
-                        }}
-                        onPress={this.passunlock}>
-                        <Icon
-                          name={this.state.passeye}
-                          size={16}
-                          color={
-                            this.state.passeye === 'eye' ? '#777777' : '#292929'
-                          }
-                        />
-                      </TouchableOpacity>
-                    </View>
 
-                    <View styleName="horizontal" style={styles.inputPassStyle}>
-                      <TextInput
-                        mode="flat"
-                        underlineColor={'rgba(0,0,0,0)'}
-                        underlineColorAndroid={'transparent'}
-                        label={'Confirm Password'}
-                        style={{
-                          borderBottomColor: 'transparent',
-                          flex: 0.9,
-                          backgroundColor: 'white',
-                          color: '#131313',
-                          fontFamily: 'Rubik',
-                          fontSize: 16,
-                          borderBottomWidth: 1,
-                          fontWeight: '400',
-                          letterSpacing: 1,
-                        }}
-                        maxLength={4}
-                        numberOfLines={1}
-                        placeholder={'Enter confirm password'}
-                        secureTextEntry={this.state.cshowpassword}
-                        placeholderTextColor={'#DEDEDE'}
-                        onChangeText={(value) =>
-                          this.setState({cpassword: value})
-                        }
-                        value={this.state.cpassword}
-                        theme={theme}
-                        keyboardType={'numeric'}
-                      />
-                      <TouchableOpacity
-                        style={{
-                          alignSelf: 'center',
-                          flex: 0.2,
-                          height: sizeHeight(8),
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: -16,
-                        }}
-                        onPress={this.passunlockc}>
-                        <Icon
-                          name={this.state.cpasseye}
-                          size={16}
-                          color={
-                            this.state.cpasseye === 'eye'
-                              ? '#777777'
-                              : '#292929'
-                          }
-                        />
-                      </TouchableOpacity>
-                    </View>
+                    <AnimatedInputBox
+                      changecolor
+                      containerstyle={{
+                        marginBottom: 8,
+                      }}
+                      placeholder={'Password *'}
+                      numberOfLines={1}
+                      secureTextEntry={this.state.showpassword}
+                      onChangeText={(value) => this.setState({password: value})}
+                      value={this.state.password}
+                      maxLength={4}
+                      keyboardType={'numeric'}
+                      showRightIcon
+                      leftIconName={this.state.passeye}
+                      leftIconColor={
+                        this.state.passeye === 'eye' ? '#555555' : '#6d6a57'
+                      }
+                      leftTextClick={this.passunlock}
+                      secureTextEntry={this.state.showpassword}
+                    />
+
+                    <AnimatedInputBox
+                      changecolor
+                      containerstyle={{
+                        marginBottom: 8,
+                      }}
+                      placeholder={'Confirm Password *'}
+                      maxLength={4}
+                      numberOfLines={1}
+                      secureTextEntry={this.state.cshowpassword}
+                      placeholderTextColor={'#DEDEDE'}
+                      onChangeText={(value) =>
+                        this.setState({cpassword: value})
+                      }
+                      value={this.state.cpassword}
+                      keyboardType={'numeric'}
+                      showRightIcon
+                      leftIconName={this.state.cpasseye}
+                      leftIconColor={
+                        this.state.cpasseye === 'eye' ? '#555555' : '#6d6a57'
+                      }
+                      leftTextClick={this.passunlockc}
+                    />
 
                     {this.state.timeout ? (
-                      <View
-                        style={{
-                          marginVertical: sizeHeight(3.5),
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          flexDirection: 'row',
-                          borderRadius: 48,
-                          borderColor: '#dedede',
-                          backgroundColor: Pref.RED,
-                          width: 60,
-                          height: 60,
-                          borderRadius: 60 / 2,
-                          alignItems: 'center',
-                          alignSelf: 'center',
-                          borderWidth: 3,
-                        }}>
+                      <View style={styles.timer}>
                         <Title
-                          style={{
-                            fontSize: 16,
-                            fontFamily: 'Rubik',
-                            fontFamily: 'Rubik',
-                            fontWeight: '700',
-                            color: 'white',
-                          }}>
-                          
+                          style={StyleSheet.flatten([
+                            styles.title1,
+                            {
+                              color: 'white',
+                              fontSize: 18,
+                            },
+                          ])}>
                           {this.state.timing}
                         </Title>
                       </View>
                     ) : (
                       <View
                         style={{
-                          marginVertical: sizeHeight(4),
                           justifyContent: 'center',
                           alignItems: 'center',
                           flexDirection: 'row',
@@ -524,16 +373,13 @@ export default class OtpScreen extends React.PureComponent {
                         <TouchableWithoutFeedback
                           onPress={() => this.sendOTPCode()}>
                           <Title
-                            style={{
-                              fontSize: 14,
-                              fontFamily: 'Rubik',
-                              fontFamily: 'Rubik',
-                              fontWeight: '700',
-                              lineHeight: 24,
-                              letterSpacing: 1,
-                              color: '#f39f24',
-                            }}>
-                            
+                            style={StyleSheet.flatten([
+                              styles.title1,
+                              {
+                                color: Pref.CARROT_ORANGE,
+                                fontSize: 16,
+                              },
+                            ])}>
                             {`Resend OTP`}
                           </Title>
                         </TouchableWithoutFeedback>
@@ -541,64 +387,71 @@ export default class OtpScreen extends React.PureComponent {
                     )}
                   </View>
                 ) : (
-                  <TextInput
-                    mode="flat"
-                    underlineColor="transparent"
-                    underlineColorAndroid="transparent"
-                    style={[
-                      styles.inputStyle,
-                      {
-                        marginVertical:
-                          this.state.mode === 0 ? sizeHeight(1) : sizeHeight(4),
-                      },
-                    ]}
-                    label={'Mobile Number'}
-                    placeholder={'Enter mobile number'}
-                    placeholderTextColor={'#DEDEDE'}
+                  <AnimatedInputBox
+                    changecolor
+                    containerstyle={{
+                      marginBottom: 8,
+                    }}
+                    placeholder={'Mobile Number'}
                     onChangeText={(value) => {
-                      if(value.match(/^[0-9]*$/g) !== null){
+                      if (String(value).match(/^[0-9]*$/g) !== null) {
                         this.setState({otp: value});
                       }
                     }}
                     keyboardType={'number-pad'}
                     maxLength={10}
                     value={this.state.otp}
-                    theme={theme}
                     returnKeyType={'next'}
                   />
                 )}
-
-                <Button
-                  mode={'flat'}
-                  uppercase={true}
-                  dark={true}
-                  loading={false}
-                  style={[
-                    styles.loginButtonStyle,
-                    {
-                      marginVertical:
-                        this.state.mode === 0
-                          ? sizeHeight(3.5)
-                          : sizeHeight(10),
-                    },
-                  ]}
-                  onPress={this.otpVerify}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 16,
-                      letterSpacing: 1,
-                    }}>
-                    {'Submit'}
-                  </Text>
-                </Button>
               </View>
-            </ScrollView>
-          </View>
+            </View>
 
-          <Loader isShow={this.state.loading} />
-        </Screen>
-      </SafeAreaView>
+            <View
+              styleName="horizontal md-gutter v-center v-center"
+              style={{
+                marginStart: 16,
+                marginTop: -24,
+              }}>
+              {/* <Button
+                mode={'flat'}
+                uppercase={true}
+                dark={true}
+                loading={false}
+                style={styles.loginButtonStyle}
+                onPress={this.login}>
+                <Title style={styles.btntext}>{'Sign In'}</Title>
+              </Button> */}
+              <Button
+                mode={'flat'}
+                uppercase={false}
+                dark={true}
+                loading={false}
+                style={[styles.loginButtonStyle]}
+                onPress={this.otpVerify}>
+                <Title style={StyleSheet.flatten([styles.btntext])}>
+                  {'Submit'}
+                </Title>
+              </Button>
+            </View>
+
+            <View styleName="horizontal v-center h-center md-gutter">
+              <Image
+                source={require('../../res/images/login.jpg')}
+                styleName={'large'}
+                style={{
+                  resizeMode: 'contain',
+                }}
+              />
+            </View>
+          </>
+        }
+        absolute={
+          <>
+            <Loader isShow={this.state.loading} />
+          </>
+        }
+      />
     );
   }
 }
@@ -607,6 +460,36 @@ export default class OtpScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  timer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderColor: '#ebeceb',
+    backgroundColor: '#0270e3',
+    width: 56,
+    height: 56,
+    borderRadius: 56 / 2,
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderWidth: 1.3,
+  },
+  fgttext: {
+    fontSize: 15,
+    letterSpacing: 0.5,
+    color: '#0270e3',
+    textDecorationColor: '#0270e3',
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    fontFamily: Pref.getFontName(4),
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
+  },
+  maincontainer: {flex: 1, backgroundColor: 'white'},
+  s: {justifyContent: 'center', alignSelf: 'center'},
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',
@@ -619,38 +502,92 @@ const styles = StyleSheet.create({
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
   },
-  inputPassStyle: {
-    height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    borderBottomColor: Colors.grey300,
-    fontFamily: 'Rubik',
-    fontSize: 16,
-    borderBottomWidth: 0.6,
-    fontWeight: '400',
-    marginHorizontal: sizeWidth(3),
-    letterSpacing: 1,
-    marginVertical: sizeHeight(1),
-  },
-  inputPass1Style: {
-    height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    fontFamily: 'Rubik',
-    fontSize: 16,
-    fontWeight: '400',
-    marginHorizontal: sizeWidth(3),
-    letterSpacing: 1,
-    marginTop: -7,
-  },
   loginButtonStyle: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginHorizontal: sizeWidth(3),
-    backgroundColor: '#e61e25',
+    backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    borderRadius: 48,
+    width: '40%',
+    fontWeight: '700',
+  },
+  subtitle: {
+    fontSize: 18,
+    letterSpacing: 0.5,
+    color: '#bbb8ad',
+    alignSelf: 'center',
+    fontWeight: '400',
+    lineHeight: 24,
+    justifyContent: 'center',
+    textAlign: 'center',
+    paddingTop: 12,
+  },
+  subtitle1: {
+    fontSize: 18,
+    letterSpacing: 0.5,
+    color: '#0276ec',
+    alignSelf: 'center',
+    fontWeight: '400',
+    lineHeight: 24,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: 30,
+    letterSpacing: 0.5,
+    color: '#555555',
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
+  },
+  title1: {
+    fontSize: 32,
+    letterSpacing: 0.5,
+    color: '#ea343c',
+    fontWeight: '700',
+    lineHeight: 36,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontFamily: Pref.getFontName(3),
+  },
+  copy: {
+    alignContent: 'center',
+    paddingVertical: 10,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
+  radiocont: {
+    marginStart: 10,
+    marginEnd: 10,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  boxsubtitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+  },
+  dropdownbox: {
+    flexDirection: 'row',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
   },
 });

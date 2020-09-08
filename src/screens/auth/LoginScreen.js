@@ -164,6 +164,7 @@ export default class LoginScreen extends React.PureComponent {
               <Title style={styles.title}>{`Welcome back`}</Title>
               <Title
                 style={styles.title1}>{`please sign in\nto continue`}</Title>
+
               <View styleName="md-gutter">
                 <AnimatedInputBox
                   onChangeText={(value) => this.setState({userid: value})}
@@ -196,7 +197,7 @@ export default class LoginScreen extends React.PureComponent {
               <View styleName="horizontal space-between md-gutter">
                 <Button
                   mode={'flat'}
-                  uppercase={true}
+                  uppercase={false}
                   dark={true}
                   loading={false}
                   style={styles.loginButtonStyle}
@@ -205,7 +206,7 @@ export default class LoginScreen extends React.PureComponent {
                 </Button>
                 <Button
                   mode={'flat'}
-                  uppercase={true}
+                  uppercase={false}
                   dark={true}
                   loading={false}
                   style={[

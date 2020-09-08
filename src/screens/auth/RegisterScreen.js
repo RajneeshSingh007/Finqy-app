@@ -513,7 +513,7 @@ export default class RegisterScreen extends React.PureComponent {
               styleName="horizontal md-gutter v-center v-center"
               style={{
                 marginStart: 16,
-                marginTop:-24
+                marginTop: -24,
               }}>
               {/* <Button
                 mode={'flat'}
@@ -526,7 +526,7 @@ export default class RegisterScreen extends React.PureComponent {
               </Button> */}
               <Button
                 mode={'flat'}
-                uppercase={true}
+                uppercase={false}
                 dark={true}
                 loading={false}
                 style={[styles.loginButtonStyle]}
