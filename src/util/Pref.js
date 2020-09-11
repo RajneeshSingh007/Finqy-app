@@ -2588,6 +2588,10 @@ export const CouponApplyUrl = `${FOLDERPATH}couponapply.php`;
 export const BannerUrl = `${FOLDERPATH}fetchBanner.php`;
 export const FetchLeadsUrl = `${FOLDERPATH}fetchLeads.php`;
 
+export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
+export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
+
+
 /**
  * Set Val
  * @param key

@@ -13,6 +13,7 @@ import stores from './src/mobx';
 import {Provider} from 'mobx-react';
 import * as Pref from '././src/util/Pref';
 import {StatusBar} from 'react-native';
+import codePush from "react-native-code-push";
 
 const theme = {
   ...DefaultTheme,
@@ -43,4 +44,20 @@ function Main() {
   );
 }
 
-AppRegistry.registerComponent(appName, () => Main);
+const options = {
+    updateDialog: {
+        title: 'Update Avaialble',
+        appendReleaseDescription: true,
+        descriptionPrefix: "Please, Install update to use app",
+        mandatoryContinueButtonLabel: 'Ok',
+        mandatoryUpdateMessage: "Please, Install update to use app",
+        optionalInstallButtonLabel: 'Cancel'
+    },
+    installMode: codePush.InstallMode.IMMEDIATE,
+    checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+    deploymentKey: Pref.STAGING_CODE_PUSH,
+};
+
+AppRegistry.registerComponent(appName, () => codePush(options)(Main));
+
+//AppRegistry.registerComponent(appName, () => Main);

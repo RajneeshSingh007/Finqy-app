@@ -107,6 +107,7 @@ export default class LeadList extends React.PureComponent {
       disableNext: false,
       disableBack: false,
       searchQuery: '',
+      enableSearch:false
     };
   }
 
@@ -187,7 +188,7 @@ export default class LeadList extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length > 6 ? 6 : sort.length,
+              itemSize: sort.length >= 6 ? 6 : sort.length,
             });
           } else {
             this.setState({
@@ -210,7 +211,6 @@ export default class LeadList extends React.PureComponent {
    */
   returnData = (sort, start = 0, end) => {
     const dataList = [];
-    console.log(start, end);
     if (sort.length > 0) {
       if (start >= 0) {
         for (let i = start; i < end; i++) {
@@ -494,20 +494,33 @@ export default class LeadList extends React.PureComponent {
 
   onChangeSearch = (query) => {
     this.setState({searchQuery: query});
-    const {dataList} = this.state;
-    if (dataList.length > 0) {
-      const result = Lodash.filter((it) => {
-        const {item} = it;
-        if (React.isValidElement(item) === false) {
-          return String(it).includes(query);
-        }
+    const {cloneList,itemSize} = this.state;
+    if (cloneList.length > 0) {
+      const trimquery = String(query).trim().toLowerCase();
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const result = Lodash.filter(clone, (it) => {
+        const {date, leadno, source_type, name, mobile, product, bank, status} = it;
+        return date && date.trim().toLowerCase().includes(trimquery) || leadno && leadno.trim().toLowerCase().includes(trimquery) || source_type && source_type.trim().toLowerCase().includes(trimquery) || name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery) || bank && bank.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery);
       });
-      this.setState({dataList: result});
+      const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const count = result.length > 0 ? result.length : itemSize;
+      this.setState({dataList: data,itemSize:count});
     }
   };
 
+  revertBack = () =>{
+    const { enableSearch} = this.state;
+    const {cloneList} = this.state;
+    if (enableSearch === true && cloneList.length > 0) {
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const data = this.returnData(clone, 0, 6);
+      this.setState({dataList: data});
+    }
+    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:6});
+  }
+
   render() {
-    const {searchQuery} = this.state;
+    const {searchQuery, enableSearch} = this.state;
     return (
       <CScreen
         body={
@@ -638,7 +651,8 @@ export default class LeadList extends React.PureComponent {
                 </View>
               }
             />
-            <View styleName="horizontal md-gutter">
+            <View styleName="horizontal md-gutter space-between">
+              <View styleName="horizontal">
               <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
                 <Title style={styles.itemtopText}>{`Back`}</Title>
               </TouchableWithoutFeedback>
@@ -653,7 +667,30 @@ export default class LeadList extends React.PureComponent {
               <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
                 <Title style={styles.itemtopText}>{`Next`}</Title>
               </TouchableWithoutFeedback>
+              </View>
+              <TouchableWithoutFeedback onPress={this.revertBack}>
+                                            <View styleName="horizontal v-center h-center">
+              <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                            </View>
+              </TouchableWithoutFeedback>
+
             </View>
+
+            {enableSearch === true ? <View styleName='md-gutter'>
+                <Searchbar
+                      placeholder="Search"
+                      onChangeText={this.onChangeSearch}
+                      value={searchQuery}
+                      style={{
+                        elevation:0,
+                        borderColor:'#dbd9cc',
+                        borderWidth:0.5,
+                        borderRadius:8
+                      }}
+                      clearIcon={() => null}
+                    />
+            </View> : null}
+
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
@@ -666,7 +703,7 @@ export default class LeadList extends React.PureComponent {
               />
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'No lead record found...'} />
+                <ListError subtitle={'No Lead Record Found...'} />
               </View>
             )}
             {this.state.dataList.length > 0 ? (

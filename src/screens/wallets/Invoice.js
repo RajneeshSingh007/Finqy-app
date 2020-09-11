@@ -93,6 +93,7 @@ export default class Invoice extends React.PureComponent {
       disableNext: false,
       disableBack: false,
       searchQuery: '',
+            enableSearch:false
     };
   }
 

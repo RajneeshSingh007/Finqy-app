@@ -35,6 +35,7 @@ import {
   Portal,
   Avatar,
   ActivityIndicator,
+  Searchbar
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import {SafeAreaView} from 'react-navigation';
@@ -85,6 +86,7 @@ export default class ViewTeam extends React.PureComponent {
       disableBack: false,
       searchQuery: '',
       cloneList: [],
+            enableSearch:false
     };
   }
 
@@ -135,7 +137,7 @@ export default class ViewTeam extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: dataList.length > 6 ? 6 : dataList.length,
+              itemSize: data.length >= 6 ? 6 : data.length,
             });
           } else {
             this.setState({loading: false});
@@ -249,13 +251,45 @@ export default class ViewTeam extends React.PureComponent {
     }
   };
 
+  onChangeSearch = (query) => {
+    this.setState({searchQuery: query});
+    const {cloneList,itemSize} = this.state;
+    if (cloneList.length > 0) {
+      const trimquery = String(query).trim().toLowerCase();
+      const clone = JSON.parse(JSON.stringify(cloneList));
+
+      const result = Lodash.filter(clone, (it) => {
+        const {aadharcard, pancard, status,mobile,email,username} = it;
+        return  aadharcard && aadharcard.trim().toLowerCase().includes(trimquery) || pancard && pancard.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery) || username && username.trim().toLowerCase().includes(trimquery);
+      });
+      const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const count = result.length > 0 ? result.length : itemSize;
+      this.setState({dataList: data,itemSize:count});
+    }
+  };
+
+  revertBack = () =>{
+    const { enableSearch} = this.state;
+    const {cloneList} = this.state;
+    if (enableSearch === true && cloneList.length > 0) {
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const data = this.returnData(clone, 0, 6);
+      this.setState({dataList: data});
+    }
+    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:6});
+  }
+
+
   render() {
+            const {searchQuery, enableSearch} = this.state;
+
     return (
       <CScreen
         body={
           <>
             <LeftHeaders showBack title={'My Team'} />
-            <View styleName="horizontal md-gutter">
+            <View styleName="horizontal md-gutter space-between">
+                            <View styleName="horizontal">
               <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
                 <Title style={styles.itemtopText}>{`Back`}</Title>
               </TouchableWithoutFeedback>
@@ -270,7 +304,30 @@ export default class ViewTeam extends React.PureComponent {
               <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
                 <Title style={styles.itemtopText}>{`Next`}</Title>
               </TouchableWithoutFeedback>
+                          </View>
+
+                                        <TouchableWithoutFeedback onPress={this.revertBack}>
+                                            <View styleName="horizontal v-center h-center">
+              <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                            </View>
+              </TouchableWithoutFeedback>
+
             </View>
+                                    {enableSearch === true ? <View styleName='md-gutter'>
+                <Searchbar
+                      placeholder="Search"
+                      onChangeText={this.onChangeSearch}
+                      value={searchQuery}
+                      style={{
+                        elevation:0,
+                        borderColor:'#dbd9cc',
+                        borderWidth:0.5,
+                        borderRadius:8
+                      }}
+                      clearIcon={() => null}
+                    />
+            </View> : null}
+
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />

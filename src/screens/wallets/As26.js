@@ -82,6 +82,7 @@ export default class As26 extends React.PureComponent {
       disableNext: false,
       disableBack: false,
       searchQuery: '',
+            enableSearch:false
     };
   }
 

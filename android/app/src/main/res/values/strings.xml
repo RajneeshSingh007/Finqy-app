@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">ERB FinPro</string>
     <string name="freshchat_file_provider_authority">com.mypackage.provider</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig</string>
 </resources>
