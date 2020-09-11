@@ -64,6 +64,7 @@ const LeftHeaders = (props) => {
     bottomtext = '',
     bottomtextStyle,
     profile = () => {},
+    name = '',
   } = props;
 
   return (
@@ -128,7 +129,7 @@ const LeftHeaders = (props) => {
                         color: Pref.WHITE,
                       },
                     ])}>
-                    {Lodash.capitalize(title.replace(/hi,/g, '').slice(0, 1))}
+                    {Lodash.capitalize(name.slice(0, 1))}
                   </Title>
                 ) : (
                   <IconChooser

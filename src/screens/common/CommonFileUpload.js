@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1.3,
     borderBottomColor: '#f2f1e6',
-    marginStart: 16,
-    marginEnd: 16,
+    marginStart: 10,
+    marginEnd: 10,
     paddingVertical: 10,
     height: 56,
     marginVertical:4

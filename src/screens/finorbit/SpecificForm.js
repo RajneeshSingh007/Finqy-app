@@ -682,7 +682,7 @@ export default class SpecificForm extends React.PureComponent {
           <AnimatedInputBox
             placeholder={'Required Cover *'}
             onChangeText={(value) => {
-              if (value.match(/^[0-9]*$/g) !== null) {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
                 this.setState({required_cover: value});
               }
             }}

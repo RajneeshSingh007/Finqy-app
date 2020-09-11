@@ -1,55 +1,26 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  Platform,
   Linking,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  FAB,
-  Avatar,
   RadioButton,
   Checkbox,
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import CustomForm from '../finorbit/CustomForm';
-import FileUploadForm from '../finorbit/FileUploadForm';
-import DocumentPicker from 'react-native-document-picker';
 import LeftHeaders from '../common/CommonLeftHeader';
-import SpecificForm from '../finorbit/SpecificForm';
-import Lodash from 'lodash';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../../util/Loader';
-import DropDown from '../common/CommonDropDown';
 import CScreen from '../component/CScreen';
-import AnimatedInputBox from '../component/AnimatedInputBox';
 
 export default class Samadhan extends React.Component {
   constructor(props) {
@@ -83,13 +54,13 @@ export default class Samadhan extends React.Component {
 
   componentDidMount() {
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
     Pref.getVal(Pref.userData, (value) =>
       this.setState({userData: value, ref: value.refercode}, () => {
         Pref.getVal(Pref.saveToken, (tt) => this.setState({token: tt}));
       }),
     );
-    //});
+    });
   }
 
   componentWillUnMount() {
@@ -158,7 +129,7 @@ export default class Samadhan extends React.Component {
             Helper.showToastMessage(`Form submitted successfully`, 1);
           }
         },
-        (error) => {
+        () => {
           this.setState({loading: false});
         },
       );

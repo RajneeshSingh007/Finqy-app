@@ -84,7 +84,7 @@ export default class ProfileScreen extends React.PureComponent {
         this.setState({token: toke}, () => {
           Pref.getVal(Pref.userData, (parseda) => {
             const pp = parseda.user_prof;
-            const url = {
+            const url = pp === undefined || pp !== null || pp === '' || !pp.includes('png') || !pp.includes('jpeg') || !pp.includes('.jpg') ? require('../../res/images/account.png') : {
               uri: pp === '' ? Pref.profileDefaultPic : `${pp}`,
             };
             let fileName = '';
@@ -92,8 +92,6 @@ export default class ProfileScreen extends React.PureComponent {
               const sp = pp.split('/');
               fileName = sp[sp.length - 1];
             }
-            //console.log('url', url, fileName);
-
             this.setState({
               userData: parseda,
               imageUrl: url,

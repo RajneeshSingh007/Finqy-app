@@ -133,23 +133,10 @@ export default class FinorbitForm extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
-  _renderItem = ({item, index}) => {
-    // if(item.url === 'abc'){
-    //     return (<CardRow
-    //         color={Colors.grey300}
-    //         clickName={''}
-    //         title={this.state.title}
-    //         subtitle={'Get your dream home'}
-    //         url={this.state.imageUrl}
-    //     />)
-    // }
-    return <BannerCard url={{uri: `${Pref.FOLDERPATH}${item.url}`}} />;
-  };
-
   onPageChange(position) {
     this.setState({
       currentPosition: position,
-      bottontext: position > 2 ? 'Submit' : 'Next',
+      bottontext: position === 3 ? 'Submit' : 'Next',
     });
     this.insertData(this.state.currentPosition, false);
   }
@@ -198,6 +185,11 @@ export default class FinorbitForm extends React.PureComponent {
       delete commons.showvectorInsuList;
       delete commons.vectorCoverList;
       delete commons.showvectorCoverList;
+      if(title !== 'Health Insurance'){
+        delete commons.floaterItemList;
+      }
+      delete commons.vectorTypeIns;
+      delete commons.showItemCalendar;
     } else if (currentPosition === 2) {
       commons = JSON.parse(
         JSON.stringify(this.FileUploadFormRef.current.state),
@@ -573,6 +565,7 @@ export default class FinorbitForm extends React.PureComponent {
                         }
                         keypos += 1;
                       });
+                      delete specificForms.floaterItemList;
                       let parseJs = JSON.parse(JSON.stringify(specificForms));
                       for (var key in parseJs) {
                         if (key !== `floaterItemList`) {
@@ -587,6 +580,7 @@ export default class FinorbitForm extends React.PureComponent {
                 }
               }
             } else {
+              delete specificForms.floaterItemList;
               if (
                 specificForms.pancardNo !== '' &&
                 !Helper.checkPanCard(specificForms.pancardNo)
@@ -630,6 +624,7 @@ export default class FinorbitForm extends React.PureComponent {
                 checkData = false;
                 Helper.showToastMessage('Invalid pan card number', 0);
               } else {
+                delete specificForms.floaterItemList;
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
                   const value = parseJs[key];
@@ -646,6 +641,7 @@ export default class FinorbitForm extends React.PureComponent {
             checkData = false;
             Helper.showToastMessage('Invalid pan card number', 0);
           } else {
+            delete specificForms.floaterItemList;
             let parseJs = JSON.parse(JSON.stringify(specificForms));
             for (var key in parseJs) {
               const value = parseJs[key];
@@ -720,18 +716,26 @@ export default class FinorbitForm extends React.PureComponent {
             this.state.token,
             (result) => {
               const {response_header} = result;
-              const {res_type} = response_header;
+              const {res_type,res} = response_header;
               this.setState({progressLoader: false});
               if (res_type === 'success') {
                 Helper.showToastMessage('Form submitted successfully', 1);
-                NavigationActions.navigate('FinorbitScreen');
-                NavigationActions.navigate('Finish', {
-                  top: 'Edit Profile',
-                  red: 'Success',
-                  grey: 'Details uploaded',
-                  blue: 'Add another lead?',
-                  back: 'FinorbitScreen',
-                });
+                if(title === `Health Insurance`){
+                  const {id} = res;
+                  const cov = Number(specificForms.required_cover);
+                  NavigationActions.navigate('GetQuotes', {
+                    formId:id,
+                    sumin:Number(cov/100000).toFixed(1)
+                  })
+                }else{
+                  NavigationActions.navigate('Finish', {
+                    top: 'Edit Profile',
+                    red: 'Success',
+                    grey: 'Details uploaded',
+                    blue: 'Add another lead?',
+                    back: 'FinorbitScreen',
+                  });
+                }
               } else {
                 Helper.showToastMessage('failed to submit form', 0);
               }
@@ -739,7 +743,6 @@ export default class FinorbitForm extends React.PureComponent {
             (error) => {
               this.setState({progressLoader: false});
               Helper.showToastMessage('Form submitted successfully', 1);
-              //NavigationActions.navigate('FinorbitScreen');
               NavigationActions.navigate('Finish', {
                 top: 'Edit Profile',
                 red: 'Success',
@@ -747,8 +750,6 @@ export default class FinorbitForm extends React.PureComponent {
                 blue: 'Add another lead?',
                 back: 'FinorbitScreen',
               });
-              // Helper.showToastMessage('form submitted successfully', 1);
-              //Helper.showToastMessage('something wents wrong...', 0);
             },
           );
         }
@@ -902,157 +903,6 @@ export default class FinorbitForm extends React.PureComponent {
           </>
         }
       />
-      //       <CommonScreen
-      //         // showTopBar
-      //         // showRightIcon={true}
-      //         showProfile={false}
-      //         title={''}
-      //         loading={this.state.loading}
-      //         absoluteBody={
-      //           <>
-      //             <Loader isShow={this.state.progressLoader} />
-
-      //             {/* <FormProgress isShow={true} clickedcallback={()=>{
-
-      //                         }} />
-      //  */}
-      //           </>
-      //         }
-      //         body={
-      //           <>
-      //             <LeftHeaders
-      //               showAvtar
-      //               showBack
-      //               rightImage
-      //               title={this.state.title}
-      //               rightUrl={this.findImage()}
-      //               style={{marginBottom: 8}}
-      //               // bottomBody={
-      //               //     <View style={{marginStart:sizeWidth(10)}}>
-      //               //         <Title style={{
-      //               //             fontSize: 17, fontFamily: 'Rubik', letterSpacing: 1, color: 'white', alignSelf: 'flex-start', fontWeight: '400', paddingVertical: sizeHeight(0.5),
-      //               //         }}> {'Apply for a loan'}</Title>
-      //               //     </View>
-      //               // }
-      //             />
-      //             <View style={{flex: 1}}>
-      //               {this.state.bannerList.length > 0 ? (
-      //                 <View style={{flex: 0.2}}>
-      //                   <Carousel
-      //                     ref={this.crousel}
-      //                     data={this.state.bannerList}
-      //                     renderItem={this._renderItem}
-      //                     sliderWidth={sizeWidth(100)}
-      //                     itemWidth={sizeWidth(100)}
-      //                     autoplay
-      //                     enableSnap
-      //                     loop
-      //                     inactiveSlideScale={0.95}
-      //                     inactiveSlideOpacity={0.8}
-      //                     scrollEnabled
-      //                     shouldOptimizeUpdates
-      //                     onSnapToItem={(slideIndex) =>
-      //                       this.setState({pageIndex: slideIndex})
-      //                     }
-      //                     onBeforeSnapToItem={(slideIndex) =>
-      //                       this.setState({pageIndex: slideIndex})
-      //                     }
-      //                     containerCustomStyle={{marginTop: sizeHeight(0.5)}}
-      //                   />
-      //                   <Pagination
-      //                     carouselRef={this.crousel}
-      //                     dotColor={Pref.PRIMARY_COLOR}
-      //                     dotsLength={this.state.bannerList.length}
-      //                     inactiveDotColor={Colors.grey300}
-      //                     inactiveDotScale={1}
-      //                     tappableDots
-      //                     activeDotIndex={this.state.pageIndex}
-      //                     containerStyle={{marginTop: -16, marginBottom: -20}}
-      //                   />
-      //                 </View>
-      //               ) : null}
-
-      // <View style={{flex: 0.8}}>
-      //   <View
-      //     style={{
-      //       marginHorizontal: sizeWidth(2),
-      //       marginBottom: sizeHeight(1),
-      //       marginTop: sizeHeight(2),
-      //     }}>
-      //     <StepIndicator
-      //       customStyles={customStyles}
-      //       labels={['Personal', 'Corporate', 'Upload', 'Submit']}
-      //       currentPosition={this.state.currentPosition}
-      //       //onPress={(pos) => this.onPageChange(pos)}
-      //       stepCount={4}
-      //     />
-      //   </View>
-
-      //   <Card
-      //     style={{
-      //       marginHorizontal: sizeWidth(2),
-      //       marginVertical: sizeHeight(1),
-      //       paddingHorizontal: sizeWidth(1),
-      //     }}>
-      //     <ScrollView
-      //       showsVerticalScrollIndicator={true}
-      //       style={{flex: 1}}>
-      //       {this.state.currentPosition === 0 ? (
-      //         <CommonForm
-      //           ref={this.commonFormRef}
-      //           showemploy={
-      //             this.state.title !== 'Fixed Deposit' &&
-      //             this.state.title !== 'Vector Plus' &&
-      //             this.state.title !== 'Business Loan' &&
-      //             this.state.title !== 'Mutual Fund' &&
-      //             this.state.title !== 'Motor Insurance'
-      //           }
-      //           saveData={this.state.dataArray[0]}
-      //           title={this.state.title}
-      //         />
-      //       ) : this.state.currentPosition === 1 ? (
-      //         <SpecificForm
-      //           ref={this.specificFormRef}
-      //           saveData={this.state.dataArray[1]}
-      //           title={this.state.title}
-      //         />
-      //       ) : this.state.currentPosition === 2 ? (
-      //         <FileUploadForm
-      //           ref={this.FileUploadFormRef}
-      //           title={this.state.title}
-      //           saveData={this.state.dataArray[2]}
-      //         />
-      //       ) : this.state.currentPosition === 3 ? (
-      //         <ApptForm
-      //           ref={this.ApptFormRef}
-      //           title={this.state.title}
-      //           saveData={this.state.dataArray[3]}
-      //         />
-      //       ) : null}
-
-      //       <Button
-      //         mode={'flat'}
-      //         uppercase={true}
-      //         dark={true}
-      //         loading={false}
-      //         style={[styles.loginButtonStyle]}
-      //         onPress={this.submitt}>
-      //         <Text
-      //           style={{
-      //             color: 'white',
-      //             fontSize: 16,
-      //             letterSpacing: 1,
-      //           }}>
-      //           {this.state.bottontext}
-      //         </Text>
-      //       </Button>
-      //     </ScrollView>
-      //   </Card>
-      // </View>
-      //             </View>
-      //           </>
-      //         }
-      //       />
     );
   }
 }

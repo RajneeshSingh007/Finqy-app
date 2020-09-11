@@ -56,9 +56,7 @@ import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No,Username,Name,Email,Mobile,Refcode,LeadRecord,,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/${moment(new Date()).format(
-  'DDMMYYYYhhmm',
-)}viewTeam.xlsx`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Connector.csv`;
 
 export default class ViewConnector extends React.PureComponent {
   constructor(props) {
@@ -207,10 +205,10 @@ export default class ViewConnector extends React.PureComponent {
                   style={{
                     textAlign: 'center',
                     fontWeight: '400',
-                    color: Number(value) === 2 ? Pref.RED : '#1bd741',
+                    color: Number(value) === 1 ? '#1bd741' : Pref.RED,
                     fontSize: 15,
                   }}>
-                  {`${Number(value) === 1 ? `Active` : `Deactive`}`}
+                  {`${Number(value) === 1 ? `Active` : `Inactive`}`}
                 </Title>
               </View>
             );

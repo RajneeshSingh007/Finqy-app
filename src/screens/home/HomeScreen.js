@@ -373,6 +373,7 @@ export default class HomeScreen extends React.PureComponent {
                 profile={() => this.setState({showProfile: !showProfile})}
                 backClicked={() => NavigationActions.openDrawer()}
                 title={`Hi,`}
+                name={name}
               />
 
               <View

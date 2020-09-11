@@ -234,7 +234,7 @@ export const networkHelperTokenContentType = (
   callback = (responseJson) => {},
   errorCallback = (error) => {},
 ) => {
-  fetch(url, {
+  const options = {
     method: method,
     headers: {
       Authorization: 'Bearer ' + token,
@@ -242,7 +242,8 @@ export const networkHelperTokenContentType = (
       'Content-Type': `multipart/form-data`,
     },
     body: jsonData,
-  })
+  };
+  fetch(url, options)
     .then((response) => {
       return response.json();
     })
@@ -436,22 +437,39 @@ export const writeCSV = (HEADER, data, FILEPATH, callback = (bool) => {}) => {
  * @param {*} objArray
  */
 export const convertToCSV = (objArray) => {
-  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-  var str = '';
-  for (var i = 0; i < array.length; i++) {
-    var line = '';
-    for (var index in array[i]) {
-      if (line != '') line += ',';
-      var obj = array[i][index];
-      // && !obj.includes("https")
-      if (typeof obj != 'object') {
-        line += obj;
-      } else {
-        line += '';
-      }
-    }
-    str += line + '\r\n';
-  }
+  // var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+  // var str = '';
+  // for (var i = 0; i < array.length; i++) {
+  //   var line = '';
+  //   for (var index in array[i]) {
+  //     if (line != '') line += ',';
+  //     var obj = array[i][index];
+  //     // && !obj.includes("https")
+  //     if (typeof obj != 'object') {
+  //       line += obj;
+  //     } else {
+  //       line += '';
+  //     }
+  //   }
+  //   str += line + '\r\n';
+  // }
+              var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+            var str = '';
+
+            for (var i = 0; i < array.length; i++) {
+                var line = '';
+                for (var index in array[i]) {
+                    if (line != '') line += ','
+                    if(typeof array[i][index]  === 'object'){
+                    line += '';
+                    }else{
+                                          line += array[i][index];
+
+                    }
+                }
+
+                str += line + '\r\n';
+            }
   return str;
 };
 

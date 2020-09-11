@@ -56,9 +56,7 @@ import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No,Username,Email,Mobile,Pancard,Aadharcard,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/erb/finpro/${moment(
-  new Date(),
-).format('DDMMYYYYhhmm')}viewTeam.xlsx`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Team.csv`;
 
 export default class ViewTeam extends React.PureComponent {
   constructor(props) {
@@ -177,10 +175,10 @@ export default class ViewTeam extends React.PureComponent {
                   style={{
                     textAlign: 'center',
                     fontWeight: '400',
-                    color: Number(value) === 2 ? Pref.RED : '#1bd741',
+                    color: Number(value) === 1 ? '#1bd741' : Pref.RED,
                     fontSize: 15,
                   }}>
-                  {`${Number(value) === 1 ? `Active` : `Deactive`}`}
+                  {`${Number(value) === 1 ? `Active` : `Inactive`}`}
                 </Title>
               </View>
             );
@@ -231,16 +229,17 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   clickedexport = () => {
-    const {dataList} = this.state;
-    if (dataList.length > 0) {
-      Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
+    const {cloneList} = this.state;
+    if (cloneList.length > 0) {
+      const data = this.returnData(cloneList,0, cloneList.length);
+      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Team Record',
               description: 'Team record exported successfully',
-              mime: 'text/csv',
+              mime: 'text/comma-separated-values',
               path: FILEPATH,
               showNotification: true,
             }),

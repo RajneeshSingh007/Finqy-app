@@ -57,9 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from '../component/Download';
 //Summary
 let HEADER = `Sr. No.,Invoice No,Status,Invoice Amount,Gross Amount,TDS,Paid Amount,Payment Date,Reference No,Invoice\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/erb/finpro/${moment(
-  new Date(),
-).format('DDMMYYYYhhmm')}invoice.xlsx`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Invoice.csv`;
 
 export default class Invoice extends React.PureComponent {
   constructor(props) {
@@ -291,16 +289,17 @@ export default class Invoice extends React.PureComponent {
   };
 
   clickedexport = () => {
-    const {dataList} = this.state;
-    if (dataList.length > 0) {
-      Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
+    const {cloneList} = this.state;
+    if (cloneList.length > 0) {
+      const data = this.returnData(cloneList,0, cloneList.length);
+      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Invoice Record',
               description: 'Invoice record exported successfully',
-              mime: 'text/csv',
+              mime: 'text/comma-separated-values',
               path: FILEPATH,
               showNotification: true,
             }),

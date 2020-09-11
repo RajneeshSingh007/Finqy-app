@@ -60,9 +60,7 @@ import CScreen from './../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Cust Moble No,Product,Company,Status,Quote,Cif,Policy\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/erb/finpro/${moment(
-  new Date(),
-).format('DDMMYYYYhhmm')}leadrecord.xlsx`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Leadrecord.csv`;
 
 export default class LeadList extends React.PureComponent {
   constructor(props) {
@@ -443,16 +441,16 @@ export default class LeadList extends React.PureComponent {
   };
 
   clickedexport = () => {
-    const {dataList} = this.state;
-    if (dataList.length > 0) {
-      Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-        //console.log(result);
+    const {cloneList} = this.state;
+    if (cloneList.length > 0) {
+      const data = this.returnData(cloneList,0, cloneList.length);
+      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Lead Record',
               description: 'Lead record exported successfully',
-              mime: 'text/csv',
+              mime: 'text/comma-separated-values',
               path: FILEPATH,
               showNotification: true,
             }),
@@ -555,7 +553,7 @@ export default class LeadList extends React.PureComponent {
                     <IconChooser
                       name="download"
                       size={24}
-                      color={Colors.blue900}
+                      color={Pref.RED}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -618,7 +616,7 @@ export default class LeadList extends React.PureComponent {
                     value={this.state.quotemail}
                     onChange={(v) => this.setState({quotemail: v})}
                     keyboardType={'email-address'}
-                    style={{marginHorizontal: 24}}
+                    style={{marginHorizontal: 12}}
                   />
 
                   <Button

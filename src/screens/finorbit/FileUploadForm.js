@@ -115,7 +115,6 @@ export default class FileUploadForm extends React.PureComponent {
                 name.includes('jpeg') ||
                 name.includes('jpg')
               ) {
-                console.log(`res`, res);
                 if (title === 'Demat') {
                   this.state.fileList.push({addressproof: res});
                 } else {

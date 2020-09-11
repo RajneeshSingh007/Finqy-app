@@ -16,6 +16,8 @@ import OtpScreen from './../screens/auth/OtpScreen';
 
 //home page
 import HomeScreen from './../screens/home/HomeScreen';
+
+//finorbit
 import FinorbitScreen from './../screens/finorbit/FinorbitScreen';
 import FinorbitForm from './../screens/finorbit/FinorbitForm';
 import Samadhan from './../screens/finorbit/Samadhan';
@@ -23,6 +25,7 @@ import NewForm from './../screens/finorbit/NewForm';
 import Payment from './../screens/finorbit/Payment';
 import VectorForm from './../screens/finorbit/VectorForm';
 import VectorPayment from './../screens/finorbit/VectorPayment';
+import GetQuotes from './../screens/finorbit/GetQuotes';
 
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
@@ -287,6 +290,7 @@ const FinOrbitNav = createStackNavigator(
     Payment: {screen: Payment},
     VectorForm: {screen: VectorForm},
     VectorPayment: {screen: VectorPayment},
+    GetQuotes:{screen:GetQuotes},
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {

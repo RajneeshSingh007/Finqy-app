@@ -108,14 +108,20 @@ export default class FinorbitScreen extends React.PureComponent {
   getFilterList = () => {
     const {selectedText, dataList} = this.state;
     const clone = JSON.parse(JSON.stringify(dataList));
-    let filter = Lodash.filter(clone, (io) => io.name.includes(selectedText));
+    let filter = Lodash.filter(clone, (io) => {
+      if(selectedText.includes('Insurance')){
+        return io.name.includes(selectedText) || io.name.includes('Vector') || io.name.includes('Policy') || io.name.includes('Sabse')
+      }else{
+        return io.name.includes(selectedText);
+      }
+    });
     if(selectedText.includes('Investment')){
      filter = Lodash.filter(
        clone,
        (io) =>
          !io.name.includes('Loan') &&
          !io.name.includes('Insurance') &&
-         !io.name.includes('Credit'),
+         !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse')
      );
     }
     return filter;

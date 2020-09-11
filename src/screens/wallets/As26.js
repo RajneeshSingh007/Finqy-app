@@ -57,9 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from '../component/Download';
 
 let HEADER = `Sr. No.,Dated,Particular,View\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/erb/finpro/${moment(
-  new Date(),
-).format('DDMMYYYYhhmm')}as26.xlsx`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/AS26.csv`;
 
 export default class As26 extends React.PureComponent {
   constructor(props) {
@@ -93,7 +91,7 @@ export default class As26 extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
     Pref.getVal(Pref.userData, (userData) => {
       this.setState({userData: userData});
       Pref.getVal(Pref.saveToken, (value) => {
@@ -102,7 +100,7 @@ export default class As26 extends React.PureComponent {
         });
       });
     });
-    //});
+    });
   }
 
   backclick = () => {
@@ -252,16 +250,17 @@ export default class As26 extends React.PureComponent {
   };
 
   clickedexport = () => {
-    const {dataList} = this.state;
-    if (dataList.length > 0) {
-      Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
+    const {cloneList} = this.state;
+    if (cloneList.length > 0) {
+      const data = this.returnData(cloneList,0, cloneList.length);
+      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'AS26',
               description: 'AS26 record exported successfully',
-              mime: 'text/csv',
+              mime: 'text/comma-separated-values',
               path: FILEPATH,
               showNotification: true,
             }),
