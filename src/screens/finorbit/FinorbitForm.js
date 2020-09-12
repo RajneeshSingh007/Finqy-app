@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   BackHandler,
   Platform,
   TouchableWithoutFeedback,
-} from 'react-native';
+} from "react-native";
 import {
   Image,
   Screen,
@@ -19,9 +19,9 @@ import {
   TouchableOpacity,
   DropDownMenu,
   DropDownModal,
-} from '@shoutem/ui';
-import * as Helper from '../../util/Helper';
-import * as Pref from '../../util/Pref';
+} from "@shoutem/ui";
+import * as Helper from "../../util/Helper";
+import * as Pref from "../../util/Pref";
 import {
   Button,
   Card,
@@ -31,26 +31,26 @@ import {
   DefaultTheme,
   HelperText,
   FAB,
-} from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import CommonForm from './CommonForm';
-import SpecificForm from './SpecificForm';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
-import FileUploadForm from './FileUploadForm';
+} from "react-native-paper";
+import NavigationActions from "../../util/NavigationActions";
+import { SafeAreaView } from "react-navigation";
+import { sizeFont, sizeHeight, sizeWidth } from "../../util/Size";
+import CommonForm from "./CommonForm";
+import SpecificForm from "./SpecificForm";
+import CommonScreen from "../common/CommonScreen";
+import CardRow from "../common/CommonCard";
+import FileUploadForm from "./FileUploadForm";
 //import StepIndicator from 'react-native-step-indicator';
-import ApptForm from './ApptForm';
-import Lodash from 'lodash';
-import Loader from '../../util/Loader';
-import LeftHeaders from '../common/CommonLeftHeader';
-import BannerCard from '../common/BannerCard';
-import Carousel from 'react-native-snap-carousel';
-import {Pagination} from 'react-native-snap-carousel';
-import FormProgress from '../../util/FormProgress';
-import CScreen from '../component/CScreen';
-import StepIndicator from '../component/StepIndicator';
+import ApptForm from "./ApptForm";
+import Lodash from "lodash";
+import Loader from "../../util/Loader";
+import LeftHeaders from "../common/CommonLeftHeader";
+import BannerCard from "../common/BannerCard";
+import Carousel from "react-native-snap-carousel";
+import { Pagination } from "react-native-snap-carousel";
+import FormProgress from "../../util/FormProgress";
+import CScreen from "../component/CScreen";
+import StepIndicator from "../component/StepIndicator";
 
 // const customStyles = {
 //   stepIndicatorSize: 25,
@@ -89,26 +89,26 @@ export default class FinorbitForm extends React.PureComponent {
       loading: false,
       progressLoader: false,
       currentPosition: 0,
-      bottontext: 'Next',
+      bottontext: "Next",
       dataArray: [],
       userData: {},
-      appliedref: '',
-      refcode: '',
+      appliedref: "",
+      refcode: "",
       bannerList: [],
-      token: '',
-      userData: '',
-      title: '',
+      token: "",
+      userData: "",
+      title: "",
     };
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const {navigation} = this.props;
-    const url = navigation.getParam('url', '');
-    const title = navigation.getParam('title', '');
+    BackHandler.addEventListener("hardwareBackPress", this.backClick);
+    const { navigation } = this.props;
+    const url = navigation.getParam("url", "");
+    const title = navigation.getParam("title", "");
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
+        this.setState({ token: value }, () => {
           Pref.getVal(Pref.userData, (userData) => {
             this.setState({
               userData: userData,
@@ -124,31 +124,32 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   backClick = () => {
-    NavigationActions.navigate('FinorbitScreen');
+    NavigationActions.navigate("FinorbitScreen");
     return true;
   };
 
   componentWillUnMount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    BackHandler.removeEventListener("hardwareBackPress", this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
   onPageChange(position) {
     this.setState({
       currentPosition: position,
-      bottontext: position === 3 ? 'Submit' : 'Next',
+      bottontext: position === 3 ? "Submit" : "Next",
     });
     this.insertData(this.state.currentPosition, false);
   }
 
   submitt = () => {
-    const {currentPosition, title} = this.state;
+    const { currentPosition, title } = this.state;
     this.insertData(currentPosition, true);
   };
 
   insertData(currentPosition, mode) {
-    const {title} = this.state;
+    const { title } = this.state;
     let commons = null;
+    console.log("title", title);
     if (currentPosition === 0) {
       commons = JSON.parse(JSON.stringify(this.commonFormRef.current.state));
       delete commons.genderList;
@@ -185,14 +186,15 @@ export default class FinorbitForm extends React.PureComponent {
       delete commons.showvectorInsuList;
       delete commons.vectorCoverList;
       delete commons.showvectorCoverList;
-      if(title !== 'Health Insurance'){
+      if (title !== "Health Insurance") {
         delete commons.floaterItemList;
       }
       delete commons.vectorTypeIns;
       delete commons.showItemCalendar;
+      console.log("d", commons);
     } else if (currentPosition === 2) {
       commons = JSON.parse(
-        JSON.stringify(this.FileUploadFormRef.current.state),
+        JSON.stringify(this.FileUploadFormRef.current.state)
       );
     } else if (currentPosition === 3) {
       commons = JSON.parse(JSON.stringify(this.ApptFormRef.current.state));
@@ -217,29 +219,29 @@ export default class FinorbitForm extends React.PureComponent {
 
       let checkData = true;
       let formData = new FormData();
-      let uniq = '';
-      if (title.includes(' ')) {
-        uniq = title.trim().toLowerCase().replace(' ', '_');
+      let uniq = "";
+      if (title.includes(" ")) {
+        uniq = title.trim().toLowerCase().replace(" ", "_");
       }
       if (title === `Life Cum Invt. Plan`) {
-        uniq = 'life_cum_investment';
+        uniq = "life_cum_investment";
       }
       //console.log(`uniq`, uniq, title);
       formData.append(uniq, uniq);
 
       if (commonForms !== undefined) {
-        if (commonForms.name === '') {
+        if (commonForms.name === "") {
           checkData = false;
-          Helper.showToastMessage('Full Name empty', 0);
-        } else if (commonForms.mobile === '') {
+          Helper.showToastMessage("Full Name empty", 0);
+        } else if (commonForms.mobile === "") {
           checkData = false;
-          Helper.showToastMessage('Mobile Number empty', 0);
+          Helper.showToastMessage("Mobile Number empty", 0);
         } else if (commonForms.mobile.match(/^[0-9]*$/g) === null) {
           checkData = false;
-          Helper.showToastMessage('Invalid mobile number', 0);
+          Helper.showToastMessage("Invalid mobile number", 0);
         } else if (
-          title !== 'Health Insurance' &&
-          title !== 'Fixed Deposit' &&
+          title !== "Health Insurance" &&
+          title !== "Fixed Deposit" &&
           title !== `Life Cum Invt. Plan` &&
           title !== `Motor Insurance` &&
           title !== `Mutual Fund` &&
@@ -249,87 +251,89 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Personal Loan` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          commonForms.email === ''
+          commonForms.email === ""
         ) {
           checkData = false;
-          Helper.showToastMessage('Email empty', 0);
+          Helper.showToastMessage("Email empty", 0);
         } else if (
-          title === 'Health Insurance' &&
-          commonForms.qualification === ''
+          title === "Health Insurance" &&
+          commonForms.qualification === ""
         ) {
           checkData = false;
-          Helper.showToastMessage('Qualification empty', 0);
+          Helper.showToastMessage("Qualification empty", 0);
         } else if (
-          title !== 'Fixed Deposit' &&
+          title !== "Fixed Deposit" &&
           title !== `Mutual Fund` &&
           title !== `Home Loan` &&
           title !== `Loan Against Property` &&
           title !== `Personal Loan` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          (commonForms.dob === '' || commonForms.dob === `Date of Birth *`)
+          (commonForms.dob === "" || commonForms.dob === `Date of Birth *`)
         ) {
           checkData = false;
-          Helper.showToastMessage('Date of Birth empty', 0);
+          Helper.showToastMessage("Date of Birth empty", 0);
         } else if (
           title !== `Personal Loan` &&
           title !== `Loan Against Property` &&
           title !== `Home Loan` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          commonForms.gender === ''
+          commonForms.gender === ""
         ) {
           checkData = false;
-          Helper.showToastMessage('Please, Select Gender', 0);
+          Helper.showToastMessage("Please, Select Gender", 0);
         } else if (
           title !== `Personal Loan` &&
-          title !== 'Fixed Deposit' &&
-          title !== 'Business Loan' &&
+          title !== "Fixed Deposit" &&
+          title !== "Business Loan" &&
           title !== `Motor Insurance` &&
           title !== `Mutual Fund` &&
           title !== `Vector Plus` &&
           title !== `Home Loan` &&
           title !== `Loan Against Property` &&
           title !== `Auto Loan` &&
-          commonForms.employ === ''
+          commonForms.employ === ""
         ) {
           checkData = false;
-          Helper.showToastMessage('Please, Select Employment Type', 0);
+          Helper.showToastMessage("Please, Select Employment Type", 0);
         } else if (
           title !== `Personal Loan` &&
           title !== `Home Loan` &&
           title !== `Loan Against Property` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          commonForms.currentlocation === ''
+          commonForms.currentlocation === ""
         ) {
           checkData = false;
-          Helper.showToastMessage('Please, Select Current Location', 0);
+          Helper.showToastMessage("Please, Select Current Location", 0);
         } else if (
           Number(commonForms.mobile.length) < 10 ||
-          commonForms.mobile === '9876543210' ||
-          commons.mobile === '1234567890'
+          commonForms.mobile === "9876543210" ||
+          commons.mobile === "1234567890"
         ) {
           checkData = false;
-          Helper.showToastMessage('Invalid mobile number', 0);
+          Helper.showToastMessage("Invalid mobile number", 0);
         } else if (
-          commonForms.email !== '' &&
-          !commonForms.email.includes('@')
+          commonForms.email !== "" &&
+          !commonForms.email.includes("@")
         ) {
           checkData = false;
-          Helper.showToastMessage('Invalid Email', 0);
-        } else if (commonForms.pincode !== '' && commonForms.pincode < 6) {
+          Helper.showToastMessage("Invalid Email", 0);
+        } else if (commonForms.pincode !== "" && commonForms.pincode < 6) {
           checkData = false;
-          Helper.showToastMessage('Invalid Pincode', 0);
+          Helper.showToastMessage("Invalid Pincode", 0);
         } else {
           let parseJs = JSON.parse(JSON.stringify(commonForms));
-          if (parseJs.currentlocation === 'Select Current Location *') {
-            parseJs.currentlocation === '';
+          if (parseJs.currentlocation === "Select Current Location *") {
+            parseJs.currentlocation === "";
           }
           for (var key in parseJs) {
             const value = parseJs[key];
             if (value !== undefined) {
-              formData.append(key, parseJs[key]);
+              if (Array.isArray(value) === false) {
+                formData.append(key, parseJs[key]);
+              }
             }
           }
         }
@@ -340,9 +344,9 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Personal Loan` &&
           title !== `Loan Against Property` &&
           title !== `Home Loan` &&
-          title !== 'Credit Card' &&
-          title !== 'Health Insurance' &&
-          title !== 'Life Cum Invt. Plan' &&
+          title !== "Credit Card" &&
+          title !== "Health Insurance" &&
+          title !== "Life Cum Invt. Plan" &&
           title !== `Motor Insurance` &&
           title !== `Vector Plus` &&
           title !== `Business Loan` &&
@@ -351,23 +355,23 @@ export default class FinorbitForm extends React.PureComponent {
         ) {
           checkData = false;
           Helper.showToastMessage(
-            title === 'Term Insurance'
-              ? 'Required Cover *'
-              : title === 'Home Loan' ||
-                title === 'Loan Against Property' ||
+            title === "Term Insurance"
+              ? "Required Cover *"
+              : title === "Home Loan" ||
+                title === "Loan Against Property" ||
                 title === `Personal Loan` ||
                 title === `Business Loan`
               ? `Desired Amount empty`
               : `Investment Amount empty`,
-            0,
+            0
           );
         } else if (
           title !== `Personal Loan` &&
           title !== `Loan Against Property` &&
           title !== `Home Loan` &&
-          title !== 'Health Insurance' &&
-          title !== 'Fixed Deposit' &&
-          title !== 'Life Cum Invt. Plan' &&
+          title !== "Health Insurance" &&
+          title !== "Fixed Deposit" &&
+          title !== "Life Cum Invt. Plan" &&
           title !== `Motor Insurance` &&
           title !== `Mutual Fund` &&
           title !== `Term Insurance` &&
@@ -377,201 +381,228 @@ export default class FinorbitForm extends React.PureComponent {
           specificForms.existingcard === ``
         ) {
           checkData = false;
-          Helper.showToastMessage('Select Existing Card/Loan', 0);
+          Helper.showToastMessage("Select Existing Card/Loan", 0);
         } else {
-          if (title === 'Life Cum Invt. Plan') {
-            if (specificForms.investment_amount === '') {
+          if (title === "Life Cum Invt. Plan") {
+            if (specificForms.investment_amount === "") {
               checkData = false;
-              Helper.showToastMessage('Investment Amount empty', 0);
+              Helper.showToastMessage("Investment Amount empty", 0);
             } else {
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
-          } else if (title === 'Motor Insurance') {
-            if (specificForms.insurance === '') {
+          } else if (title === "Motor Insurance") {
+            if (specificForms.insurance === "") {
               checkData = false;
-              Helper.showToastMessage('Select Any Claim Last Year', 0);
+              Helper.showToastMessage("Select Any Claim Last Year", 0);
             } else if (
               specificForms.claim_type === `` ||
               specificForms.claim_type === `Select Insurance Type *`
             ) {
               checkData = false;
-              Helper.showToastMessage('Select Insurance Type', 0);
+              Helper.showToastMessage("Select Insurance Type", 0);
             } else {
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
-          } else if (title === 'Vector Plus') {
+          } else if (title === "Vector Plus") {
             //required_cover
             if (
               specificForms.claim_type === `` ||
               specificForms.claim_type === `Select Insurance Type *`
             ) {
               checkData = false;
-              Helper.showToastMessage('Select Insurance Type', 0);
-            } else if (specificForms.required_cover === '') {
+              Helper.showToastMessage("Select Insurance Type", 0);
+            } else if (specificForms.required_cover === "") {
               checkData = false;
-              Helper.showToastMessage('Select Required Cover', 0);
+              Helper.showToastMessage("Select Required Cover", 0);
             } else {
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
-          } else if (title === 'Auto Loan') {
-            if (title !== `Auto Loan` && specificForms.nooldcard === '') {
+          } else if (title === "Auto Loan") {
+            if (title !== `Auto Loan` && specificForms.nooldcard === "") {
               checkData = false;
-              Helper.showToastMessage('Select Type Of Car', 0);
+              Helper.showToastMessage("Select Type Of Car", 0);
             } else {
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
           } else if (
-            title === 'Term Insurance' ||
+            title === "Term Insurance" ||
             title === `Health Insurance`
           ) {
-            if (specificForms.turnover === '') {
+            if (specificForms.turnover === "") {
               checkData = false;
-              Helper.showToastMessage('Annual TurnOver Empty', 0);
+              Helper.showToastMessage("Annual TurnOver Empty", 0);
             } else if (
               title === `Health Insurance` &&
-              specificForms.required_cover === ''
+              specificForms.required_cover === ""
             ) {
               checkData = false;
-              Helper.showToastMessage('Required Cover Empty', 0);
+              Helper.showToastMessage("Required Cover Empty", 0);
             } else if (
               title === `Term Insurance` &&
-              specificForms.amount === ''
+              specificForms.amount === ""
             ) {
               checkData = false;
-              Helper.showToastMessage('Required Cover Empty', 0);
-            } else if (specificForms.lifestyle === '') {
+              Helper.showToastMessage("Required Cover Empty", 0);
+            } else if (specificForms.lifestyle === "") {
               checkData = false;
-              Helper.showToastMessage('Select Lifestyle', 0);
-            } else if (specificForms.lifestyle2 === '') {
+              Helper.showToastMessage("Select Lifestyle", 0);
+            } else if (specificForms.lifestyle2 === "") {
               checkData = false;
-              Helper.showToastMessage('Select Lifestyle', 0);
-            } else if (specificForms.existing_diseases === '') {
+              Helper.showToastMessage("Select Lifestyle", 0);
+            } else if (specificForms.existing_diseases === "") {
               checkData = false;
-              Helper.showToastMessage('Select Existing Disease', 0);
+              Helper.showToastMessage("Select Existing Disease", 0);
             } else if (
               title === `Health Insurance` &&
-              specificForms.claim_type === ''
+              specificForms.claim_type === ""
             ) {
               checkData = false;
-              Helper.showToastMessage('Please, Select Type Of Insurance', 0);
+              Helper.showToastMessage("Please, Select Type Of Insurance", 0);
             } else if (
               title === `Health Insurance` &&
-              specificForms.claim_type === 'Family Floater'
+              specificForms.claim_type === "Family Floater"
             ) {
-              if (specificForms.family_floater === '') {
+              if (specificForms.family_floater === "") {
                 checkData = false;
-                Helper.showToastMessage('Please, Select Family Floater', 0);
+                Helper.showToastMessage("Please, Select Family Floater", 0);
               } else {
-                const floaterItemList = JSON.parse(
-                  JSON.stringify(specificForms.floaterItemList),
-                );
-                if (floaterItemList.length > 0) {
-                  let checker = false;
-                  for (let index = 0; index < floaterItemList.length; index++) {
-                    const element = floaterItemList[index];
-                    const {name, gender, dob, relation} = element;
-                    if (
-                      name === '' ||
-                      gender === '' ||
-                      dob === '' ||
-                      relation === ''
+                if (
+                  specificForms !== null &&
+                  specificForms.floaterItemList !== undefined &&
+                  specificForms.floaterItemList !== null
+                ) {
+                  const floaterItemList = JSON.parse(
+                    JSON.stringify(specificForms.floaterItemList)
+                  );
+                  if (floaterItemList.length > 0) {
+                    let checker = false;
+                    for (
+                      let index = 0;
+                      index < floaterItemList.length;
+                      index++
                     ) {
-                      checker = true;
+                      const element = floaterItemList[index];
+                      const { name, gender, dob, relation } = element;
+                      if (
+                        name === "" ||
+                        gender === "" ||
+                        dob === "" ||
+                        relation === ""
+                      ) {
+                        checker = true;
+                      }
                     }
-                  }
-                  if (checker) {
-                    checkData = false;
-                    Helper.showToastMessage(
-                      'Please, Fill all member details',
-                      0,
-                    );
-                  } else {
-                    if (
-                      specificForms.pancardNo !== '' &&
-                      !Helper.checkPanCard(specificForms.pancardNo)
-                    ) {
+                    if (checker) {
                       checkData = false;
-                      Helper.showToastMessage('Invalid pan card number', 0);
+                      Helper.showToastMessage(
+                        "Please, Fill all member details",
+                        0
+                      );
                     } else {
-                      let keypos = 1;
-                      const loops = Lodash.map(floaterItemList, (ele) => {
-                        let parseJs = JSON.parse(JSON.stringify(ele));
-                        for (var key in parseJs) {
-                          const value = parseJs[key];
-                          if (value !== undefined) {
-                            formData.append(
-                              keypos === 1
-                                ? `floater_${key}`
-                                : `floater_${key}${keypos}`,
-                              parseJs[key],
-                            );
+                      if (
+                        specificForms.pancardNo !== "" &&
+                        !Helper.checkPanCard(specificForms.pancardNo)
+                      ) {
+                        checkData = false;
+                        Helper.showToastMessage("Invalid pan card number", 0);
+                      } else {
+                        let keypos = 1;
+                        const loops = Lodash.map(floaterItemList, (ele) => {
+                          let parseJs = JSON.parse(JSON.stringify(ele));
+                          for (var key in parseJs) {
+                            const value = parseJs[key];
+                            if (value !== undefined) {
+                              formData.append(
+                                keypos === 1
+                                  ? `floater_${key}`
+                                  : `floater_${key}${keypos}`,
+                                parseJs[key]
+                              );
+                            }
                           }
-                        }
-                        keypos += 1;
-                      });
-                      delete specificForms.floaterItemList;
-                      let parseJs = JSON.parse(JSON.stringify(specificForms));
-                      for (var key in parseJs) {
-                        if (key !== `floaterItemList`) {
-                          const value = parseJs[key];
-                          if (value !== undefined) {
-                            formData.append(key, parseJs[key]);
+                          keypos += 1;
+                        });
+                        let parseJs = JSON.parse(JSON.stringify(specificForms));
+                        for (var key in parseJs) {
+                          if (key !== `floaterItemList`) {
+                            const value = parseJs[key];
+                            if (value !== undefined) {
+                              if (Array.isArray(value) === false) {
+                                formData.append(key, parseJs[key]);
+                              }
+                            }
                           }
                         }
                       }
@@ -580,73 +611,82 @@ export default class FinorbitForm extends React.PureComponent {
                 }
               }
             } else {
-              delete specificForms.floaterItemList;
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
           } else if (title === `Auto Loan`) {
-            if (specificForms.turnover === '') {
+            if (specificForms.turnover === "") {
               checkData = false;
-              Helper.showToastMessage('Annual Turnover empty', 0);
+              Helper.showToastMessage("Annual Turnover empty", 0);
             } else if (
               title !== `Business Loan` &&
               title !== `Personal Loan` &&
-              (specificForms.loan_property_city === '' ||
+              (specificForms.loan_property_city === "" ||
                 specificForms.loan_property_city ===
                   `Select Loan Property City *`)
             ) {
               checkData = false;
-              Helper.showToastMessage('Select Loan Property city', 0);
+              Helper.showToastMessage("Select Loan Property city", 0);
             } else if (
               (title === `Personal Loan` || title === `Business Loan`) &&
               specificForms.type_loan === ``
             ) {
               checkData = false;
-              Helper.showToastMessage('Select Type of Loan', 0);
+              Helper.showToastMessage("Select Type of Loan", 0);
             } else {
               if (
-                specificForms.pancardNo !== '' &&
+                specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
                 checkData = false;
-                Helper.showToastMessage('Invalid pan card number', 0);
+                Helper.showToastMessage("Invalid pan card number", 0);
               } else {
-                delete specificForms.floaterItemList;
                 let parseJs = JSON.parse(JSON.stringify(specificForms));
                 for (var key in parseJs) {
-                  const value = parseJs[key];
-                  if (value !== undefined) {
-                    formData.append(key, parseJs[key]);
+                  if (key !== "floaterItemList") {
+                    const value = parseJs[key];
+                    if (value !== undefined) {
+                      if (Array.isArray(value) === false) {
+                        formData.append(key, parseJs[key]);
+                      }
+                    }
                   }
                 }
               }
             }
           } else if (
-            specificForms.pancardNo !== '' &&
+            specificForms.pancardNo !== "" &&
             !Helper.checkPanCard(specificForms.pancardNo)
           ) {
             checkData = false;
-            Helper.showToastMessage('Invalid pan card number', 0);
+            Helper.showToastMessage("Invalid pan card number", 0);
           } else {
-            delete specificForms.floaterItemList;
             let parseJs = JSON.parse(JSON.stringify(specificForms));
             for (var key in parseJs) {
-              const value = parseJs[key];
-              if (value !== undefined) {
-                formData.append(key, parseJs[key]);
+              if (key !== "floaterItemList") {
+                const value = parseJs[key];
+                if (value !== undefined) {
+                  if (Array.isArray(value) === false) {
+                    formData.append(key, parseJs[key]);
+                  }
+                }
               }
             }
           }
@@ -665,7 +705,9 @@ export default class FinorbitForm extends React.PureComponent {
                 if (key === `rcbookcopy`) {
                   existence = true;
                 }
-                formData.append(key, parseJs[key]);
+                if (Array.isArray(value) === false) {
+                  formData.append(key, parseJs[key]);
+                }
               }
             }
           });
@@ -673,22 +715,24 @@ export default class FinorbitForm extends React.PureComponent {
           if (title === `Motor Insurance`) {
             if (!existence) {
               checkData = false;
-              Helper.showToastMessage('Please, Select RC Copy', 0);
+              Helper.showToastMessage("Please, Select RC Copy", 0);
             }
           }
         }
       }
 
       if (dateForm !== undefined) {
-        if (dateForm.baa === '') {
+        if (dateForm.baa === "") {
           checkData = false;
-          Helper.showToastMessage('Please, Select Appointment Date', 0);
+          Helper.showToastMessage("Please, Select Appointment Date", 0);
         } else {
           let parseJs = JSON.parse(JSON.stringify(dateForm));
           for (var key in parseJs) {
             const value = parseJs[key];
             if (value !== undefined) {
-              formData.append(key, parseJs[key]);
+              if (Array.isArray(value) === false) {
+                formData.append(key, parseJs[key]);
+              }
             }
           }
         }
@@ -699,13 +743,13 @@ export default class FinorbitForm extends React.PureComponent {
           this.setState((prevState) => {
             return {
               currentPosition: prevState.currentPosition + 1,
-              bottontext: prevState.currentPosition + 1 > 2 ? 'Submit' : 'Next',
+              bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
             };
           });
         } else {
-          this.setState({progressLoader: true});
-          const {refercode} = this.state.userData;
-          formData.append('ref', refercode);
+          this.setState({ progressLoader: true });
+          const { refercode } = this.state.userData;
+          formData.append("ref", refercode);
 
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
@@ -715,42 +759,42 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             (result) => {
-              const {response_header} = result;
-              const {res_type,res} = response_header;
-              this.setState({progressLoader: false});
-              if (res_type === 'success') {
-                Helper.showToastMessage('Form submitted successfully', 1);
-                if(title === `Health Insurance`){
-                  const {id} = res;
+              const { response_header } = result;
+              const { res_type, res } = response_header;
+              this.setState({ progressLoader: false });
+              if (res_type === "success") {
+                Helper.showToastMessage("Form submitted successfully", 1);
+                if (title === `Health Insurance`) {
+                  const { id } = res;
                   const cov = Number(specificForms.required_cover);
-                  NavigationActions.navigate('GetQuotes', {
-                    formId:id,
-                    sumin:Number(cov/100000).toFixed(1)
-                  })
-                }else{
-                  NavigationActions.navigate('Finish', {
-                    top: 'Edit Profile',
-                    red: 'Success',
-                    grey: 'Details uploaded',
-                    blue: 'Add another lead?',
-                    back: 'FinorbitScreen',
+                  NavigationActions.navigate("GetQuotes", {
+                    formId: id,
+                    sumin: Number(cov / 100000).toFixed(1),
+                  });
+                } else {
+                  NavigationActions.navigate("Finish", {
+                    top: "Edit Profile",
+                    red: "Success",
+                    grey: "Details uploaded",
+                    blue: "Add another lead?",
+                    back: "FinorbitScreen",
                   });
                 }
               } else {
-                Helper.showToastMessage('failed to submit form', 0);
+                Helper.showToastMessage("failed to submit form", 0);
               }
             },
             (error) => {
-              this.setState({progressLoader: false});
-              Helper.showToastMessage('Form submitted successfully', 1);
-              NavigationActions.navigate('Finish', {
-                top: 'Edit Profile',
-                red: 'Success',
-                grey: 'Details uploaded',
-                blue: 'Add another lead?',
-                back: 'FinorbitScreen',
+              this.setState({ progressLoader: false });
+              Helper.showToastMessage("Form submitted successfully", 1);
+              NavigationActions.navigate("Finish", {
+                top: "Edit Profile",
+                red: "Success",
+                grey: "Details uploaded",
+                blue: "Add another lead?",
+                back: "FinorbitScreen",
               });
-            },
+            }
           );
         }
       }
@@ -758,19 +802,19 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   findImage() {
-    const {title} = this.props;
+    const { title } = this.props;
     const productList = JSON.parse(JSON.stringify(Pref.productList));
     const search = Lodash.find(productList, (io) => io.name === title);
     console.log(title, search);
     return search === undefined
-      ? require('../../res/images/logo.png')
+      ? require("../../res/images/logo.png")
       : search.url;
   }
 
   render() {
-    const {title} = this.state;
+    const { title } = this.state;
     const split =
-      title !== '' ? (title.includes(' ') ? title.split(' ') : [title]) : [''];
+      title !== "" ? (title.includes(" ") ? title.split(" ") : [title]) : [""];
     return (
       <CScreen
         absolute={
@@ -798,19 +842,17 @@ export default class FinorbitForm extends React.PureComponent {
                     <Title style={styles.passText}>{`${split[1]}`}</Title>
                   ) : split.length === 3 ? (
                     <Title
-                      style={
-                        styles.passText
-                      }>{`${split[1]} ${split[2]}`}</Title>
+                      style={styles.passText}
+                    >{`${split[1]} ${split[2]}`}</Title>
                   ) : split.length === 4 ? (
                     <Title
-                      style={
-                        styles.passText
-                      }>{`${split[1]} ${split[2]} ${split[3]}`}</Title>
+                      style={styles.passText}
+                    >{`${split[1]} ${split[2]} ${split[3]}`}</Title>
                   ) : null}
                 </>
               }
               bottomtextStyle={{
-                color: '#555555',
+                color: "#555555",
                 fontSize: 20,
               }}
             />
@@ -834,11 +876,11 @@ export default class FinorbitForm extends React.PureComponent {
                 <CommonForm
                   ref={this.commonFormRef}
                   showemploy={
-                    this.state.title !== 'Fixed Deposit' &&
-                    this.state.title !== 'Vector Plus' &&
-                    this.state.title !== 'Business Loan' &&
-                    this.state.title !== 'Mutual Fund' &&
-                    this.state.title !== 'Motor Insurance'
+                    this.state.title !== "Fixed Deposit" &&
+                    this.state.title !== "Vector Plus" &&
+                    this.state.title !== "Business Loan" &&
+                    this.state.title !== "Mutual Fund" &&
+                    this.state.title !== "Motor Insurance"
                   }
                   saveData={this.state.dataArray[0]}
                   title={this.state.title}
@@ -875,12 +917,13 @@ export default class FinorbitForm extends React.PureComponent {
                 <Title style={styles.btntext}>{'Sign In'}</Title>
               </Button> */}
               <Button
-                mode={'flat'}
+                mode={"flat"}
                 uppercase={false}
                 dark={true}
                 loading={false}
                 style={styles.loginButtonStyle}
-                onPress={this.submitt}>
+                onPress={this.submitt}
+              >
                 <Title style={styles.btntext}>{this.state.bottontext}</Title>
               </Button>
             </View>
@@ -915,65 +958,65 @@ const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 0.5,
     color: Pref.RED,
-    fontWeight: '700',
+    fontWeight: "700",
     lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
+    alignSelf: "center",
+    justifyContent: "center",
+    textAlign: "center",
     paddingVertical: 16,
   },
   inputStyle: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    borderBottomColor: '#dedede',
-    fontFamily: 'Rubik',
+    backgroundColor: "white",
+    color: "#292929",
+    borderBottomColor: "#dedede",
+    fontFamily: "Rubik",
     fontSize: 16,
     borderBottomWidth: 1,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
   },
   inputPassStyle: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    borderBottomColor: '#dedede',
-    fontFamily: 'Rubik',
+    backgroundColor: "white",
+    color: "#292929",
+    borderBottomColor: "#dedede",
+    fontFamily: "Rubik",
     fontSize: 16,
     borderBottomWidth: 1,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
     marginVertical: sizeHeight(1),
   },
   inputPass1Style: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#292929',
-    fontFamily: 'Rubik',
+    backgroundColor: "white",
+    color: "#292929",
+    fontFamily: "Rubik",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
     marginTop: -7,
   },
   loginButtonStyle: {
-    color: 'white',
+    color: "white",
     backgroundColor: Pref.RED,
-    textAlign: 'center',
+    textAlign: "center",
     elevation: 0,
     borderRadius: 0,
     letterSpacing: 0.5,
     borderRadius: 48,
-    width: '40%',
+    width: "40%",
     paddingVertical: 4,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   btntext: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
     letterSpacing: 0.5,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

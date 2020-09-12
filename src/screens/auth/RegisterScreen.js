@@ -221,26 +221,13 @@ export default class RegisterScreen extends React.PureComponent {
             );
           }
         },
-        () => {
+        (error) => {
           this.setState({loading: false});
           Helper.showToastMessage('something went wrong', 0);
         },
       );
     }
   };
-
-  sendOTPCode() {
-    // const to = "+91" + this.state.contact;
-    // auth().signInWithPhoneNumber(to)
-    //     .then(confirmResult => {
-    //         //console.log('confirmResult', confirmResult);
-    //         this.setState({confirmResult: confirmResult});
-    //     })
-    //     .catch(error => {
-    //         console.log('otperror', error);
-    //        // Helper.showToastMessage('Auth Failed', 0)
-    //     });
-  }
 
   render() {
     return (
@@ -253,13 +240,13 @@ export default class RegisterScreen extends React.PureComponent {
         }
         body={
           <>
-            <IntroHeader />
+            <IntroHeader showRight={true} />
             <View style={{flex: 0.87}} styleName="v-center h-center md-gutter">
-              <Title style={styles.title}>{`Register`}</Title>
+              {/* <Title style={styles.title}>{`Register`}</Title> */}
               <Title
                 style={
                   styles.title1
-                }>{`please fill form to create your account`}</Title>
+                }>{`Partner Registration`}</Title>
 
               <View styleName="md-gutter">
                 <AnimatedInputBox
@@ -510,20 +497,33 @@ export default class RegisterScreen extends React.PureComponent {
             </View>
 
             <View
-              styleName="horizontal md-gutter v-center v-center"
+              styleName="horizontal md-gutter v-center v-center space-between"
               style={{
                 marginStart: 16,
                 marginTop: -24,
               }}>
-              {/* <Button
+              <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}
                 loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
+                  style={[
+                    styles.loginButtonStyle,
+                    {
+                      backgroundColor: 'transparent',
+                      borderColor: '#d5d3c1',
+                      borderWidth: 1.3,
+                      width:'56%'
+                    },
+                  ]}
+                onPress={() => NavigationActions.goBack()}>
+                <Title                     style={StyleSheet.flatten([
+                      styles.btntext,
+                      {
+                        color: '#b8b28f',
+                      },
+                    ])}>{'<<Back to login'}</Title>
+              </Button>
               <Button
                 mode={'flat'}
                 uppercase={false}

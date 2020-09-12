@@ -5,7 +5,7 @@ import IconChooser from '../common/IconChooser';
 import * as Pref from '../../util/Pref';
 
 const IntroHeader = (prop) => {
-  const {flex = 0.13, iconClick = () =>{}} = prop;
+  const {flex = 0.13, iconClick = () =>{}, showRight = false} = prop;
   return (
     <View
       styleName="md-gutter"
@@ -26,7 +26,8 @@ const IntroHeader = (prop) => {
             />
           </View>
           <View style={styles.rightcon}>
-            <Title style={styles.rightText}>
+            {showRight === false  ?<> 
+                        <Title style={styles.rightText}>
               {`Login `}
               <IconChooser name={'arrow-right'} size={20} color={'#bbb8ac'} />
             </Title>
@@ -40,6 +41,7 @@ const IntroHeader = (prop) => {
                 />
               </View>
             </TouchableWithoutFeedback>
+            </> : null}
           </View>
         </View>
       </View>

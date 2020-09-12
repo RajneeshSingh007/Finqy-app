@@ -34,7 +34,10 @@ export default class LoginScreen extends React.PureComponent {
       showpassword: true,
       token: '',
     };
-    Pref.setVal(Pref.userData, '');
+    Pref.setVal(Pref.saveToken, null);
+    Pref.setVal(Pref.userData, null);
+    Pref.setVal(Pref.userID, null);
+    Pref.setVal(Pref.USERTYPE, '');
     Pref.setVal(Pref.loggedStatus, false);
   }
 
@@ -62,7 +65,7 @@ export default class LoginScreen extends React.PureComponent {
               Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
             }
           },
-          () => {
+          (error) => {
             //console.log(`error`, error)
           },
         );
@@ -96,7 +99,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('Invalid password', 0);
     }
-    //console.log('token', this.state.token);
+    console.log('token', this.state.token);
     if (errorData) {
       this.setState({loading: true});
       messaging()

@@ -2527,67 +2527,69 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
-  {
-    name: 'Hello Doctor Policy',
-    url: require('./../res/images/erb.png'),
-  },
-  {
-    name: 'Asaan Health Policy',
-    url: require('./../res/images/asanhealth.png'),
-  },
-  {
-    name: 'Sabse Asaan Health Plan',
-    url: require('./../res/images/sabseasan.png'),
-  },
+  // {
+  //   name: 'Hello Doctor Policy',
+  //   url: require('./../res/images/erb.png'),
+  // },
+  // {
+  //   name: 'Asaan Health Policy',
+  //   url: require('./../res/images/asanhealth.png'),
+  // },
+  // {
+  //   name: 'Sabse Asaan Health Plan',
+  //   url: require('./../res/images/sabseasan.png'),
+  // },
 ];
+
 /**
  * Server url
  */
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
-//'http://192.168.0.34/';
-//https://erb.ai/;
-export const BASEUrl = 'https://erb.ai/corporate_tool/Apis/';
-export const FOLDERPATH = `${BASEUrl}`;
-export const FinOrbitFormUrl = `${FOLDERPATH}finorbit/`;
-export const LoginUrl = `${FOLDERPATH}tool_login.php`;
-export const EmailOTPUrl = `${FOLDERPATH}tool_email_otp.php`;
-export const RegisterUrl = `${FOLDERPATH}tool_register.php`;
-export const GetToken = `${FOLDERPATH}get_token.php`;
-export const AddTeam = `${FOLDERPATH}tool_add_team.php`;
-export const OffersUrl = `${FOLDERPATH}tool_offers.php`;
-export const ViewTeamUrl = `${FOLDERPATH}tool_view_team.php`;
-export const TrainingUrl = `${FOLDERPATH}tool_training.php`;
-export const RelationManagerUrl = `${FOLDERPATH}tool_managers.php`;
-export const BlogsUrl = `${FOLDERPATH}tool_blogs.php`;
-export const WalletInvoiceUrl = `${FOLDERPATH}tool_get_invoice.php`;
-export const ChangePass = `${FOLDERPATH}tool_change_pass.php`;
-export const LeadRecordUrl = `${FOLDERPATH}tool_lead_record.php`;
-export const ViewConnectorUrl = `${FOLDERPATH}tool_view_connector.php`;
-export const WalletUrl = `${FOLDERPATH}tool_get_wallet.php`;
-export const AjaxUrl = `${FOLDERPATH}tool_ajax.php`;
-export const UpdateAccountUrl = `${FOLDERPATH}tool_update_profile.php`;
-export const WalletRedeemUrl = `${FOLDERPATH}tool_wallet_redeem.php`;
-export const ConnectorregisterUrl = `${FOLDERPATH}tool_connector_register.php`;
-export const As26Url = `${FOLDERPATH}tool_get_26as.php`;
-export const CertUrl = `${FOLDERPATH}tool_cert.php`;
-export const PayoutUrl = `${FOLDERPATH}tool_payout_structure.php`;
-export const ConnectorPercentage = `${FOLDERPATH}tool_payout`;
-export const ForgotUrl = `https://www.erb.ai/forgot_all.php`;
-export const NewFormPayment = `https://erb.ai/erbfinorbit/policy_premium.php`;
-export const VectorFormPayment = `https://erb.ai/erbfinorbit/Test_payment.php`;
-export const AgreeUrl = `https://erb.ai/corporate_tool/agree.pdf`;
-export const TCondition = `https://erb.ai/termcondition.php`;
-export const AjaxWithoutToken = `https://erb.ai/erbfinorbit/ajax.php`;
-export const NewFormUrl = `https://erb.ai/erbfinorbit/aditya_birla_response.php`;
-export const FindCityState = `https://erb.ai/erbfinorbit/fetchcitystatebypin.php`;
+
+export const MainUrl = `https://erb.ai/`;//`http://uat.erb.ai/`; //`https://erb.ai/`;
+export const FinURL = `${MainUrl}erbfinorbit/`;
+export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
+//export const FOLDERPATH = `${BASEUrl}erbfinorbit`;
+export const FinOrbitFormUrl = `${BASEUrl}finorbit/`;
+
+export const DashBoardUrl = `${BASEUrl}tool_dashboard.php`;
+export const LoginUrl = `${BASEUrl}tool_login.php`;
+export const EmailOTPUrl = `${BASEUrl}tool_email_otp.php`;
+export const RegisterUrl = `${BASEUrl}tool_register.php`;
+export const GetToken = `${BASEUrl}get_token.php`;
+export const AddTeam = `${BASEUrl}tool_add_team.php`;
+export const OffersUrl = `${BASEUrl}tool_offers.php`;
+export const ViewTeamUrl = `${BASEUrl}tool_view_team.php`;
+export const TrainingUrl = `${BASEUrl}tool_training.php`;
+export const RelationManagerUrl = `${BASEUrl}tool_managers.php`;
+export const BlogsUrl = `${BASEUrl}tool_blogs.php`;
+export const WalletInvoiceUrl = `${BASEUrl}tool_get_invoice.php`;
+export const ChangePass = `${BASEUrl}tool_change_pass.php`;
+export const LeadRecordUrl = `${BASEUrl}tool_lead_record.php`;
+export const ViewConnectorUrl = `${BASEUrl}tool_view_connector.php`;
+export const WalletUrl = `${BASEUrl}tool_get_wallet.php`;
+export const AjaxUrl = `${BASEUrl}tool_ajax.php`;
+export const UpdateAccountUrl = `${BASEUrl}tool_update_profile.php`;
+export const WalletRedeemUrl = `${BASEUrl}tool_wallet_redeem.php`;
+export const ConnectorregisterUrl = `${BASEUrl}tool_connector_register.php`;
+export const As26Url = `${BASEUrl}tool_get_26as.php`;
+export const CertUrl = `${BASEUrl}tool_cert.php`;
+export const PayoutUrl = `${BASEUrl}tool_payout_structure.php`;
+export const ConnectorPercentage = `${BASEUrl}tool_payout`;
+
+export const ForgotUrl = `${MainUrl}forgot_all.php`;
+export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
+export const TCondition = `${MainUrl}termcondition.php`;
+
+export const NewFormPayment = `${FinURL}policy_premium.php`;
+export const VectorFormPayment = `${FinURL}Test_payment.php`;
+export const AjaxWithoutToken = `${FinURL}ajax.php`;
+export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
+export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
+
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
 
-export const FetchAccountUrl = `${FOLDERPATH}fetchaccount.php`;
-export const MultiForm = `${BASEUrl}erbfinorbit/finorbitForms.php`;
-export const CouponApplyUrl = `${FOLDERPATH}couponapply.php`;
-export const BannerUrl = `${FOLDERPATH}fetchBanner.php`;
-export const FetchLeadsUrl = `${FOLDERPATH}fetchLeads.php`;
-
+//code push
 export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
 export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
 

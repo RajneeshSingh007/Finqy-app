@@ -55,7 +55,7 @@ const options = {
     },
     installMode: codePush.InstallMode.IMMEDIATE,
     checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-    deploymentKey: Pref.STAGING_CODE_PUSH,
+    deploymentKey: Pref.PRODUCTION_CODE_PUSH,
 };
 
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));

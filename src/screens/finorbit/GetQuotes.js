@@ -58,21 +58,9 @@ export default class GetQuotes extends React.Component {
     const { navigation } = this.props;
     const formId = navigation.getParam('formId', null);
     const sumInsurred = navigation.getParam('sumin', null);
-    let check = 1;
-    if(sumInsurred !== null){
-      const parse = String(sumInsurred);
-      if(parse.includes('.')){
-        const sp = parse.split('.');
-        if(sp[1] === '0'){
-          check = 0;
-        }else{
-          check = 1;
-        }
-      }
-    }
     this.focusListener = navigation.addListener('didFocus', () => {
-      this.setState({ formId: formId, sumInsurred:`${Number(sumInsurred).toFixed(check)}` });
-      this.fetchCompany(formId, Number(sumInsurred).toFixed(check), true);
+      this.setState({ formId: formId, sumInsurred:`${Number(sumInsurred)}` });
+      this.fetchCompany(formId, Number(sumInsurred), true);
     });
   }
 
@@ -97,7 +85,7 @@ export default class GetQuotes extends React.Component {
                 name: cname,
                 og: e,
                 id: index + 1,
-                select: false,
+                select: isFirstTime === true  ? index < 3 ? true : false : false,
               };
             });
             console.log('list',list)
@@ -134,17 +122,15 @@ export default class GetQuotes extends React.Component {
       return false;
     }
     if (map.length === 1) {
-      const compId = `${map[0]["id"]}`;
+      const compId = `${map[0]["companyid"]}`;
       finalUrl = `https://erb.ai/erbfinorbit/download_quote1.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 2) {
-      const compId = `${map[0]["id"]}$$${map[1]["id"]}`;
+      const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}`;
       finalUrl = `https://erb.ai/erbfinorbit/download_quote2.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 3) {
-      const compId = `${map[0]["id"]}$$${map[1]["id"]}$$${map[2]["id"]}`;
+      const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}$$${map[2]["companyid"]}`;
       finalUrl = `https://erb.ai/erbfinorbit/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }
-                console.log("map", map.length,finalUrl);
-
     this.setState({ modalvis: true, pdfurl: finalUrl });
   };
 
@@ -380,16 +366,7 @@ export default class GetQuotes extends React.Component {
               </View>
             </View>
 
-            <View styleName="horizontal space-between md-gutter v-end h-end">
-              {/* <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
+            <View styleName="horizontal space-between md-gutter v-center h-center">
               <Button
                 mode={"flat"}
                 uppercase={false}
@@ -398,7 +375,7 @@ export default class GetQuotes extends React.Component {
                 style={styles.loginButtonStyle}
                 onPress={this.submitt}
               >
-                <Title style={styles.btntext}>{`Submit`}</Title>
+                <Title style={styles.btntext}>{`Get Quote`}</Title>
               </Button>
             </View>
           </>
