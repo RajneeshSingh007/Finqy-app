@@ -2541,12 +2541,84 @@ export const productList = [
   // },
 ];
 
+export const productListClone = [
+  {
+    name: 'Term Insurance',
+    url: require('./../res/images/termins.png'),
+  },
+  {
+    name: 'Health Insurance',
+    url: require('./../res/images/healthins.png'),
+  },
+  {
+    name: 'Motor Insurance',
+    url: require('./../res/images/motorins.png'),
+  },
+  {
+    name: 'Insurance Samadhan',
+    url: require('./../res/images/samadhan.png'),
+  },
+  {
+    name: 'Vector Plus',
+    url: require('./../res/images/vectorplus.png'),
+  },
+  {
+    name: 'Life Cum Invt. Plan',
+    url: require('./../res/images/lifecuminv.png'),
+  },
+  {
+    name: 'Fixed Deposit',
+    url: require('./../res/images/fixeddeposit.png'),
+  },
+  {
+    name: 'Mutual Fund',
+    url: require('./../res/images/mutualfund.png'),
+  },
+  {
+    name: 'Credit Card',
+    url: require('./../res/images/creditcard.png'),
+  },
+  {
+    name: 'Home Loan',
+    url: require('./../res/images/homeloan.png'),
+  },
+  {
+    name: 'Loan Against Property',
+    url: require('./../res/images/propertyloan.png'),
+  },
+  {
+    name: 'Personal Loan',
+    url: require('./../res/images/personalloan.png'),
+  },
+  {
+    name: 'Business Loan',
+    url: require('./../res/images/businessloan.png'),
+  },
+  {
+    name: 'Auto Loan',
+    url: require('./../res/images/autoloan.png'),
+  },
+  {
+    name: 'Hello Doctor Policy',
+    url: require('./../res/images/erb.png'),
+  },
+  {
+    name: 'Asaan Health Policy',
+    url: require('./../res/images/asanhealth.png'),
+  },
+  {
+    name: 'Sabse Asaan Health Plan',
+    url: require('./../res/images/sabseasan.png'),
+  },
+];
+
 /**
  * Server url
  */
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
-export const MainUrl = `https://erb.ai/`;//`http://uat.erb.ai/`; //`https://erb.ai/`;
+//`http://uat.erb.ai/`; //`https://erb.ai/`;
+export const MainUrl = `https://erb.ai/`;
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
 //export const FOLDERPATH = `${BASEUrl}erbfinorbit`;

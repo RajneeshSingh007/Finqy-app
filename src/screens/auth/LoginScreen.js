@@ -4,12 +4,12 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Image, Subtitle, Title, View} from '@shoutem/ui';
+import { Image, Subtitle, Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {Button, Colors} from 'react-native-paper';
+import { Button, Colors } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import messaging from '@react-native-firebase/messaging';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
@@ -47,31 +47,35 @@ export default class LoginScreen extends React.PureComponent {
     } catch (e) {
       console.log(e);
     }
-    Pref.getVal(Pref.saveToken, (value) => {
-      if (value === undefined || value === null) {
-        const body = JSON.stringify({
-          username: `ERBFinPro`,
-          product: `FinPro App`,
-        });
-        Helper.networkHelper(
-          Pref.GetToken,
-          body,
-          Pref.methodPost,
-          (result) => {
-            const {data, response_header} = result;
-            const {res_type} = response_header;
-            if (res_type === `success`) {
-              this.setState({token: Helper.removeQuotes(data)});
-              Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
-            }
-          },
-          (error) => {
-            //console.log(`error`, error)
-          },
-        );
-      } else {
-        this.setState({token: value});
-      }
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+
+      Pref.getVal(Pref.saveToken, (value) => {
+        if (value === undefined || value === null) {
+          const body = JSON.stringify({
+            username: `ERBFinPro`,
+            product: `FinPro App`,
+          });
+          Helper.networkHelper(
+            Pref.GetToken,
+            body,
+            Pref.methodPost,
+            (result) => {
+              const { data, response_header } = result;
+              const { res_type } = response_header;
+              if (res_type === `success`) {
+                this.setState({ token: Helper.removeQuotes(data) });
+                Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
+              }
+            },
+            (error) => {
+              //console.log(`error`, error)
+            },
+          );
+        } else {
+          this.setState({ token: value });
+        }
+      });
     });
   }
 
@@ -101,7 +105,7 @@ export default class LoginScreen extends React.PureComponent {
     }
     console.log('token', this.state.token);
     if (errorData) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       messaging()
         .getToken()
         .then((fcmToken) => {
@@ -118,14 +122,14 @@ export default class LoginScreen extends React.PureComponent {
               this.state.token,
               (result) => {
                 console.log(`result`, result);
-                const {data, response_header} = result;
-                const {res_type, type} = response_header;
-                this.setState({loading: false});
+                const { data, response_header } = result;
+                const { res_type, type } = response_header;
+                this.setState({ loading: false });
                 if (res_type === `error`) {
                   Helper.showToastMessage('no account found', 0);
                 } else {
                   Pref.setVal(Pref.USERTYPE, type);
-                  const {id} = data[0];
+                  const { id } = data[0];
                   Pref.setVal(Pref.userID, id);
                   Pref.setVal(Pref.userData, data[0]);
                   Pref.setVal(Pref.loggedStatus, true);
@@ -133,7 +137,7 @@ export default class LoginScreen extends React.PureComponent {
                 }
               },
               () => {
-                this.setState({loading: false});
+                this.setState({ loading: false });
                 Helper.showToastMessage('something went wrong', 0);
               },
             );
@@ -163,14 +167,14 @@ export default class LoginScreen extends React.PureComponent {
         body={
           <>
             <IntroHeader />
-            <View style={{flex: 0.87}} styleName="v-center h-center md-gutter">
+            <View style={{ flex: 0.87 }} styleName="v-center h-center md-gutter">
               <Title style={styles.title}>{`Welcome back`}</Title>
               <Title
                 style={styles.title1}>{`please sign in\nto continue`}</Title>
 
               <View styleName="md-gutter">
                 <AnimatedInputBox
-                  onChangeText={(value) => this.setState({userid: value})}
+                  onChangeText={(value) => this.setState({ userid: value })}
                   value={this.state.userid}
                   placeholder={'Enter your mobile number/User ID'}
                   maxLength={10}
@@ -182,7 +186,7 @@ export default class LoginScreen extends React.PureComponent {
                 />
 
                 <AnimatedInputBox
-                  onChangeText={(value) => this.setState({password: value})}
+                  onChangeText={(value) => this.setState({ password: value })}
                   value={this.state.password}
                   placeholder={'Enter your password'}
                   maxLength={4}
@@ -282,8 +286,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontWeight: '700',
   },
-  maincontainer: {flex: 1, backgroundColor: 'white'},
-  s: {justifyContent: 'center', alignSelf: 'center'},
+  maincontainer: { flex: 1, backgroundColor: 'white' },
+  s: { justifyContent: 'center', alignSelf: 'center' },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',

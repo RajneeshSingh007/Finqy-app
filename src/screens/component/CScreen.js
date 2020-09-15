@@ -31,10 +31,14 @@ export default class CScreen extends React.PureComponent {
   };
 
   render() {
-    const {body, scrollEnable = true, absolute = null, showfooter =true} = this.props;
+    const {body, scrollEnable = true, absolute = null, showfooter =true, bgColor=Pref.WHITE} = this.props;
     return (
-      <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
-        <Screen style={styles.mainContainer}>
+      <SafeAreaView style={StyleSheet.flatten([styles.mainContainer,{
+        backgroundColor:bgColor
+      }])} forceInset={{top: 'never'}}>
+        <Screen style={StyleSheet.flatten([styles.mainContainer,{
+        backgroundColor:bgColor
+      }])}>
           {scrollEnable === true ? (
             // <KeyboardAvoidingView
             //   style={{
