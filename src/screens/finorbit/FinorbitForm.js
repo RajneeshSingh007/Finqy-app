@@ -515,6 +515,24 @@ export default class FinorbitForm extends React.PureComponent {
             ) {
               checkData = false;
               Helper.showToastMessage("Required Cover Empty", 0);
+            }else if (
+              title === `Term Insurance` &&
+              specificForms.pay_type === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Pay Type", 0);
+            }else if (
+              title === `Term Insurance` &&
+              specificForms.addons === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Addons Type", 0);
+            }else if (
+              title === `Term Insurance` &&
+              specificForms.policy_term === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Policy Term", 0);
             } else if (specificForms.lifestyle === "") {
               checkData = false;
               Helper.showToastMessage("Select Lifestyle", 0);
@@ -524,6 +542,12 @@ export default class FinorbitForm extends React.PureComponent {
             } else if (specificForms.existing_diseases === "") {
               checkData = false;
               Helper.showToastMessage("Select Existing Disease", 0);
+            }else if (
+              title === `Term Insurance` && specificForms.existing_diseases === 'YES' &&
+              specificForms.diseases === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Specify diseases", 0);
             } else if (
               title === `Health Insurance` &&
               specificForms.claim_type === ""

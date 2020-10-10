@@ -169,6 +169,10 @@ export default class SpecificForm extends React.PureComponent {
       showvectorCoverList: false,
       floaterItemList: [],
       showItemCalendar: false,
+      policy_term:'',
+      pay_type:'',
+      addons:'',
+      diseases:''
     };
   }
 
@@ -1166,8 +1170,203 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
+          
           </View>
         ) : null}
+        {title === 'Term Insurance' ? <View>
+            <View style={styles.radiocont}>
+              <View style={StyleSheet.flatten([styles.radiodownbox, {
+                height:96
+              }])}>
+                <Title style={styles.bbstyle}>{`Pay Type *`}</Title>
+
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({pay_type: value})
+                  }
+                  value={this.state.pay_type}>
+                  <View styleName="horizontal" style={{marginBottom: 8, flexGrow:1,flexWrap:'wrap'}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Regular Pay"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Regular Pay`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="5 Pay"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`5 Pay`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="10 Pay"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`10 Pay`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="20 Pay"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`20 Pay`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Policy Term *`}</Title>
+
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({policy_term: value})
+                  }
+                  value={this.state.policy_term}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="70"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`70`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="80"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`80`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="60 Yearly"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`60 Yearly`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+          
+            <View style={styles.radiocont}>
+              <View style={StyleSheet.flatten([styles.radiodownbox, {
+                height:124
+              }])}>
+                <Title style={styles.bbstyle}>{`Addons *`}</Title>
+
+                <RadioButton.Group
+                  onValueChange={(value) =>
+                    this.setState({addons: value})
+                  }
+                  value={this.state.addons}>
+                  <View styleName="horizontal" style={{marginBottom: 8, flexGrow:1,flexWrap:'wrap'}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Critical illness"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Critical illness`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Accidental Death Rider"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Accidental Death Rider`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Critical illness & Accidental Death Rider"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Critical illness & Accidental Death Rider`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="waiver of premium"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Waiver of premium`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="None"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`None`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+          
+                    {this.state.existing_diseases === 'YES' ? 
+              <AnimatedInputBox
+                onChangeText={(value) => {
+                    this.setState({diseases: value});
+                }}
+                value={this.state.diseases}
+                placeholder={'Specify Diseases *'}
+                changecolor
+                containerstyle={styles.animatedInputCont}
+              /> : null}
+
+        </View> : null}
         {title === 'Health Insurance' || title === 'Vector Plus' ? (
           <View>
             <View style={styles.radiocont}>
