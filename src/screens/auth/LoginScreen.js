@@ -89,7 +89,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('mobile number/User ID empty', 0);
     } else if (
-      this.state.userid.length < 10 ||
+      //this.state.userid.length < 10 ||
       this.state.userid === '9876543210' ||
       this.state.userid === '0000000000' ||
       this.state.userid === '1234567890'
@@ -103,7 +103,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('Invalid password', 0);
     }
-    console.log('token', this.state.token);
+    //console.log('token', this.state.token);
     if (errorData) {
       this.setState({ loading: true });
       messaging()

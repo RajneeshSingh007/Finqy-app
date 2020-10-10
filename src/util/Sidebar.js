@@ -139,7 +139,7 @@ export default class Sidebar extends React.Component {
           click: '',
         },
         {
-          name: `My Manager`,
+          name: `FinTeam Manager`,
           expand: false,
           heading: true,
           iconname: 'user-tie',
@@ -202,7 +202,7 @@ export default class Sidebar extends React.Component {
               options: {},
             },
             {
-              name: `My Wallet`,
+              name: `Earning History`,
               expand: false,
               click: 'MyWallet',
               options: {},
@@ -239,7 +239,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `My Marketing Tool`,
+          name: `FinAds Marketing`,
           expand: false,
           click: 'MarketingTool',
           options: {},
@@ -247,7 +247,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `My Training Module`,
+          name: `FinTrain Learning`,
           expand: false,
           click: 'Training',
           options: {},
@@ -255,7 +255,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `My FinNews`,
+          name: `FinNews`,
           expand: false,
           click: 'Blogs',
           options: {},
@@ -263,7 +263,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `My Helpdesk`,
+          name: `Helpdesk`,
           expand: false,
           heading: true,
           iconname: 'headset',
@@ -271,7 +271,7 @@ export default class Sidebar extends React.Component {
 
           sub: [
             {
-              name: `My Relationship Manager`,
+              name: `Relation Manager`,
               expand: false,
               click: 'Manager',
               options: {},
@@ -409,7 +409,7 @@ export default class Sidebar extends React.Component {
                 options: {},
               },
               {
-                name: `My Wallet`,
+               name: `Earning History`,
                 expand: false,
                 click: 'MyWallet',
                 options: {},
@@ -438,7 +438,7 @@ export default class Sidebar extends React.Component {
             icontype: 2,
           },
           {
-            name: `My Marketing Tool`,
+            name: `FinAds Marketing`,
             expand: false,
             click: 'MarketingTool',
             options: {},
@@ -446,7 +446,7 @@ export default class Sidebar extends React.Component {
             icontype: 2,
           },
           {
-            name: `My Training Module`,
+            name: `FinTrain Learning`,
             expand: false,
             click: 'Training',
             options: {},
@@ -454,7 +454,7 @@ export default class Sidebar extends React.Component {
             icontype: 2,
           },
           {
-            name: `My FinNews`,
+            name: `FinNews`,
             expand: false,
             click: 'Blogs',
             options: {},
@@ -515,7 +515,7 @@ export default class Sidebar extends React.Component {
             click: '',
           },
           {
-            name: `My Marketing Tool`,
+            name: `FinAds Marketing`,
             expand: false,
             click: 'MarketingTool',
             options: {type: 1},
@@ -523,7 +523,7 @@ export default class Sidebar extends React.Component {
             icontype: 2,
           },
           {
-            name: `My Training Module`,
+            name: `FinTrain Learning`,
             expand: false,
             click: 'Training',
             options: {},
@@ -531,7 +531,7 @@ export default class Sidebar extends React.Component {
             icontype: 2,
           },
           {
-            name: `My Helpdesk`,
+            name: `Helpdesk`,
             expand: false,
             heading: true,
             iconname: 'headset',
@@ -539,7 +539,7 @@ export default class Sidebar extends React.Component {
 
             sub: [
               {
-                name: `My Relationship Manager`,
+                name: `Relation Manager`,
                 expand: false,
                 click: 'Manager',
                 options: {},

@@ -184,6 +184,7 @@ export default class HomeScreen extends React.PureComponent {
         leadData = result;
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
+        //console.log('pieData',pieData)
         this.setState({ pieData: pieData, leadData: leadData, barData: barData });
       },
       (error) => {
@@ -376,14 +377,14 @@ export default class HomeScreen extends React.PureComponent {
           color: "#fe8c8c",
         },
         {
-          value: total_investment_lead,
+          value: total_loan_lead,
           label: productList[3],
-          color: "#77e450",
+          color: "#ffe251",
         },
         {
-          value: total_loan_lead,
+          value: total_investment_lead,
           label: productList[4],
-          color: "#ffe251",
+          color: "#77e450",
         },
       ];
     }
@@ -584,9 +585,10 @@ export default class HomeScreen extends React.PureComponent {
 
   render() {
     const { showProfile, type, userData, leadData, pieTextData } = this.state;
-    let name = "";
+    let name = "", profilePic=null;
     if (Helper.nullCheck(userData) === false) {
       name = userData.rname === undefined ? userData.username : userData.rname;
+      profilePic = userData.user_prof === undefined || userData.user_prof === null ? null : {uri:userData.user_prof};
     }
     return (
       <CScreen
@@ -688,6 +690,7 @@ export default class HomeScreen extends React.PureComponent {
                 backClicked={() => NavigationActions.openDrawer()}
                 title={`Hi,`}
                 name={name}
+                profilePic={profilePic}
               />
 
               {this.state.enableFilter === false ? (

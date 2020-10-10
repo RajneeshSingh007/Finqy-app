@@ -2618,7 +2618,7 @@ export const productListClone = [
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
 //`http://uat.erb.ai/`; //`https://erb.ai/`;
-export const MainUrl = `https://erb.ai/`;
+export const MainUrl = `http://uat.erb.ai/`;
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
 //export const FOLDERPATH = `${BASEUrl}erbfinorbit`;
@@ -2661,6 +2661,7 @@ export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
 
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
 
+export const BASEImageUrl = `${BASEUrl}getbase64.php`
 //code push
 export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
 export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';

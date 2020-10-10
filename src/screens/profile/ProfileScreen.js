@@ -33,8 +33,8 @@ import {
   Avatar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import CommonScreen from '../common/CommonScreen';
 import CommonForm from '../finorbit/CommonForm';
 import FileUploadForm from '../finorbit/FileUploadForm';
@@ -47,6 +47,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
 import StepIndicator from '../component/StepIndicator';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 export default class ProfileScreen extends React.PureComponent {
   constructor(props) {
@@ -74,33 +75,42 @@ export default class ProfileScreen extends React.PureComponent {
       btnText: 'Next',
       dataArray: [],
       fileName: '',
+      mail_host: '',
+      mail_port: '',
+      mail_username: '',
+      mail_password: ''
     };
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       Pref.getVal(Pref.saveToken, (toke) => {
-        this.setState({token: toke}, () => {
+        this.setState({ token: toke }, () => {
           Pref.getVal(Pref.userData, (parseda) => {
             const pp = parseda.user_prof;
-            const url = pp === undefined || pp !== null || pp === '' || !pp.includes('png') || !pp.includes('jpeg') || !pp.includes('.jpg') ? require('../../res/images/account.png') : {
-              uri: pp === '' ? Pref.profileDefaultPic : `${pp}`,
+            const url = pp === undefined || pp === null || pp === '' ? require('../../res/images/account.png') : {
+              uri: `${pp}`,
             };
             let fileName = '';
             if (pp !== '') {
               const sp = pp.split('/');
               fileName = sp[sp.length - 1];
             }
+            const { mail_host, mail_password, mail_port, mail_username } = parseda;
             this.setState({
               userData: parseda,
               imageUrl: url,
               fileName: fileName,
+              mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
+              mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
+              mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
+              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password
             });
             this.updateData(parseda);
           });
         });
-        Pref.getVal(Pref.USERTYPE, (v) => this.setState({utype: v}));
+        Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
       });
     });
   }
@@ -146,7 +156,7 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   submitt = () => {
-    const {token, res, userData, utype, currentposition, fileName} = this.state;
+    const { token, res, userData, utype, currentposition, fileName } = this.state;
     if (currentposition < 2) {
       if (currentposition === 0) {
         let commons = JSON.parse(
@@ -248,6 +258,10 @@ export default class ProfileScreen extends React.PureComponent {
     let formData = new FormData();
     formData.append('user_id', userData.id);
     formData.append('type', utype);
+    formData.append('mail_host', this.state.mail_host);
+    formData.append('mail_port', this.state.mail_port);
+    formData.append('mail_username', this.state.mail_username);
+    formData.append('mail_password', this.state.mail_password);
 
     let commons = this.state.dataArray[0];
     //JSON.parse(JSON.stringify(this.commonFormRef.current.state));
@@ -360,7 +374,7 @@ export default class ProfileScreen extends React.PureComponent {
     //console.log(`formData`, formData, token);
 
     if (checkData) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       Helper.networkHelperTokenContentType(
         Pref.UpdateAccountUrl,
         formData,
@@ -368,15 +382,15 @@ export default class ProfileScreen extends React.PureComponent {
         token,
         (result) => {
           //console.log(`result`, result);
-          const {data, response_header} = result;
-          const {res_type, message} = response_header;
-          this.setState({loading: false});
+          const { data, response_header } = result;
+          const { res_type, message } = response_header;
+          this.setState({ loading: false });
           if (res_type === `success`) {
             //Helper.showToastMessage('Profile updated successfully', 1);
-            const {id} = data[0];
+            const { id } = data[0];
             Pref.setVal(Pref.userID, id);
             Pref.setVal(Pref.userData, data[0]);
-            this.setState({userData: data[0]});
+            this.setState({ userData: data[0] });
             NavigationActions.navigate('Finish', {
               top: 'Edit Profile',
               red: 'Success',
@@ -390,7 +404,7 @@ export default class ProfileScreen extends React.PureComponent {
         },
         (error) => {
           //console.log(`error`, error);
-          this.setState({loading: false});
+          this.setState({ loading: false });
         },
       );
     }
@@ -401,7 +415,7 @@ export default class ProfileScreen extends React.PureComponent {
       const res = await DocumentPicker.pick({
         type: DocumentPicker.types.images,
       });
-      this.setState({imageUrl: {uri: res.uri}, res: res});
+      this.setState({ imageUrl: { uri: res.uri }, res: res });
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
       } else {
@@ -411,7 +425,7 @@ export default class ProfileScreen extends React.PureComponent {
   };
 
   backNav = () => {
-    const {currentposition} = this.state;
+    const { currentposition } = this.state;
     if (currentposition > 0) {
       this.setState((prev) => {
         return {
@@ -453,7 +467,7 @@ export default class ProfileScreen extends React.PureComponent {
                 }}>
                 <Avatar.Image
                   source={this.state.imageUrl}
-                  style={{backgroundColor: 'transparent'}}
+                  style={{ backgroundColor: 'transparent' }}
                   size={124}
                 />
               </View>
@@ -479,6 +493,57 @@ export default class ProfileScreen extends React.PureComponent {
                     ref={this.specificFormRef}
                     saveData={this.state.dataArray[1]}
                   />
+                  <View>
+                    <AnimatedInputBox
+                      placeholder={'Mail Host'}
+                      onChangeText={(value) =>
+                        this.setState({ mail_host: value })
+                      }
+                      value={this.state.mail_host}
+                      changecolor
+                      containerstyle={styles.animatedInputCont}
+                      returnKeyType={'next'}
+                    />
+
+                    <AnimatedInputBox
+                      placeholder={'Mail Port'}
+                      onChangeText={(value) => {
+                        if (String(value).match(/^[0-9]*$/g) !== null) {
+                          this.setState({ mail_port: value })
+                        }
+                      }}
+                      value={this.state.mail_port}
+                      changecolor
+                      keyboardType={'numeric'}
+                      containerstyle={styles.animatedInputCont}
+                      returnKeyType={'next'}
+                    />
+
+
+                    <AnimatedInputBox
+                      placeholder={'Mail Username'}
+                      onChangeText={(value) =>
+                        this.setState({ mail_username: value })
+                      }
+                      value={this.state.mail_username}
+                      changecolor
+                      containerstyle={styles.animatedInputCont}
+                      returnKeyType={'next'}
+                    />
+
+
+                    <AnimatedInputBox
+                      placeholder={'Mail Password'}
+                      onChangeText={(value) =>
+                        this.setState({ mail_password: value })
+                      }
+                      value={this.state.mail_password}
+                      changecolor
+                      containerstyle={styles.animatedInputCont}
+                      returnKeyType={'next'}
+                    />
+
+                  </View>
                 </>
               ) : this.state.currentposition === 1 ? (
                 <BankForm
@@ -495,36 +560,35 @@ export default class ProfileScreen extends React.PureComponent {
             </View>
 
             <View
-              styleName={`horizontal space-between md-gutter ${
-                this.state.currentposition === 0 ? `v-end h-end` : ``
-              }`}>
+              styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
+                }`}>
               {this.state.currentposition === 1 ||
-              this.state.currentposition === 2 ? (
-                <Button
-                  mode={'flat'}
-                  uppercase={true}
-                  dark={true}
-                  loading={false}
-                  style={[
-                    styles.loginButtonStyle,
-                    {
-                      backgroundColor: 'transparent',
-                      borderColor: '#d5d3c1',
-                      borderWidth: 1.3,
-                    },
-                  ]}
-                  onPress={this.backNav}>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.btntext,
+                this.state.currentposition === 2 ? (
+                  <Button
+                    mode={'flat'}
+                    uppercase={true}
+                    dark={true}
+                    loading={false}
+                    style={[
+                      styles.loginButtonStyle,
                       {
-                        color: '#b8b28f',
+                        backgroundColor: 'transparent',
+                        borderColor: '#d5d3c1',
+                        borderWidth: 1.3,
                       },
-                    ])}>
-                    {'Back'}
-                  </Title>
-                </Button>
-              ) : null}
+                    ]}
+                    onPress={this.backNav}>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.btntext,
+                        {
+                          color: '#b8b28f',
+                        },
+                      ])}>
+                      {'Back'}
+                    </Title>
+                  </Button>
+                ) : null}
               <Button
                 mode={'flat'}
                 uppercase={false}
@@ -748,6 +812,11 @@ const styles = StyleSheet.create({
     marginStart: 10,
     marginEnd: 10,
     alignContent: 'center',
+    paddingVertical: 10,
+  },
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
     paddingVertical: 10,
   },
 });

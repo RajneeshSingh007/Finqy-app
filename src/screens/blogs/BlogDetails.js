@@ -85,6 +85,7 @@ export default class BlogDetails extends React.PureComponent {
             {
               color: '#686868',
               paddingVertical: 0,
+              marginHorizontal:16,
             },
           ])}>{`${item.title}`}</Title>
 

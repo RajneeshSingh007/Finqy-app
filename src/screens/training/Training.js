@@ -134,10 +134,11 @@ export default class Training extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
+    console.log('link',item.link)
     const videoid =
-      item.link !== '' ? item.link.split('?')[1].replace('v=', '') : '';
+     item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
     const {fileType} = this.state;
-    return item.link !== '' && fileType === 0 ? (
+    return item.link !== ''  && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && fileType === 0 ? (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
           <View
@@ -185,7 +186,9 @@ export default class Training extends React.PureComponent {
                   marginBottom: 10,
                 }}>
                 <View style={styles.circle}>
-                  <IconChooser
+                  {/* {!item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') ?
+                   : <Image source={{uri:`${item.link}`}} styleName='medium' />} */}
+                   <IconChooser
                     name={`file-pdf`}
                     size={32}
                     iconType={5}

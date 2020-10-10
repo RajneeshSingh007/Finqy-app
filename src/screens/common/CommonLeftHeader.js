@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import * as Pref from '../../util/Pref';
+import * as Helper from '../../util/Helper';
 import {
   Avatar,
   List,
@@ -28,10 +29,10 @@ import {
   DefaultTheme,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/FontAwesome5';
-import {Heading, Subtitle, Image, View, Title} from '@shoutem/ui';
+import { Heading, Subtitle, Image, View, Title } from '@shoutem/ui';
 import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 
@@ -63,8 +64,9 @@ const LeftHeaders = (props) => {
     bottombg = `white`,
     bottomtext = '',
     bottomtextStyle,
-    profile = () => {},
+    profile = () => { },
     name = '',
+    profilePic = null
   } = props;
 
   return (
@@ -87,19 +89,19 @@ const LeftHeaders = (props) => {
               </View>
             </TouchableWithoutFeedback>
           </View>
-          <View style={{flex: 0.6}}>
+          <View style={{ flex: 0.6 }}>
             {showBack === true ? (
               <Title style={styles.centertext}>{Lodash.truncate(title)}</Title>
             ) : (
-              <Image
-                source={require('../../res/images/squarelogo.png')}
-                styleName="medium"
-                style={{
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                }}
-              />
-            )}
+                <Image
+                  source={require('../../res/images/squarelogo.png')}
+                  styleName="medium"
+                  style={{
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              )}
           </View>
           <View style={styles.rightcon}>
             <TouchableWithoutFeedback
@@ -111,35 +113,42 @@ const LeftHeaders = (props) => {
                   NavigationActions.openDrawer();
                 }
               }}>
-              <View
-                style={StyleSheet.flatten([
-                  styles.circle,
-                  {
-                    backgroundColor: title === 'Hi,' ? Pref.RED : Pref.WHITE,
-                    borderColor: title === 'Hi,' ? Pref.RED : '#4a4949',
-                    borderStyle: 'solid',
-                    borderWidth: title === 'Hi,' ? 0 : 3,
-                  },
-                ])}>
-                {title === 'Hi,' ? (
-                  <Title
+              {title === 'Hi,' ? (
+                <View>
+                  <Avatar.Image
+                    source={profilePic === null ? require('../../res/images/account.png') : profilePic}
+                    size={56}
+                    style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+                  />
+                </View>
+                // <Title
+                //   style={StyleSheet.flatten([
+                //     styles.belowtext,
+                //     {
+                //       color: Pref.WHITE,
+                //     },
+                //   ])}>
+                //   {Lodash.capitalize(name.slice(0, 1))}
+                // </Title>
+              ) : (
+                  <View
                     style={StyleSheet.flatten([
-                      styles.belowtext,
+                      styles.circle,
                       {
-                        color: Pref.WHITE,
+                        backgroundColor: title === 'Hi,' ? Pref.RED : Pref.WHITE,
+                        borderColor: title === 'Hi,' ? Pref.RED : '#4a4949',
+                        borderStyle: 'solid',
+                        borderWidth: title === 'Hi,' ? 0 : 3,
                       },
                     ])}>
-                    {Lodash.capitalize(name.slice(0, 1))}
-                  </Title>
-                ) : (
-                  <IconChooser
-                    name={'menu'}
-                    size={18}
-                    color={'red'}
-                    style={styles.icon}
-                  />
+                    <IconChooser
+                      name={'menu'}
+                      size={18}
+                      color={'red'}
+                      style={styles.icon}
+                    />
+                  </View>
                 )}
-              </View>
             </TouchableWithoutFeedback>
           </View>
         </View>

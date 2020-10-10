@@ -36,9 +36,9 @@ export default class Manager extends React.PureComponent {
 
   componentDidMount() {
     Pref.getVal(Pref.userData, (userData) => {
-      this.setState({userData: userData});
+      this.setState({ userData: userData });
       Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
+        this.setState({ token: value }, () => {
           this.fetchData();
         });
       });
@@ -46,8 +46,8 @@ export default class Manager extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
-    const {refercode} = this.state.userData;
+    this.setState({ loading: true });
+    const { refercode } = this.state.userData;
     const body = JSON.stringify({
       user_refercode: refercode,
     });
@@ -57,16 +57,16 @@ export default class Manager extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === `success`) {
-          this.setState({dataList: data, loading: false});
+          this.setState({ dataList: data, loading: false });
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       (error) => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
@@ -76,30 +76,82 @@ export default class Manager extends React.PureComponent {
    * @param {*} item
    * @param {*} index
    */
-  renderItems(item) {
+  renderItems(item, index) {
+    const inc = index+1;
     return (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
-          <Image
+          {/* <Image
             source={{
               uri: `https://image.freepik.com/free-vector/online-courses-concept_23-2148524391.jpg`,
             }}
             styleName="large"
             style={styles.image}
-          />
+          /> */}
 
           <View styleName="horizontal space-between" style={styles.footerCon}>
             <View>
+              {index === -1 ? <Title
+                styleName="v-start h-start"
+                numberOfLines={1}
+                style={StyleSheet.flatten([styles.itemtext, {
+                  color: '#bcbaa1'
+                }])}>
+                {`ERB SPEC`}
+              </Title> :
+                <Title
+                  styleName="v-start h-start"
+                  numberOfLines={1}
+                  style={StyleSheet.flatten([styles.itemtext, {
+                    color: '#bcbaa1'
+                  }])}>
+                  {`Escalation ${inc}`}
+                </Title>
+              }
               <Title
                 styleName="v-start h-start"
                 numberOfLines={1}
-                style={styles.itemtext}>
+                style={StyleSheet.flatten([styles.itemtext, {
+                  fontSize: 15,
+                  paddingVertical: 2
+                }])}>
                 {Lodash.truncate(`${item.username}`, {
                   length: 16,
                   separator: '...',
                 })}
               </Title>
               <Title
+                style={StyleSheet.flatten([
+                  styles.itemtext,
+                  {
+                    paddingVertical: 0,
+                    fontSize: 13,
+                    color: '#848486',
+                    fontWeight: '400',
+                    marginTop: 0,
+                    marginBottom: 0,
+                    paddingBottom: 0,
+                  },
+                ])}>
+                {`${item.email}  `}
+                <View style={styles.divider} />
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.itemtext,
+                    {
+                      paddingVertical: 0,
+                      fontSize: 13,
+                      color: '#848486',
+                      fontWeight: '400',
+                      marginTop: 0,
+                      marginBottom: 0,
+                      paddingBottom: 0,
+                    },
+                  ])}>
+                  {`  ${item.mobile}`}
+                </Title>
+              </Title>
+              {/* <Title
                 style={StyleSheet.flatten([
                   styles.itemtext,
                   {
@@ -145,7 +197,7 @@ export default class Manager extends React.PureComponent {
                   ])}>
                   {`  ${Lodash.capitalize(item.status)}`}
                 </Title>
-              </Title>
+              </Title> */}
             </View>
           </View>
         </View>
@@ -159,11 +211,11 @@ export default class Manager extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={'My Manager'}
+              title={'Relation Manager'}
               showBack
               bottomtext={
                 <>
-                  {`My `}
+                  {`Relation `}
                   <Title style={styles.passText}>{`Manager`}</Title>
                 </>
               }
@@ -176,21 +228,22 @@ export default class Manager extends React.PureComponent {
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
-            ) : this.state.dataList.length > 0 ? (
-              <FlatList
-                data={this.state.dataList}
-                renderItem={({item, index}) => this.renderItems(item)}
-                nestedScrollEnabled={true}
-                keyExtractor={(item, index) => `${index}`}
-                showsVerticalScrollIndicator={true}
-                showsHorizontalScrollIndicator={false}
-                extraData={this.state}
-              />
-            ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No relationship manager found...'} />
-              </View>
-            )}
+            ) : <View>
+                {this.renderItems({ "created_date": "16-07-2020", "designation": "asdkj", "email": "someone@gmail.com", "id": "1", "ip_add": "106.193.143.165", "mobile": "0000000000", "status": "active", "username": "Someone Static" }, -1)}
+                {this.state.dataList.length > 0 ?
+                  <FlatList
+                    data={this.state.dataList}
+                    renderItem={({ item, index }) => this.renderItems(item, index)}
+                    nestedScrollEnabled={true}
+                    keyExtractor={(item, index) => `${index}`}
+                    showsVerticalScrollIndicator={true}
+                    showsHorizontalScrollIndicator={false}
+                    extraData={this.state}
+                  />
+                  : <View style={styles.emptycont}>
+                    <ListError subtitle={'Relation manager found...'} />
+                  </View>}
+              </View>}
           </>
         }
       />
@@ -212,6 +265,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderRadius: 16,
     marginHorizontal: 16,
+    paddingVertical: 8
   },
   emptycont: {
     flex: 0.7,

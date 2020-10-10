@@ -97,7 +97,7 @@ export default class MyOffers extends React.PureComponent {
   shareOffer = (id, image) => {
     this.setState({fullLoader: true});
     Helper.networkHelperGet(
-      `https://erb.ai/corporate_tool/Apis/getbase64.php?url=${image}`,
+      `${Pref.BASEImageUrl}?url=${image}`,
       (result) => {
         this.setState({fullLoader: false});
         this.shareofers(id, result);

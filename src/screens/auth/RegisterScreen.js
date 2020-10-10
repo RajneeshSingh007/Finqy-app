@@ -522,7 +522,7 @@ export default class RegisterScreen extends React.PureComponent {
                       {
                         color: '#b8b28f',
                       },
-                    ])}>{'<<Back to login'}</Title>
+                    ])}>{'Back to login'}</Title>
               </Button>
               <Button
                 mode={'flat'}

@@ -62,6 +62,7 @@ export default class MarketingTool extends React.PureComponent {
       id: `${id}`,
     });
 
+    //console.log('body', Pref.OffersUrl, body,this.state.token);
     Helper.networkHelperTokenPost(
       Pref.OffersUrl,
       body,
@@ -90,7 +91,7 @@ export default class MarketingTool extends React.PureComponent {
   shareOffer = (id, image) => {
     this.setState({fullLoader: true});
     Helper.networkHelperGet(
-      `https://erb.ai/corporate_tool/Apis/getbase64.php?url=${image}`,
+      `${Pref.BASEImageUrl}?url=${image}`,
       (result) => {
         this.setState({fullLoader: false});
         this.shareofers(id, result);
@@ -148,11 +149,11 @@ export default class MarketingTool extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'Marketing Tool'}
+              title={'FinAds Marketing'}
               bottomtext={
                 <>
-                  {`Marketing `}
-                  <Title style={styles.passText}>{`Tool`}</Title>
+                  {`FinAds `}
+                  <Title style={styles.passText}>{`Marketing`}</Title>
                 </>
               }
               bottomtextStyle={{
