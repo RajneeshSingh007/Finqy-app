@@ -116,7 +116,7 @@ const LeftHeaders = (props) => {
               {title === 'Hi,' ? (
                 <View>
                   <Avatar.Image
-                    source={profilePic === null ? require('../../res/images/account.png') : profilePic}
+                    source={profilePic === null ? require('../../res/images/account.png') :profilePic}
                     size={56}
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />

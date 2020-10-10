@@ -117,12 +117,14 @@ export default class HomeScreen extends React.PureComponent {
     };
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
-        this.setState({ userData: value });
+        let profilePic = value.user_prof === undefined || value.user_prof === null ? null : { uri: decodeURIComponent(value.user_prof) };
+        this.setState({ userData: value, profilePic: profilePic });
       }
     });
     Pref.getVal(Pref.USERTYPE, (v) => {
       this.setState({ type: v });
     });
+
   }
 
   componentDidMount() {
@@ -275,16 +277,16 @@ export default class HomeScreen extends React.PureComponent {
         colorx = '#decf89'
       } else if (name.includes("Vector")) {
         y = leadData.religare;
-                colorx = '#f78282';
+        colorx = '#f78282';
       } else if (name.includes("Hello")) {
         y = leadData.aditya_birla_doc;
-                colorx = '#e89898';
+        colorx = '#e89898';
       } else if (name.includes("Sabse")) {
         y = leadData.aditya_birla_cio;
-                colorx = '#f19f9f';
+        colorx = '#f19f9f';
       } else if (name.includes("Policy")) {
         y = leadData.aditya_birla_ci;
-                colorx = '#ea9a9a';
+        colorx = '#ea9a9a';
       } else if (name.includes("Credit")) {
         y = leadData.total_credit_card_lead;
       }
@@ -304,14 +306,14 @@ export default class HomeScreen extends React.PureComponent {
       pieTextData = Lodash.map(mapPieData, (i => {
         const perc = this.getPercentage(totalSum, i.value);
         i.perc = perc;
-        if(perc === 0){
-          counter+= 1;
+        if (perc === 0) {
+          counter += 1;
         }
         return i;
       }))
     }
     console.log(piearraySize, counter)
-    if(piearraySize === counter){
+    if (piearraySize === counter) {
       pieTextData = [];
     }
     this.setState({
@@ -584,11 +586,11 @@ export default class HomeScreen extends React.PureComponent {
   };
 
   render() {
-    const { showProfile, type, userData, leadData, pieTextData } = this.state;
-    let name = "", profilePic=null;
+    const { showProfile, type, userData, leadData, pieTextData, profilePic } = this.state;
+    let name = "";
     if (Helper.nullCheck(userData) === false) {
       name = userData.rname === undefined ? userData.username : userData.rname;
-      profilePic = userData.user_prof === undefined || userData.user_prof === null ? null : {uri:userData.user_prof};
+      //profilePic = userData.user_prof === undefined || userData.user_prof === null ? null : {uri:userData.user_prof};
     }
     return (
       <CScreen

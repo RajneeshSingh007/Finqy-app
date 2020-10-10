@@ -78,7 +78,7 @@ export default class ProfileScreen extends React.PureComponent {
       mail_host: '',
       mail_port: '',
       mail_username: '',
-      mail_password: ''
+      mail_password: '',
     };
   }
 
@@ -88,16 +88,20 @@ export default class ProfileScreen extends React.PureComponent {
       Pref.getVal(Pref.saveToken, (toke) => {
         this.setState({ token: toke }, () => {
           Pref.getVal(Pref.userData, (parseda) => {
+            //console.log('parseda', parseda)
             const pp = parseda.user_prof;
             const url = pp === undefined || pp === null || pp === '' ? require('../../res/images/account.png') : {
-              uri: `${pp}`,
+              uri: `${decodeURIComponent(pp)}`,
             };
             let fileName = '';
-            if (pp !== '') {
-              const sp = pp.split('/');
+            const fm = decodeURIComponent(pp);
+            if (pp !== undefined || pp !== null || pp !== '') {
+              const sp = fm.split("/");
               fileName = sp[sp.length - 1];
+                //console.log('sp',sp)
             }
-            const { mail_host, mail_password, mail_port, mail_username } = parseda;
+            //console.log('fileName', fileName)
+            const { mail_host, mail_password, mail_port, mail_username,bank_name } = parseda;
             this.setState({
               userData: parseda,
               imageUrl: url,
@@ -105,7 +109,7 @@ export default class ProfileScreen extends React.PureComponent {
               mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
               mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
               mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
-              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password
+              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
             });
             this.updateData(parseda);
           });
@@ -247,6 +251,7 @@ export default class ProfileScreen extends React.PureComponent {
               userData.bank_account_name,
               userData.account_branch,
               userData.account_type,
+              userData.bank_name
             );
           }
         },

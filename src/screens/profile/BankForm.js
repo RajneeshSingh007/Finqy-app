@@ -67,6 +67,7 @@ export default class BankForm extends React.PureComponent {
       bank_account_name: '',
       account_branch: '',
       account_type: '',
+      bank_name:''
     };
   }
 
@@ -80,6 +81,7 @@ export default class BankForm extends React.PureComponent {
         saveData.bank_account_name,
         saveData.account_branch,
         saveData.account_type,
+        Helper.nullCheck(saveData.bank_name) === true ? '' : saveData.bank_name
       );
     }
   }
@@ -91,6 +93,7 @@ export default class BankForm extends React.PureComponent {
     bank_account_name,
     account_branch,
     account_type,
+    bank_name
   ) => {
     this.setState({
       bank: bank,
@@ -99,6 +102,7 @@ export default class BankForm extends React.PureComponent {
       bank_account_name: bank_account_name,
       account_branch: account_branch,
       account_type: account_type,
+      bank_name:bank_name
     });
   };
 
@@ -135,6 +139,15 @@ export default class BankForm extends React.PureComponent {
                     theme={theme}
                     returnKeyType={"next"}
                 /> */}
+
+        <AnimatedInputBox
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          placeholder={'Bank Name'}
+          onChangeText={(value) => this.setState({bank_name: value})}
+          value={this.state.bank_name}
+          returnKeyType={'next'}
+        />
 
         <AnimatedInputBox
           changecolor
