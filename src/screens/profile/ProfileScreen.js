@@ -58,6 +58,7 @@ export default class ProfileScreen extends React.PureComponent {
     this.FileUploadFormRef = React.createRef();
     this.specificFormRef = React.createRef();
     this.bankFormRef = React.createRef();
+    this.backClick = this.backClick.bind(this);
     this.state = {
       loading: false,
       imageUrl: '',
@@ -83,6 +84,7 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       Pref.getVal(Pref.saveToken, (toke) => {
@@ -90,7 +92,7 @@ export default class ProfileScreen extends React.PureComponent {
           Pref.getVal(Pref.userData, (parseda) => {
             //console.log('parseda', parseda)
             const pp = parseda.user_prof;
-            const url = pp === undefined || pp === null || pp === '' ? require('../../res/images/account.png') : {
+            const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? require('../../res/images/account.png') : {
               uri: `${decodeURIComponent(pp)}`,
             };
             let fileName = '';
@@ -100,7 +102,7 @@ export default class ProfileScreen extends React.PureComponent {
               fileName = sp[sp.length - 1];
                 //console.log('sp',sp)
             }
-            //console.log('fileName', fileName)
+            //console.log('url', url)
             const { mail_host, mail_password, mail_port, mail_username,bank_name } = parseda;
             this.setState({
               userData: parseda,
@@ -118,6 +120,12 @@ export default class ProfileScreen extends React.PureComponent {
       });
     });
   }
+
+  // componentDidUpdate(){
+  //   if(this.state.currentposition > 0){
+  //     this.setState({currentposition:0})
+  //   }
+  // }
 
   updateData = (userData) => {
     if (this.commonFormRef.current !== null) {
@@ -154,7 +162,13 @@ export default class ProfileScreen extends React.PureComponent {
     }
   };
 
+  backClick = () =>{
+    this.setState({currentposition:0});
+    return false;
+  }
+
   componentWillUnMount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -376,7 +390,7 @@ export default class ProfileScreen extends React.PureComponent {
     } else if (fileName !== '') {
       formData.append('user_prof', fileName);
     }
-    //console.log(`formData`, formData, token);
+    console.log(`formData`, formData, token);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -386,7 +400,7 @@ export default class ProfileScreen extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          //console.log(`result`, result);
+          console.log(`result`, result);
           const { data, response_header } = result;
           const { res_type, message } = response_header;
           this.setState({ loading: false });

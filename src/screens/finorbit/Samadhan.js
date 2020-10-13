@@ -16,7 +16,7 @@ import {
   RadioButton,
   Checkbox,
 } from 'react-native-paper';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import CustomForm from '../finorbit/CustomForm';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
@@ -42,24 +42,24 @@ export default class Samadhan extends React.Component {
       isTermSelected: false,
       showCompType: false,
       compTypeList: [
-        {value: `Claim is rejected`},
-        {value: `Claim is delayed`},
-        {value: `Policy is cancelled`},
-        {value: `No response on the claim status`},
-        {value: `Group insurance claim`},
-        {value: `Other`},
+        { value: `Claim is rejected` },
+        { value: `Claim is delayed` },
+        { value: `Policy is cancelled` },
+        { value: `No response on the claim status` },
+        { value: `Group insurance claim` },
+        { value: `Other` },
       ],
     };
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, (value) =>
-      this.setState({userData: value, ref: value.refercode}, () => {
-        Pref.getVal(Pref.saveToken, (tt) => this.setState({token: tt}));
-      }),
-    );
+      Pref.getVal(Pref.userData, (value) =>
+        this.setState({ ref: value.refercode }, () => {
+          Pref.getVal(Pref.saveToken, (tt) => this.setState({ token: tt }));
+        }),
+      );
     });
   }
 
@@ -70,18 +70,14 @@ export default class Samadhan extends React.Component {
   submitt = () => {
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
-    const {userData} = body;
-    const {refercode} = userData;
+    //const { userData } = body;
+    //console.log('userData', body)
+    //const { refercode } = userData;
 
-    body.ref = refercode;
+    //body.ref = refercode;
 
     if (body.name === '') {
       Helper.showToastMessage('Name empty', 0);
-      return false;
-    }
-
-    if (body.email === '') {
-      Helper.showToastMessage('Email empty', 0);
       return false;
     }
 
@@ -96,22 +92,27 @@ export default class Samadhan extends React.Component {
       return false;
     }
 
+    if (body.email === '') {
+      Helper.showToastMessage('Email empty', 0);
+      return false;
+    }
+
     if (!this.state.isTermSelected) {
       Helper.showToastMessage('Please, Select Term & Condition', 0);
       return false;
     }
 
     if (checkData && this.state.isTermSelected) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       Helper.networkHelperTokenContentType(
         `${Pref.FinOrbitFormUrl}insurance_samadhan.php`,
         JSON.stringify(body),
         Pref.methodPost,
         this.state.token,
         (result) => {
-          const {response_header} = result;
-          const {res_type} = response_header;
-          this.setState({loading: false});
+          const { response_header } = result;
+          const { res_type } = response_header;
+          this.setState({ loading: false });
           if (res_type === `error`) {
             Helper.showToastMessage(`Failed to submit`, 0);
           } else {
@@ -130,7 +131,7 @@ export default class Samadhan extends React.Component {
           }
         },
         () => {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         },
       );
     }
@@ -160,7 +161,7 @@ export default class Samadhan extends React.Component {
             <View styleName="md-gutter">
               <CustomForm
                 value={this.state.name}
-                onChange={(v) => this.setState({name: v})}
+                onChange={(v) => this.setState({ name: v })}
                 label={`Full Name *`}
                 placeholder={`Enter full name`}
               />
@@ -173,15 +174,15 @@ export default class Samadhan extends React.Component {
                 maxLength={10}
                 onChange={(value) => {
                   if (String(value).match(/^[0-9]*$/g) !== null) {
-                    this.setState({mobile: value});
+                    this.setState({ mobile: value });
                   }
                 }}
               />
 
               <CustomForm
                 value={this.state.email}
-                onChange={(v) => this.setState({email: v})}
-                label={`Email`}
+                onChange={(v) => this.setState({ email: v })}
+                label={`Email *`}
                 placeholder={`Enter email`}
                 keyboardType={'email-address'}
               />
@@ -194,32 +195,32 @@ export default class Samadhan extends React.Component {
                     let clist = [];
                     if (value === `Health Insurance`) {
                       clist = [
-                        {value: `Claim is rejected`},
-                        {value: `Claim is delayed`},
-                        {value: `Policy is cancelled`},
-                        {value: `No response on the claim status`},
-                        {value: `Group insurance claim`},
-                        {value: `Other`},
+                        { value: `Claim is rejected` },
+                        { value: `Claim is delayed` },
+                        { value: `Policy is cancelled` },
+                        { value: `No response on the claim status` },
+                        { value: `Group insurance claim` },
+                        { value: `Other` },
                       ];
                     } else if (value === `Life Insurance`) {
                       clist = [
-                        {value: `Death claim rejected`},
-                        {value: `Death claim delayed`},
-                        {value: `Maturity claim not paid`},
-                        {value: `Moneyback not paid`},
-                        {value: `Misselling and Fraud sales`},
-                        {value: `Policy Bond not received`},
-                        {value: `Free Look claim not received`},
-                        {value: `Other`},
+                        { value: `Death claim rejected` },
+                        { value: `Death claim delayed` },
+                        { value: `Maturity claim not paid` },
+                        { value: `Moneyback not paid` },
+                        { value: `Misselling and Fraud sales` },
+                        { value: `Policy Bond not received` },
+                        { value: `Free Look claim not received` },
+                        { value: `Other` },
                       ];
                     } else if (value === `General Insurance`) {
                       clist = [
-                        {value: `Motor Insurance claim`},
-                        {value: `Travel Insurance claim`},
-                        {value: `Fidelity claim`},
-                        {value: `Commercial claim`},
-                        {value: `Property claim`},
-                        {value: `Other`},
+                        { value: `Motor Insurance claim` },
+                        { value: `Travel Insurance claim` },
+                        { value: `Fidelity claim` },
+                        { value: `Commercial claim` },
+                        { value: `Property claim` },
+                        { value: `Other` },
                       ];
                     }
                     this.setState({
@@ -229,11 +230,11 @@ export default class Samadhan extends React.Component {
                     });
                   }}
                   value={this.state.policy_type}>
-                  <View styleName="vertical" style={{marginBottom: 8}}>
+                  <View styleName="vertical" style={{ marginBottom: 8 }}>
                     <View styleName="horizontal">
                       <RadioButton
                         value="Life Insurance"
-                        style={{alignSelf: 'center', justifyContent: 'center'}}
+                        style={{ alignSelf: 'center', justifyContent: 'center' }}
                       />
                       <Title
                         styleName="v-center h-center"
@@ -246,7 +247,7 @@ export default class Samadhan extends React.Component {
                     <View styleName="horizontal">
                       <RadioButton
                         value="Health Insurance"
-                        style={{alignSelf: 'center', justifyContent: 'center'}}
+                        style={{ alignSelf: 'center', justifyContent: 'center' }}
                       />
                       <Title
                         styleName="v-center h-center"
@@ -255,7 +256,7 @@ export default class Samadhan extends React.Component {
                     <View styleName="horizontal">
                       <RadioButton
                         value="General Insurance"
-                        style={{alignSelf: 'center', justifyContent: 'center'}}
+                        style={{ alignSelf: 'center', justifyContent: 'center' }}
                       />
                       <Title
                         styleName="v-center h-center"
@@ -271,10 +272,10 @@ export default class Samadhan extends React.Component {
 
                   <RadioButton.Group
                     onValueChange={(value) =>
-                      this.setState({complaint_type: value})
+                      this.setState({ complaint_type: value })
                     }
                     value={this.state.complaint_type}>
-                    <View styleName="vertical" style={{marginBottom: 8}}>
+                    <View styleName="vertical" style={{ marginBottom: 8 }}>
                       {this.state.compTypeList.map((e) => {
                         return (
                           <View styleName="horizontal">
@@ -301,7 +302,7 @@ export default class Samadhan extends React.Component {
                   status={this.state.isTermSelected ? 'checked' : 'unchecked'}
                   selectedColor={Pref.PRIMARY_COLOR}
                   onPress={() =>
-                    this.setState({isTermSelected: !this.state.isTermSelected})
+                    this.setState({ isTermSelected: !this.state.isTermSelected })
                   }
                 />
                 <TouchableWithoutFeedback

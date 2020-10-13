@@ -35,7 +35,7 @@ export default class FinProSideBar extends React.PureComponent {
         `https://digipay.axisbank.co.in/fastag/customer?utm_source=payerevbay&utm_medium=affiliates&utm_campaign=freefastag-affiliates&utm_content=pay&fbclid=IwAR3lZ53fZdh6aOlldFewCdink9mDEvaguAA3JahnI99lSWsDi7609tljbWY`,
       );
     } else {
-      if (title === 'Vector Plus') {
+      if (title === 'Vector Plus' || title === 'Religare Group Plan') {
         NavigationActions.navigate(`VectorForm`, parseItem);
       } else if (title.includes('Samadhan')) {
         NavigationActions.navigate(`Samadhan`);

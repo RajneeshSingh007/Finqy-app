@@ -88,12 +88,11 @@ export default class AddTeam extends React.Component {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log(`result`, result);
           const {response_header} = result;
           const {res_type, message} = response_header;
           this.setState({loading: false});
           if (res_type === `error`) {
-            Helper.showToastMessage(message, 0);
+            Helper.showToastMessage("Failed to update password", 0);
           } else {
             this.setState({
               loading: false,

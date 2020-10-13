@@ -85,6 +85,7 @@ export default class FinorbitForm extends React.PureComponent {
     this.FileUploadFormRef = React.createRef();
     this.ApptFormRef = React.createRef();
     this.backClick = this.backClick.bind(this);
+    this.restoreList = [];
     this.state = {
       loading: false,
       progressLoader: false,
@@ -106,21 +107,21 @@ export default class FinorbitForm extends React.PureComponent {
     const { navigation } = this.props;
     const url = navigation.getParam("url", "");
     const title = navigation.getParam("title", "");
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({ token: value }, () => {
-          Pref.getVal(Pref.userData, (userData) => {
-            this.setState({
-              userData: userData,
-              imageUrl: url,
-              title: title,
-              isMounted: true,
-              currentPosition: 0,
-            });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.saveToken, (value) => {
+      this.setState({ token: value }, () => {
+        Pref.getVal(Pref.userData, (userData) => {
+          this.setState({
+            userData: userData,
+            imageUrl: url,
+            title: title,
+            isMounted: true,
+            currentPosition: 0,
           });
         });
       });
     });
+    //});
   }
 
   backClick = () => {
@@ -146,12 +147,36 @@ export default class FinorbitForm extends React.PureComponent {
     this.insertData(currentPosition, true);
   };
 
+  backNav = () => {
+    const { currentPosition } = this.state;
+    if (currentPosition === 0) {
+      return false;
+    }
+    this.setState((prev) => {
+      return {
+        currentPosition: prev.currentPosition - 1,
+        bottontext: "Next",
+      };
+    }, () => {
+      if (this.state.currentPosition === 0) {
+        this.commonFormRef.current.restoreData(this.restoreList[0]);
+      }else if (this.state.currentPosition === 1) {
+        this.specificFormRef.current.restoreData(this.restoreList[1]);
+      }else if (this.state.currentPosition === 2) {
+        this.FileUploadFormRef.current.restoreData(this.restoreList[2]);
+      }else if (this.state.currentPosition === 3) {
+        this.ApptFormRef.current.restoreData(this.restoreList[3]);
+      }
+    });
+  };
+
   insertData(currentPosition, mode) {
     const { title } = this.state;
     let commons = null;
     console.log("title", title);
     if (currentPosition === 0) {
       commons = JSON.parse(JSON.stringify(this.commonFormRef.current.state));
+      this.restoreList[0] = commons;
       delete commons.genderList;
       delete commons.employList;
       delete commons.cityList;
@@ -163,6 +188,7 @@ export default class FinorbitForm extends React.PureComponent {
       delete commons.maxDate;
     } else if (currentPosition === 1) {
       commons = JSON.parse(JSON.stringify(this.specificFormRef.current.state));
+      this.restoreList[1] = commons;
       delete commons.cityList;
       delete commons.showCarList;
       delete commons.showExisitingList;
@@ -196,8 +222,10 @@ export default class FinorbitForm extends React.PureComponent {
       commons = JSON.parse(
         JSON.stringify(this.FileUploadFormRef.current.state)
       );
+      this.restoreList[2] = commons;
     } else if (currentPosition === 3) {
       commons = JSON.parse(JSON.stringify(this.ApptFormRef.current.state));
+      this.restoreList[3] = commons;
       delete commons.showCalendar;
       delete commons.showdatesx;
       delete commons.mode;
@@ -240,6 +268,7 @@ export default class FinorbitForm extends React.PureComponent {
           checkData = false;
           Helper.showToastMessage("Invalid mobile number", 0);
         } else if (
+          title !== "Term Insurance" &&
           title !== "Health Insurance" &&
           title !== "Fixed Deposit" &&
           title !== `Life Cum Invt. Plan` &&
@@ -256,7 +285,8 @@ export default class FinorbitForm extends React.PureComponent {
           checkData = false;
           Helper.showToastMessage("Email empty", 0);
         } else if (
-          title === "Health Insurance" &&
+          (title === "Term Insurance" ||
+            title === "Health Insurance") &&
           commonForms.qualification === ""
         ) {
           checkData = false;
@@ -279,6 +309,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Home Loan` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
+          title !== `Motor Insurance` &&
           commonForms.gender === ""
         ) {
           checkData = false;
@@ -293,6 +324,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Home Loan` &&
           title !== `Loan Against Property` &&
           title !== `Auto Loan` &&
+          title !== `Life Cum Invt. Plan` &&
           commonForms.employ === ""
         ) {
           checkData = false;
@@ -303,6 +335,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Loan Against Property` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
+          title !== `Motor Insurance` &&
           commonForms.currentlocation === ""
         ) {
           checkData = false;
@@ -361,8 +394,8 @@ export default class FinorbitForm extends React.PureComponent {
                 title === "Loan Against Property" ||
                 title === `Personal Loan` ||
                 title === `Business Loan`
-              ? `Desired Amount empty`
-              : `Investment Amount empty`,
+                ? `Desired Amount empty`
+                : `Investment Amount empty`,
             0
           );
         } else if (
@@ -382,6 +415,12 @@ export default class FinorbitForm extends React.PureComponent {
         ) {
           checkData = false;
           Helper.showToastMessage("Select Existing Card/Loan", 0);
+        } else if (title === 'Home Loan' &&
+          (specificForms.loan_property_city === "" ||
+            specificForms.loan_property_city ===
+            `Select Loan Property City *`)) {
+          checkData = false;
+          Helper.showToastMessage("Select Loan Property City", 0);
         } else {
           if (title === "Life Cum Invt. Plan") {
             if (specificForms.investment_amount === "") {
@@ -515,19 +554,19 @@ export default class FinorbitForm extends React.PureComponent {
             ) {
               checkData = false;
               Helper.showToastMessage("Required Cover Empty", 0);
-            }else if (
+            } else if (
               title === `Term Insurance` &&
               specificForms.pay_type === ""
             ) {
               checkData = false;
               Helper.showToastMessage("Please, Select Pay Type", 0);
-            }else if (
+            } else if (
               title === `Term Insurance` &&
               specificForms.addons === ""
             ) {
               checkData = false;
               Helper.showToastMessage("Please, Select Addons Type", 0);
-            }else if (
+            } else if (
               title === `Term Insurance` &&
               specificForms.policy_term === ""
             ) {
@@ -542,7 +581,7 @@ export default class FinorbitForm extends React.PureComponent {
             } else if (specificForms.existing_diseases === "") {
               checkData = false;
               Helper.showToastMessage("Select Existing Disease", 0);
-            }else if (
+            } else if (
               title === `Term Insurance` && specificForms.existing_diseases === 'YES' &&
               specificForms.diseases === ""
             ) {
@@ -578,12 +617,14 @@ export default class FinorbitForm extends React.PureComponent {
                       index++
                     ) {
                       const element = floaterItemList[index];
-                      const { name, gender, dob, relation } = element;
+                      const { name, gender, dob, relation, diseases, existing_diseases } = element;
                       if (
                         name === "" ||
                         gender === "" ||
                         dob === "" ||
-                        relation === ""
+                        relation === "" ||
+                        diseases === "" ||
+                        existing_diseases === ""
                       ) {
                         checker = true;
                       }
@@ -608,12 +649,18 @@ export default class FinorbitForm extends React.PureComponent {
                           for (var key in parseJs) {
                             const value = parseJs[key];
                             if (value !== undefined) {
-                              formData.append(
-                                keypos === 1
-                                  ? `floater_${key}`
-                                  : `floater_${key}${keypos}`,
-                                parseJs[key]
-                              );
+                              if (key.includes('existing_diseases')) {
+                                formData.append(`existing_diseases${keypos}`, parseJs[key]);
+                              } else if (key.includes('diseases')) {
+                                formData.append(`diseases${keypos}`, parseJs[key]);
+                              } else {
+                                formData.append(
+                                  keypos === 1
+                                    ? `floater_${key}`
+                                    : `floater_${key}${keypos}`,
+                                  parseJs[key]
+                                );
+                              }
                             }
                           }
                           keypos += 1;
@@ -664,7 +711,7 @@ export default class FinorbitForm extends React.PureComponent {
               title !== `Personal Loan` &&
               (specificForms.loan_property_city === "" ||
                 specificForms.loan_property_city ===
-                  `Select Loan Property City *`)
+                `Select Loan Property City *`)
             ) {
               checkData = false;
               Helper.showToastMessage("Select Loan Property city", 0);
@@ -854,10 +901,10 @@ export default class FinorbitForm extends React.PureComponent {
                 split.length === 2
                   ? `${split[0]} ${split[1]}`
                   : split.length === 3
-                  ? `${split[0]} ${split[1]} ${split[2]}`
-                  : split.length === 4
-                  ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
-                  : split[0]
+                    ? `${split[0]} ${split[1]} ${split[2]}`
+                    : split.length === 4
+                      ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
+                      : split[0]
               }
               bottomtext={
                 <>
@@ -904,7 +951,8 @@ export default class FinorbitForm extends React.PureComponent {
                     this.state.title !== "Vector Plus" &&
                     this.state.title !== "Business Loan" &&
                     this.state.title !== "Mutual Fund" &&
-                    this.state.title !== "Motor Insurance"
+                    this.state.title !== "Motor Insurance" &&
+                    this.state.title !== 'Life Cum Invt. Plan'
                   }
                   saveData={this.state.dataArray[0]}
                   title={this.state.title}
@@ -930,16 +978,22 @@ export default class FinorbitForm extends React.PureComponent {
               ) : null}
             </View>
 
-            <View styleName="horizontal space-between md-gutter v-end h-end">
-              {/* <Button
+            <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
+              {this.state.currentPosition > 0 ?               <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}
                 loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
+                style={[styles.loginButtonStyle, {
+                  backgroundColor: 'transparent',
+                  borderColor: '#d5d3c1',
+                  borderWidth: 1.3,
+                }]}
+                onPress={this.backNav}>
+                <Title style={StyleSheet.flatten([styles.btntext, {
+                  color: '#b8b28f',
+                }])}>{'Back'}</Title>
+              </Button> : null}
               <Button
                 mode={"flat"}
                 uppercase={false}

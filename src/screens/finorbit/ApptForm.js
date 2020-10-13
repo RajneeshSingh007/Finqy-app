@@ -26,6 +26,11 @@ export default class ApptForm extends React.PureComponent {
     };
   }
 
+  restoreData(obj){
+    console.log('obj', obj);
+    this.setState(obj);
+  }
+
   onChange = (event, selectedDate) => {
     if (selectedDate !== undefined && selectedDate !== null) {
       if (this.state.mode == 'date') {

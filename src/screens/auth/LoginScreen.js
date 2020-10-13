@@ -89,7 +89,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('mobile number/User ID empty', 0);
     } else if (
-      //this.state.userid.length < 10 ||
+      this.state.userid.length < 10 ||
       this.state.userid === '9876543210' ||
       this.state.userid === '0000000000' ||
       this.state.userid === '1234567890'
@@ -121,7 +121,7 @@ export default class LoginScreen extends React.PureComponent {
               Pref.methodPost,
               this.state.token,
               (result) => {
-                console.log(`result`, result);
+                //console.log(`result`, result);
                 const { data, response_header } = result;
                 const { res_type, type } = response_header;
                 this.setState({ loading: false });
@@ -176,7 +176,7 @@ export default class LoginScreen extends React.PureComponent {
                 <AnimatedInputBox
                   onChangeText={(value) => this.setState({ userid: value })}
                   value={this.state.userid}
-                  placeholder={'Enter your mobile number/User ID'}
+                  placeholder={'Enter your mobile number'}
                   maxLength={10}
                   keyboardType={'number-pad'}
                   changecolor

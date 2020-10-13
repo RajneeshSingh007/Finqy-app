@@ -117,7 +117,8 @@ export default class HomeScreen extends React.PureComponent {
     };
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
-        let profilePic = value.user_prof === undefined || value.user_prof === null ? null : { uri: decodeURIComponent(value.user_prof) };
+        const pp = value.user_prof;
+        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         this.setState({ userData: value, profilePic: profilePic });
       }
     });
@@ -594,7 +595,7 @@ export default class HomeScreen extends React.PureComponent {
     }
     return (
       <CScreen
-        bgColor={this.state.enableFilter ? "#f9f8f1" : Pref.WHITE}
+        bgColor={Pref.WHITE}
         absolute={
           <>
             {showProfile ? (
@@ -801,11 +802,27 @@ export default class HomeScreen extends React.PureComponent {
                   </View>
                 </View>
               ) : (
+                <View styleName='vertical space-between'>
+                                      <Title
+                        style={StyleSheet.flatten([
+                          styles.itemtopText,
+                          {
+                            color: '#0270e3',
+                            fontSize: 18,
+                            fontWeight: "400",
+                            alignContent:'center',
+                            alignSelf:'center',
+                            justifyContent:'center',
+                            marginTop:12
+                          },
+                        ])}
+                      >{this.state.selectedProdut}</Title>
                   <TouchableWithoutFeedback onPress={this.reset}>
                     <View
                       styleName="horizontal v-end h-end md-gutter"
                       style={{
                         marginEnd: 16,
+                        marginTop:-24
                       }}
                     >
                       <DrawerTop
@@ -813,8 +830,8 @@ export default class HomeScreen extends React.PureComponent {
                       />
                     </View>
                   </TouchableWithoutFeedback>
+                  </View>
                 )}
-
               <View
                 styleName="md-gutter vertical v-center h-center"
                 style={styles.leadercont}
@@ -847,9 +864,7 @@ export default class HomeScreen extends React.PureComponent {
                 yAxislabelColor={"#656565"}
                 labelColor={"#656565"}
                 showEvenNumberXaxisLabel={false}
-                backgroundColor={
-                  this.state.enableFilter ? "#f9f8f1" : Pref.WHITE
-                }
+                backgroundColor={Pref.WHITE}
                 height={250}
                 defaultColumnWidth={60}
                 defaultColumnMargin={12}
@@ -869,7 +884,7 @@ export default class HomeScreen extends React.PureComponent {
                       fontSize: 24,
                       lineHeight: 24,
                       marginVertical: 8,
-                      paddingVertical: 10,
+                      paddingVertical: 6,
                     },
                   ])}
                 >{`All Leads`}</Title>

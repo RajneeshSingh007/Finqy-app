@@ -33,8 +33,8 @@ import {
   FAB,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import CommonForm from './CommonForm';
 import SpecificForm from './SpecificForm';
 import CommonScreen from '../common/CommonScreen';
@@ -47,7 +47,7 @@ import Loader from '../../util/Loader';
 import LeftHeaders from '../common/CommonLeftHeader';
 import BannerCard from '../common/BannerCard';
 import Carousel from 'react-native-snap-carousel';
-import {Pagination} from 'react-native-snap-carousel';
+import { Pagination } from 'react-native-snap-carousel';
 import FormProgress from '../../util/FormProgress';
 import VectorSpecForm from './VectorSpecForm';
 import CScreen from '../component/CScreen';
@@ -85,6 +85,7 @@ export default class VectorForm extends React.PureComponent {
     this.addressFormRef = React.createRef();
     this.vectorSpecFormRef = React.createRef();
     this.backClick = this.backClick.bind(this);
+    this.restoreList = [];
     this.state = {
       loading: false,
       progressLoader: false,
@@ -102,12 +103,12 @@ export default class VectorForm extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     const url = navigation.getParam('url', '');
     const title = navigation.getParam('title', '');
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
+        this.setState({ token: value }, () => {
           Pref.getVal(Pref.userData, (userData) => {
             this.setState({
               userData: userData,
@@ -132,7 +133,7 @@ export default class VectorForm extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
-  _renderItem = ({item, index}) => {
+  _renderItem = ({ item, index }) => {
     // if(item.url === 'abc'){
     //     return (<CardRow
     //         color={Colors.grey300}
@@ -142,7 +143,7 @@ export default class VectorForm extends React.PureComponent {
     //         url={this.state.imageUrl}
     //     />)
     // }
-    return <BannerCard url={{uri: `${Pref.FOLDERPATH}${item.url}`}} />;
+    return <BannerCard url={{ uri: `${Pref.FOLDERPATH}${item.url}` }} />;
   };
 
   onPageChange(position) {
@@ -154,15 +155,16 @@ export default class VectorForm extends React.PureComponent {
   }
 
   submitt = () => {
-    const {currentPosition, title} = this.state;
+    const { currentPosition, title } = this.state;
     this.insertData(currentPosition, true);
   };
 
   insertData(currentPosition, mode) {
-    const {title} = this.state;
+    const { title } = this.state;
     let commons = null;
     if (currentPosition === 0) {
       commons = JSON.parse(JSON.stringify(this.commonFormRef.current.state));
+      this.restoreList[0] = commons;
       delete commons.genderList;
       delete commons.employList;
       delete commons.cityList;
@@ -176,8 +178,10 @@ export default class VectorForm extends React.PureComponent {
       commons = JSON.parse(
         JSON.stringify(this.vectorSpecFormRef.current.state),
       );
+      this.restoreList[1] = commons;
     } else if (currentPosition === 2) {
       commons = JSON.parse(JSON.stringify(this.addressFormRef.current.state));
+      this.restoreList[2] = commons;
     }
     let result = false;
     if (commons !== null) {
@@ -282,7 +286,7 @@ export default class VectorForm extends React.PureComponent {
           const itemlist = vectorForms.floaterItemList;
           let checkdataexists = 0;
           const element = itemlist[0];
-          const {name, gender, dob, relation} = element;
+          const { name, gender, dob, relation } = element;
           if (name !== '' && gender !== '' && dob !== '' && relation !== '') {
             let count = 1;
             formData.append(`floater_namef${count}`, `${name}`);
@@ -312,7 +316,7 @@ export default class VectorForm extends React.PureComponent {
           let checkdataexists = 0;
           for (let index = 0; index < itemlist.length; index++) {
             const element = itemlist[index];
-            const {name, gender, dob, relation} = element;
+            const { name, gender, dob, relation } = element;
             if (name !== '' && gender !== '' && dob !== '' && relation !== '') {
               let count = Number(index) + 1;
               formData.append(`floater_namef${count}`, `${name}`);
@@ -336,7 +340,7 @@ export default class VectorForm extends React.PureComponent {
           let checkdataexists = 0;
           for (let index = 0; index < itemlist.length; index++) {
             const element = itemlist[index];
-            const {name, gender, dob, relation} = element;
+            const { name, gender, dob, relation } = element;
             if (name !== '' && gender !== '' && dob !== '' && relation !== '') {
               checkdataexists++;
               let count = Number(index) + 1;
@@ -364,7 +368,7 @@ export default class VectorForm extends React.PureComponent {
           let checkdataexists = 0;
           for (let index = 0; index < itemlist.length; index++) {
             const element = itemlist[index];
-            const {name, gender, dob, relation} = element;
+            const { name, gender, dob, relation } = element;
             if (name !== '' && gender !== '' && dob !== '' && relation !== '') {
               let count = Number(index) + 1;
               formData.append(`floater_namef${count}`, `${name}`);
@@ -459,7 +463,7 @@ export default class VectorForm extends React.PureComponent {
             };
           });
         } else {
-          this.setState({progressLoader: true});
+          this.setState({ progressLoader: true });
           formData.append('areaCdp', '');
           formData.append('areaCdc', '');
           formData.append('reg_form', 'reg_form');
@@ -472,8 +476,8 @@ export default class VectorForm extends React.PureComponent {
             Pref.methodPost,
             (result) => {
               console.log(`result`, result);
-              this.setState({progressLoader: false});
-              const {status} = result;
+              this.setState({ progressLoader: false });
+              const { status } = result;
               if (status === 'Success') {
                 NavigationActions.navigate('VectorPayment', {
                   result: result,
@@ -484,7 +488,7 @@ export default class VectorForm extends React.PureComponent {
             },
             (error) => {
               console.log('erorr', error);
-              this.setState({progressLoader: false});
+              this.setState({ progressLoader: false });
               Helper.showToastMessage('something wents wrong...', 0);
             },
           );
@@ -493,8 +497,12 @@ export default class VectorForm extends React.PureComponent {
     }
   }
 
+  restoreData(obj) {
+    this.setState(obj);
+  }
+
   findImage() {
-    const {title} = this.props;
+    const { title } = this.props;
     const productList = JSON.parse(JSON.stringify(Pref.productList));
     const search = Lodash.find(productList, (io) => io.name === title);
     return search === undefined
@@ -502,16 +510,37 @@ export default class VectorForm extends React.PureComponent {
       : search.url;
   }
 
+  backNav = () => {
+    const { currentPosition } = this.state;
+    if (currentPosition === 0) {
+      return false;
+    }
+    this.setState((prev) => {
+      return {
+        currentPosition: prev.currentPosition - 1,
+        bottontext: "Next",
+      };
+    }, () => {
+      if (this.state.currentPosition === 0) {
+        this.commonFormRef.current.restoreData(this.restoreList[0]);
+      } else if (this.state.currentPosition === 1) {
+        this.vectorSpecFormRef.current.restoreData(this.restoreList[1]);
+      } else if (this.state.currentPosition === 2) {
+        this.addressFormRef.current.restoreData(this.restoreList[2]);
+      }
+    });
+  };
+
   render() {
     const newform =
       this.state.title &&
-      (this.state.title === 'Vector Plus' ||
-        this.state.title.includes('Hello') ||
-        this.state.title.includes('Sabse') ||
-        this.state.title.includes('Asaan'))
+        (this.state.title === 'Vector Plus' || this.state.title === 'Religare Group Plan' ||
+          this.state.title.includes('Hello') ||
+          this.state.title.includes('Sabse') ||
+          this.state.title.includes('Asaan'))
         ? true
         : false;
-    const {title} = this.state;
+    const { title } = this.state;
     const split =
       title && title !== null && title !== ''
         ? title.includes(' ')
@@ -530,11 +559,11 @@ export default class VectorForm extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={`MCD Policy`}
+              title={this.state.title === 'Religare Group Plan' ? 'Religare Group Plan' : `MCD Policy`}
               bottomtext={
                 <>
-                  {`MCD `}
-                  <Title style={styles.passText}>{`Policy`}</Title>
+                  {this.state.title === 'Religare Group Plan' ? `Religare` : `MCD `}
+                  <Title style={styles.passText}>{this.state.title === 'Religare Group Plan' ? 'Group Plan' : `Policy`}</Title>
                 </>
               }
               bottomtextStyle={{
@@ -572,16 +601,23 @@ export default class VectorForm extends React.PureComponent {
               ) : null}
             </View>
 
-            <View styleName="horizontal space-between md-gutter v-end h-end">
-              {/* <Button
+            <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
+              {this.state.currentPosition > 0 ? <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}
                 loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
+                style={[styles.loginButtonStyle, {
+                  backgroundColor: 'transparent',
+                  borderColor: '#d5d3c1',
+                  borderWidth: 1.3,
+                }]}
+                onPress={this.backNav}>
+                <Title style={StyleSheet.flatten([styles.btntext, {
+                  color: '#b8b28f',
+                }])}>{'Back'}</Title>
+              </Button> : null}
+
               <Button
                 mode={'flat'}
                 uppercase={false}

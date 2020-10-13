@@ -106,6 +106,10 @@ export default class VectorSpecForm extends React.PureComponent {
     }
   };
 
+  restoreData(obj){
+    this.setState(obj);
+  }
+
   onFloatitemChange(value, item, type, pos) {
     if (type === 0) {
       item.name = value;

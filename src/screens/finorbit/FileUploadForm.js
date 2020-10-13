@@ -32,8 +32,8 @@ import {
   FAB,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -42,7 +42,7 @@ import moment from 'moment';
 import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
 import CommonFileUpload from '../common/CommonFileUpload';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
 export default class FileUploadForm extends React.PureComponent {
   constructor(props) {
@@ -61,13 +61,17 @@ export default class FileUploadForm extends React.PureComponent {
   //     }
   // }
 
+  restoreData(obj){
+    this.setState(obj);
+  }
+
   onChange = (event, selectDate) => {
     const fullDate = moment(selectDate).format('DD-MM-YYYY');
-    this.setState({showCalendar: false, currentDate: selectDate});
+    this.setState({ showCalendar: false, currentDate: selectDate });
   };
 
   render() {
-    const {title, heading = `File Upload`} = this.props;
+    const { title, heading = `File Upload` } = this.props;
     return (
       <View>
         {/* <View
@@ -87,15 +91,15 @@ export default class FileUploadForm extends React.PureComponent {
           type={2}
           pickedCallback={(selected, res) => {
             if (!selected) {
-              const {name} = res;
+              const { name } = res;
               if (
                 name.includes('pdf') ||
                 name.includes('png') ||
                 name.includes('jpeg') ||
                 name.includes('jpg')
               ) {
-                console.log(`res`, res);
-                this.state.fileList.push({pancard: res});
+                //console.log(`res`, res);
+                this.state.fileList.push({ pancard: res });
               } else {
                 Helper.showToastMessage('Please, select Pdf or Image', 0);
               }
@@ -108,7 +112,7 @@ export default class FileUploadForm extends React.PureComponent {
           type={2}
           pickedCallback={(selected, res) => {
             if (!selected) {
-              const {name} = res;
+              const { name } = res;
               if (
                 name.includes('pdf') ||
                 name.includes('png') ||
@@ -116,9 +120,9 @@ export default class FileUploadForm extends React.PureComponent {
                 name.includes('jpg')
               ) {
                 if (title === 'Demat') {
-                  this.state.fileList.push({addressproof: res});
+                  this.state.fileList.push({ addressproof: res });
                 } else {
-                  this.state.fileList.push({aadharcard: res});
+                  this.state.fileList.push({ aadharcard: res });
                 }
               } else {
                 Helper.showToastMessage('Please, select Pdf or Image', 0);
@@ -130,10 +134,20 @@ export default class FileUploadForm extends React.PureComponent {
         {title === 'Profile' ? (
           <CommonFileUpload
             title={'Cancelled Cheque'}
-            type={1}
+            type={2}
             pickedCallback={(selected, res) => {
               if (!selected) {
-                this.state.fileList.push({cancel_chq: res});
+                const { name } = res;
+                if (
+                  name.includes('pdf') ||
+                  name.includes('png') ||
+                  name.includes('jpeg') ||
+                  name.includes('jpg')
+                ) {
+                  this.state.fileList.push({ cancel_chq: res });
+                } else {
+                  Helper.showToastMessage('Please, select Pdf or Image', 0);
+                }
               }
             }}
           />
@@ -142,10 +156,20 @@ export default class FileUploadForm extends React.PureComponent {
         {title === 'Profile' ? (
           <CommonFileUpload
             title={'GST Certificate'}
-            type={1}
+            type={2}
             pickedCallback={(selected, res) => {
               if (!selected) {
-                this.state.fileList.push({gst_cert: res});
+                const { name } = res;
+                if (
+                  name.includes('pdf') ||
+                  name.includes('png') ||
+                  name.includes('jpeg') ||
+                  name.includes('jpg')
+                ) {
+                  this.state.fileList.push({ gst_cert: res });
+                } else {
+                  Helper.showToastMessage('Please, select Pdf or Image', 0);
+                }
               }
             }}
           />
@@ -160,14 +184,14 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedCallback={(selected, res) => {
                 if (!selected) {
-                  const {name} = res;
+                  const { name } = res;
                   if (
                     name.includes('pdf') ||
                     name.includes('png') ||
                     name.includes('jpeg') ||
                     name.includes('jpg')
                   ) {
-                    this.state.fileList.push({rcbookcopy: res});
+                    this.state.fileList.push({ rcbookcopy: res });
                   } else {
                     Helper.showToastMessage('Please, select Pdf or Image', 0);
                   }
@@ -179,14 +203,14 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedCallback={(selected, res) => {
                 if (!selected) {
-                  const {name} = res;
+                  const { name } = res;
                   if (
                     name.includes('pdf') ||
                     name.includes('png') ||
                     name.includes('jpeg') ||
                     name.includes('jpg')
                   ) {
-                    this.state.fileList.push({oldinsurancecopy: res});
+                    this.state.fileList.push({ oldinsurancecopy: res });
                   } else {
                     Helper.showToastMessage('Please, select Pdf or Image', 0);
                   }
@@ -199,14 +223,14 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedCallback={(selected, res) => {
                 if (!selected) {
-                  const {name} = res;
+                  const { name } = res;
                   if (
                     name.includes('pdf') ||
                     name.includes('png') ||
                     name.includes('jpeg') ||
                     name.includes('jpg')
                   ) {
-                    this.state.fileList.push({puccopy: res});
+                    this.state.fileList.push({ puccopy: res });
                   } else {
                     Helper.showToastMessage('Please, select Pdf or Image', 0);
                   }
@@ -222,115 +246,187 @@ export default class FileUploadForm extends React.PureComponent {
             type={0}
             pickedCallback={(selected, res) => {
               if (!selected) {
-                this.state.fileList.push({cancelcheque: res});
+                this.state.fileList.push({ cancelcheque: res });
               }
             }}
           />
         ) : null}
 
         {title === 'Auto Loan' ||
-        title === 'Business Loan' ||
-        title === 'Personal Loan' ||
-        title === 'Credit Card' ||
-        title === 'Loan Against Property' ||
-        title === 'Home Loan' ? (
-          <View>
-            {/* <View style={styles.line1} /> */}
+          title === 'Business Loan' ||
+          title === 'Personal Loan' ||
+          title === 'Credit Card' ||
+          title === 'Loan Against Property' ||
+          title === 'Home Loan' ? (
+            <View>
+              {/* <View style={styles.line1} /> */}
 
-            <View
-              styleName="vertical"
-              style={{marginStart: sizeWidth(2), marginTop: 6}}>
-              <Subtitle style={styles.title1}>
-                
-                {title === 'Personal Loan'
-                  ? `3 Months Salary Slip`
-                  : title === 'Credit Card'
-                  ? `3 Months Salary Slip or 1 Years ITR`
-                  : title === 'Loan Against Property' || title === 'Home Loan'
-                  ? `6 Months Salary Slip or 3 Years ITR`
-                  : `3 Years ITR`}
-              </Subtitle>
-            </View>
+              <View
+                styleName="vertical"
+                style={{ marginStart: sizeWidth(2), marginTop: 6 }}>
+                <Subtitle style={styles.title1}>
 
-            <CommonFileUpload
-              title={''}
-              type={1}
-              pickedCallback={(selected, res) => {
-                if (!selected) {
-                  this.state.fileList.push({salaryslip: res});
-                }
-              }}
-            />
-
-            <CommonFileUpload
-              title={''}
-              type={1}
-              pickedCallback={(selected, res) => {
-                if (!selected) {
-                  this.state.fileList.push({salaryslip1: res});
-                }
-              }}
-            />
-
-            <CommonFileUpload
-              title={''}
-              type={1}
-              pickedCallback={(selected, res) => {
-                if (!selected) {
-                  this.state.fileList.push({salaryslip2: res});
-                }
-              }}
-            />
-
-            {title === 'Loan Against Property' || title === 'Home Loan' ? (
-              <View>
-                <CommonFileUpload
-                  title={''}
-                  type={1}
-                  pickedCallback={(selected, res) => {
-                    if (!selected) {
-                      this.state.fileList.push({salaryslip3: res});
-                    }
-                  }}
-                />
-                <CommonFileUpload
-                  title={''}
-                  type={1}
-                  pickedCallback={(selected, res) => {
-                    if (!selected) {
-                      this.state.fileList.push({salaryslip4: res});
-                    }
-                  }}
-                />
-                <CommonFileUpload
-                  title={''}
-                  type={1}
-                  pickedCallback={(selected, res) => {
-                    if (!selected) {
-                      this.state.fileList.push({salaryslip5: res});
-                    }
-                  }}
-                />
+                  {title === 'Personal Loan'
+                    ? `3 Months Salary Slip`
+                    : title === 'Credit Card'
+                      ? `3 Months Salary Slip or 1 Years ITR`
+                      : title === 'Loan Against Property' || title === 'Home Loan'
+                        ? `6 Months Salary Slip or 3 Years ITR`
+                        : `3 Years ITR`}
+                </Subtitle>
               </View>
-            ) : null}
 
-            {/* <View style={styles.line1} /> */}
+              <CommonFileUpload
+                title={''}
+                type={2}
+                pickedCallback={(selected, res) => {
+                  if (!selected) {
+                    const { name } = res;
+                    if (
+                      name.includes('pdf') ||
+                      name.includes('png') ||
+                      name.includes('jpeg') ||
+                      name.includes('jpg')
+                    ) {
+                      this.state.fileList.push({ salaryslip: res });
+                    } else {
+                      Helper.showToastMessage('Please, select Pdf or Image', 0);
+                    }
+                  }
+                }}
+              />
 
-            <CommonFileUpload
-              title={
-                title === 'Home Loan'
-                  ? '1 Year Bank Statement'
-                  : '3 Month Bank Statement'
-              }
-              type={1}
-              pickedCallback={(selected, res) => {
-                if (!selected) {
-                  this.state.fileList.push({bankstate: res});
+              <CommonFileUpload
+                title={''}
+                type={2}
+                pickedCallback={(selected, res) => {
+                  if (!selected) {
+                    const { name } = res;
+                    if (
+                      name.includes('pdf') ||
+                      name.includes('png') ||
+                      name.includes('jpeg') ||
+                      name.includes('jpg')
+                    ) {
+                      this.state.fileList.push({ salaryslip1: res });
+                    } else {
+                      Helper.showToastMessage('Please, select Pdf or Image', 0);
+                    }
+
+                  }
+                }}
+              />
+
+              <CommonFileUpload
+                title={''}
+                type={2}
+                pickedCallback={(selected, res) => {
+                  if (!selected) {
+                    const { name } = res;
+                    if (
+                      name.includes('pdf') ||
+                      name.includes('png') ||
+                      name.includes('jpeg') ||
+                      name.includes('jpg')
+                    ) {
+                      this.state.fileList.push({ salaryslip2: res });
+                    } else {
+                      Helper.showToastMessage('Please, select Pdf or Image', 0);
+                    }
+                  }
+                }}
+              />
+
+              {title === 'Loan Against Property' || title === 'Home Loan' ? (
+                <View>
+                  <CommonFileUpload
+                    title={''}
+                    type={2}
+                    pickedCallback={(selected, res) => {
+                      if (!selected) {
+                        const { name } = res;
+                        if (
+                          name.includes('pdf') ||
+                          name.includes('png') ||
+                          name.includes('jpeg') ||
+                          name.includes('jpg')
+                        ) {
+                          this.state.fileList.push({ salaryslip3: res });
+                        } else {
+                          Helper.showToastMessage('Please, select Pdf or Image', 0);
+                        }
+                      }
+                    }}
+                  />
+                  <CommonFileUpload
+                    title={''}
+                    type={2}
+                    pickedCallback={(selected, res) => {
+                      if (!selected) {
+                        const { name } = res;
+                        if (
+                          name.includes('pdf') ||
+                          name.includes('png') ||
+                          name.includes('jpeg') ||
+                          name.includes('jpg')
+                        ) {
+                          this.state.fileList.push({ salaryslip4: res });
+                        } else {
+                          Helper.showToastMessage('Please, select Pdf or Image', 0);
+                        }
+
+                      }
+                    }}
+                  />
+                  <CommonFileUpload
+                    title={''}
+                    type={2}
+                    pickedCallback={(selected, res) => {
+                      if (!selected) {
+                        const { name } = res;
+                        if (
+                          name.includes('pdf') ||
+                          name.includes('png') ||
+                          name.includes('jpeg') ||
+                          name.includes('jpg')
+                        ) {
+                          this.state.fileList.push({ salaryslip5: res });
+                        } else {
+                          Helper.showToastMessage('Please, select Pdf or Image', 0);
+                        }
+                      }
+                    }}
+                  />
+                </View>
+              ) : null}
+
+              {/* <View style={styles.line1} /> */}
+
+              <CommonFileUpload
+                title={
+                  title === 'Home Loan'
+                    ? '1 Year Bank Statement'
+                    : '3 Month Bank Statement'
                 }
-              }}
-            />
-          </View>
-        ) : null}
+                type={2}
+                pickedCallback={(selected, res) => {
+                  if (!selected) {
+                    const { name } = res;
+                    if (
+                      name.includes('pdf') ||
+                      name.includes('png') ||
+                      name.includes('jpeg') ||
+                      name.includes('jpg')
+                    ) {
+                      this.state.fileList.push({ bankstate: res });
+                    } else {
+                      Helper.showToastMessage('Please, select Pdf or Image', 0);
+                    }
+                  }
+                }}
+              />
+            </View>
+          ) : null}
       </View>
     );
   }
@@ -375,6 +471,6 @@ const styles = StyleSheet.create({
     color: '#6d6a57',
     lineHeight: 20,
     marginStart: 4,
-    marginVertical:8
+    marginVertical: 8
   },
 });

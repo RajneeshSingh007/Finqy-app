@@ -2527,6 +2527,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
+    {
+    name: 'Religare Group Plan',
+    url: require('./../res/images/autoloan.png'),
+  },
   // {
   //   name: 'Hello Doctor Policy',
   //   url: require('./../res/images/erb.png'),

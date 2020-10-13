@@ -6,6 +6,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  BackHandler
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {SafeAreaView} from 'react-navigation';
@@ -21,6 +22,22 @@ export default class CScreen extends React.PureComponent {
     changeNavigationBarColor(Pref.WHITE, true, true);
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
+        this.backClick = this.backClick.bind(this);
+  }
+
+
+  componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    this.scrollToTop();
+  }
+
+  backClick = () =>{
+    this.scrollToTop();
+    return false;
+  }
+  
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
   scrollToTop = () => {

@@ -147,6 +147,10 @@ export default class AddressForm extends React.PureComponent {
     }
   };
 
+  restoreData(obj){
+    this.setState(obj);
+  }
+
   render() {
     const {
       showemploy,

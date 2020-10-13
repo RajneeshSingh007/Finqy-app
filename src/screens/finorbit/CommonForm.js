@@ -85,7 +85,7 @@ export default class CommonForm extends React.PureComponent {
       email: '',
       mobile: '',
       gender: '',
-      dob: 'Date of Birth *',
+      dob: 'Date of Birth ',
       employ: '',
       ofc_add: '',
       qualification: '',
@@ -102,7 +102,9 @@ export default class CommonForm extends React.PureComponent {
     const {saveData, title} = this.props;
     if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
       this.setState({dob: 'Date of Birth'});
-    } else if (title === 'Vector Plus') {
+    }else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance') {
+      this.setState({dob: 'Date of Birth *'});
+    } else if (title === 'Vector Plus' || title === 'Religare Group Plan') {
       const maxDates = new Date();
       const getyear = maxDates.getFullYear() - 18;
       maxDates.setFullYear(getyear);
@@ -134,6 +136,10 @@ export default class CommonForm extends React.PureComponent {
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  }
+
+  restoreData(obj){
+    this.setState(obj);
   }
 
   backClick = () => {
@@ -207,7 +213,7 @@ export default class CommonForm extends React.PureComponent {
     } = this.props;
     const newform =
       title &&
-      (title === 'Vector Plus' ||
+      (title === 'Vector Plus' || title === 'Religare Group Plan'||
         title.includes('Hello') ||
         title.includes('Sabse') ||
         title.includes('Asaan'))
@@ -236,7 +242,7 @@ export default class CommonForm extends React.PureComponent {
               ? 'First Name *'
               : 'Full Name *'
           }
-          editable={editable}
+          editable={title === 'Profile' ? false : editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
           changecolor
@@ -310,7 +316,7 @@ export default class CommonForm extends React.PureComponent {
             }
           }}
           value={this.state.mobile}
-          editable={editable}
+          editable={ title === 'Profile' ? false : editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
@@ -340,14 +346,12 @@ export default class CommonForm extends React.PureComponent {
         /> */}
         <AnimatedInputBox
           placeholder={
-            title === `Home Loan`
-              ? 'Email *'
-              : title === 'Fixed Deposit' ||
+            title === title === 'Fixed Deposit' ||
                 title === 'Health Insurance' ||
                 title === `Life Cum Invt. Plan` ||
                 title === `Motor Insurance` ||
                 title === `Mutual Fund` ||
-                title === `Profile`
+                title === `Profile` || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Business Loan' || title === 'Auto Loan' || title === 'Term Insurance' || title == 'Fixed Deposit'
               ? 'Email'
               : 'Email *'
           }
@@ -355,7 +359,7 @@ export default class CommonForm extends React.PureComponent {
           containerstyle={styles.animatedInputCont}
           onChangeText={(value) => this.setState({email: value})}
           value={this.state.email}
-          editable={editable}
+          editable={title === 'Profile' ? false : editable}
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
@@ -605,7 +609,7 @@ export default class CommonForm extends React.PureComponent {
               </TouchableWithoutFeedback>
             </View>
 
-            {title === 'Vector Plus' ? (
+            {title === 'Vector Plus' || title === 'Religare Group Plan' ? (
               <View>
                 <View style={styles.radiocont}>
                   <View style={styles.radiodownbox}>
@@ -686,7 +690,7 @@ export default class CommonForm extends React.PureComponent {
 
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Select Gender *`}</Title>
+                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title ==='Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit'  || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' ? '*' : ''}`}</Title>
                 <RadioButton.Group
                   onValueChange={(value) => this.setState({gender: value})}
                   value={this.state.gender}>
@@ -731,7 +735,7 @@ export default class CommonForm extends React.PureComponent {
         {showemploy ? (
           <View style={styles.radiocont}>
             <View style={styles.radiodownbox}>
-              <Title style={styles.bbstyle}>{`Select Employment Type *`}</Title>
+              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title ==='Term Insurance' || title === 'Health Insurance' ? '*' : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({employ: value})}
                 value={this.state.employ}>
@@ -813,7 +817,7 @@ export default class CommonForm extends React.PureComponent {
                     styleName="v-center h-center"
                     style={styles.textopen}>{`Daughter`}</Title>
                 </View>
-                {title === 'Vector Plus' ? null : (
+                {title === 'Vector Plus' || title === 'Religare Group Plan' ? null : (
                   <>
                     <View
                       styleName="horizontal"
@@ -903,7 +907,7 @@ export default class CommonForm extends React.PureComponent {
                     },
                   ]}>
                   {this.state.currentlocation === ''
-                    ? 'Select Current Location *'
+                    ? `Select Current Location ${title === 'Credit Card' || title ==='Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' ? '*' : ''}`
                     : this.state.currentlocation}
                 </Title>
                 <Icon
