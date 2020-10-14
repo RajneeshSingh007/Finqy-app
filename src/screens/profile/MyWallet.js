@@ -242,7 +242,7 @@ export default class MyWallet extends React.PureComponent {
                     fontSize: 20,
                     lineHeight: 36,
                   },
-                ])}>{`₹ ${this.state.wallet} /`}</Title>
+                ])}>{`₹ ${this.state.wallet} /-`}</Title>
               <Button
                 style={styles.loginButtonStyle}
                 uppercase={false}

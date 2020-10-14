@@ -40,7 +40,7 @@ export default class ProfScreen extends React.PureComponent {
             Pref.getVal(Pref.userData, value => {
                 const parse = JSON.parse(value);
                 const pp = parse.profile_pic;
-                const url = {uri: pp === '' ? Pref.profileDefaultPic : `${Pref.FOLDERPATH}${pp}`};
+                const url = {uri: pp === '' ? Pref.profileDefaultPic : `${Pref.BASEUrl}${pp}`};
                 this.setState({ userData: parse, pic: url })
             })
         });

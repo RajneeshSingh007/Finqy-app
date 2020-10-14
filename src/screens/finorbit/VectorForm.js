@@ -106,7 +106,7 @@ export default class VectorForm extends React.PureComponent {
     const { navigation } = this.props;
     const url = navigation.getParam('url', '');
     const title = navigation.getParam('title', '');
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({ token: value }, () => {
           Pref.getVal(Pref.userData, (userData) => {
@@ -115,12 +115,12 @@ export default class VectorForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition: 0,
+              currentPosition: 2,
             });
           });
         });
       });
-    });
+    //});
   }
 
   backClick = () => {
@@ -143,7 +143,7 @@ export default class VectorForm extends React.PureComponent {
     //         url={this.state.imageUrl}
     //     />)
     // }
-    return <BannerCard url={{ uri: `${Pref.FOLDERPATH}${item.url}` }} />;
+    return <BannerCard url={{ uri: `${Pref.BASEUrl}${item.url}` }} />;
   };
 
   onPageChange(position) {
@@ -562,7 +562,7 @@ export default class VectorForm extends React.PureComponent {
               title={this.state.title === 'Religare Group Plan' ? 'Religare Group Plan' : `MCD Policy`}
               bottomtext={
                 <>
-                  {this.state.title === 'Religare Group Plan' ? `Religare` : `MCD `}
+                  {this.state.title === 'Religare Group Plan' ? `Religare ` : `MCD `}
                   <Title style={styles.passText}>{this.state.title === 'Religare Group Plan' ? 'Group Plan' : `Policy`}</Title>
                 </>
               }

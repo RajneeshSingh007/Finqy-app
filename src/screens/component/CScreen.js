@@ -40,6 +40,12 @@ export default class CScreen extends React.PureComponent {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
+  // componentWillReceiveProps(){
+  //   if(this.props.body){
+  //     this.scrollToTop();
+  //   }
+  // }
+
   scrollToTop = () => {
     const ref = this.scrollViewRef.current;
     if (ref && ref.scrollTo) {

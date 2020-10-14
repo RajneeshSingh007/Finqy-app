@@ -140,7 +140,7 @@ export default class NewForm extends React.PureComponent {
     //         url={this.state.imageUrl}
     //     />)
     // }
-    return <BannerCard url={{uri: `${Pref.FOLDERPATH}${item.url}`}} />;
+    return <BannerCard url={{uri: `${Pref.BASEUrl}${item.url}`}} />;
   };
 
   onPageChange(position) {

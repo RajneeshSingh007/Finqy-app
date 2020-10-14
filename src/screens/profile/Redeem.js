@@ -217,19 +217,19 @@ export default class Redeem extends React.PureComponent {
                 style={StyleSheet.flatten([
                   styles.itemtopText,
                   {
-                    color: '#555555',
+                    color: '#0270e3',
                     fontSize: 20,
                     lineHeight: 20,
                   },
-                ])}>{`₹ ${this.state.walletc} /`}</Title>
+                ])}>{`₹ ${this.state.walletc} /-`}</Title>
             </View>
 
             <View styleName="md-gutter">
-              <CustomForm
+              {/* <CustomForm
                 value={this.state.mobile}
                 onChange={(v) => this.setState({mobile: v})}
                 label={`UPI ID `}
-              />
+              /> */}
 
               <BankForm ref={this.bankFormRef} />
             </View>

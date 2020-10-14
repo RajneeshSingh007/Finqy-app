@@ -84,6 +84,7 @@ export default class ProfileScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    //this.props.scrollToTop();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
@@ -675,9 +676,9 @@ export default class ProfileScreen extends React.PureComponent {
       // />
 
       //         {/* <View style={{marginVertical:sizeHeight(1),justifyContent:'center',alignContents:'center',alignItems:'center'}}>
-      //                       {this.state.pancardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.pancardupload}` }} style={{margin:16}} /> : null}
-      //                       {this.state.aadharcardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.FOLDERPATH}${this.state.aadharcardupload}` }} /> : null}
-      //                       {this.state.addressupload !== '' ? <Icon name='pdf' size={56} source={{ uri: `${Pref.FOLDERPATH}${this.state.addressupload}` }} /> : null}
+      //                       {this.state.pancardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.BASEUrl}${this.state.pancardupload}` }} style={{margin:16}} /> : null}
+      //                       {this.state.aadharcardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.BASEUrl}${this.state.aadharcardupload}` }} /> : null}
+      //                       {this.state.addressupload !== '' ? <Icon name='pdf' size={56} source={{ uri: `${Pref.BASEUrl}${this.state.addressupload}` }} /> : null}
       //                   </View> */}
 
       //         <Button

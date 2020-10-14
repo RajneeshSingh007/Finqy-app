@@ -159,7 +159,7 @@ export default class AddressForm extends React.PureComponent {
       disabled = false,
       heading = `Personal Details`,
     } = this.props;
-    const ispolicy = title && title === 'Vector Plus' ? true : false;
+    const ispolicy = title && title === 'Vector Plus' || title === 'Religare Group Plan' ? true : false;
     return (
       <View>
         {/* <View

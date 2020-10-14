@@ -63,7 +63,7 @@ export default class AnsScreen extends React.PureComponent {
             Pref.getVal(Pref.userData, value => {
                 const parse = JSON.parse(value);
                 const pp = parse.profile_pic;
-                const url = { uri: pp === '' ? Pref.profileDefaultPic : `${Pref.FOLDERPATH}${pp}` };
+                const url = { uri: pp === '' ? Pref.profileDefaultPic : `${Pref.BASEUrl}${pp}` };
                 this.setState({ userData: parse, pic: url })
             })
         });
@@ -133,7 +133,7 @@ export default class AnsScreen extends React.PureComponent {
             <Card.Content>
                 <View style={{ flex: 1, flexDirection: 'column', padding: 4 }}>
                     <View style={{ flex: 1, flexDirection: 'row', marginBottom: 16 }}>
-                        <Avatar.Image source={{ uri: item.pic !== '' ? `${Pref.FOLDERPATH}${item.pic}` : `${Pref.profileDefaultPic}` }} size={42} backgroundColor={'transparent'} style={{
+                        <Avatar.Image source={{ uri: item.pic !== '' ? `${Pref.BASEUrl}${item.pic}` : `${Pref.profileDefaultPic}` }} size={42} backgroundColor={'transparent'} style={{
                             backgroundColor: 'transparent'
                         }} />
                         <View>

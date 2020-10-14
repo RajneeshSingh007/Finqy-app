@@ -2487,10 +2487,10 @@ export const productList = [
     name: 'Insurance Samadhan',
     url: require('./../res/images/samadhan.png'),
   },
-  {
-    name: 'Vector Plus',
-    url: require('./../res/images/vectorplus.png'),
-  },
+  // {
+  //   name: 'Vector Plus',
+  //   url: require('./../res/images/vectorplus.png'),
+  // },
   {
     name: 'Life Cum Invt. Plan',
     url: require('./../res/images/lifecuminv.png'),
@@ -2527,10 +2527,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
-    {
-    name: 'Religare Group Plan',
-    url: require('./../res/images/autoloan.png'),
-  },
+  //   {
+  //   name: 'Religare Group Plan',
+  //   url: require('./../res/images/autoloan.png'),
+  // },
   // {
   //   name: 'Hello Doctor Policy',
   //   url: require('./../res/images/erb.png'),
@@ -2621,6 +2621,7 @@ export const productListClone = [
  */
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
+export const LiveUrl = `https://erb.ai/erbfinorbit`;
 //`http://uat.erb.ai/`; //`https://erb.ai/`;
 export const MainUrl = `http://uat.erb.ai/`;
 export const FinURL = `${MainUrl}erbfinorbit/`;
@@ -2658,7 +2659,8 @@ export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
 
 export const NewFormPayment = `${FinURL}policy_premium.php`;
-export const VectorFormPayment = `${FinURL}Test_payment.php`;
+export const VectorFormPayment = `${LiveUrl}vp_payment.php`;
+export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
 export const AjaxWithoutToken = `${FinURL}ajax.php`;
 export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
