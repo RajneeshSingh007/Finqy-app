@@ -15,14 +15,17 @@ import * as Pref from '../../util/Pref';
 import Footer from '../component/Footer';
 import IconChooser from '../common/IconChooser';
 
-export default class CScreen extends React.PureComponent {
+export default class CScreen extends React.Component {
   constructor(props) {
     super(props);
     this.scrollViewRef = React.createRef();
     changeNavigationBarColor(Pref.WHITE, true, true);
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
-        this.backClick = this.backClick.bind(this);
+    this.backClick = this.backClick.bind(this);
+    this.state ={
+      scrollreset:false
+    }
   }
 
 
@@ -40,16 +43,21 @@ export default class CScreen extends React.PureComponent {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
-  // componentWillReceiveProps(){
-  //   if(this.props.body){
-  //     this.scrollToTop();
-  //   }
-  // }
+
+  componentWillReceiveProps(nextProps){
+    //console.log(nextProps.scrollreset)
+    if(nextProps.scrollreset){
+      this.scrollToTop();
+    }
+  }
 
   scrollToTop = () => {
-    const ref = this.scrollViewRef.current;
-    if (ref && ref.scrollTo) {
-      ref.scrollTo({x: 0, y: 0, animated: true});
+    if(this.scrollViewRef && this.scrollViewRef.current){
+      const ref = this.scrollViewRef.current;
+      //console.log('ref',ref)
+      if (ref && ref.scrollTo) {
+        ref.scrollTo({x: 0, y: 0, animated: true});
+      }
     }
   };
 

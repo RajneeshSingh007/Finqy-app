@@ -1,49 +1,28 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  FAB,
   Avatar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import CommonForm from '../finorbit/CommonForm';
 import FileUploadForm from '../finorbit/FileUploadForm';
 import DocumentPicker from 'react-native-document-picker';
 import BankForm from './BankForm';
 import LeftHeaders from '../common/CommonLeftHeader';
 import SpecificForm from '../finorbit/SpecificForm';
-import Lodash from 'lodash';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
 import StepIndicator from '../component/StepIndicator';
@@ -80,10 +59,12 @@ export default class ProfileScreen extends React.PureComponent {
       mail_port: '',
       mail_username: '',
       mail_password: '',
+      scrollReset:false
     };
   }
 
   componentDidMount() {
+    this.setState({currentposition:0,scrollReset:false});
     //this.props.scrollToTop();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
@@ -104,7 +85,7 @@ export default class ProfileScreen extends React.PureComponent {
                 //console.log('sp',sp)
             }
             //console.log('url', url)
-            const { mail_host, mail_password, mail_port, mail_username,bank_name } = parseda;
+            const { mail_host, mail_password, mail_port, mail_username } = parseda;
             this.setState({
               userData: parseda,
               imageUrl: url,
@@ -255,6 +236,7 @@ export default class ProfileScreen extends React.PureComponent {
           return {
             currentposition: prevProp.currentposition + 1,
             btnText: currentposition === 1 ? 'Submit' : 'Next',
+                      scrollReset:true
           };
         },
         () => {
@@ -375,15 +357,6 @@ export default class ProfileScreen extends React.PureComponent {
     );
     let filex = fcommons.fileList;
     if (filex !== undefined && filex !== null && filex.length > 0) {
-      const loops = Lodash.map(filex, (ele) => {
-        let parseJs = JSON.parse(JSON.stringify(ele));
-        for (var key in parseJs) {
-          const value = parseJs[key];
-          if (value !== undefined) {
-            formData.append(key, parseJs[key]);
-          }
-        }
-      });
     }
 
     if (res != null) {
@@ -403,7 +376,7 @@ export default class ProfileScreen extends React.PureComponent {
         (result) => {
           console.log(`result`, result);
           const { data, response_header } = result;
-          const { res_type, message } = response_header;
+          const { res_type } = response_header;
           this.setState({ loading: false });
           if (res_type === `success`) {
             //Helper.showToastMessage('Profile updated successfully', 1);
@@ -422,7 +395,7 @@ export default class ProfileScreen extends React.PureComponent {
             Helper.showToastMessage('Failed to update profile', 0);
           }
         },
-        (error) => {
+        () => {
           //console.log(`error`, error);
           this.setState({ loading: false });
         },
@@ -451,6 +424,7 @@ export default class ProfileScreen extends React.PureComponent {
         return {
           currentposition: prev.currentposition - 1,
           btnText: 'Next',
+          scrollReset:true
         };
       });
     }
@@ -459,6 +433,7 @@ export default class ProfileScreen extends React.PureComponent {
   render() {
     return (
       <CScreen
+        scrollreset = {this.state.scrollReset}
         absolute={<Loader isShow={this.state.loading} />}
         body={
           <>
@@ -622,85 +597,6 @@ export default class ProfileScreen extends React.PureComponent {
           </>
         }
       />
-      // <CommonScreen
-      //   title={''}
-      //   loading={this.state.loading}
-      //   absoluteBody={<Loader isShow={this.state.loading} />}
-      //   body={
-      //     <>
-      //       <LeftHeaders
-      //         //showAvtar
-      //         //rightImage={false}
-      //         //url={require('../../res/images/moneywallets.png')}
-      //         title={'My Profile'}
-      //         showBack
-      //       />
-
-      //       <Card
-      //         style={{
-      //           marginHorizontal: sizeWidth(4),
-      //           marginVertical: sizeHeight(2),
-      //           paddingHorizontal: sizeWidth(0),
-      //         }}>
-      // <TouchableWithoutFeedback onPress={() => this.filePicker()}>
-      //   <View
-      //     style={{
-      //       marginVertical: sizeHeight(2),
-      //       alignSelf: 'center',
-      //       justifyContent: 'center',
-      //       backgroundColor: 'transparent',
-      //     }}>
-      //     <Avatar.Image
-      //       source={this.state.imageUrl}
-      //       style={{backgroundColor: Colors.grey300}}
-      //       size={96}
-      //       backgroundColor={'transparent'}
-      //     />
-      //   </View>
-      // </TouchableWithoutFeedback>
-
-      //         <CommonForm title="Profile" ref={this.commonFormRef} />
-
-      // <SpecificForm
-      //   title="Demat"
-      //   heading={`Other Information`}
-      //   ref={this.specificFormRef}
-      // />
-
-      //         <BankForm ref={this.bankFormRef} />
-
-      // <FileUploadForm
-      //   title="Profile"
-      //   ref={this.FileUploadFormRef}
-      //   heading={`File Upload`}
-      // />
-
-      //         {/* <View style={{marginVertical:sizeHeight(1),justifyContent:'center',alignContents:'center',alignItems:'center'}}>
-      //                       {this.state.pancardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.BASEUrl}${this.state.pancardupload}` }} style={{margin:16}} /> : null}
-      //                       {this.state.aadharcardupload !== '' ? <Image styleName='medium' source={{ uri: `${Pref.BASEUrl}${this.state.aadharcardupload}` }} /> : null}
-      //                       {this.state.addressupload !== '' ? <Icon name='pdf' size={56} source={{ uri: `${Pref.BASEUrl}${this.state.addressupload}` }} /> : null}
-      //                   </View> */}
-
-      //         <Button
-      //           mode={'flat'}
-      //           uppercase={true}
-      //           dark={true}
-      //           loading={false}
-      //           style={[styles.loginButtonStyle]}
-      //           onPress={this.submitt}>
-      //           <Text
-      //             style={{
-      //               color: 'white',
-      //               fontSize: 16,
-      //               letterSpacing: 1,
-      //             }}>
-      //             {'Save Profile'}
-      //           </Text>
-      //         </Button>
-      //       </Card>
-      //     </>
-      //   }
-      // />
     );
   }
 }

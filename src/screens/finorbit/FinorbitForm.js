@@ -1,54 +1,26 @@
 import React from "react";
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  Platform,
-  TouchableWithoutFeedback,
 } from "react-native";
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from "@shoutem/ui";
 import * as Helper from "../../util/Helper";
 import * as Pref from "../../util/Pref";
 import {
   Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  HelperText,
-  FAB,
 } from "react-native-paper";
 import NavigationActions from "../../util/NavigationActions";
-import { SafeAreaView } from "react-navigation";
-import { sizeFont, sizeHeight, sizeWidth } from "../../util/Size";
+import { sizeHeight, sizeWidth } from "../../util/Size";
 import CommonForm from "./CommonForm";
 import SpecificForm from "./SpecificForm";
-import CommonScreen from "../common/CommonScreen";
-import CardRow from "../common/CommonCard";
 import FileUploadForm from "./FileUploadForm";
 //import StepIndicator from 'react-native-step-indicator';
 import ApptForm from "./ApptForm";
 import Lodash from "lodash";
 import Loader from "../../util/Loader";
 import LeftHeaders from "../common/CommonLeftHeader";
-import BannerCard from "../common/BannerCard";
-import Carousel from "react-native-snap-carousel";
-import { Pagination } from "react-native-snap-carousel";
-import FormProgress from "../../util/FormProgress";
 import CScreen from "../component/CScreen";
 import StepIndicator from "../component/StepIndicator";
 
@@ -84,7 +56,7 @@ export default class FinorbitForm extends React.PureComponent {
     this.specificFormRef = React.createRef();
     this.FileUploadFormRef = React.createRef();
     this.ApptFormRef = React.createRef();
-    this.backClick = this.backClick.bind(this);
+    //this.backClick = this.backClick.bind(this);
     this.restoreList = [];
     this.state = {
       loading: false,
@@ -99,29 +71,30 @@ export default class FinorbitForm extends React.PureComponent {
       token: "",
       userData: "",
       title: "",
+      scrollReset:false
     };
   }
 
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.backClick);
+    //BackHandler.addEventListener("hardwareBackPress", this.backClick);
     const { navigation } = this.props;
     const url = navigation.getParam("url", "");
     const title = navigation.getParam("title", "");
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, (value) => {
-      this.setState({ token: value }, () => {
-        Pref.getVal(Pref.userData, (userData) => {
-          this.setState({
-            userData: userData,
-            imageUrl: url,
-            title: title,
-            isMounted: true,
-            currentPosition: 0,
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({ token: value }, () => {
+          Pref.getVal(Pref.userData, (userData) => {
+            this.setState({
+              userData: userData,
+              imageUrl: url,
+              title: title,
+              isMounted: true,
+              currentPosition: 0,
+            });
           });
         });
       });
     });
-    //});
   }
 
   backClick = () => {
@@ -130,7 +103,7 @@ export default class FinorbitForm extends React.PureComponent {
   };
 
   componentWillUnMount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.backClick);
+   // BackHandler.removeEventListener("hardwareBackPress", this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
@@ -143,19 +116,21 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   submitt = () => {
-    const { currentPosition, title } = this.state;
+    const { currentPosition } = this.state;
     this.insertData(currentPosition, true);
   };
 
   backNav = () => {
     const { currentPosition } = this.state;
     if (currentPosition === 0) {
+      this.setState({scrollReset:true})
       return false;
     }
     this.setState((prev) => {
       return {
         currentPosition: prev.currentPosition - 1,
         bottontext: "Next",
+        scrollReset:true
       };
     }, () => {
       if (this.state.currentPosition === 0) {
@@ -644,27 +619,6 @@ export default class FinorbitForm extends React.PureComponent {
                         Helper.showToastMessage("Invalid pan card number", 0);
                       } else {
                         let keypos = 1;
-                        const loops = Lodash.map(floaterItemList, (ele) => {
-                          let parseJs = JSON.parse(JSON.stringify(ele));
-                          for (var key in parseJs) {
-                            const value = parseJs[key];
-                            if (value !== undefined) {
-                              if (key.includes('existing_diseases')) {
-                                formData.append(`existing_diseases${keypos}`, parseJs[key]);
-                              } else if (key.includes('diseases')) {
-                                formData.append(`diseases${keypos}`, parseJs[key]);
-                              } else {
-                                formData.append(
-                                  keypos === 1
-                                    ? `floater_${key}`
-                                    : `floater_${key}${keypos}`,
-                                  parseJs[key]
-                                );
-                              }
-                            }
-                          }
-                          keypos += 1;
-                        });
                         let parseJs = JSON.parse(JSON.stringify(specificForms));
                         for (var key in parseJs) {
                           if (key !== `floaterItemList`) {
@@ -768,20 +722,6 @@ export default class FinorbitForm extends React.PureComponent {
         const allfileslist = fileListForms.fileList;
         if (allfileslist !== undefined && allfileslist.length > 0) {
           let existence = false;
-          const loops = Lodash.map(allfileslist, (ele) => {
-            let parseJs = JSON.parse(JSON.stringify(ele));
-            for (var key in parseJs) {
-              const value = parseJs[key];
-              if (value !== undefined) {
-                if (key === `rcbookcopy`) {
-                  existence = true;
-                }
-                if (Array.isArray(value) === false) {
-                  formData.append(key, parseJs[key]);
-                }
-              }
-            }
-          });
 
           if (title === `Motor Insurance`) {
             if (!existence) {
@@ -815,6 +755,7 @@ export default class FinorbitForm extends React.PureComponent {
             return {
               currentPosition: prevState.currentPosition + 1,
               bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
+              scrollReset:true
             };
           });
         } else {
@@ -855,7 +796,7 @@ export default class FinorbitForm extends React.PureComponent {
                 Helper.showToastMessage("failed to submit form", 0);
               }
             },
-            (error) => {
+            () => {
               this.setState({ progressLoader: false });
               Helper.showToastMessage("Form submitted successfully", 1);
               NavigationActions.navigate("Finish", {
@@ -888,6 +829,7 @@ export default class FinorbitForm extends React.PureComponent {
       title !== "" ? (title.includes(" ") ? title.split(" ") : [title]) : [""];
     return (
       <CScreen
+        scrollreset = {this.state.scrollReset}
         absolute={
           <>
             <Loader isShow={this.state.progressLoader} />
@@ -1005,22 +947,6 @@ export default class FinorbitForm extends React.PureComponent {
                 <Title style={styles.btntext}>{this.state.bottontext}</Title>
               </Button>
             </View>
-            {/* <Button
-              mode={'flat'}
-              uppercase={true}
-              dark={true}
-              loading={false}
-              style={[styles.loginButtonStyle]}
-              onPress={this.submitt}>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 16,
-                  letterSpacing: 1,
-                }}>
-                {this.state.bottontext}
-              </Text>
-            </Button> */}
           </>
         }
       />

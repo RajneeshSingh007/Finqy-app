@@ -98,6 +98,7 @@ export default class VectorForm extends React.PureComponent {
       bannerList: [],
       token: '',
       userData: '',
+      scrollReset:false
     };
   }
 
@@ -106,7 +107,7 @@ export default class VectorForm extends React.PureComponent {
     const { navigation } = this.props;
     const url = navigation.getParam('url', '');
     const title = navigation.getParam('title', '');
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({ token: value }, () => {
           Pref.getVal(Pref.userData, (userData) => {
@@ -120,7 +121,7 @@ export default class VectorForm extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   backClick = () => {
@@ -150,6 +151,7 @@ export default class VectorForm extends React.PureComponent {
     this.setState({
       currentPosition: position,
       bottontext: position === 1 ? 'Submit' : 'Next',
+      scrollReset:true
     });
     this.insertData(this.state.currentPosition, false);
   }
@@ -460,6 +462,7 @@ export default class VectorForm extends React.PureComponent {
             return {
               currentPosition: prevState.currentPosition + 1,
               bottontext: prevState.currentPosition === 1 ? 'Submit' : 'Next',
+              scrollReset:true
             };
           });
         } else {
@@ -550,6 +553,7 @@ export default class VectorForm extends React.PureComponent {
 
     return (
       <CScreen
+        scrollreset = {this.state.scrollReset}
         absolute={
           <>
             <Loader isShow={this.state.progressLoader} />

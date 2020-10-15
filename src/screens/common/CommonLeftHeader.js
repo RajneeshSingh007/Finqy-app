@@ -1,73 +1,44 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import {
-  Linking,
-  StatusBar,
   StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Dimensions,
-  Platform,
 } from 'react-native';
 import * as Pref from '../../util/Pref';
-import * as Helper from '../../util/Helper';
 import {
   Avatar,
-  List,
-  Checkbox,
-  Chip,
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  DefaultTheme,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import Icon from 'react-native-vector-icons/Feather';
-import Icons from 'react-native-vector-icons/FontAwesome5';
-import { Heading, Subtitle, Image, View, Title } from '@shoutem/ui';
+import { sizeHeight, sizeWidth } from '../../util/Size';
+import { Image, View, Title } from '@shoutem/ui';
 import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 
 const LeftHeaders = (props) => {
   const {
     title,
-    url = require('../../res/images/logo.png'),
-    style,
-    showAvtar,
-    data = {},
-    screenName,
-    showBottom = false,
     bottomBody,
-    rightImage = false,
-    rightUrl,
     showBack = false,
-    showIcon = false,
-    iconName,
-    iconColor,
-    iconSize,
-    bottomIconName = 'bell',
-    bottomIconTitle = 'Notification',
-    bottomClicked,
     backClicked = () => {
       NavigationActions.goBack();
     },
-    backicon = `arrow-left`,
-    backColor = `#292929`,
-    bottombg = `white`,
     bottomtext = '',
     bottomtextStyle,
-    profile = () => { },
-    name = '',
-    profilePic = null
-  } = props;
+    profile = () => { }  } = props;
+
+  const [pic, setPic] = useState(null);
+
+  useEffect(() => {
+    Pref.getVal(Pref.userData, (value) => {
+      if (value !== undefined && value !== null) {
+        const pp = value.user_prof;
+        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
+        setPic(profilePic);
+      }
+    });
+
+    return () => {
+    };
+  }, []);
 
   return (
     <View
@@ -116,7 +87,7 @@ const LeftHeaders = (props) => {
               {/* {title === 'Hi,' ? ( */}
                 <View>
                   <Avatar.Image
-                    source={profilePic === null ? require('../../res/images/account.png') :profilePic}
+                    source={pic === null ? require('../../res/images/account.png') :pic}
                     size={56}
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />
@@ -162,117 +133,6 @@ const LeftHeaders = (props) => {
       {bottomBody}
     </View>
   );
-  // return (
-  //   <View style={[styles.container, style]}>
-  //     <View
-  //       style={{
-  //         flexDirection: 'row',
-  //         alignContent: 'center',
-  //         alignItems: 'center',
-  //         marginStart: sizeHeight(4),
-  //         justifyContent:
-  //           showBack && showAvtar
-  //             ? 'space-between'
-  //             : showBack
-  //             ? 'flex-start'
-  //             : 'space-between',
-  //       }}>
-  //       {showBack ? (
-  //         <View style={{flexDirection: 'row', marginBottom: 12}}>
-  //           <TouchableWithoutFeedback onPress={backClicked}>
-  //             <Icon
-  //               name={backicon}
-  //               size={24}
-  //               color={backColor}
-  //               style={{alignSelf: 'center', marginEnd: 4}}
-  //             />
-  //           </TouchableWithoutFeedback>
-  //           <Heading
-  //             style={{
-  //               fontSize: 17,
-  //               fontFamily: 'Rubik',
-  //               letterSpacing: 1,
-  //               color: '#292929',
-  //               fontWeight: 'bold',
-  //               paddingVertical: sizeWidth(1.5),
-  //               marginStart: showBack ? sizeHeight(1) : 0,
-  //             }}>
-
-  // {Lodash.truncate(title, {
-  //   length: 21,
-  //   separator: `...`,
-  // })}
-  //           </Heading>
-  //         </View>
-  //       ) : (
-  //         <Heading
-  //           style={{
-  //             fontSize: 17,
-  //             fontFamily: 'Rubik',
-  //             letterSpacing: 1,
-  //             color: '#292929',
-  //             fontWeight: 'bold',
-  //             paddingVertical: sizeWidth(1.5),
-  //             marginStart: showBack ? sizeHeight(1) : 0,
-  //           }}>
-
-  //           {Lodash.truncate(title, {
-  //             length: 20,
-  //             separator: `...`,
-  //           })}
-  //         </Heading>
-  //       )}
-  //       {showAvtar ? (
-  //         !rightImage ? (
-  //           <Avatar.Image
-  //             source={url}
-  //             style={[styles.avatar]}
-  //             size={64}
-  //             backgroundColor={'transparent'}
-  //           />
-  //         ) : showIcon ? (
-  //           <Icon
-  //             name={iconName}
-  //             color={iconColor}
-  //             size={iconSize}
-  //             style={styles.avatar}
-  //           />
-  //         ) : (
-  //           <Image
-  //             styleName={'small'}
-  //             source={rightUrl}
-  //             style={styles.avatar}
-  //           />
-  //         )
-  //       ) : null}
-  //     </View>
-  //     {showBottom ? (
-  //       <TouchableWithoutFeedback onPress={bottomClicked}>
-  //         <View
-  //           style={{
-  //             alignContent: 'center',
-  //             borderRadius: 16,
-  //             width: '36%',
-  //             borderColor: 'rgba(255,255,255,0.2)',
-  //             backgroundColor: bottombg,
-  //             flexDirection: 'row',
-  //             marginStart: sizeWidth(10),
-  //             paddingVertical:6
-  //           }}>
-  //           <Icon
-  //             name={bottomIconName}
-  //             size={22}
-  //             color={'white'}
-  //             style={{alignSelf: 'center', marginStart: 12}}
-  //           />
-  //           <Subtitle style={styles.subtitle}>{bottomIconTitle}</Subtitle>
-  //         </View>
-  //       </TouchableWithoutFeedback>
-  //     ) : (
-  //       bottomBody
-  //     )}
-  //   </View>
-  //);
 };
 
 const styles = StyleSheet.create({
