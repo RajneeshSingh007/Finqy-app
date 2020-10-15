@@ -13,12 +13,13 @@ import * as Pref from '../../util/Pref';
 import {
   Button,
 } from 'react-native-paper';
-import {sizeWidth} from '../../util/Size';
+import { sizeWidth } from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Share from 'react-native-share';
 import DropDown from '../common/CommonDropDown';
 import CScreen from '../component/CScreen';
+import Lodash from 'lodash';
 
 export default class LinkSharingOption extends React.PureComponent {
   constructor(props) {
@@ -34,25 +35,23 @@ export default class LinkSharingOption extends React.PureComponent {
       dataList: [],
       showProduct: false,
       productList: [
-        {
-          value: 'Auto Loan',
-        },
-        {value: 'Business Loan'},
-        {value: 'Credit Card'},
-        {value: 'Fixed Deposit'},
-        {value: 'Home Loan'},
-        {value: 'Health Insurance'},
-        {value: 'Motor Insurance'},
-        {value: 'Insurance Samadhan'},
-        {value: 'Insure Check'},
-        {value: 'Loan Against Property'},
-        {value: 'Life Cum Investment'},
-        {value: 'Mutual Fund'},
-        {value: 'Personal Loan'},
-        {value: 'Term Insurance'},
-        {value: 'Hello Doctor Policy'},
-        {value: 'Asaan Health Policy'},
-        {value: 'Sabse Asaan Health Plan'},
+        {value: 'Auto Loan',url: `${Pref.FinURL}/alform.php`},
+        { value: 'Business Loan', url: `${Pref.FinURL}/blform.php` },
+        { value: 'Credit Card',url: `${Pref.FinURL}/ccf.php` },
+        { value: 'Fixed Deposit',url: `${Pref.FinURL}/fd.php` },
+        { value: 'Home Loan',url: `${Pref.FinURL}/hlform.php` },
+        { value: 'Health Insurance',url: `${Pref.FinURL}/hiform.php` },
+        { value: 'Insurance Samadhan',url: `${Pref.FinURL}/isform.php` },
+        { value: 'Insure Check',url: `${Pref.FinURL}/ic.php` },
+        { value: 'Loan Against Property',url: `${Pref.FinURL}/lapform.php` },
+        { value: 'Life Cum Investment',url: `${Pref.FinURL}/lci.php` },
+        { value: 'Motor Insurance',url: `${Pref.FinURL}/mi.php` },
+        { value: 'Mutual Fund',url: `${Pref.FinURL}/mfform.php` },
+        { value: 'Personal Loan',url: `${Pref.FinURL}/plform.php` },
+        { value: 'Term Insurance',url: `${Pref.FinURL}/tiform.php` },
+        { value: 'Hello Doctor Policy',url: `${Pref.FinURL}/hp.php` },
+        { value: 'Asaan Health Policy',url: `${Pref.FinURL}/shp.php` },
+        { value: 'Sabse Asaan Health Plan',url: `${Pref.FinURL}/sahp.php` },
       ],
       productName: '',
     };
@@ -60,47 +59,53 @@ export default class LinkSharingOption extends React.PureComponent {
 
   componentDidMount() {
     Pref.getVal(Pref.userData, (parse) => {
-      this.setState({userData: parse});
+      this.setState({ userData: parse });
     });
   }
 
   shareApp = (value) => {
-    const {refercode} = this.state.userData;
+    const userData = this.state.userData;
+    const { rcontact, rname,refercode } = userData;
+    //const { refercode } = this.state.userData;
     //https://play.google.com/store/apps/details?id=com.erb
-    let fix = '';
-    if (value.includes(' ')) {
-      const sp = value.toString().split(` `);
-      fix = sp[0];
-    } else {
-      fix = value;
-    }
+    // let fix = '';
+    // if (value.includes(' ')) {
+    //   const sp = value.toString().split(` `);
+    //   fix = sp[0];
+    // } else {
+    //   fix = value;
+    // }
+    // const url = ``;
+    // //const finalUrl = '';
+    // let finalUrl = `http://erb.ai/erbfinorbit/index.php?type=${fix}&ref=${refercode}`;
+    // if (fix === 'Hello') {
+    //   finalUrl = `https://www.erb.ai/erbfinorbit/hd.php`;
+    // } else if (fix === 'Asaan') {
+    //   finalUrl = `https://www.erb.ai/erbfinorbit/ahp.php`;
+    // } else if (fix === 'Sabse') {
+    //   finalUrl = `https://www.erb.ai/erbfinorbit/sahp.php`;
+    // }
     const url = ``;
-    const title = 'ERB';
-    let message = `http://erb.ai/erbfinorbit/index.php?type=${fix}&ref=${refercode}`;
-    if (fix === 'Hello') {
-      message = `https://www.erb.ai/erbfinorbit/hd.php`;
-    } else if (fix === 'Asaan') {
-      message = `https://www.erb.ai/erbfinorbit/ahp.php`;
-    } else if (fix === 'Sabse') {
-      message = `https://www.erb.ai/erbfinorbit/sahp.php`;
-    }
+    const title = 'ERB Referral';
+    const finalUrl = `${value}?ref=${refercode}`
+    const message = `Greetings!!\n\nPlease find the below product your looking for\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${rcontact}.\n\nYours Sincerely\n${rname}`
     const options = Platform.select({
       ios: {
         activityItemSources: [
           {
-            placeholderItem: {type: 'url', content: url},
+            placeholderItem: { type: 'url', content: url },
             item: {
-              default: {type: 'url', content: url},
+              default: { type: 'url', content: url },
             },
             subject: {
               default: title,
             },
-            linkMetadata: {originalUrl: url, url, title},
+            linkMetadata: { originalUrl: url, url, title },
           },
           {
-            placeholderItem: {type: 'text', content: message},
+            placeholderItem: { type: 'text', content: message },
             item: {
-              default: {type: 'text', content: message},
+              default: { type: 'text', content: message },
               message: null, // Specify no text to share via Messages app.
             },
           },
@@ -114,20 +119,21 @@ export default class LinkSharingOption extends React.PureComponent {
       },
     });
     Share.open(options);
-    this.setState({showProduct: false});
   };
 
   shareBtn = () => {
-    const {productName} = this.state;
+    const { productName,productList } = this.state;
     if (productName === '') {
       Helper.showToastMessage('Please, Select product', 2);
       return false;
     }
-    this.shareApp(productName);
+    this.setState({ showProduct: false });
+    const find = Lodash.find(productList, io => io.value === productName);
+    this.shareApp(find.url);
   };
 
   render() {
-    const {productName} = this.state;
+    const { productName } = this.state;
     return (
       <CScreen
         body={
@@ -194,7 +200,7 @@ export default class LinkSharingOption extends React.PureComponent {
                   {this.state.showProduct ? (
                     <DropDown
                       itemCallback={(value) =>
-                        this.setState({productName: value, showProduct: false})
+                        this.setState({ productName: value, showProduct: false })
                       }
                       list={this.state.productList}
                       isCityList={false}
@@ -276,10 +282,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 48,
     paddingStart: 10,
-    paddingEnd:10,
+    paddingEnd: 10,
     justifyContent: 'space-between',
-    marginStart:-10,
-    marginEnd:-10
+    marginStart: -10,
+    marginEnd: -10
   },
   dotContainer: {
     backgroundColor: 'transparent',

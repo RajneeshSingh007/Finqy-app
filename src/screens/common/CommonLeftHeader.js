@@ -106,14 +106,14 @@ const LeftHeaders = (props) => {
           <View style={styles.rightcon}>
             <TouchableWithoutFeedback
               onPress={() => {
-                console.log('title', title);
-                if (title === 'Hi,') {
+                //console.log('title', title);
+                //if (title === 'Hi,') {
                   profile();
-                } else {
-                  NavigationActions.openDrawer();
-                }
+                //} else {
+                  //NavigationActions.openDrawer();
+                //}
               }}>
-              {title === 'Hi,' ? (
+              {/* {title === 'Hi,' ? ( */}
                 <View>
                   <Avatar.Image
                     source={profilePic === null ? require('../../res/images/account.png') :profilePic}
@@ -121,34 +121,34 @@ const LeftHeaders = (props) => {
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />
                 </View>
-                // <Title
-                //   style={StyleSheet.flatten([
-                //     styles.belowtext,
-                //     {
-                //       color: Pref.WHITE,
-                //     },
-                //   ])}>
-                //   {Lodash.capitalize(name.slice(0, 1))}
-                // </Title>
-              ) : (
-                  <View
-                    style={StyleSheet.flatten([
-                      styles.circle,
-                      {
-                        backgroundColor: title === 'Hi,' ? Pref.RED : Pref.WHITE,
-                        borderColor: title === 'Hi,' ? Pref.RED : '#4a4949',
-                        borderStyle: 'solid',
-                        borderWidth: title === 'Hi,' ? 0 : 3,
-                      },
-                    ])}>
-                    <IconChooser
-                      name={'menu'}
-                      size={18}
-                      color={'red'}
-                      style={styles.icon}
-                    />
-                  </View>
-                )}
+              {/* //   <Title
+              //     style={StyleSheet.flatten([
+              //       styles.belowtext,
+              //       {
+              //         color: Pref.WHITE,
+              //       },
+              //     ])}>
+              //     {Lodash.capitalize(name.slice(0, 1))}
+              //   </Title>
+              // ) : (
+              //     <View
+              //       style={StyleSheet.flatten([
+              //         styles.circle,
+              //         {
+              //           backgroundColor: title === 'Hi,' ? Pref.RED : Pref.WHITE,
+              //           borderColor: title === 'Hi,' ? Pref.RED : '#4a4949',
+              //           borderStyle: 'solid',
+              //           borderWidth: title === 'Hi,' ? 0 : 3,
+              //         },
+              //       ])}>
+              //       <IconChooser
+              //         name={'menu'}
+              //         size={18}
+              //         color={'red'}
+              //         style={styles.icon}
+              //       />
+              //     </View>
+              //   )} */}
             </TouchableWithoutFeedback>
           </View>
         </View>

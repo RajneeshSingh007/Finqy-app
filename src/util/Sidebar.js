@@ -36,7 +36,7 @@ import {
   Divider,
 } from 'react-native-paper';
 import NavigationActions from './NavigationActions';
-import {SafeAreaView} from 'react-navigation';
+import { SafeAreaView } from 'react-navigation';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
@@ -67,7 +67,7 @@ export default class Sidebar extends React.Component {
           name: `My Profile`,
           expand: false,
           heading: true,
-          iconname: 'user',
+          iconname: require('../res/images/menuicon1.png'),
           icontype: 0,
           sub: [
             {
@@ -101,7 +101,7 @@ export default class Sidebar extends React.Component {
           name: `My FinPro`,
           expand: false,
           heading: true,
-          iconname: 'chart-line',
+          iconname: require('../res/images/menuicon2.png'),
           icontype: 2,
           sub: [
             // {
@@ -142,7 +142,7 @@ export default class Sidebar extends React.Component {
           name: `FinTeam Manager`,
           expand: false,
           heading: true,
-          iconname: 'user-tie',
+          iconname: require('../res/images/menuicon3.png'),
           icontype: 2,
           sub: [
             {
@@ -192,7 +192,7 @@ export default class Sidebar extends React.Component {
           name: `My Wallet`,
           expand: false,
           heading: true,
-          iconname: 'wallet',
+          iconname: require('../res/images/menuicon4.png'),
           icontype: 2,
           sub: [
             {
@@ -227,7 +227,7 @@ export default class Sidebar extends React.Component {
           expand: false,
           click: `MyOffers`,
           options: {},
-          iconname: 'tags',
+          iconname: require('../res/images/menuicon5.png'),
           icontype: 2,
         },
         {
@@ -235,7 +235,7 @@ export default class Sidebar extends React.Component {
           expand: false,
           click: 'PopularPlan',
           options: {},
-          iconname: 'tag',
+          iconname: require('../res/images/menuicon6.png'),
           icontype: 2,
         },
         {
@@ -243,7 +243,7 @@ export default class Sidebar extends React.Component {
           expand: false,
           click: 'MarketingTool',
           options: {},
-          iconname: 'user-tag',
+          iconname: require('../res/images/menuicon7.png'),
           icontype: 2,
         },
         {
@@ -251,7 +251,7 @@ export default class Sidebar extends React.Component {
           expand: false,
           click: 'Training',
           options: {},
-          iconname: 'youtube',
+          iconname: require('../res/images/menuicon8.png'),
           icontype: 2,
         },
         {
@@ -259,14 +259,14 @@ export default class Sidebar extends React.Component {
           expand: false,
           click: 'Blogs',
           options: {},
-          iconname: 'rss-square',
+          iconname: require('../res/images/menuicon9.png'),
           icontype: 2,
         },
         {
           name: `Helpdesk`,
           expand: false,
           heading: true,
-          iconname: 'headset',
+          iconname: require('../res/images/menuicon10.png'),
           icontype: 2,
 
           sub: [
@@ -305,8 +305,8 @@ export default class Sidebar extends React.Component {
           pp === ''
             ? Pref.profileDefaultPic
             : pp === undefined
-            ? Pref.profileDefaultPic
-            : pp,
+              ? Pref.profileDefaultPic
+              : pp,
       };
       //console.log(`url`, url);
       this.setState({
@@ -317,14 +317,14 @@ export default class Sidebar extends React.Component {
     });
     Pref.getVal(Pref.USERTYPE, (v) => {
       //console.log(v);
-      this.setState({type: v});
+      this.setState({ type: v });
       if (v === `connector`) {
         const filter = [
           {
             name: `My Profile`,
             expand: false,
             heading: true,
-            iconname: 'user',
+          iconname: require('../res/images/menuicon1.png'),
             icontype: 0,
             sub: [
               {
@@ -358,7 +358,7 @@ export default class Sidebar extends React.Component {
             name: `My FinPro`,
             expand: false,
             heading: true,
-            iconname: 'chart-line',
+          iconname: require('../res/images/menuicon2.png'),
             icontype: 2,
             sub: [
               // {
@@ -399,7 +399,7 @@ export default class Sidebar extends React.Component {
             name: `My Wallet`,
             expand: false,
             heading: true,
-            iconname: 'wallet',
+          iconname: require('../res/images/menuicon3.png'),
             icontype: 2,
             sub: [
               {
@@ -409,7 +409,7 @@ export default class Sidebar extends React.Component {
                 options: {},
               },
               {
-               name: `Earning History`,
+                name: `Earning History`,
                 expand: false,
                 click: 'MyWallet',
                 options: {},
@@ -434,7 +434,7 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: `MyOffers`,
             options: {},
-            iconname: 'tags',
+          iconname: require('../res/images/menuicon4.png'),
             icontype: 2,
           },
           {
@@ -442,7 +442,7 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'MarketingTool',
             options: {},
-            iconname: 'user-tag',
+          iconname: require('../res/images/menuicon5.png'),
             icontype: 2,
           },
           {
@@ -450,7 +450,7 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Training',
             options: {},
-            iconname: 'youtube',
+          iconname: require('../res/images/menuicon6.png'),
             icontype: 2,
           },
           {
@@ -458,7 +458,7 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Blogs',
             options: {},
-            iconname: 'rss-square',
+          iconname: require('../res/images/menuicon7.png'),
             icontype: 2,
           },
           // {
@@ -470,14 +470,14 @@ export default class Sidebar extends React.Component {
           //   options: {},
           // },
         ];
-        this.setState({menuList: filter});
+        this.setState({ menuList: filter });
       } else if (v === 'team') {
         const filter = [
           {
             name: `My FinPro`,
             expand: false,
             heading: true,
-            iconname: 'chart-line',
+          iconname: require('../res/images/menuicon2.png'),
             icontype: 2,
             sub: [
               // {
@@ -518,8 +518,8 @@ export default class Sidebar extends React.Component {
             name: `FinAds Marketing`,
             expand: false,
             click: 'MarketingTool',
-            options: {type: 1},
-            iconname: 'user-tag',
+            options: { type: 1 },
+          iconname: require('../res/images/menuicon7.png'),
             icontype: 2,
           },
           {
@@ -527,14 +527,14 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Training',
             options: {},
-            iconname: 'youtube',
+          iconname: require('../res/images/menuicon8.png'),
             icontype: 2,
           },
           {
             name: `Helpdesk`,
             expand: false,
             heading: true,
-            iconname: 'headset',
+          iconname: require('../res/images/menuicon10.png'),
             icontype: 2,
 
             sub: [
@@ -562,7 +562,7 @@ export default class Sidebar extends React.Component {
           //   options: {},
           // },
         ];
-        this.setState({menuList: filter});
+        this.setState({ menuList: filter });
       }
     });
   }
@@ -586,7 +586,7 @@ export default class Sidebar extends React.Component {
       item.sub = meh;
       return ele;
     });
-    this.setState({menuList: fill});
+    this.setState({ menuList: fill });
   };
 
   menuSubHeaderClick = (item, index, sub, i) => {
@@ -597,7 +597,7 @@ export default class Sidebar extends React.Component {
     menusub[i] = sub;
     item.sub = menusub;
     menuList[index] = item;
-    this.setState({menuList: menuList});
+    this.setState({ menuList: menuList });
   };
 
   headingclick = (item, index) => {
@@ -643,26 +643,26 @@ export default class Sidebar extends React.Component {
       //   });
       //   Freshchat.showConversations();
       // } else {
-        if (s.click === `Certificate`) {
-          const {refercode} = this.state.userData;
-          NavigationActions.navigate(s.click, {
-            item: refercode,
-          });
-        } else {
-          NavigationActions.navigate(s.click, s.options);
-        }
+      if (s.click === `Certificate`) {
+        const { refercode } = this.state.userData;
+        NavigationActions.navigate(s.click, {
+          item: refercode,
+        });
+      } else {
+        NavigationActions.navigate(s.click, s.options);
+      }
       // }
       NavigationActions.closeDrawer();
     }
   };
 
   render() {
-    const {menuList, userData} = this.state;
+    const { menuList, userData } = this.state;
     return (
-      <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
+      <SafeAreaView style={styles.mainContainer} forceInset={{ top: 'never' }}>
         <View style={styles.mainContainer}>
           <DrawerTop />
-          <View style={{flex: 0.87, marginStart: 12, marginEnd: 12}}>
+          <View style={{ flex: 0.87, marginStart: 12, marginEnd: 12 }}>
             <ScrollView
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}>
@@ -679,15 +679,27 @@ export default class Sidebar extends React.Component {
                             : '#f2f0e4',
                         }}>
                         <View styleName="horizontal v-center h-center" style={{
-                          alignItems:'center',
-                          justifyContent:'center'
+                          alignItems: 'center',
+                          justifyContent: 'center'
                         }}>
-                          <IconChooser
+                          <Image
+                            source={item.iconname}
+                            style={
+                              {
+                              width: 24,
+                              height: 24,
+                              tintColor: '#626161',
+                              resizeMode:'contain'
+                            }
+                            }
+                          />
+
+                          {/* <IconChooser
                             name={item.iconname}
                             size={22}
                             color={'#626161'}
                             iconType={item.icontype}
-                          />
+                          /> */}
                           <Title
                             styleName="wrap"
                             style={{
@@ -698,8 +710,8 @@ export default class Sidebar extends React.Component {
                                 : Pref.PRIMARY_COLOR,
                               alignSelf: 'center',
                               fontWeight: 'bold',
-                              justifyContent:'center',
-                              marginStart:16
+                              justifyContent: 'center',
+                              marginStart: 16
                             }}>{`${item.name}`}</Title>
                         </View>
                         {item.heading ? (
@@ -713,98 +725,98 @@ export default class Sidebar extends React.Component {
                     </TouchableWithoutFeedback>
                     {item.expand
                       ? item.sub.map((s, i) => {
-                          return (
-                            <View
-                              style={{
-                                backgroundColor: s.expand
-                                  ? '#e8e5d7'
-                                  : 'transparent',
-                                marginStart: s.expand ? 0 : 16,
-                                paddingStart: s.expand ? 16 : 0,
-                              }}>
-                              <TouchableWithoutFeedback
-                                onPress={() =>
-                                  this.subClick(item, s, index, i)
-                                }>
-                                <View
-                                  styleName="horizontal v-center space-between"
+                        return (
+                          <View
+                            style={{
+                              backgroundColor: s.expand
+                                ? '#e8e5d7'
+                                : 'transparent',
+                              marginStart: s.expand ? 0 : 16,
+                              paddingStart: s.expand ? 16 : 0,
+                            }}>
+                            <TouchableWithoutFeedback
+                              onPress={() =>
+                                this.subClick(item, s, index, i)
+                              }>
+                              <View
+                                styleName="horizontal v-center space-between"
+                                style={{
+                                  marginHorizontal: 16,
+                                  marginVertical: 8,
+                                  paddingVertical: 10,
+                                }}>
+                                <Title
+                                  styleName="wrap"
                                   style={{
-                                    marginHorizontal: 16,
-                                    marginVertical: 8,
-                                    paddingVertical:10,
-                                  }}>
-                                  <Title
-                                    styleName="wrap"
-                                    style={{
-                                      fontSize: 14,
+                                    fontSize: 14,
 
-                                      letterSpacing: 0.5,
-                                      color: !s.expand
-                                        ? '#97948c'
-                                        : Pref.PRIMARY_COLOR,
-                                      alignSelf: 'flex-start',
-                                    }}>{`${s.name}`}</Title>
-                                  {s.heading ? (
-                                    <Icon
-                                      name={`chevron-down`}
-                                      size={22}
-                                      color={'#97948c'}
-                                    />
-                                  ) : null}
-                                </View>
-                              </TouchableWithoutFeedback>
-                              {s.expand
-                                ? s.sub.map((s, i) => {
-                                    return (
-                                      <View
-                                        style={{
-                                          marginStart: s.expand ? 0 : 16,
-                                          paddingStart: s.expand ? 16 : 0,
-                                          paddingVertical: 6,
-                                        }}>
-                                        <Divider
-                                          styleName="light"
-                                          style={styles.line}
-                                        />
-                                        <TouchableWithoutFeedback
-                                          onPress={() =>
-                                            NavigationActions.navigate(s.click)
-                                          }>
-                                          <View
-                                            styleName="horizontal v-center space-between"
-                                            style={{
-                                              marginHorizontal: 16,
-                                              marginVertical: 8,
-                                            }}>
-                                            <Title
-                                              styleName="wrap"
-                                              style={
-                                                styles.menusubtitle
-                                              }>{`${s.name}`}</Title>
-                                            {s.heading ? (
-                                              <Icon
-                                                name={`chevron-right`}
-                                                size={22}
-                                                color={'#97948c'}
-                                              />
-                                            ) : null}
-                                          </View>
-                                        </TouchableWithoutFeedback>
-                                      </View>
-                                    );
-                                  })
-                                : null}
-                              {s.sub !== undefined ? (
-                                i === s.sub.length - 1 ? null : (
-                                  <Divider
-                                    styleName="light"
-                                    style={styles.line}
+                                    letterSpacing: 0.5,
+                                    color: !s.expand
+                                      ? '#97948c'
+                                      : Pref.PRIMARY_COLOR,
+                                    alignSelf: 'flex-start',
+                                  }}>{`${s.name}`}</Title>
+                                {s.heading ? (
+                                  <Icon
+                                    name={`chevron-down`}
+                                    size={22}
+                                    color={'#97948c'}
                                   />
-                                )
-                              ) : null}
-                            </View>
-                          );
-                        })
+                                ) : null}
+                              </View>
+                            </TouchableWithoutFeedback>
+                            {s.expand
+                              ? s.sub.map((s, i) => {
+                                return (
+                                  <View
+                                    style={{
+                                      marginStart: s.expand ? 0 : 16,
+                                      paddingStart: s.expand ? 16 : 0,
+                                      paddingVertical: 6,
+                                    }}>
+                                    <Divider
+                                      styleName="light"
+                                      style={styles.line}
+                                    />
+                                    <TouchableWithoutFeedback
+                                      onPress={() =>
+                                        NavigationActions.navigate(s.click)
+                                      }>
+                                      <View
+                                        styleName="horizontal v-center space-between"
+                                        style={{
+                                          marginHorizontal: 16,
+                                          marginVertical: 8,
+                                        }}>
+                                        <Title
+                                          styleName="wrap"
+                                          style={
+                                            styles.menusubtitle
+                                          }>{`${s.name}`}</Title>
+                                        {s.heading ? (
+                                          <Icon
+                                            name={`chevron-right`}
+                                            size={22}
+                                            color={'#97948c'}
+                                          />
+                                        ) : null}
+                                      </View>
+                                    </TouchableWithoutFeedback>
+                                  </View>
+                                );
+                              })
+                              : null}
+                            {s.sub !== undefined ? (
+                              i === s.sub.length - 1 ? null : (
+                                <Divider
+                                  styleName="light"
+                                  style={styles.line}
+                                />
+                              )
+                            ) : null}
+                          </View>
+                        );
+                      })
                       : null}
                     {index === this.state.menuList.length - 1 ? null : (
                       <Divider styleName="light" style={styles.line} />
@@ -832,10 +844,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLOR,
   },
-  subMargin: {marginStart: 16},
+  subMargin: { marginStart: 16 },
   subtitle: {
     fontSize: 14,
-    
+
     letterSpacing: 0.5,
     color: '#97948c',
     alignSelf: 'flex-start',
@@ -843,7 +855,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 17,
-    
+
     letterSpacing: 0.5,
     color: 'black',
     alignSelf: 'flex-start',
@@ -860,7 +872,7 @@ const styles = StyleSheet.create({
   },
   menutitle: {
     fontSize: 13,
-    
+
     letterSpacing: 0.5,
     color: '#97948c',
     alignSelf: 'flex-start',
@@ -868,7 +880,7 @@ const styles = StyleSheet.create({
   },
   menusubtitle: {
     fontSize: 13,
-    
+
     letterSpacing: 0.5,
     color: '#97948c',
     alignSelf: 'flex-start',
