@@ -348,8 +348,8 @@ export default class CommonForm extends React.PureComponent {
           placeholder={
             title === title === 'Fixed Deposit' ||
                 title === 'Health Insurance' ||
-                title === `Life Cum Invt. Plan` ||
-                title === `Motor Insurance` ||
+                //title === `Life Cum Invt. Plan` ||
+                //title === `Motor Insurance` ||
                 title === `Mutual Fund` ||
                 title === `Profile` || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Business Loan' || title === 'Auto Loan' || title === 'Term Insurance' || title == 'Fixed Deposit'
               ? 'Email'
@@ -907,7 +907,7 @@ export default class CommonForm extends React.PureComponent {
                     },
                   ]}>
                   {this.state.currentlocation === ''
-                    ? `Select Current Location ${title === 'Credit Card' || title ==='Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' ? '*' : ''}`
+                    ? `Select Current Location ${title === 'Credit Card' || title ==='Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title  === 'Motor Insurance' ? '*' : ''}`
                     : this.state.currentlocation}
                 </Title>
                 <Icon

@@ -313,7 +313,7 @@ export default class As26 extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
+                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`,'AS26', 'AS26.pdf','application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"

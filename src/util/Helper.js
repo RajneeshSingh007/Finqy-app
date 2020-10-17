@@ -508,6 +508,37 @@ export const downloadFile = (url, name) => {
  * @param {*} url
  * @param {*} name
  */
+export const downloadFileWithFileName = (url, name, fileName, mime) => {
+  showToastMessage('Download Started', 1);
+  const {config, fs} = RNFetchBlob;
+  let DownloadDir = fs.dirs.DownloadDir;
+  const filePath = `${DownloadDir}/${fileName}`;
+  let options = {
+    fileCache: true,
+    addAndroidDownloads: {
+      title: ``,
+      useDownloadManager: true,
+      notification: true,
+      path: filePath,
+      description: name || '',
+    },
+  };
+  config(options)
+    .fetch('GET', `${url}`)
+    .then((res) => {
+      //console.log(`res`, res);
+      RNFetchBlob.fs.scanFile([{path: filePath, mime: mime}]),
+      showToastMessage('Download Complete', 1);
+      // do some magic here
+    });
+};
+
+
+/**
+ *
+ * @param {*} url
+ * @param {*} name
+ */
 export const saveFile = (url, name) => {
   showToastMessage('Download Started', 1);
   var Base64Code = url.split('data:image/png;base64,');

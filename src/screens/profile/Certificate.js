@@ -84,7 +84,7 @@ export default class Certificate extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFile(`${this.state.pdfurl}.pdf`, '');
+                Helper.downloadFileWithFileName(`${this.state.pdfurl}.pdf`,'Certificate', 'Certificate.pdf','application/pdf');
               }}
               style={{flex: 0.09}}
             />

@@ -199,7 +199,7 @@ export default class FileUploadForm extends React.PureComponent {
               }}
             />
             <CommonFileUpload
-              title={'Old Insurance Copy'}
+              title={'Old Insurance Copy *'}
               type={2}
               pickedCallback={(selected, res) => {
                 if (!selected) {

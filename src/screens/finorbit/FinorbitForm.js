@@ -71,7 +71,7 @@ export default class FinorbitForm extends React.PureComponent {
       token: "",
       userData: "",
       title: "",
-      scrollReset:false
+      scrollReset: false
     };
   }
 
@@ -82,6 +82,7 @@ export default class FinorbitForm extends React.PureComponent {
     const title = navigation.getParam("title", "");
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
+        //console.log('token', value);
         this.setState({ token: value }, () => {
           Pref.getVal(Pref.userData, (userData) => {
             this.setState({
@@ -103,7 +104,7 @@ export default class FinorbitForm extends React.PureComponent {
   };
 
   componentWillUnMount() {
-   // BackHandler.removeEventListener("hardwareBackPress", this.backClick);
+    // BackHandler.removeEventListener("hardwareBackPress", this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
@@ -123,23 +124,23 @@ export default class FinorbitForm extends React.PureComponent {
   backNav = () => {
     const { currentPosition } = this.state;
     if (currentPosition === 0) {
-      this.setState({scrollReset:true})
+      this.setState({ scrollReset: true })
       return false;
     }
     this.setState((prev) => {
       return {
         currentPosition: prev.currentPosition - 1,
         bottontext: "Next",
-        scrollReset:true
+        scrollReset: true
       };
     }, () => {
       if (this.state.currentPosition === 0) {
         this.commonFormRef.current.restoreData(this.restoreList[0]);
-      }else if (this.state.currentPosition === 1) {
+      } else if (this.state.currentPosition === 1) {
         this.specificFormRef.current.restoreData(this.restoreList[1]);
-      }else if (this.state.currentPosition === 2) {
+      } else if (this.state.currentPosition === 2) {
         this.FileUploadFormRef.current.restoreData(this.restoreList[2]);
-      }else if (this.state.currentPosition === 3) {
+      } else if (this.state.currentPosition === 3) {
         this.ApptFormRef.current.restoreData(this.restoreList[3]);
       }
     });
@@ -246,8 +247,8 @@ export default class FinorbitForm extends React.PureComponent {
           title !== "Term Insurance" &&
           title !== "Health Insurance" &&
           title !== "Fixed Deposit" &&
-          title !== `Life Cum Invt. Plan` &&
-          title !== `Motor Insurance` &&
+          //title !== `Life Cum Invt. Plan` &&
+          //title !== `Motor Insurance` &&
           title !== `Mutual Fund` &&
           title !== `Vector Plus` &&
           title !== `Home Loan` &&
@@ -310,7 +311,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Loan Against Property` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          title !== `Motor Insurance` &&
+          //title !== `Motor Insurance` &&
           commonForms.currentlocation === ""
         ) {
           checkData = false;
@@ -423,15 +424,18 @@ export default class FinorbitForm extends React.PureComponent {
               }
             }
           } else if (title === "Motor Insurance") {
-            if (specificForms.insurance === "") {
+            if (specificForms.claim_type === "") {
               checkData = false;
-              Helper.showToastMessage("Select Any Claim Last Year", 0);
+              Helper.showToastMessage("Please, Select Any Claim Last Year", 0);
+            } else if (specificForms.car_type === "") {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Car Type", 0);
             } else if (
-              specificForms.claim_type === `` ||
-              specificForms.claim_type === `Select Insurance Type *`
+              specificForms.insurance === `` ||
+              specificForms.insurance === `Select Insurance Type *`
             ) {
               checkData = false;
-              Helper.showToastMessage("Select Insurance Type", 0);
+              Helper.showToastMessage("Please, Select Insurance Type", 0);
             } else {
               if (
                 specificForms.pancardNo !== "" &&
@@ -562,6 +566,12 @@ export default class FinorbitForm extends React.PureComponent {
             ) {
               checkData = false;
               Helper.showToastMessage("Please, Specify diseases", 0);
+            } else if (
+              title === `Term Insurance` && specificForms.payment_mode === '' &&
+              specificForms.diseases === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Preferred Payment Mode", 0);
             } else if (
               title === `Health Insurance` &&
               specificForms.claim_type === ""
@@ -720,14 +730,68 @@ export default class FinorbitForm extends React.PureComponent {
 
       if (fileListForms !== undefined) {
         const allfileslist = fileListForms.fileList;
+        let existence = "";
+        //console.log('allfileslist', allfileslist)
         if (allfileslist !== undefined && allfileslist.length > 0) {
-          let existence = false;
-
-          if (title === `Motor Insurance`) {
-            if (!existence) {
-              checkData = false;
-              Helper.showToastMessage("Please, Select RC Copy", 0);
+          const loops = Lodash.map(allfileslist, (ele) => {
+            let parseJs = JSON.parse(JSON.stringify(ele));
+            for (var key in parseJs) {
+              const value = parseJs[key];
+              if (value !== undefined) {
+                if (Array.isArray(value) === false) {
+                  formData.append(key, parseJs[key]);
+                }
+              }
             }
+          });
+          if (title === 'Motor Insurance') {
+            const rcCopy = Lodash.find(allfileslist, io =>{
+              if ('rcbookcopy' in io){
+                io.key = 'rcbookcopy';
+                return io;
+              }else {
+                return undefined;
+              }
+            });
+            if(rcCopy !== undefined){
+              const {key} = rcCopy;
+              const { name } = rcCopy[key];
+              if (String(key) === `rcbookcopy` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            }else{
+              existence = "rcbookcopy";
+            }
+
+            const oldInCopy = Lodash.find(allfileslist, io =>{
+              if ('oldinsurancecopy' in io){
+                io.key = 'oldinsurancecopy';
+                return io;
+              }else {
+                return undefined;
+              }
+            });
+            if(oldInCopy !== undefined){
+              const {key} = oldInCopy;
+              const { name } = oldInCopy[key];
+              if (String(key) === `oldinsurancecopy` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            }else{
+              existence = "oldinsurancecopy";
+            }
+          }
+        } else {
+          existence = "rcbookcopy";
+        }
+        //console.log('existence', existence)
+        if (title === `Motor Insurance`) {
+          if (existence === 'rcbookcopy') {
+            checkData = false;
+            Helper.showToastMessage('Please, Select RC Copy', 0);
+          } else if (existence === 'oldinsurancecopy') {
+            checkData = false;
+            Helper.showToastMessage('Please, Select Old Insurance Copy', 0);
           }
         }
       }
@@ -755,7 +819,7 @@ export default class FinorbitForm extends React.PureComponent {
             return {
               currentPosition: prevState.currentPosition + 1,
               bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
-              scrollReset:true
+              scrollReset: true
             };
           });
         } else {
@@ -765,12 +829,16 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
+          //console.log('formData', formData);
+          //console.log('formUrls', formUrls);
+
           Helper.networkHelperTokenContentType(
             formUrls,
             formData,
             Pref.methodPost,
             this.state.token,
             (result) => {
+              //console.log('result',result)
               const { response_header } = result;
               const { res_type, res } = response_header;
               this.setState({ progressLoader: false });
@@ -829,7 +897,7 @@ export default class FinorbitForm extends React.PureComponent {
       title !== "" ? (title.includes(" ") ? title.split(" ") : [title]) : [""];
     return (
       <CScreen
-        scrollreset = {this.state.scrollReset}
+        scrollreset={this.state.scrollReset}
         absolute={
           <>
             <Loader isShow={this.state.progressLoader} />
@@ -921,7 +989,7 @@ export default class FinorbitForm extends React.PureComponent {
             </View>
 
             <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
-              {this.state.currentPosition > 0 ?               <Button
+              {this.state.currentPosition > 0 ? <Button
                 mode={'flat'}
                 uppercase={true}
                 dark={true}

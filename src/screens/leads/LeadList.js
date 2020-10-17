@@ -561,7 +561,7 @@ export default class LeadList extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
+                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`,this.state.pdfTitle, `${this.state.pdfTitle}.pdf`,'application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"

@@ -359,7 +359,7 @@ export default class Invoice extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
+                  onPress={() =>Helper.downloadFileWithFileName(`${this.state.pdfurl}`,'Invoice', 'Invoice.pdf','application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"
