@@ -119,7 +119,7 @@ export default class HomeScreen extends React.PureComponent {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
         console.log('pp', pp)
-        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
+        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         this.setState({ userData: value, profilePic: profilePic });
       }
     });
@@ -140,36 +140,36 @@ export default class HomeScreen extends React.PureComponent {
       this.setState({ loading: false });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, (value) => {
-        if (value === undefined || value === null) {
-          const body = JSON.stringify({
-            username: `ERBFinPro`,
-            product: `FinPro App`,
-          });
-          Helper.networkHelper(
-            Pref.GetToken,
-            body,
-            Pref.methodPost,
-            (result) => {
-              const { data, response_header } = result;
-              const { res_type } = response_header;
-              if (res_type === `success`) {
-                this.setState({ token: Helper.removeQuotes(data) });
-                Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
-                const { refercode } = this.state.userData;
-                this.fetchDashboard(Helper.removeQuotes(data), refercode);
-              }
-            },
-            (error) => {
-              console.log(`error`, error)
+    Pref.getVal(Pref.saveToken, (value) => {
+      if (value === undefined || value === null) {
+        const body = JSON.stringify({
+          username: `ERBFinPro`,
+          product: `FinPro App`,
+        });
+        Helper.networkHelper(
+          Pref.GetToken,
+          body,
+          Pref.methodPost,
+          (result) => {
+            const { data, response_header } = result;
+            const { res_type } = response_header;
+            if (res_type === `success`) {
+              this.setState({ token: Helper.removeQuotes(data) });
+              Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
+              const { refercode } = this.state.userData;
+              this.fetchDashboard(Helper.removeQuotes(data), refercode);
             }
-          );
-        } else {
-          this.setState({ token: value });
-          const { refercode } = this.state.userData;
-          this.fetchDashboard(value, refercode);
-        }
-      });
+          },
+          (error) => {
+            console.log(`error`, error)
+          }
+        );
+      } else {
+        this.setState({ token: value });
+        const { refercode } = this.state.userData;
+        this.fetchDashboard(value, refercode);
+      }
+    });
     });
   }
 
@@ -188,7 +188,7 @@ export default class HomeScreen extends React.PureComponent {
         leadData = result;
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
-        //console.log('pieData',pieData)
+        console.log('leadData', result)
         this.setState({ pieData: pieData, leadData: leadData, barData: barData });
       },
       (error) => {
@@ -231,72 +231,79 @@ export default class HomeScreen extends React.PureComponent {
       this.reset();
       return false;
     }
-    const { leadData } = this.state;
+    const leadData = JSON.parse(JSON.stringify(this.state.leadData));
+    //console.log('leadData', leadData)
     const cloneList = this.getFilterList(ed);
     const color = this.returnSelectProductColor(ed);
-    const mapBarData = [];
-    const mapPieData = [];
+    let mapBarData = [];
+    let mapPieData = [];
     let pieTextData = [];
     cloneList.map((item) => {
       const { name } = item;
+      //console.log('name', name)
       let y = 0;
       let colorx = color;
-      if (name.includes("Term")) {
+      let x = name;
+      if (name === 'Term Insurance') {
         y = leadData.term_insurance;
         colorx = '#e27373';
-      } else if (name.includes("Motor")) {
+      } else if (name === 'Motor Insurance') {
         y = leadData.motor_insurance;
         colorx = '#fea3a3';
-      } else if (name.includes("Health")) {
+      } else if (name === 'Health Insurance') {
         y = leadData.health_insurance;
         colorx = '#f7b2b2';
-      } else if (name.includes("Samadhan")) {
+      } else if (name === 'Insurance Samadhan') {
         y = leadData.insurance_samadhan;
         colorx = "#fed1d1";
-      } else if (name.includes("Mutual")) {
+      } else if (name === 'Mutual Fund') {
         y = leadData.mutual_fund;
         colorx = '#85f95b';
-      } else if (name.includes("Fixed")) {
+      } else if (name === 'Fixed Deposit') {
         y = leadData.fixed_deposit;
         colorx = '#98f377';
       } else if (name.includes("Life")) {
         y = leadData.life_cum_investment;
         colorx = "#78f54b";
-      } else if (name.includes("Home")) {
+      } else if (name === 'Home Loan') {
         y = leadData.home_loan;
         colorx = '#f9e062'
-      } else if (name.includes("Against")) {
+      } else if (name === 'Loan Against Property') {
         y = leadData.loan_against_property;
         colorx = '#f5e076'
-      } else if (name.includes("Business")) {
+      } else if (name === 'Business Loan') {
         y = leadData.business_loan;
         colorx = '#ccbb69'
-      } else if (name.includes("Personal")) {
+      } else if (name === 'Personal Loan') {
         y = leadData.personal_loan;
         colorx = '#e8d785'
-      } else if (name.includes("Auto")) {
+      } else if (name === 'Auto Loan') {
         y = leadData.auto_loan;
         colorx = '#decf89'
-      } else if (name.includes("Vector")) {
+      } else if (name === 'Credit Card') {
+        y = leadData.total_credit_card_lead;
+      }else if (name === 'Vector Plus') {
         y = leadData.religare;
         colorx = '#f78282';
-      } else if (name.includes("Hello")) {
+        x = 'Religare'
+      }  else if (name === `Hello Doctor Policy`) {
         y = leadData.aditya_birla_doc;
+        x = 'Aditya Birla DOC';
         colorx = '#e89898';
-      } else if (name.includes("Sabse")) {
+      } else if (name === `Sabse Asaan Health Plan`) {
         y = leadData.aditya_birla_cio;
         colorx = '#f19f9f';
-      } else if (name.includes("Policy")) {
+        x = 'Aditya Birla CIO';
+      }else if (name === 'Asaan Health Policy') {
         y = leadData.aditya_birla_ci;
         colorx = '#ea9a9a';
-      } else if (name.includes("Credit")) {
-        y = leadData.total_credit_card_lead;
-      }
-      mapBarData.push({ x: name, y: y, color: colorx });
+        x = 'Aditya Birla CI';
+      } 
+      mapBarData.push({ x: x, y: y, color: colorx });
       //if (y > 0) {
       mapPieData.push({
         value: y,
-        label: name,
+        label: x,
         color: colorx,
       })
       //}
@@ -314,7 +321,8 @@ export default class HomeScreen extends React.PureComponent {
         return i;
       }))
     }
-    console.log(piearraySize, counter)
+    //console.log(mapBarData)
+    //mapBarData = [];
     if (piearraySize === counter) {
       pieTextData = [];
     }
@@ -405,7 +413,7 @@ export default class HomeScreen extends React.PureComponent {
   getconvertedPercentage = () => {
     const total_lead = this.returnTotalLead();
     const confirm_lead = this.returnConfirmLead();
-    return this.getPercentage(total_lead, confirm_lead);
+    return confirm_lead ? this.getPercentage(total_lead, confirm_lead) : 0;
   };
 
   returnTotalLead = () => {
@@ -803,34 +811,34 @@ export default class HomeScreen extends React.PureComponent {
                   </View>
                 </View>
               ) : (
-                <View styleName='vertical space-between'>
-                                      <Title
-                        style={StyleSheet.flatten([
-                          styles.itemtopText,
-                          {
-                            color: '#0270e3',
-                            fontSize: 18,
-                            fontWeight: "400",
-                            alignContent:'center',
-                            alignSelf:'center',
-                            justifyContent:'center',
-                            marginTop:12
-                          },
-                        ])}
-                      >{this.state.selectedProdut}</Title>
-                  <TouchableWithoutFeedback onPress={this.reset}>
-                    <View
-                      styleName="horizontal v-end h-end md-gutter"
-                      style={{
-                        marginEnd: 16,
-                        marginTop:-24
-                      }}
-                    >
-                      <DrawerTop
-                        backClicked={this.reset}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
+                  <View styleName='vertical space-between'>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.itemtopText,
+                        {
+                          color: '#0270e3',
+                          fontSize: 18,
+                          fontWeight: "400",
+                          alignContent: 'center',
+                          alignSelf: 'center',
+                          justifyContent: 'center',
+                          marginTop: 12
+                        },
+                      ])}
+                    >{this.state.selectedProdut}</Title>
+                    <TouchableWithoutFeedback onPress={this.reset}>
+                      <View
+                        styleName="horizontal v-end h-end md-gutter"
+                        style={{
+                          marginEnd: 16,
+                          marginTop: -24
+                        }}
+                      >
+                        <DrawerTop
+                          backClicked={this.reset}
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
                   </View>
                 )}
               <View
