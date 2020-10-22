@@ -1,8 +1,8 @@
-import {Dimensions, PermissionsAndroid, Platform} from 'react-native';
-import {NavigationActions, StackActions} from 'react-navigation';
+import { Dimensions, PermissionsAndroid, Platform } from 'react-native';
+import { NavigationActions, StackActions } from 'react-navigation';
 import NavigationAction from './../util/NavigationActions';
 import Moment from 'moment';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import { showMessage, hideMessage } from 'react-native-flash-message';
 import * as Pref from './Pref';
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -86,7 +86,7 @@ export const requestPermissions = async () => {
           result['android.permission.READ_EXTERNAL_STORAGE'] ||
           result['android.permission.CAMERA'] ||
           result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            'never_ask_again'
+          'never_ask_again'
         ) {
           //ignore
         }
@@ -112,8 +112,8 @@ export const networkHelper = (
   url,
   jsonData,
   method,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url, {
     method: method,
@@ -140,8 +140,8 @@ export const networkHelper = (
  */
 export const networkHelperGet = (
   url,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url, {
     method: 'GET',
@@ -168,8 +168,8 @@ export const networkHelperGet = (
 export const getNetworkHelper = (
   url,
   method,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url)
     .then((response) => response.text())
@@ -195,8 +195,8 @@ export const networkHelperContentType = (
   url,
   jsonData,
   method,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url, {
     method: method,
@@ -231,8 +231,8 @@ export const networkHelperTokenContentType = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   const options = {
     method: method,
@@ -267,8 +267,8 @@ export const networkHelperToken = (
   url,
   method,
   token,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url, {
     method: method,
@@ -303,8 +303,8 @@ export const networkHelperTokenPost = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => {},
-  errorCallback = (error) => {},
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
 ) => {
   fetch(url, {
     method: method,
@@ -334,7 +334,7 @@ export const networkHelperTokenPost = (
 export const navigateAfterFinish = (props, screen) => {
   const navigateAction = StackActions.reset({
     index: 0,
-    actions: [NavigationActions.navigate({routeName: screen})],
+    actions: [NavigationActions.navigate({ routeName: screen })],
   });
   props.navigation.dispatch(navigateAction);
 };
@@ -389,18 +389,19 @@ export const showToastMessage = (message, type = 0) => {
       type === 0
         ? 'danger'
         : type === 1
-        ? 'success'
-        : type === 2
-        ? 'info'
-        : 'default',
+          ? 'success'
+          : type === 2
+            ? 'info'
+            : 'default',
     icon:
       type === 0
         ? 'danger'
         : type === 1
-        ? 'success'
-        : type === 2
-        ? 'info'
-        : 'default',
+          ? 'success'
+          : type === 2
+            ? 'info'
+            : 'default',
+            duration:10000
   });
 };
 
@@ -419,7 +420,7 @@ export const checkPanCard = (text) => {
  * @param {*} data
  * @param {*} callback
  */
-export const writeCSV = (HEADER, data, FILEPATH, callback = (bool) => {}) => {
+export const writeCSV = (HEADER, data, FILEPATH, callback = (bool) => { }) => {
   try {
     const csvString = `${HEADER}${convertToCSV(data)}`;
     RNFetchBlob.fs
@@ -453,23 +454,23 @@ export const convertToCSV = (objArray) => {
   //   }
   //   str += line + '\r\n';
   // }
-              var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-            var str = '';
+  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+  var str = '';
 
-            for (var i = 0; i < array.length; i++) {
-                var line = '';
-                for (var index in array[i]) {
-                    if (line != '') line += ','
-                    if(typeof array[i][index]  === 'object'){
-                    line += '';
-                    }else{
-                                          line += array[i][index];
+  for (var i = 0; i < array.length; i++) {
+    var line = '';
+    for (var index in array[i]) {
+      if (line != '') line += ','
+      if (typeof array[i][index] === 'object') {
+        line += '';
+      } else {
+        line += array[i][index];
 
-                    }
-                }
+      }
+    }
 
-                str += line + '\r\n';
-            }
+    str += line + '\r\n';
+  }
   return str;
 };
 
@@ -482,7 +483,7 @@ export const downloadFile = (url, name) => {
   showToastMessage('Download Started', 1);
   const sp = url.split('/');
   let lsp = sp[sp.length - 1];
-  const {config, fs} = RNFetchBlob;
+  const { config, fs } = RNFetchBlob;
   let DownloadDir = fs.dirs.DownloadDir;
   let options = {
     fileCache: true,
@@ -508,11 +509,14 @@ export const downloadFile = (url, name) => {
  * @param {*} url
  * @param {*} name
  */
-export const downloadFileWithFileName = (url, name, fileName, mime) => {
-  showToastMessage('Download Started', 1);
-  const {config, fs} = RNFetchBlob;
+export const downloadFileWithFileName = (url, name, fileName, mime, notification = true) => {
+  if (notification) {
+    showToastMessage('Download Started', 1);
+  }
+  const filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${fileName}`;
+  const { config, fs } = RNFetchBlob;
   let DownloadDir = fs.dirs.DownloadDir;
-  const filePath = `${DownloadDir}/${fileName}`;
+  //const filePath = `${DownloadDir}/${fileName}`;
   let options = {
     fileCache: true,
     addAndroidDownloads: {
@@ -523,13 +527,21 @@ export const downloadFileWithFileName = (url, name, fileName, mime) => {
       description: name || '',
     },
   };
+  let finalUrl = '';
+  if (url.includes('pdf')) {
+    finalUrl = url.replace('pdf', '');
+  } else {
+    finalUrl = url;
+  }
+  finalUrl += 'pdf';
   config(options)
-    .fetch('GET', `${url}`)
+    .fetch('GET', `${finalUrl}`)
     .then((res) => {
       //console.log(`res`, res);
-      RNFetchBlob.fs.scanFile([{path: filePath, mime: mime}]),
-      showToastMessage('Download Complete', 1);
-      // do some magic here
+      RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
+      if (notification) {
+        showToastMessage('Download Complete', 1);
+      }
     });
 };
 
@@ -663,7 +675,7 @@ export const dateObj = (dt, delimeter) => {
   if (nullStringCheck(dt) === false) {
     let sp = dt.split('-');
     const db = new Date();
-    db.setFullYear(Number(sp[2]), Number(sp[1])-1, Number(sp[0]));
+    db.setFullYear(Number(sp[2]), Number(sp[1]) - 1, Number(sp[0]));
     return db;
   } else {
     return new Date();

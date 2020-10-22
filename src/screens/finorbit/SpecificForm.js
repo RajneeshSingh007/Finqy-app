@@ -181,12 +181,48 @@ export default class SpecificForm extends React.PureComponent {
       pay_type: '',
       addons: '',
       diseases: '',
-      car_type: ''
+      car_type: '',
+      dependent: '',
+      type_insurance: ''
     };
   }
 
   componentDidMount() {
-    const { saveData, title } = this.props;
+    // if (saveData !== undefined && saveData !== null) {
+    //   this.saveData(
+    //     saveData.company,
+    //     saveData.amount,
+    //     saveData.companylocation,
+    //     saveData.aadharcardNo,
+    //     saveData.pancardNo,
+    //     saveData.turnover,
+    //     saveData.nooldcard,
+    //     saveData.existingcard,
+    //     saveData.loan_property_city,
+    //     saveData.rcbook,
+    //     saveData.model,
+    //     saveData.car_brand,
+    //     saveData.car_value,
+    //     saveData.car_model,
+    //     saveData.reg_no,
+    //     saveData.insurance,
+    //     saveData.claim_type,
+    //     saveData.required_cover,
+    //     saveData.family_floater,
+    //     saveData.investment_amount,
+    //     saveData.marital_status,
+    //     saveData.profession,
+    //     saveData.lifestyle,
+    //     saveData.lifestyle2,
+    //     saveData.payment_mode,
+    //     saveData.existing_diseases,
+    //   );
+    // }
+    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+  }
+
+  componentWillReceiveProps(prop) {
+    const { saveData, title } = prop;
     if (title === `Vector Plus` || title === `Health Insurance`) {
       this.setState({
         healthFList: [
@@ -201,37 +237,7 @@ export default class SpecificForm extends React.PureComponent {
       });
     }
 
-    if (saveData !== undefined && saveData !== null) {
-      this.saveData(
-        saveData.company,
-        saveData.amount,
-        saveData.companylocation,
-        saveData.aadharcardNo,
-        saveData.pancardNo,
-        saveData.turnover,
-        saveData.nooldcard,
-        saveData.existingcard,
-        saveData.loan_property_city,
-        saveData.rcbook,
-        saveData.model,
-        saveData.car_brand,
-        saveData.car_value,
-        saveData.car_model,
-        saveData.reg_no,
-        saveData.insurance,
-        saveData.claim_type,
-        saveData.required_cover,
-        saveData.family_floater,
-        saveData.investment_amount,
-        saveData.marital_status,
-        saveData.profession,
-        saveData.lifestyle,
-        saveData.lifestyle2,
-        saveData.payment_mode,
-        saveData.existing_diseases,
-      );
-    }
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+
   }
 
   componentWillUnmount() {
@@ -555,6 +561,25 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null} */}
 
+        {title === `Insure Check` ? <View>
+
+
+          <AnimatedInputBox
+            onChangeText={(value) => {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
+                this.setState({ dependent: value });
+              }
+            }}
+
+            // onChangeText={(value) => this.setState({ dependent: value })}
+            value={this.state.dependent}
+            placeholder={'No Of Dependents'}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
+        </View> : null}
+
         {title !== 'Vector Plus' &&
           title !== 'Mutual Fund' &&
           title !== 'Demat' &&
@@ -562,7 +587,8 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Motor Insurance' &&
           title !== 'Term Insurance' &&
           title !== 'Health Insurance' &&
-          title !== 'Life Cum Invt. Plan' ? (
+          title !== 'Life Cum Invt. Plan' &&
+          title !== 'Insure Check' ? (
             <View>
               <AnimatedInputBox
                 onChangeText={(value) => this.setState({ company: value })}
@@ -641,7 +667,7 @@ export default class SpecificForm extends React.PureComponent {
             </View>
           ) : null}
 
-        {title === 'Term Insurance' || title === `Health Insurance` ? (
+        {title === 'Term Insurance' || title === `Health Insurance` || title === 'Insure Check' ? (
           <AnimatedInputBox
             keyboardType={'number-pad'}
             onChangeText={(value) => {
@@ -682,7 +708,7 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Demat' &&
           title !== 'Motor Insurance' &&
           title != 'Health Insurance' &&
-          title !== 'Life Cum Invt. Plan' ? (
+          title !== 'Life Cum Invt. Plan' && title !== 'Insure Check' ? (
             <AnimatedInputBox
               keyboardType={'number-pad'}
               onChangeText={(value) => {
@@ -861,30 +887,31 @@ export default class SpecificForm extends React.PureComponent {
 
 
                 </View> : null} */}
-
-        <AnimatedInputBox
-          placeholder={'PAN Card Number'}
-          onChangeText={(value) => this.setState({ pancardNo: value })}
-          value={this.state.pancardNo}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-          maxLength={10}
-          returnKeyType={'next'}
-        />
-        <AnimatedInputBox
-          placeholder={'Aadhar Card Number'}
-          maxLength={12}
-          keyboardType={'number-pad'}
-          onChangeText={(value) => {
-            if (String(value).match(/^[0-9]*$/g) !== null) {
-              this.setState({ aadharcardNo: value });
-            }
-          }}
-          value={this.state.aadharcardNo}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-          returnKeyType={'next'}
-        />
+        {title !== 'Insure Check' ? <View>
+          <AnimatedInputBox
+            placeholder={title === 'Demat' ? 'PAN Card Number' : 'PAN Card Number'}
+            onChangeText={(value) => this.setState({ pancardNo: value })}
+            value={this.state.pancardNo}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+            maxLength={10}
+            returnKeyType={'next'}
+          />
+          <AnimatedInputBox
+            placeholder={title === 'Demat' ? 'Aadhar Card Number' : 'Aadhar Card Number'}
+            maxLength={12}
+            keyboardType={'number-pad'}
+            onChangeText={(value) => {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
+                this.setState({ aadharcardNo: value });
+              }
+            }}
+            value={this.state.aadharcardNo}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+            returnKeyType={'next'}
+          />
+        </View> : null}
 
         {title === 'Motor Insurance' ? (
           <View>
@@ -1655,6 +1682,7 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
+
         {/* {title === 'Vector Plus' ? (
           <View>
             <View
@@ -1969,7 +1997,7 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Motor Insurance' &&
           title !== 'Term Insurance' &&
           title !== 'Health Insurance' &&
-          title !== 'Life Cum Invt. Plan' ? (
+          title !== 'Life Cum Invt. Plan' && title !== 'Insure Check' ? (
             <View>
               <View style={styles.radiocont}>
                 <View style={styles.radiodownbox}>
@@ -2091,7 +2119,7 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Term Insurance' &&
           title !== 'Health Insurance' &&
           title !== 'Life Cum Invt. Plan' &&
-          title !== 'Auto Loan' ? (
+          title !== 'Auto Loan' && title !== 'Insure Check' ? (
             <View style={styles.radiocont}>
               <TouchableWithoutFeedback
                 onPress={() =>
@@ -2130,6 +2158,110 @@ export default class SpecificForm extends React.PureComponent {
             </View>
           ) : null}
 
+        {title === 'Insure Check' ? <View>
+          <View style={styles.radiocont}>
+            <View style={StyleSheet.flatten([styles.radiodownbox, {
+              height: 96
+            }])}>
+              <Title style={styles.bbstyle}>{`What type of insurance do you have? *`}</Title>
+
+              <RadioButton.Group
+                onValueChange={(value) =>
+                  this.setState({ type_insurance: value })
+                }
+                value={this.state.type_insurance}>
+                <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: 'wrap' }}>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton value="Health Insurance" style={{ alignSelf: 'center' }} />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Health Insurance`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Life Insurance"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Life Insurance`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Health & Life Insurance"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Health & Life Insurance`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="None"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`None`}</Title>
+                  </View>
+                </View>
+              </RadioButton.Group>
+            </View>
+          </View>
+
+          {/* <View
+              style={{
+                marginHorizontal: sizeWidth(3),
+              }}>
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  this.setState({
+                    showvectorCoverList: !this.state.showvectorCoverList,
+                    showvectorInsuList: false,
+                    showtermInsList: false,
+                    showCarList: false,
+                    showCompanyCityList: false,
+                    showLoanCityList: false,
+                    showExisitingList: false,
+                    showmotorInsList: false,
+                    showHealthFlist: false,
+                  })
+                }>
+                <View style={styles.dropdownbox}>
+                  <Title style={styles.boxsubtitle}>
+                    {this.state.vectorCover}
+                  </Title>
+                  <Icon
+                    name={'chevron-down'}
+                    size={24}
+                    color={'#6d6a57'}
+                    style={styles.downIcon}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+              {this.state.showvectorCoverList ? (
+                <DropDown
+                  itemCallback={(value) =>
+                    this.setState({
+                      showvectorCoverList: false,
+                      vectorCover: value,
+                    })
+                  }
+                  list={this.state.vectorCoverList}
+                />
+              ) : null}
+            </View>
+           */}
+        </View>
+          : null}
         {this.state.showCalendar ? (
           <DateTimePicker
             testID="dateTimePicker"

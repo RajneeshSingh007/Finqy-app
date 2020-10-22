@@ -33,8 +33,8 @@ import {
   Avatar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import CommonScreen from '../common/CommonScreen';
 import CustomForm from '../finorbit/CustomForm';
 import FileUploadForm from '../finorbit/FileUploadForm';
@@ -67,12 +67,12 @@ export default class AddTeam extends React.Component {
       showCityList: false,
       cityList: filter,
     };
-    Pref.getVal(Pref.userData, (value) => this.setState({userData: value}));
-    Pref.getVal(Pref.saveToken, (value) => this.setState({token: value}));
+    Pref.getVal(Pref.userData, (value) => this.setState({ userData: value }));
+    Pref.getVal(Pref.saveToken, (value) => this.setState({ token: value }));
   }
 
   submitt = () => {
-    const {refercode} = this.state.userData;
+    const { refercode } = this.state.userData;
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
     delete body.userData;
@@ -83,19 +83,20 @@ export default class AddTeam extends React.Component {
       return false;
     }
 
-    if (body.email === '') {
-      Helper.showToastMessage('Email empty', 0);
-      return false;
-    } else if (body.email.includes('@') === false) {
-      Helper.showToastMessage('Invalid Email', 0);
-      return false;
-    }
 
     if (body.mobile_no === '') {
       Helper.showToastMessage('Mobile Number empty', 0);
       return false;
     } else if (body.mobile_no === '9876543210' || body.mobile_no.length < 10) {
       Helper.showToastMessage('Invalid Mobile Number', 0);
+      return false;
+    }
+
+    if (body.email === '') {
+      Helper.showToastMessage('Email empty', 0);
+      return false;
+    } else if (body.email.includes('@') === false) {
+      Helper.showToastMessage('Invalid Email', 0);
       return false;
     }
 
@@ -125,7 +126,7 @@ export default class AddTeam extends React.Component {
     body.refercode = refercode;
 
     if (checkData) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       Helper.networkHelperTokenPost(
         Pref.AddTeam,
         JSON.stringify(body),
@@ -133,9 +134,9 @@ export default class AddTeam extends React.Component {
         this.state.token,
         (result) => {
           console.log('result', result);
-          const {data, response_header} = result;
-          const {res_type, message} = response_header;
-          this.setState({loading: false});
+          const { data, response_header } = result;
+          const { res_type, message } = response_header;
+          this.setState({ loading: false });
           if (res_type === `error`) {
             Helper.showToastMessage(message, 0);
           } else {
@@ -175,7 +176,7 @@ export default class AddTeam extends React.Component {
           }
         },
         (error) => {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         },
       );
     }
@@ -205,7 +206,7 @@ export default class AddTeam extends React.Component {
             <View styleName="md-gutter">
               <CustomForm
                 value={this.state.name}
-                onChange={(v) => this.setState({name: v})}
+                onChange={(v) => this.setState({ name: v })}
                 label={`Name *`}
                 placeholder={`Enter name`}
               />
@@ -214,7 +215,7 @@ export default class AddTeam extends React.Component {
                 value={this.state.mobile_no}
                 onChange={(v) => {
                   if (String(v).match(/^[0-9]*$/g) !== null) {
-                    this.setState({mobile_no: v});
+                    this.setState({ mobile_no: v });
                   }
                 }}
                 label={`Mobile Number *`}
@@ -228,7 +229,7 @@ export default class AddTeam extends React.Component {
 
               <CustomForm
                 value={this.state.email}
-                onChange={(v) => this.setState({email: v})}
+                onChange={(v) => this.setState({ email: v })}
                 label={`Email *`}
                 placeholder={`Enter email`}
                 keyboardType={'email-address'}
@@ -285,7 +286,7 @@ export default class AddTeam extends React.Component {
                 {this.state.showCityList ? (
                   <DropDown
                     itemCallback={(value) =>
-                      this.setState({showCityList: false, address: value})
+                      this.setState({ showCityList: false, address: value })
                     }
                     list={this.state.cityList}
                     isCityList

@@ -27,6 +27,7 @@ import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
 import StepIndicator from '../component/StepIndicator';
 import AnimatedInputBox from '../component/AnimatedInputBox';
+import Lodash from 'lodash';
 
 export default class ProfileScreen extends React.PureComponent {
   constructor(props) {
@@ -59,48 +60,49 @@ export default class ProfileScreen extends React.PureComponent {
       mail_port: '',
       mail_username: '',
       mail_password: '',
-      scrollReset:false
+      scrollReset: false,
+      topText: 'User'
     };
   }
 
   componentDidMount() {
-    this.setState({currentposition:0,scrollReset:false});
+    this.setState({ currentposition: 0, scrollReset: false });
     //this.props.scrollToTop();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
-    this.willfocusListener = navigation.addListener('willFocus', () => {
-      Pref.getVal(Pref.saveToken, (toke) => {
-        this.setState({ token: toke }, () => {
-          Pref.getVal(Pref.userData, (parseda) => {
-            //console.log('parseda', parseda)
-            const pp = parseda.user_prof;
-            const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? require('../../res/images/account.png') : {
-              uri: `${decodeURIComponent(pp)}`,
-            };
-            let fileName = '';
-            const fm = decodeURIComponent(pp);
-            if (pp !== undefined || pp !== null || pp !== '') {
-              const sp = fm.split("/");
-              fileName = sp[sp.length - 1];
-                //console.log('sp',sp)
-            }
-            //console.log('url', url)
-            const { mail_host, mail_password, mail_port, mail_username } = parseda;
-            this.setState({
-              userData: parseda,
-              imageUrl: url,
-              fileName: fileName,
-              mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
-              mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
-              mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
-              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
-            });
-            this.updateData(parseda);
+    //this.willfocusListener = navigation.addListener('willFocus', () => {
+    Pref.getVal(Pref.saveToken, (toke) => {
+      this.setState({ token: toke }, () => {
+        Pref.getVal(Pref.userData, (parseda) => {
+          //console.log('parseda', parseda)
+          const pp = parseda.user_prof;
+          const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
+            uri: `${decodeURIComponent(pp)}`,
+          };
+          let fileName = '';
+          const fm = decodeURIComponent(pp);
+          if (pp !== undefined || pp !== null || pp !== '') {
+            const sp = fm.split("/");
+            fileName = sp[sp.length - 1];
+            //console.log('sp',sp)
+          }
+          //console.log('url', url)
+          const { mail_host, mail_password, mail_port, mail_username } = parseda;
+          this.setState({
+            userData: parseda,
+            imageUrl: url,
+            fileName: fileName,
+            mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
+            mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
+            mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
+            mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
           });
+          this.updateData(parseda);
         });
-        Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
       });
+      Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
     });
+    //});
   }
 
   // componentDidUpdate(){
@@ -144,8 +146,8 @@ export default class ProfileScreen extends React.PureComponent {
     }
   };
 
-  backClick = () =>{
-    this.setState({currentposition:0});
+  backClick = () => {
+    this.setState({ currentposition: 0, topText: 'User' });
     return false;
   }
 
@@ -222,6 +224,15 @@ export default class ProfileScreen extends React.PureComponent {
         }
         if (spcommons != null) {
           this.state.dataArray[1] = spcommons;
+          if (spcommons.pancardNo !== '' && !Helper.checkPanCard(spcommons.pancardNo)) {
+            checkData = false;
+            Helper.showToastMessage('Invalid pan card number', 0);
+            return false;
+          } else if (spcommons.aadharcardNo !== '' && spcommons.aadharcardNo.length < 12) {
+            checkData = false;
+            Helper.showToastMessage('Invalid Aadhar card', 0);
+            return false;
+          }
         }
       } else if (currentposition === 1) {
         let commons = JSON.parse(
@@ -229,6 +240,11 @@ export default class ProfileScreen extends React.PureComponent {
         );
         if (commons != null) {
           this.state.dataArray[2] = commons;
+          if (commons.bank_ifsc != null && String(commons.bank_ifsc).match(/[A-Za-z]{4}0[A-Z0-9a-z]{6}$/) == null) {
+            checkData = false;
+            Helper.showToastMessage('Invalid IFSC code', 0);
+            return false;
+          }
         }
       }
       this.setState(
@@ -236,7 +252,8 @@ export default class ProfileScreen extends React.PureComponent {
           return {
             currentposition: prevProp.currentposition + 1,
             btnText: currentposition === 1 ? 'Submit' : 'Next',
-                      scrollReset:true
+            scrollReset: true,
+            topText: prevProp.currentposition + 1 === 1 ? 'Bank' : 'File'
           };
         },
         () => {
@@ -329,21 +346,20 @@ export default class ProfileScreen extends React.PureComponent {
     // delete spcommons.car_value;
     // delete spcommons.floaterItemList;
 
-    if (spcommons.pancardNo !== '') {
-      if (!Helper.checkPanCard(spcommons.pancardNo)) {
-        checkData = false;
-        Helper.showToastMessage('Invalid pan card number', 0);
-      } else {
-        for (var keys in spcommons) {
-          const value = spcommons[keys];
-          if (value !== undefined) {
-            formData.append(keys, spcommons[keys]);
-          }
-        }
+    // if (spcommons.pancardNo !== '') {
+    //    else {
+    for (var keys in spcommons) {
+      const value = spcommons[keys];
+      if (value !== undefined) {
+        formData.append(keys, spcommons[keys]);
       }
     }
 
+
+
     let bankformCommons = this.state.dataArray[2];
+
+    console.log('bankformCommons', bankformCommons)
 
     for (var keys in bankformCommons) {
       const value = bankformCommons[keys];
@@ -357,6 +373,17 @@ export default class ProfileScreen extends React.PureComponent {
     );
     let filex = fcommons.fileList;
     if (filex !== undefined && filex !== null && filex.length > 0) {
+      const loops = Lodash.map(filex, (ele) => {
+        let parseJs = JSON.parse(JSON.stringify(ele));
+        for (var key in parseJs) {
+          const value = parseJs[key];
+          if (value !== undefined) {
+            if (Array.isArray(value) === false) {
+              formData.append(key, parseJs[key]);
+            }
+          }
+        }
+      });
     }
 
     if (res != null) {
@@ -364,7 +391,7 @@ export default class ProfileScreen extends React.PureComponent {
     } else if (fileName !== '') {
       formData.append('user_prof', fileName);
     }
-    console.log(`formData`, formData, token);
+    //console.log(`formData`, formData, token);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -389,6 +416,7 @@ export default class ProfileScreen extends React.PureComponent {
               red: 'Success',
               grey: 'Details updated',
               blue: 'Back to main menu',
+              profilerefresh:1
             });
             //this.updateData(data[0]);
           } else {
@@ -424,7 +452,8 @@ export default class ProfileScreen extends React.PureComponent {
         return {
           currentposition: prev.currentposition - 1,
           btnText: 'Next',
-          scrollReset:true
+          scrollReset: true,
+          topText: prev.currentposition - 1 === 1 ? "Bank" : 'User'
         };
       });
     }
@@ -433,7 +462,7 @@ export default class ProfileScreen extends React.PureComponent {
   render() {
     return (
       <CScreen
-        scrollreset = {this.state.scrollReset}
+        scrollreset={this.state.scrollReset}
         absolute={<Loader isShow={this.state.loading} />}
         body={
           <>
@@ -441,7 +470,7 @@ export default class ProfileScreen extends React.PureComponent {
               title={`Edit My Profile`}
               bottomtext={
                 <>
-                  {`User `}
+                  {`${this.state.topText} `}
                   {<Title style={styles.passText}>{`Details`}</Title>}
                 </>
               }
@@ -455,7 +484,7 @@ export default class ProfileScreen extends React.PureComponent {
             <TouchableWithoutFeedback onPress={() => this.filePicker()}>
               <View
                 style={{
-                  marginVertical: sizeHeight(1),
+                  //marginVertical: sizeHeight(1),
                   alignSelf: 'center',
                   justifyContent: 'center',
                   backgroundColor: 'transparent',
@@ -488,7 +517,7 @@ export default class ProfileScreen extends React.PureComponent {
                     ref={this.specificFormRef}
                     saveData={this.state.dataArray[1]}
                   />
-                  <View>
+                  {/* <View>
                     <AnimatedInputBox
                       placeholder={'Mail Host'}
                       onChangeText={(value) =>
@@ -538,7 +567,7 @@ export default class ProfileScreen extends React.PureComponent {
                       returnKeyType={'next'}
                     />
 
-                  </View>
+                  </View> */}
                 </>
               ) : this.state.currentposition === 1 ? (
                 <BankForm

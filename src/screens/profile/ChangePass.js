@@ -13,7 +13,7 @@ import {
   Colors,
   DefaultTheme,
 } from 'react-native-paper';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
 import AnimatedInputBox from '../component/AnimatedInputBox';
@@ -40,16 +40,23 @@ export default class AddTeam extends React.Component {
       cshowpassword: true,
       oldshowpassword: true,
     };
-    Pref.getVal(Pref.userData, (value) => this.setState({userData: value}));
-    Pref.getVal(Pref.saveToken, (value) =>
-      this.setState({token: value}, () => {
-        Pref.getVal(Pref.USERTYPE, (v) => this.setState({utype: v}));
-      }),
-    );
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.willfocusListener = navigation.addListener('willFocus', () => {
+      Pref.getVal(Pref.userData, (value) => this.setState({ userData: value }, () => {
+        Pref.getVal(Pref.saveToken, (token) =>
+          this.setState({ token: token }, () => {
+            Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
+          }),
+        );
+      }));
+    });
   }
 
   submitt = () => {
-    const {id} = this.state.userData;
+    const { id } = this.state.userData;
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
     delete body.userData;
@@ -81,16 +88,16 @@ export default class AddTeam extends React.Component {
     console.log(`body`, body);
 
     if (checkData) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       Helper.networkHelperTokenPost(
         Pref.ChangePass,
         JSON.stringify(body),
         Pref.methodPost,
         this.state.token,
         (result) => {
-          const {response_header} = result;
-          const {res_type, message} = response_header;
-          this.setState({loading: false});
+          const { response_header } = result;
+          const { res_type, message } = response_header;
+          this.setState({ loading: false });
           if (res_type === `error`) {
             Helper.showToastMessage("Failed to update password", 0);
           } else {
@@ -106,7 +113,7 @@ export default class AddTeam extends React.Component {
         },
         (error) => {
           console.log(`error`, error);
-          this.setState({loading: false});
+          this.setState({ loading: false });
         },
       );
     }
@@ -169,7 +176,7 @@ export default class AddTeam extends React.Component {
               <AnimatedInputBox
                 placeholder={'Old Password'}
                 secureTextEntry={this.state.oldshowpassword}
-                onChangeText={(value) => this.setState({oldpass: value})}
+                onChangeText={(value) => this.setState({ oldpass: value })}
                 value={this.state.oldpass}
                 maxLength={4}
                 keyboardType={'numeric'}
@@ -186,7 +193,7 @@ export default class AddTeam extends React.Component {
               <AnimatedInputBox
                 placeholder={'New Password'}
                 secureTextEntry={this.state.showpassword}
-                onChangeText={(value) => this.setState({newpass: value})}
+                onChangeText={(value) => this.setState({ newpass: value })}
                 value={this.state.newpass}
                 maxLength={4}
                 keyboardType={'numeric'}
@@ -206,7 +213,7 @@ export default class AddTeam extends React.Component {
               <AnimatedInputBox
                 placeholder={'Confirm Password'}
                 secureTextEntry={this.state.cshowpassword}
-                onChangeText={(value) => this.setState({newpassc: value})}
+                onChangeText={(value) => this.setState({ newpassc: value })}
                 value={this.state.newpassc}
                 maxLength={4}
                 keyboardType={'numeric'}
@@ -304,7 +311,7 @@ const styles = StyleSheet.create({
     width: '40%',
     paddingVertical: 4,
     fontWeight: '700',
-    marginTop:12
+    marginTop: 12
   },
   btntext: {
     color: 'white',

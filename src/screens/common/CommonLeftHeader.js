@@ -23,7 +23,8 @@ const LeftHeaders = (props) => {
     },
     bottomtext = '',
     bottomtextStyle,
-    profile = () => { }  } = props;
+    profile = () => { }  
+  } = props;
 
   const [pic, setPic] = useState(null);
 
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    paddingVertical: 16,
+    paddingVertical: 8,
   },
   insideview: {
     height: sizeHeight(5),

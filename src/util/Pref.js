@@ -2527,6 +2527,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
+  // {
+  //   name: 'Insure Check',
+  //   url: require('./../res/images/sabseasan.png'),
+  // },
   //   {
   //   name: 'Religare Group Plan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2612,6 +2616,10 @@ export const productListClone = [
   },
   {
     name: 'Sabse Asaan Health Plan',
+    url: require('./../res/images/sabseasan.png'),
+  },
+    {
+    name: 'Insure Check',
     url: require('./../res/images/sabseasan.png'),
   },
 ];

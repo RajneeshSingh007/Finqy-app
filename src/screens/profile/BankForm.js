@@ -170,6 +170,7 @@ export default class BankForm extends React.PureComponent {
           keyboardType={'number-pad'}
           value={this.state.account_no}
           returnKeyType={'next'}
+          maxLength={18}
         />
 
         <AnimatedInputBox
@@ -185,9 +186,12 @@ export default class BankForm extends React.PureComponent {
           changecolor
           containerstyle={styles.animatedInputCont}
           placeholder={'IFSC code'}
-          onChangeText={(value) => this.setState({bank_ifsc: value})}
+          onChangeText={(value) => {
+              this.setState({bank_ifsc: value})
+          }}
           value={this.state.bank_ifsc}
           returnKeyType={'next'}
+          maxLength={11}
         />
 
         <View style={styles.radiocont}>

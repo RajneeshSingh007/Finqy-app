@@ -1,8 +1,8 @@
 import React from 'react';
-import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
-import {Title, View, Image} from '@shoutem/ui';
+import { StyleSheet, BackHandler, TouchableWithoutFeedback } from 'react-native';
+import { Title, View, Image } from '@shoutem/ui';
 import * as Pref from '../../util/Pref';
-import {Portal} from 'react-native-paper';
+import { Portal } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
@@ -23,12 +23,12 @@ export default class FinorbitScreen extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      this.setState({loading: false});
+      this.setState({ loading: false });
     });
   }
 
@@ -44,18 +44,18 @@ export default class FinorbitScreen extends React.PureComponent {
   };
 
   renderFinProItems = (iconName, title) => {
-    const {selectedText} = this.state;
+    const { selectedText } = this.state;
     return (
       <View style={styles.mainconx}>
         <View style={styles.dummy} />
         <TouchableWithoutFeedback
-          onPress={() => this.setState({selectedText: title})}>
+          onPress={() => this.setState({ selectedText: title })}>
           <View
             styleName="v-center h-center horizontal"
             style={styles.itemcont}>
             <View style={styles.mainconx}>
-              <View style={{flex: 0.05}} />
-              <View style={{flex: 0.25}}>
+              <View style={{ flex: 0.05 }} />
+              <View style={{ flex: 0.25 }}>
                 <View
                   style={StyleSheet.flatten([
                     styles.circle,
@@ -64,15 +64,23 @@ export default class FinorbitScreen extends React.PureComponent {
                         selectedText === title ? '#0270e3' : Pref.RED,
                     },
                   ])}>
-                  <IconChooser
+                  <Image
+                    source={iconName}
+                    style={StyleSheet.flatten([styles.icon, {
+                      width: 20,
+                      height: 20,
+                      resizeMode: 'contain'
+                    }])}
+                  />
+                  {/* <IconChooser
                     name={iconName}
                     size={17}
                     color={'white'}
                     style={styles.icon}
-                  />
+                  /> */}
                 </View>
               </View>
-              <View style={{flex: 0.5, flexDirection: 'row'}}>
+              <View style={{ flex: 0.5, flexDirection: 'row' }}>
                 <Title
                   style={StyleSheet.flatten([
                     styles.itemtext1,
@@ -94,7 +102,7 @@ export default class FinorbitScreen extends React.PureComponent {
                   name="chevron-right"
                   size={20}
                   color={selectedText === title ? '#0270e3' : '#97948c'}
-                  //style={styles.icon}
+                //style={styles.icon}
                 />
               </View>
             </View>
@@ -106,29 +114,29 @@ export default class FinorbitScreen extends React.PureComponent {
   };
 
   getFilterList = () => {
-    const {selectedText, dataList} = this.state;
+    const { selectedText, dataList } = this.state;
     const clone = JSON.parse(JSON.stringify(dataList));
     let filter = Lodash.filter(clone, (io) => {
-      if(selectedText.includes('Insurance')){
-        return io.name.includes(selectedText) || io.name.includes('Vector') || io.name.includes('Policy') || io.name.includes('Sabse')
-      }else{
+      if (selectedText.includes('Insurance')) {
+        return io.name.includes(selectedText) || io.name.includes('Vector') || io.name.includes('Policy') || io.name.includes('Sabse') || io.name.includes('Insure Check')
+      } else {
         return io.name.includes(selectedText);
       }
     });
-    if(selectedText.includes('Investment')){
-     filter = Lodash.filter(
-       clone,
-       (io) =>
-         !io.name.includes('Loan') &&
-         !io.name.includes('Insurance') &&
-         !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse')
-     );
+    if (selectedText.includes('Investment')) {
+      filter = Lodash.filter(
+        clone,
+        (io) =>
+          !io.name.includes('Loan') &&
+          !io.name.includes('Insurance') &&
+          !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse') && !io.name.includes('Insure Check')
+      );
     }
     return filter;
   };
 
   render() {
-    const {selectedText} = this.state;
+    const { selectedText } = this.state;
     return (
       <CScreen
         absolute={
@@ -137,7 +145,7 @@ export default class FinorbitScreen extends React.PureComponent {
               <Portal>
                 <FinProSideBar
                   list={this.getFilterList()}
-                  backClicked={() => this.setState({selectedText: ''})}
+                  backClicked={() => this.setState({ selectedText: '' })}
                 />
               </Portal>
             ) : null}
@@ -160,10 +168,10 @@ export default class FinorbitScreen extends React.PureComponent {
               }}
             />
 
-            {this.renderFinProItems('credit-card', 'Credit Card')}
-            {this.renderFinProItems('credit-card', 'Loan')}
-            {this.renderFinProItems('credit-card', 'Insurance')}
-            {this.renderFinProItems('credit-card', 'Investment')}
+            {this.renderFinProItems(require('../../res/images/docicon.png'), 'Credit Card')}
+            {this.renderFinProItems(require('../../res/images/symbol.png'), 'Loan')}
+            {this.renderFinProItems(require('../../res/images/insuranceicn.png'), 'Insurance')}
+            {this.renderFinProItems(require('../../res/images/investicon.png'), 'Investment')}
 
             <Image
               source={require('../../res/images/finpro.jpg')}
@@ -188,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     letterSpacing: 0.5,
   },
-  dummy: {flex: 0.2},
+  dummy: { flex: 0.2 },
   mainconx: {
     flex: 1,
     flexDirection: 'row',

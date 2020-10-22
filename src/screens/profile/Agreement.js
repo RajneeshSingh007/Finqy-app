@@ -10,6 +10,8 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Pdf from 'react-native-pdf';
 import CScreen from '../component/CScreen';
+import Download from '../component/Download';
+import * as Helper from '../../util/Helper';
 
 export default class Agreement extends React.PureComponent {
   constructor(props) {
@@ -41,6 +43,12 @@ export default class Agreement extends React.PureComponent {
                 flex: 0.85,
                 backgroundColor: '#f9f8f1',
               }}
+            />
+            <Download
+              rightIconClick={() => {
+                Helper.downloadFileWithFileName(`${Pref.AgreeUrl}`,'MyAgreement', 'MyAgreement.pdf','application/pdf');
+              }}
+              style={{flex: 0.09}}
             />
           </View>
         }

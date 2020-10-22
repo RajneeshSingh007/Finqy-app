@@ -1,28 +1,34 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Title, View} from '@shoutem/ui';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Title, View } from '@shoutem/ui';
 import LeftHeader from './CommonLeftHeader';
 import CScreen from '../component/CScreen';
 import * as Pref from '../../util/Pref';
 import NavigationActions from '../../util/NavigationActions';
+import Codepush from 'react-native-code-push';
 
 const FinishScreen = (prop) => {
-  const {navigation} = prop;
+  const { navigation } = prop;
   const topTitle = navigation.getParam('top', '');
   const redText = navigation.getParam('red', '');
   const greyText = navigation.getParam('grey', '');
   const blueText = navigation.getParam('blue', 'Back to main menu');
   const back = navigation.getParam('back', null);
+  const profilerefresh = navigation.getParam('profilerefresh', -1);
 
   const clicked = () => {
-    if (back === undefined || back === null) {
-      NavigationActions.navigate('Home');
-    } else if (back !== '' && back === 'back') {
-      NavigationActions.goBack();
-    } else if(back !== '' && back !== 'back') {
-      NavigationActions.navigate(back);
-    }else{
-      NavigationActions.goBack();
+    if (profilerefresh === 1) {
+      Codepush.restartApp();
+    } else {
+      if (back === undefined || back === null) {
+        NavigationActions.navigate('Home');
+      } else if (back !== '' && back === 'back') {
+        NavigationActions.goBack();
+      } else if (back !== '' && back !== 'back') {
+        NavigationActions.navigate(back);
+      } else {
+        NavigationActions.goBack();
+      }
     }
   };
 
@@ -58,7 +64,7 @@ const FinishScreen = (prop) => {
                 ])}>{`${blueText}`}</Title>
             </TouchableWithoutFeedback>
           </View>
-          <View style={{flex: 0.1, backgroundColor: '#f9f8f1'}}></View>
+          <View style={{ flex: 0.1, backgroundColor: '#f9f8f1' }}></View>
         </>
       }
     />

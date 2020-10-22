@@ -275,7 +275,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Personal Loan` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
-          (commonForms.dob === "" || commonForms.dob === `Date of Birth *`)
+          (commonForms.dob === "" || commonForms.dob === `Date of Birth *` || commonForms.dob === `Date of Birth`)
         ) {
           checkData = false;
           Helper.showToastMessage("Date of Birth empty", 0);
@@ -286,6 +286,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
           title !== `Motor Insurance` &&
+          title !== `Insure Check` &&
           commonForms.gender === ""
         ) {
           checkData = false;
@@ -301,6 +302,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Loan Against Property` &&
           title !== `Auto Loan` &&
           title !== `Life Cum Invt. Plan` &&
+          title !== `Insure Check` &&
           commonForms.employ === ""
         ) {
           checkData = false;
@@ -745,39 +747,39 @@ export default class FinorbitForm extends React.PureComponent {
             }
           });
           if (title === 'Motor Insurance') {
-            const rcCopy = Lodash.find(allfileslist, io =>{
-              if ('rcbookcopy' in io){
+            const rcCopy = Lodash.find(allfileslist, io => {
+              if ('rcbookcopy' in io) {
                 io.key = 'rcbookcopy';
                 return io;
-              }else {
+              } else {
                 return undefined;
               }
             });
-            if(rcCopy !== undefined){
-              const {key} = rcCopy;
+            if (rcCopy !== undefined) {
+              const { key } = rcCopy;
               const { name } = rcCopy[key];
               if (String(key) === `rcbookcopy` && name !== undefined && String(name).length === 0) {
                 existence = key;
               }
-            }else{
+            } else {
               existence = "rcbookcopy";
             }
 
-            const oldInCopy = Lodash.find(allfileslist, io =>{
-              if ('oldinsurancecopy' in io){
+            const oldInCopy = Lodash.find(allfileslist, io => {
+              if ('oldinsurancecopy' in io) {
                 io.key = 'oldinsurancecopy';
                 return io;
-              }else {
+              } else {
                 return undefined;
               }
             });
-            if(oldInCopy !== undefined){
-              const {key} = oldInCopy;
+            if (oldInCopy !== undefined) {
+              const { key } = oldInCopy;
               const { name } = oldInCopy[key];
               if (String(key) === `oldinsurancecopy` && name !== undefined && String(name).length === 0) {
                 existence = key;
               }
-            }else{
+            } else {
               existence = "oldinsurancecopy";
             }
           }
@@ -939,7 +941,7 @@ export default class FinorbitForm extends React.PureComponent {
             />
             <StepIndicator
               activeCounter={this.state.currentPosition}
-              stepCount={4}
+              stepCount={this.state.title === 'Insure Check' ? 2 : 4}
             />
 
             {/* <StepIndicator
@@ -962,7 +964,8 @@ export default class FinorbitForm extends React.PureComponent {
                     this.state.title !== "Business Loan" &&
                     this.state.title !== "Mutual Fund" &&
                     this.state.title !== "Motor Insurance" &&
-                    this.state.title !== 'Life Cum Invt. Plan'
+                    this.state.title !== 'Life Cum Invt. Plan' &&
+                    this.state.title !== 'Insure Check'
                   }
                   saveData={this.state.dataArray[0]}
                   title={this.state.title}
@@ -978,14 +981,13 @@ export default class FinorbitForm extends React.PureComponent {
                   ref={this.FileUploadFormRef}
                   title={this.state.title}
                   saveData={this.state.dataArray[2]}
-                />
-              ) : this.state.currentPosition === 3 ? (
-                <ApptForm
-                  ref={this.ApptFormRef}
-                  title={this.state.title}
-                  saveData={this.state.dataArray[3]}
-                />
-              ) : null}
+                />) : this.state.currentPosition === 3 ? (
+                  <ApptForm
+                    ref={this.ApptFormRef}
+                    title={this.state.title}
+                    saveData={this.state.dataArray[3]}
+                  />
+                ) : null}
             </View>
 
             <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
