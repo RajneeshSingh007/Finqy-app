@@ -1,4 +1,4 @@
-import {Screen, View} from '@shoutem/ui';
+import { Screen, View } from '@shoutem/ui';
 import React from 'react';
 import {
   ScrollView,
@@ -9,11 +9,12 @@ import {
   BackHandler
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import {SafeAreaView} from 'react-navigation';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import * as Pref from '../../util/Pref';
 import Footer from '../component/Footer';
 import IconChooser from '../common/IconChooser';
+import ScrollTop from '../common/ScrollTop';
 
 export default class CScreen extends React.Component {
   constructor(props) {
@@ -23,53 +24,58 @@ export default class CScreen extends React.Component {
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
     this.backClick = this.backClick.bind(this);
-    this.state ={
-      scrollreset:false
+    this.state = {
+      scrollreset: false
     }
   }
 
 
-  componentDidMount(){
+  componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     this.scrollToTop();
   }
 
-  backClick = () =>{
+  backClick = () => {
     this.scrollToTop();
     return false;
   }
-  
-  componentWillUnmount(){
+
+  componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     //console.log(nextProps.scrollreset)
-    if(nextProps.scrollreset){
+    if (nextProps.scrollreset) {
       this.scrollToTop();
     }
   }
 
   scrollToTop = () => {
-    if(this.scrollViewRef && this.scrollViewRef.current){
+    if (this.scrollViewRef && this.scrollViewRef.current) {
       const ref = this.scrollViewRef.current;
       //console.log('ref',ref)
       if (ref && ref.scrollTo) {
-        ref.scrollTo({x: 0, y: 0, animated: true});
+        const timer = setTimeout(() => {
+          ref.scrollTo({ x: 0, y: 0, animated: false });
+          if(timer){
+            clearTimeout(timer);
+          }
+        }, 150);
       }
     }
   };
 
   render() {
-    const {body, scrollEnable = true, absolute = null, showfooter =true, bgColor=Pref.WHITE} = this.props;
+    const { body, scrollEnable = true, absolute = null, showfooter = true, bgColor = Pref.WHITE } = this.props;
     return (
-      <SafeAreaView style={StyleSheet.flatten([styles.mainContainer,{
-        backgroundColor:bgColor
-      }])} forceInset={{top: 'never'}}>
-        <Screen style={StyleSheet.flatten([styles.mainContainer,{
-        backgroundColor:bgColor
-      }])}>
+      <SafeAreaView style={StyleSheet.flatten([styles.mainContainer, {
+        backgroundColor: bgColor
+      }])} forceInset={{ top: 'never' }}>
+        <Screen style={StyleSheet.flatten([styles.mainContainer, {
+          backgroundColor: bgColor
+        }])}>
           {scrollEnable === true ? (
             // <KeyboardAvoidingView
             //   style={{
@@ -88,24 +94,15 @@ export default class CScreen extends React.Component {
               keyboardShouldPersistTaps={'handled'}>
               {body}
               {showfooter === true ?
-              <View>
-                <TouchableWithoutFeedback onPress={this.scrollToTop}>
-                  <View styleName="v-start h-start" style={styles.topcon}>
-                    <IconChooser
-                      name={'arrow-up'}
-                      size={28}
-                      color={Pref.RED}
-                      style={styles.icon}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-                <Footer />
-              </View> : null}
+                <View>
+                  <ScrollTop onPress={this.scrollToTop} />
+                  <Footer />
+                </View> : null}
             </ScrollView>
           ) : (
-            //  </KeyboardAvoidingView>
-            body
-          )}
+              //  </KeyboardAvoidingView>
+              body
+            )}
           {absolute}
         </Screen>
       </SafeAreaView>
@@ -119,14 +116,14 @@ const styles = StyleSheet.create({
     //position: 'absolute',
     //right: 0,
     //bottom: 0,
-    flexDirection:'row-reverse'
+    flexDirection: 'row-reverse'
   },
-  scroller: {flex: 1},
+  scroller: { flex: 1 },
   mainContainer: {
     flex: 1,
     backgroundColor: Pref.WHITE,
   },
-  icon:{
-    alignItems:'center'
+  icon: {
+    alignItems: 'center'
   }
 });

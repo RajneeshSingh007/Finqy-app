@@ -1,6 +1,6 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
-import {View} from '@shoutem/ui';
+import { StatusBar } from 'react-native';
+import { View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import NavigationActions from '../../util/NavigationActions';
@@ -9,6 +9,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import CScreen from '../component/CScreen';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Download from '../component/Download';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export default class Certificate extends React.PureComponent {
   constructor(props) {
@@ -21,47 +22,60 @@ export default class Certificate extends React.PureComponent {
       loading: false,
       modalvis: true,
       pdfurl: '',
+      remoteFileUrl: '',
+      referCode: ''
     };
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
-    const item = navigation.getParam('item', null);
-    console.log(`item`, item);
-    if (item !== null) {
-      Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(item, v));
-    } else {
-      NavigationActions.goBack();
-    }
-  }
-
-  componentDidUpdate(preProp, nextState) {
-    if (preProp.navigation !== undefined) {
-      const {navigation} = this.props;
-      const olditem = preProp.navigation.getParam('item', null);
-      const item = navigation.getParam('item', null);
-      if (olditem !== item) {
-        if (item !== null) {
-          Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(item, v));
-        } else {
-          NavigationActions.goBack();
-        }
-      }
-    }
-  }
-
-  fetchData = (refercode, v) => {
-    const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${v}`;
-    this.setState({
-      pdfurl: cert,
-      loading: false,
-      modalvis: true,
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, data => {
+        //console.log('data', data)
+        Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(data, v));
+      })
     });
+  }
+
+  fetchData = (data, v) => {
+    const { refercode } = data;
+    let filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Certificate_${refercode}.pdf`;
+    const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${v}`;
+    RNFetchBlob.fs.exists(filePath)
+      .then((exist) => {
+        //console.log(exist,filePath)
+        if (exist) {
+          this.setState({
+            pdfurl: `file://${filePath}`,
+            loading: false,
+            modalvis: true,
+            remoteFileUrl: cert,
+            referCode: refercode
+          });
+        } else {
+          this.setState({
+            pdfurl: cert,
+            loading: false,
+            modalvis: true,
+            remoteFileUrl: cert,
+            referCode: refercode
+          });
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          pdfurl: cert,
+          loading: false,
+          modalvis: true,
+          remoteFileUrl: cert,
+          referCode: refercode
+
+        });
+      });
   };
 
   componentWillUnMount() {
     if (this.focusListener !== undefined) this.focusListener.remove();
-    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
   render() {
@@ -69,9 +83,9 @@ export default class Certificate extends React.PureComponent {
       <CScreen
         scrollEnable={false}
         body={
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <LeftHeaders title={`My Certificate`} showBack />
-            <View style={{flex: 0.02}}></View>
+            <View style={{ flex: 0.02 }}></View>
             <Pdf
               source={{
                 uri: this.state.pdfurl,
@@ -84,9 +98,9 @@ export default class Certificate extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.pdfurl}.pdf`,'Certificate', 'Certificate.pdf','application/pdf');
+                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `Certificate_${this.state.referCode}`, `Certificate_${this.state.referCode}.pdf`, 'application/pdf');
               }}
-              style={{flex: 0.09}}
+              style={{ flex: 0.09 }}
             />
           </View>
         }

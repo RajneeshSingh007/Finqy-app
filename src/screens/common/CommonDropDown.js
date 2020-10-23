@@ -109,7 +109,8 @@ class DropDown extends React.PureComponent {
           </Title>
         }
         children={
-          <View style={styles.continr}>
+        
+        <View style={styles.continr}>
             {enableSearch ? (
               <Searchbar
                 placeholder="Search"

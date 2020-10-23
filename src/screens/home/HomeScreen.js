@@ -118,7 +118,7 @@ export default class HomeScreen extends React.PureComponent {
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
-        console.log('pp', pp)
+        //console.log('pp', pp)
         let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         this.setState({ userData: value, profilePic: profilePic });
       }
@@ -188,7 +188,7 @@ export default class HomeScreen extends React.PureComponent {
         leadData = result;
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
-        console.log('leadData', result)
+        //console.log('leadData', result)
         this.setState({ pieData: pieData, leadData: leadData, barData: barData });
       },
       (error) => {

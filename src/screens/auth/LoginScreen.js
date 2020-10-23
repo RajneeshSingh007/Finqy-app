@@ -16,6 +16,7 @@ import Loader from '../../util/Loader';
 import IntroHeader from '../intro/IntroHeader';
 import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export default class LoginScreen extends React.PureComponent {
   constructor(props) {
@@ -129,7 +130,17 @@ export default class LoginScreen extends React.PureComponent {
                   Helper.showToastMessage('no account found', 0);
                 } else {
                   Pref.setVal(Pref.USERTYPE, type);
-                  const { id } = data[0];
+                  const { id, refercode } = data[0];
+                  let certPath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Certificate_${refercode}.pdf`;
+                  let agreePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Agreement_${refercode}.pdf`;
+                  this.downloadFile(certPath, () => {
+                    const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
+                    Helper.downloadFileWithFileName(cert, `Certificate_${refercode}`, `Certificate_${refercode}.pdf`, 'application/pdf', false);
+                  })
+                  this.downloadFile(agreePath, () => {
+                    Helper.downloadFileWithFileName(`${Pref.AgreeUrl}`, `Agreement_${refercode}`, `Agreement_${refercode}.pdf`, 'application/pdf', false);
+
+                  });
                   Pref.setVal(Pref.userID, id);
                   Pref.setVal(Pref.userData, data[0]);
                   Pref.setVal(Pref.loggedStatus, true);
@@ -145,6 +156,20 @@ export default class LoginScreen extends React.PureComponent {
         });
     }
   };
+
+  downloadFile = (filePath, callback = () => { }) => {
+    RNFetchBlob.fs.exists(filePath)
+      .then((exist) => {
+        console.log(exist, filePath)
+        if (exist) {
+        } else {
+          callback();
+        }
+      })
+      .catch((err) => {
+        callback();
+      });
+  }
 
   passunlock = () => {
     const toggle = this.state.showpassword;

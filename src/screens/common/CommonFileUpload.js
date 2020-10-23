@@ -66,6 +66,7 @@ class CommonFileUpload extends React.PureComponent {
 
   render() {
     const {pickedName} = this.state;
+    const {pickedTitle = null} = this.props; 
     return (
       <TouchableWithoutFeedback onPress={this.filePicker}>
         <View style={styles.insideContainer}>
@@ -93,6 +94,9 @@ class CommonFileUpload extends React.PureComponent {
             </Title>
             {pickedName !== '' ? (
               <Title style={styles.subtitle}>{pickedName}</Title>
+            ) : null}
+                        {pickedTitle !== '' ? (
+              <Title style={styles.subtitle}>{pickedTitle}</Title>
             ) : null}
           </View>
         </View>

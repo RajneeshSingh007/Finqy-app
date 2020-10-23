@@ -527,13 +527,14 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
       description: name || '',
     },
   };
-  let finalUrl = '';
-  if (url.includes('pdf')) {
-    finalUrl = url.replace('pdf', '');
+  let finalUrl = url;
+  if (url.includes('.pdf')) {
+    //finalUrl = url.replace('.pdf', '');
   } else {
-    finalUrl = url;
+    //finalUrl = url;
+    finalUrl += '.pdf';
   }
-  finalUrl += 'pdf';
+  //console.log('finalUrl', finalUrl)
   config(options)
     .fetch('GET', `${finalUrl}`)
     .then((res) => {

@@ -216,12 +216,14 @@ const styles = StyleSheet.create({
     flex: 0.2,
     flexDirection: 'row',
     alignItems: 'center',
+    marginStart:8
   },
   rightcon: {
     flex: 0.2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginEnd:8
   },
   rightText: {
     color: '#bbb8ac',

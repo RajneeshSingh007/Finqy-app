@@ -5,11 +5,11 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Title, View} from '@shoutem/ui';
+import { Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
-import {sizeWidth, sizeHeight} from '../../util/Size';
+import { Colors, ActivityIndicator, Chip } from 'react-native-paper';
+import { sizeWidth, sizeHeight } from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -37,19 +37,19 @@ export default class Training extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.setState({userData: userData});
-        Pref.getVal(Pref.saveToken, (value) => {
-          this.setState({token: value}, () => {
-            this.fetchData();
-          });
+    Pref.getVal(Pref.userData, (userData) => {
+      this.setState({ userData: userData });
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({ token: value }, () => {
+          this.fetchData();
         });
       });
+    });
     });
   }
 
@@ -59,7 +59,7 @@ export default class Training extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     const body = JSON.stringify({
       training_id: '1',
     });
@@ -69,15 +69,15 @@ export default class Training extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
+        const { data, response_header } = result;
         //console.log('resultx', result);
-        const {res_type} = response_header;
+        const { res_type } = response_header;
         if (res_type === `success`) {
-          const {categoryList} = this.state;
-          categoryList.push({name: `All`, selected: true});
+          const { categoryList } = this.state;
+          categoryList.push({ name: `All`, selected: true });
           //https://www.youtube.com/embed/GegDvKYZ1rA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture
           const catlist = Lodash.map(data, (io) => {
-            const {product_name, link} = io;
+            const { product_name, link } = io;
             const find = Lodash.find(
               categoryList,
               (ui) => ui.name === product_name,
@@ -102,7 +102,7 @@ export default class Training extends React.PureComponent {
             }
             return io;
           });
-          categoryList.push({name: `Download`, selected: false});
+          categoryList.push({ name: `Download`, selected: false });
           this.setState({
             cloneList: catlist,
             dataList: catlist,
@@ -110,17 +110,17 @@ export default class Training extends React.PureComponent {
             loading: false,
           });
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       () => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
 
   findDownloadSelected = () => {
-    const {categoryList} = this.state;
+    const { categoryList } = this.state;
     const find = Lodash.find(
       categoryList,
       (io) => io.name === `Download` && io.selected === true,
@@ -134,11 +134,11 @@ export default class Training extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-    console.log('link',item.link)
+    console.log('link', item.link)
     const videoid =
-     item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
-    const {fileType} = this.state;
-    return item.link !== ''  && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && fileType === 0 ? (
+      item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
+    const { fileType } = this.state;
+    return item.link !== '' && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && fileType === 0 ? (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
           <View
@@ -168,7 +168,7 @@ export default class Training extends React.PureComponent {
           <TouchableWithoutFeedback
             onPress={() =>
               Helper.downloadFile(
-                `https://erb.ai/erevbay_admin/${item.product_name}/${item.pdf_file}`,
+                `${Pref.MainUrl}/erevbay_admin/${item.product_name}/${item.pdf_file}`,
                 '',
               )
             }>
@@ -186,15 +186,15 @@ export default class Training extends React.PureComponent {
                   marginBottom: 10,
                 }}>
                 <View style={styles.circle}>
-                  {/* {!item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') ?
-                   : <Image source={{uri:`${item.link}`}} styleName='medium' />} */}
-                   <IconChooser
-                    name={`file-pdf`}
-                    size={32}
-                    iconType={5}
-                    style={styles.pdf}
-                    color={'#8a8a87'}
-                  />
+                  {/* {item.link !== '' && item.link.includes('.png') || item.link.includes('.jpeg') || item.link.includes('.jpg') ? <Image source={{ uri: `${item.link}` }} styleName='medium' style={styles.pdf} /> : */}
+                    <IconChooser
+                      name={`file-pdf`}
+                      size={32}
+                      iconType={5}
+                      style={styles.pdf}
+                      color={'#8a8a87'}
+                    />
+                    {/* } */}
                 </View>
               </View>
               <Title
@@ -209,7 +209,7 @@ export default class Training extends React.PureComponent {
   }
 
   chipclick = (item, fileType) => {
-    const {cloneList} = this.state;
+    const { cloneList } = this.state;
     //const sel = item.selected;
     // const ok = Lodash.map(categoryList, (io) => {
     //   if (io.name === item.name) {
@@ -248,14 +248,13 @@ export default class Training extends React.PureComponent {
           color: item.selected ? `white` : `black`,
           fontSize: 14,
         }}
-        onPress={() => this.chipclick(item, -1)}>{`${
-        item.name === `All` ? `    All    ` : Lodash.capitalize(name)
-      }`}</Chip>
+        onPress={() => this.chipclick(item, -1)}>{`${item.name === `All` ? `    All    ` : Lodash.capitalize(name)
+          }`}</Chip>
     );
   }
 
   render() {
-    const {showFilter} = this.state;
+    const { showFilter } = this.state;
     return (
       <CScreen
         body={
@@ -276,7 +275,7 @@ export default class Training extends React.PureComponent {
             />
             <View styleName="horizontal v-end h-end md-gutter">
               <TouchableWithoutFeedback
-                onPress={() => this.setState({showFilter: !showFilter})}>
+                onPress={() => this.setState({ showFilter: !showFilter })}>
                 <Title
                   style={StyleSheet.flatten([
                     styles.passText,
@@ -304,7 +303,7 @@ export default class Training extends React.PureComponent {
             {showFilter ? (
               <View styleName="vertical md-gutter" style={styles.filtercont}>
                 <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({name: 'All'}, 0)}>
+                  onPress={() => this.chipclick({ name: 'All' }, 0)}>
                   <Title
                     style={StyleSheet.flatten([
                       styles.passText,
@@ -326,7 +325,7 @@ export default class Training extends React.PureComponent {
                     backgroundColor: '#e4cbcb',
                   }}></View>
                 <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({name: 'Download'}, 1)}>
+                  onPress={() => this.chipclick({ name: 'Download' }, 1)}>
                   <Title
                     style={StyleSheet.flatten([
                       styles.passText,
@@ -356,7 +355,7 @@ export default class Training extends React.PureComponent {
             ) : this.state.dataList.length > 0 ? (
               <FlatList
                 data={this.state.dataList}
-                renderItem={({item}) => this.renderItems(item)}
+                renderItem={({ item }) => this.renderItems(item)}
                 nestedScrollEnabled={true}
                 keyExtractor={(item, index) => `${index}`}
                 showsVerticalScrollIndicator={true}
@@ -364,10 +363,10 @@ export default class Training extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No training modules found...'} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No training modules found...'} />
+                  </View>
+                )}
           </>
         }></CScreen>
     );
@@ -400,7 +399,7 @@ const styles = StyleSheet.create({
     //top:56,
     right: sizeWidth(4),
     borderRadius: 8,
-    top: sizeHeight(33),
+    top: sizeHeight(28),
     ...Platform.select({
       android: {
         elevation: 4,

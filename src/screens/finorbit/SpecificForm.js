@@ -183,7 +183,14 @@ export default class SpecificForm extends React.PureComponent {
       diseases: '',
       car_type: '',
       dependent: '',
-      type_insurance: ''
+      type_insurance: '',
+      health_sum_assured: '',
+      life_sum_assured: '',
+      life_company: '',
+      health_company: '',
+      showHealthCompany: false,
+      showLifeCompany: false,
+      showInsureCheckList: 0,
     };
   }
 
@@ -219,6 +226,7 @@ export default class SpecificForm extends React.PureComponent {
     //   );
     // }
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
+
   }
 
   componentWillReceiveProps(prop) {
@@ -355,7 +363,10 @@ export default class SpecificForm extends React.PureComponent {
   };
 
   restoreData(obj) {
-    this.setState(obj);
+    if (obj !== undefined) {
+      this.setState(obj);
+
+    }
   }
 
   onFloatitemChange(value, item, type, index) {
@@ -576,6 +587,7 @@ export default class SpecificForm extends React.PureComponent {
             placeholder={'No Of Dependents'}
             returnKeyType={'next'}
             changecolor
+            keyboardType={'numeric'}
             containerstyle={styles.animatedInputCont}
           />
         </View> : null}
@@ -2167,7 +2179,7 @@ export default class SpecificForm extends React.PureComponent {
 
               <RadioButton.Group
                 onValueChange={(value) =>
-                  this.setState({ type_insurance: value })
+                  this.setState({ type_insurance: value, showInsureCheckList: value === 'Health Insurance' ? 1 : value === 'Life Insurance' ? 2 : value === 'Health & Life Insurance' ? 3 : 0 })
                 }
                 value={this.state.type_insurance}>
                 <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: 'wrap' }}>
@@ -2216,6 +2228,117 @@ export default class SpecificForm extends React.PureComponent {
               </RadioButton.Group>
             </View>
           </View>
+          {this.state.showInsureCheckList === 1 || this.state.showInsureCheckList === 3 ?
+            <>
+              <View style={styles.radiocont1}>
+                <View style={StyleSheet.flatten([styles.radiodownbox, {
+                  height: 32
+                }])}>
+                  <Title style={styles.bbstyle}>{`What is the sum assured for your Health Insurance Policy(in Lacs eg. 5 for 5 lakhs)?`}</Title>
+                </View>
+              </View>
+              <AnimatedInputBox
+                onChangeText={(value) => {
+                  if (String(value).match(/^[0-9]*$/g) !== null) {
+                    this.setState({ health_sum_assured: value });
+                  }
+                }}
+                value={this.state.health_sum_assured}
+                placeholder={'Sum Assured *'}
+                returnKeyType={'next'}
+                changecolor
+                containerstyle={styles.animatedInputCont}
+                keyboardType={'numeric'}
+              />
+
+              <View style={styles.radiocont}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    this.setState({
+                      showHealthCompany: !this.state.showHealthCompany,
+                    })
+                  }>
+                  <View style={styles.dropdownbox}>
+                    <Title style={styles.boxsubtitle}>
+                      {this.state.health_company === '' ? 'Select Policy Company *' : this.state.health_company}
+                    </Title>
+                    <Icon
+                      name={'chevron-down'}
+                      size={24}
+                      color={'#6d6a57'}
+                      style={styles.downIcon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {this.state.showHealthCompany ? (
+                  <DropDown
+                    itemCallback={(value) =>
+                      this.setState({
+                        showHealthCompany: false,
+                        health_company: value,
+                      })
+                    }
+                    list={Pref.HealthCompany}
+                  />
+                ) : null}
+              </View>
+            </> : null}
+
+          {this.state.showInsureCheckList === 2 || this.state.showInsureCheckList === 3 ?
+            <>
+              <View style={styles.radiocont1}>
+                <View style={StyleSheet.flatten([styles.radiodownbox, {
+                  height: 32
+                }])}>
+                  <Title style={styles.bbstyle}>{`What is the sum assured for your Life Insurance Policy(eg. 5 for 5 lakhs)?`}</Title>
+                </View>
+              </View>
+              <AnimatedInputBox
+                onChangeText={(value) => {
+                  if (String(value).match(/^[0-9]*$/g) !== null) {
+                    this.setState({ life_sum_assured: value });
+                  }
+                }}
+                value={this.state.life_sum_assured}
+                placeholder={'Sum Assured *'}
+                returnKeyType={'next'}
+                changecolor
+                containerstyle={styles.animatedInputCont}
+                keyboardType={'numeric'}
+              />
+
+              <View style={styles.radiocont}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    this.setState({
+                      showLifeCompany: !this.state.showLifeCompany,
+                    })
+                  }>
+                  <View style={styles.dropdownbox}>
+                    <Title style={styles.boxsubtitle}>
+                      {this.state.life_company === '' ? 'Select Policy Company *' : this.state.life_company}
+                    </Title>
+                    <Icon
+                      name={'chevron-down'}
+                      size={24}
+                      color={'#6d6a57'}
+                      style={styles.downIcon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {this.state.showLifeCompany ? (
+                  <DropDown
+                    itemCallback={(value) =>
+                      this.setState({
+                        showLifeCompany: false,
+                        life_company: value,
+                      })
+                    }
+                    list={Pref.LifeCompany}
+                  />
+                ) : null}
+              </View>
+            </> : null}
 
           {/* <View
               style={{
@@ -2297,6 +2420,11 @@ const styles = StyleSheet.create({
     marginEnd: 10,
     borderBottomWidth: 1.3,
     borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+  },
+  radiocont1: {
+    marginStart: 10,
+    marginEnd: 10,
     alignContent: 'center',
   },
   animatedInputCont: {

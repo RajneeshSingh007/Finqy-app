@@ -1,10 +1,12 @@
 import * as React from "react";
-import {StatusBar, StyleSheet, View,BackHandler} from 'react-native';
-import {AppContainer} from './src/util/AppRouter';
+import { StatusBar, View, BackHandler } from 'react-native';
+import { AppContainer } from './src/util/AppRouter';
 import NavigationActions from './src/util/NavigationActions';
-import {inject, observer} from "mobx-react";
+import { inject, observer } from "mobx-react";
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import FlashMessage from "react-native-flash-message";
+import CodePush from "react-native-code-push";
+import Loader from './src/util/Loader';
 
 let currentScreenx = ''
 class App extends React.PureComponent {
@@ -14,34 +16,80 @@ class App extends React.PureComponent {
         changeNavigationBarColor('white', true);
         StatusBar.setBackgroundColor('white', false);
         StatusBar.setBarStyle('dark-content');
+        this.state = { restartAllowed: true, downloading: -1 };
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        this.syncImmediate();
         //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     }
 
-    backClick = () =>{
+    backClick = () => {
         if (currentScreenx !== '' && currentScreenx === 'Login') {
             BackHandler.exitApp();
             return false;
-        } 
-        else if (currentScreenx !== '' && (currentScreenx === 'LeadList' || currentScreenx === 'ProfScreen' || currentScreenx === 'FinorbitScreen')){
+        }
+        else if (currentScreenx !== '' && (currentScreenx === 'LeadList' || currentScreenx === 'ProfScreen' || currentScreenx === 'FinorbitScreen')) {
             NavigationActions.navigate('HomeScreen')
             return true;
-        } else if (currentScreenx !== '' && currentScreenx === 'HomeScreen'){
+        } else if (currentScreenx !== '' && currentScreenx === 'HomeScreen') {
             return false;
-        }else if (currentScreenx !== '' && currentScreenx === 'HomeScreen'){
+        } else if (currentScreenx !== '' && currentScreenx === 'HomeScreen') {
             return false;
-        }else{
+        } else {
             NavigationActions.goBack();
             return true;
         }
         return false;
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     }
+
+    codePushStatusDidChange(syncStatus) {
+        console.log('syncStatus', syncStatus)
+        switch (syncStatus) {
+            case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
+                this.setState({ downloading: -1 });
+                break;
+            case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+                this.setState({ downloading: 1 });
+                break;
+            case CodePush.SyncStatus.AWAITING_USER_ACTION:
+                this.setState({ downloading: 1 });
+                break;
+            case CodePush.SyncStatus.INSTALLING_UPDATE:
+                this.setState({ downloading: 1 });
+                break;
+            case CodePush.SyncStatus.UP_TO_DATE:
+                this.setState({ downloading: -1 });
+                break;
+            case CodePush.SyncStatus.UPDATE_IGNORED:
+                this.setState({ downloading: -1 });
+                break;
+            case CodePush.SyncStatus.UPDATE_INSTALLED:
+                this.setState({ downloading: 2 });
+                break;
+        }
+    }
+
+    codePushDownloadDidProgress() {
+    }
+
+    syncImmediate() {
+        CodePush.sync(
+            { installMode: CodePush.InstallMode.IMMEDIATE, updateDialog: true },
+            this.codePushStatusDidChange.bind(this),
+            this.codePushDownloadDidProgress.bind(this)
+        );
+    }
+
+    codepushDialog = () => {
+        const { downloading } = this.state;
+        return <Loader isShow={downloading === 1 ? true : false}  />
+    }
+
 
     render() {
         return (
@@ -50,9 +98,10 @@ class App extends React.PureComponent {
             }}>
                 <AppContainer
                     ref={ref => NavigationActions.setTopLevelNavigator(ref)}
-                    onNavigationStateChange={this.handleNavigationChange}/>
-                    
+                    onNavigationStateChange={this.handleNavigationChange} />
+
                 <FlashMessage position='bottom' />
+                {this.codepushDialog()}
             </View>
         );
     }

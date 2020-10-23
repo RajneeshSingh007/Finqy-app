@@ -9,16 +9,27 @@ import moment from 'moment';
 import * as Pref from '../../util/Pref';
 import CustomForm from './CustomForm';
 
-const date = new Date();
+let date = new Date();
 
 export default class ApptForm extends React.PureComponent {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
+    const currentdate = moment().toDate();
+    const obj = moment().toObject();
+
+    currentdate.setDate(Number(obj.date+1));
+    
+    const maxDate = moment().toDate();
+    maxDate.setDate(Number(obj.date+1));
+    maxDate.setMonth(Number(obj.months+1))
+
+    console.log('date', date.getDay(),currentdate,maxDate);
     this.state = {
       showCalendar: false,
-      currentDate: date,
-      showdatesx: date,
+      currentDate: currentdate,
+      showdatesx: currentdate,
+      maxDates:maxDate,
       mode: 'date',
       currentTime: '',
       baa: 'Schedule an Appointment',
@@ -27,8 +38,11 @@ export default class ApptForm extends React.PureComponent {
   }
 
   restoreData(obj){
-    console.log('obj', obj);
-    this.setState(obj);
+    //console.log('obj', obj);
+    if(obj !== undefined){
+          this.setState(obj);
+
+    }
   }
 
   onChange = (event, selectedDate) => {
@@ -127,9 +141,11 @@ export default class ApptForm extends React.PureComponent {
           <DateTimePicker
             value={this.state.currentDate}
             onChange={this.onChange}
+            maximumDate={this.state.maxDates}
+            minimumDate={this.state.currentDate}
             mode={this.state.mode}
             is24Hour={false}
-            minimumDate={date}
+            //minimumDate={date}
             display={'spinner'}
           />
         ) : null}

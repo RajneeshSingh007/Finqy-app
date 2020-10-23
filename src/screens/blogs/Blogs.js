@@ -112,7 +112,7 @@ export default class Blogs extends React.PureComponent {
     // if (url.includes('newspaper')){
     //     url = url.replace('/images', '');
     // }
-    let url = `https://erb.ai/erevbay_admin/${item.img}`;
+    let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
     return (
       <View styleName="md-gutter">
         <TouchableWithoutFeedback

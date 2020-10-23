@@ -80,22 +80,22 @@ export default class FinorbitForm extends React.PureComponent {
     const { navigation } = this.props;
     const url = navigation.getParam("url", "");
     const title = navigation.getParam("title", "");
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, (value) => {
-        //console.log('token', value);
-        this.setState({ token: value }, () => {
-          Pref.getVal(Pref.userData, (userData) => {
-            this.setState({
-              userData: userData,
-              imageUrl: url,
-              title: title,
-              isMounted: true,
-              currentPosition: 0,
-            });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.saveToken, (value) => {
+      //console.log('token', value);
+      this.setState({ token: value }, () => {
+        Pref.getVal(Pref.userData, (userData) => {
+          this.setState({
+            userData: userData,
+            imageUrl: url,
+            title: title,
+            isMounted: true,
+            currentPosition: 0,
           });
         });
       });
     });
+    //});
   }
 
   backClick = () => {
@@ -229,6 +229,8 @@ export default class FinorbitForm extends React.PureComponent {
       }
       if (title === `Life Cum Invt. Plan`) {
         uniq = "life_cum_investment";
+      }else if(title  === 'Insure Check'){
+        uniq = 'insure_check';
       }
       //console.log(`uniq`, uniq, title);
       formData.append(uniq, uniq);
@@ -362,6 +364,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Vector Plus` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
+          title !== `Insure Check` &&
           specificForms.amount === ``
         ) {
           checkData = false;
@@ -389,6 +392,7 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Vector Plus` &&
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
+          title !== `Insure Check` &&
           specificForms.existingcard === ``
         ) {
           checkData = false;
@@ -714,7 +718,25 @@ export default class FinorbitForm extends React.PureComponent {
           ) {
             checkData = false;
             Helper.showToastMessage("Invalid pan card number", 0);
-          } else {
+          }else if(title === 'Insure Check' && specificForms.type_insurance === ''){
+                checkData = false;
+                Helper.showToastMessage("Please, Select Type of Insurance", 0);
+          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_sum_assured === ''){
+                checkData = false;
+                Helper.showToastMessage("Please, Enter Life Sum Assured", 0);
+          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_sum_assured === ''){
+                checkData = false;
+                Helper.showToastMessage("Please, Enter Health Sum Assured", 0);
+          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_company === ''){
+                checkData = false;
+                Helper.showToastMessage("Please, Select Life Policy Company", 0);
+          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_company === ''){
+                checkData = false;
+                Helper.showToastMessage("Please, Select Health Policy Company", 0);
+          }else if (title === 'Insure Check' &&  specificForms.turnover === "") {
+              checkData = false;
+              Helper.showToastMessage("Annual Turnover Empty", 0);
+            } else {
             let parseJs = JSON.parse(JSON.stringify(specificForms));
             for (var key in parseJs) {
               if (key !== "floaterItemList") {
@@ -816,14 +838,43 @@ export default class FinorbitForm extends React.PureComponent {
       }
 
       if (checkData) {
-        if (currentPosition < 3) {
-          this.setState((prevState) => {
-            return {
-              currentPosition: prevState.currentPosition + 1,
-              bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
-              scrollReset: true
-            };
-          });
+        const limit = title === 'Insure Check' ? 1 : 3;
+        if (currentPosition <  limit) {
+          if (this.state.title === 'Insure Check') {
+            this.setState((prevState) => {
+              return {
+                currentPosition: prevState.currentPosition + 1,
+                bottontext: prevState.currentPosition + 1 > 0 ? "Submit" : "Next",
+                scrollReset: true
+              };
+            }, () => {
+              if (this.state.currentPosition === 0) {
+                this.commonFormRef.current.restoreData(this.restoreList[0]);
+              } else if (this.state.currentPosition === 1) {
+                this.specificFormRef.current.restoreData(this.restoreList[1]);
+              }
+            });
+          } else {
+            this.setState((prevState) => {
+              return {
+                currentPosition: prevState.currentPosition + 1,
+                bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
+                scrollReset: true
+              };
+            }, () => {
+              if (this.state.currentPosition === 0) {
+                this.commonFormRef.current.restoreData(this.restoreList[0]);
+              } else if (this.state.currentPosition === 1) {
+                this.specificFormRef.current.restoreData(this.restoreList[1]);
+              } else if (this.state.currentPosition === 2) {
+                this.FileUploadFormRef.current.restoreData(this.restoreList[2]);
+              } else if (this.state.currentPosition === 3) {
+                this.ApptFormRef.current.restoreData(this.restoreList[3]);
+              }
+            });
+
+          }
+
         } else {
           this.setState({ progressLoader: true });
           const { refercode } = this.state.userData;
@@ -831,8 +882,8 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
-          //console.log('formData', formData);
-          //console.log('formUrls', formUrls);
+          console.log('formData', formData);
+          console.log('formUrls', formUrls);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -840,7 +891,7 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             (result) => {
-              //console.log('result',result)
+              console.log('result',result)
               const { response_header } = result;
               const { res_type, res } = response_header;
               this.setState({ progressLoader: false });
@@ -866,16 +917,18 @@ export default class FinorbitForm extends React.PureComponent {
                 Helper.showToastMessage("failed to submit form", 0);
               }
             },
-            () => {
+            (e) => {
+              console.log(e);
               this.setState({ progressLoader: false });
-              Helper.showToastMessage("Form submitted successfully", 1);
-              NavigationActions.navigate("Finish", {
-                top: "Edit Profile",
-                red: "Success",
-                grey: "Details uploaded",
-                blue: "Add another lead?",
-                back: "FinorbitScreen",
-              });
+              Helper.showToastMessage("Something went wrong", 0);
+              //Helper.showToastMessage("Form submitted successfully", 1);
+              // NavigationActions.navigate("Finish", {
+              //   top: "Edit Profile",
+              //   red: "Success",
+              //   grey: "Details uploaded",
+              //   blue: "Add another lead?",
+              //   back: "FinorbitScreen",
+              // });
             }
           );
         }

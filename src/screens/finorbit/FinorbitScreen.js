@@ -15,7 +15,7 @@ export default class FinorbitScreen extends React.PureComponent {
     super(props);
     this.backClick = this.backClick.bind(this);
     this.state = {
-      dataList: Pref.productList,
+      dataList: [],
       loading: false,
       selectedText: '',
     };
@@ -28,7 +28,12 @@ export default class FinorbitScreen extends React.PureComponent {
       this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      this.setState({ loading: false });
+      const productList = JSON.parse(JSON.stringify(Pref.productList));
+      // productList.push({
+      //   name: 'Insure Check',
+      // })
+
+      this.setState({ loading: false, dataList: productList });
     });
   }
 

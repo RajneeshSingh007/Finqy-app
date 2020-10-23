@@ -207,7 +207,11 @@ export default class RegisterScreen extends React.PureComponent {
           const {res_type} = response_header;
           if (res_type === `success`) {
             const {otp} = data;
-            Helper.showToastMessage('Email Code Sent', 1);
+            Helper.showToastMessage('OTP sent successfully', 1);
+            Helper.networkHelperGet(`${Pref.SMS_OTP}?invisible=1&otp=${otp}&authkey=345308AQ4dSpkOE55f9280a7P1&mobile=91${jsonData.contact}&template_id=5f929552dd5594798d2ead5e`, result =>{
+            }, error =>{
+
+            })
             NavigationActions.navigate('OtpScreen', {
               mode: 0,
               emailcode: otp,
@@ -343,18 +347,33 @@ export default class RegisterScreen extends React.PureComponent {
                 </View>
 
                 {this.state.modetext === 'Company' ? (
+                  <>
                   <AnimatedInputBox
                     changecolor
                     containerstyle={{
                       marginBottom: 8,
                     }}
-                    placeholder={'Company Name *'}
+                    placeholder={'Name Of The Company *'}
                     onChangeText={(value) =>
                       this.setState({companyname: value})
                     }
                     value={this.state.companyname}
                     returnKeyType={'next'}
                   />
+                  <AnimatedInputBox
+                    changecolor
+                    containerstyle={{
+                      marginBottom: 8,
+                    }}
+                    placeholder={'GST No.'}
+                    onChangeText={(value) =>
+                      this.setState({gst: value})
+                    }
+                    value={this.state.gst}
+                    returnKeyType={'next'}
+                    maxLength={15}
+                  />
+                  </>
                 ) : this.state.modetext === 'Individual' ? (
                   <View style={styles.radiocont}>
                     <TouchableWithoutFeedback

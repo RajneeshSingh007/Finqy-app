@@ -170,7 +170,7 @@ export default class OtpScreen extends React.PureComponent {
           formdata,
           Pref.methodPost,
           (result) => {
-            console.log(`result`, result);
+            //console.log(`result`, result);
             const {type} = result;
             this.setState({loading: false, otp: ''});
             if (type === 'success') {
@@ -207,6 +207,10 @@ export default class OtpScreen extends React.PureComponent {
         if (res_type === `success`) {
           const {otp} = data;
           Helper.showToastMessage('OTP sent successfully', 1);
+          Helper.networkHelperGet(`${Pref.SMS_OTP}?invisible=1&otp=${otp}&authkey=345308AQ4dSpkOE55f9280a7P1&mobile=91${jsonData.contact}&template_id=5f929552dd5594798d2ead5e`, result =>{
+            }, error =>{
+
+            })
           this.setState({emailcode: otp});
         } else {
           Helper.showToastMessage(message, 0);

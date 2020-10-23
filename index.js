@@ -46,7 +46,7 @@ function Main() {
 
 const options = {
     updateDialog: {
-        title: 'Update Avaialble',
+        title: 'New Update Available',
         appendReleaseDescription: true,
         descriptionPrefix: "Please, Install update to use app",
         mandatoryContinueButtonLabel: 'Ok',

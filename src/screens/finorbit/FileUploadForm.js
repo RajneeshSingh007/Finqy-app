@@ -61,8 +61,37 @@ export default class FileUploadForm extends React.PureComponent {
   //     }
   // }
 
-  restoreData(obj){
-    this.setState(obj);
+  restoreData(obj) {
+    //console.log('obj', obj)
+    if(obj !== undefined){
+      this.setState(obj);
+    }
+  }
+
+  findFileName = (input) => {
+    const { fileList } = this.state;
+    if (fileList.length > 0) {
+      let returnName = null;
+      for (let index = 0; index < fileList.length; index++) {
+        const io = fileList[index];
+        for (var key in io) {
+          console.log(key);
+          if (input === key) {
+            const { name } = io[key];
+            if (name !== undefined && name !== '') {
+              returnName = name;
+              break;
+            }
+          }
+        }
+        if (returnName !== null) {
+          break;
+        }
+      }
+      return returnName;
+    } else {
+      return null;
+    }
   }
 
   onChange = (event, selectDate) => {
@@ -89,6 +118,7 @@ export default class FileUploadForm extends React.PureComponent {
         <CommonFileUpload
           title={'Pan Card'}
           type={2}
+          pickedTitle={this.findFileName(`pancard`)}
           pickedCallback={(selected, res) => {
             if (!selected) {
               const { name } = res;
@@ -110,6 +140,7 @@ export default class FileUploadForm extends React.PureComponent {
         <CommonFileUpload
           title={'Aadhar Card'}
           type={2}
+          pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
           pickedCallback={(selected, res) => {
             if (!selected) {
               const { name } = res;
@@ -135,6 +166,7 @@ export default class FileUploadForm extends React.PureComponent {
           <CommonFileUpload
             title={'Cancelled Cheque'}
             type={2}
+            pickedTitle={this.findFileName(`cancel_chq`)}
             pickedCallback={(selected, res) => {
               if (!selected) {
                 const { name } = res;
@@ -157,6 +189,7 @@ export default class FileUploadForm extends React.PureComponent {
           <CommonFileUpload
             title={'GST Certificate'}
             type={2}
+            pickedTitle={this.findFileName(`gst_cert`)}
             pickedCallback={(selected, res) => {
               if (!selected) {
                 const { name } = res;
@@ -182,6 +215,7 @@ export default class FileUploadForm extends React.PureComponent {
             <CommonFileUpload
               title={'RC Copy *'}
               type={2}
+              pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) => {
                 if (!selected) {
                   const { name } = res;
@@ -201,6 +235,7 @@ export default class FileUploadForm extends React.PureComponent {
             <CommonFileUpload
               title={'Old Insurance Copy *'}
               type={2}
+              pickedTitle={this.findFileName(`oldinsurancecopy`)}
               pickedCallback={(selected, res) => {
                 if (!selected) {
                   const { name } = res;
@@ -221,6 +256,7 @@ export default class FileUploadForm extends React.PureComponent {
             <CommonFileUpload
               title={'PUC Copy'}
               type={2}
+              pickedTitle={this.findFileName(`puccopy`)}
               pickedCallback={(selected, res) => {
                 if (!selected) {
                   const { name } = res;
@@ -244,6 +280,7 @@ export default class FileUploadForm extends React.PureComponent {
           <CommonFileUpload
             title={'Cancelled Cheque'}
             type={0}
+            pickedTitle={this.findFileName(`cancelcheque`)}
             pickedCallback={(selected, res) => {
               if (!selected) {
                 this.state.fileList.push({ cancelcheque: res });
@@ -263,7 +300,7 @@ export default class FileUploadForm extends React.PureComponent {
 
               <View
                 styleName="vertical"
-                style={{ marginStart: sizeWidth(2), marginTop: 6 }}>
+                style={{ marginStart: sizeWidth(2), marginVertical: 12, }}>
                 <Subtitle style={styles.title1}>
 
                   {title === 'Personal Loan'
@@ -277,8 +314,9 @@ export default class FileUploadForm extends React.PureComponent {
               </View>
 
               <CommonFileUpload
-                title={''}
+                title={'Salary Slip 1'}
                 type={2}
+                pickedTitle={this.findFileName(`salaryslip`)}
                 pickedCallback={(selected, res) => {
                   if (!selected) {
                     const { name } = res;
@@ -297,8 +335,9 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={''}
+                title={'Salary Slip 2'}
                 type={2}
+                pickedTitle={this.findFileName(`salaryslip1`)}
                 pickedCallback={(selected, res) => {
                   if (!selected) {
                     const { name } = res;
@@ -318,8 +357,9 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={''}
+                title={'Salary Slip 3'}
                 type={2}
+                pickedTitle={this.findFileName(`salaryslip2`)}
                 pickedCallback={(selected, res) => {
                   if (!selected) {
                     const { name } = res;
@@ -340,8 +380,9 @@ export default class FileUploadForm extends React.PureComponent {
               {title === 'Loan Against Property' || title === 'Home Loan' ? (
                 <View>
                   <CommonFileUpload
-                    title={''}
+                    title={'Salary Slip 4'}
                     type={2}
+                    pickedTitle={this.findFileName(`salaryslip3`)}
                     pickedCallback={(selected, res) => {
                       if (!selected) {
                         const { name } = res;
@@ -359,8 +400,9 @@ export default class FileUploadForm extends React.PureComponent {
                     }}
                   />
                   <CommonFileUpload
-                    title={''}
+                    title={'Salary Slip 5'}
                     type={2}
+                    pickedTitle={this.findFileName(`salaryslip4`)}
                     pickedCallback={(selected, res) => {
                       if (!selected) {
                         const { name } = res;
@@ -379,8 +421,9 @@ export default class FileUploadForm extends React.PureComponent {
                     }}
                   />
                   <CommonFileUpload
-                    title={''}
+                    title={'Salary Slip 6'}
                     type={2}
+                    pickedTitle={this.findFileName(`salaryslip5`)}
                     pickedCallback={(selected, res) => {
                       if (!selected) {
                         const { name } = res;
@@ -409,6 +452,7 @@ export default class FileUploadForm extends React.PureComponent {
                     : '3 Month Bank Statement'
                 }
                 type={2}
+                pickedTitle={this.findFileName(`bankstate`)}
                 pickedCallback={(selected, res) => {
                   if (!selected) {
                     const { name } = res;

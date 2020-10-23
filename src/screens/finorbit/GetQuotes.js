@@ -88,7 +88,7 @@ export default class GetQuotes extends React.Component {
                 select: isFirstTime === true  ? index < 3 ? true : false : false,
               };
             });
-            console.log('list',list)
+            //console.log('list',list)
             this.setState({ companyList: list, loading: false });
           }
         } else {
@@ -96,7 +96,7 @@ export default class GetQuotes extends React.Component {
         }
       },
       (error) => {
-        console.log("er", error);
+        //console.log("er", error);
         this.setState({ companyList: [], loading: false });
       }
     );
@@ -123,13 +123,14 @@ export default class GetQuotes extends React.Component {
     }
     if (map.length === 1) {
       const compId = `${map[0]["companyid"]}`;
-      finalUrl = `https://erb.ai/erbfinorbit/download_quote1.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      //https://erb.ai/erbfinorbit
+      finalUrl = `${Pref.FinURL}/download_quote1.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 2) {
       const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}`;
-      finalUrl = `https://erb.ai/erbfinorbit/download_quote2.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      finalUrl = `${Pref.FinURL}/download_quote2.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 3) {
       const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}$$${map[2]["companyid"]}`;
-      finalUrl = `https://erb.ai/erbfinorbit/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      finalUrl = `${Pref.FinURL}/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }
     this.setState({ modalvis: true, pdfurl: finalUrl });
   };

@@ -30,7 +30,7 @@ export default class Loader extends React.PureComponent{
     }
 
     render(){
-        const {isShow}  = this.props;
+        const {isShow, title = 'Please Wait...',}  = this.props;
         return isShow !== undefined && isShow !== null && isShow ? (
           <Portal>
             <View style={styles.topContainer}>
@@ -49,8 +49,10 @@ export default class Loader extends React.PureComponent{
                     color: '#555555',
                     letterSpacing: 0.5,
                     marginTop: 24,
+                    alignContent:'center',
+                    justifyContent:'center',
                     fontFamily: Pref.getFontName(3),
-                  }}>{`Please Wait...`}</Subtitle>
+                  }}>{title}</Subtitle>
               </View>
               <View style={{flex: 0.4}}></View>
             </View>

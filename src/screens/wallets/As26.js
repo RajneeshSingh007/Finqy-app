@@ -36,8 +36,8 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import PlaceholderLoader from '../../util/PlaceholderLoader';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -82,32 +82,32 @@ export default class As26 extends React.PureComponent {
       disableNext: false,
       disableBack: false,
       searchQuery: '',
-            enableSearch:false
+      enableSearch: false
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true, dataList: []});
+      this.setState({ loading: true, dataList: [] });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, (userData) => {
-      this.setState({userData: userData});
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
-          this.fetchData();
+      Pref.getVal(Pref.userData, (userData) => {
+        this.setState({ userData: userData });
+        Pref.getVal(Pref.saveToken, (value) => {
+          this.setState({ token: value }, () => {
+            this.fetchData();
+          });
         });
       });
-    });
     });
   }
 
   backclick = () => {
-    const {modalvis} = this.state;
+    const { modalvis } = this.state;
     if (modalvis) {
-      this.setState({modalvis: false, pdfurl: ''});
+      this.setState({ modalvis: false, pdfurl: '' });
       return true;
     }
     return false;
@@ -120,8 +120,8 @@ export default class As26 extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
-    const {refercode, id} = this.state.userData;
+    this.setState({ loading: true });
+    const { refercode, id } = this.state.userData;
     const body = JSON.stringify({
       user_id: Number(id),
     });
@@ -131,8 +131,9 @@ export default class As26 extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type, message} = response_header;
+        //console.log('result', result)
+        const { data, response_header } = result;
+        const { res_type, message } = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
@@ -145,7 +146,7 @@ export default class As26 extends React.PureComponent {
               );
             });
             const sort = sorting.reverse();
-            const {itemSize} = this.state;
+            const { itemSize } = this.state;
             this.setState({
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
@@ -156,14 +157,14 @@ export default class As26 extends React.PureComponent {
               itemSize: sort.length > 6 ? 6 : sort.length,
             });
           } else {
-            this.setState({loading: false});
+            this.setState({ loading: false });
           }
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       (error) => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
@@ -174,8 +175,10 @@ export default class As26 extends React.PureComponent {
   }
 
   invoiceViewClick = (value) => {
-    let parse = value.replace('home/erevbiig/public_html/', '');
-    this.setState({modalvis: true, pdfurl: `https://erb.ai/${parse}`});
+    //let parse = value.replace('home/erevbiig/public_html/', '');
+    //const finalUrl = `${Pref.MainUrl}/${parse}`;
+    //console.log('finalUrl', value)
+    this.setState({ modalvis: true, pdfurl:value });
   };
 
   /**
@@ -204,7 +207,7 @@ export default class As26 extends React.PureComponent {
                       color: Pref.RED,
                       fontSize: 15,
                     }}>
-                    {`View/Download`}
+                    {`View`}
                   </Title>
                 </View>
               </TouchableWithoutFeedback>
@@ -223,7 +226,7 @@ export default class As26 extends React.PureComponent {
    * @param {*} mode true ? next : back
    */
   pagination = (mode) => {
-    const {itemSize, cloneList} = this.state;
+    const { itemSize, cloneList } = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -235,7 +238,7 @@ export default class As26 extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
+        this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
       if (itemSize <= 6) {
@@ -245,19 +248,19 @@ export default class As26 extends React.PureComponent {
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
-        this.setState({dataList: slicedArray, itemSize: plus});
+        this.setState({ dataList: slicedArray, itemSize: plus });
       }
     }
   };
 
   clickedexport = () => {
-    const {cloneList} = this.state;
+    const { cloneList } = this.state;
     if (cloneList.length > 0) {
-      const data = this.returnData(cloneList,0, cloneList.length);
+      const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
+          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'AS26',
               description: 'AS26 record exported successfully',
@@ -298,7 +301,7 @@ export default class As26 extends React.PureComponent {
             <Modal
               visible={this.state.modalvis}
               setModalVisible={() =>
-                this.setState({pdfurl: '', modalvis: false})
+                this.setState({ pdfurl: '', modalvis: false })
               }
               ratioHeight={0.87}
               backgroundColor={`white`}
@@ -313,7 +316,7 @@ export default class As26 extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`,'AS26', 'AS26.pdf','application/pdf')}>
+                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`, 'AS26', 'AS26.pdf', 'application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"
@@ -356,16 +359,15 @@ export default class As26 extends React.PureComponent {
                 tableHead={this.state.tableHead}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No 26AS found...'} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No 26AS found...'} />
+                  </View>
+                )}
 
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${
-                  this.state.itemSize
-                }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
+                  }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}

@@ -127,7 +127,7 @@ export default class CommonForm extends React.PureComponent {
     //console.log('title', prop)
     if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
       this.setState({ dob: 'Date of Birth' });
-    } else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance') {
+    } else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check') {
       this.setState({ dob: 'Date of Birth *' });
     } else if (title === 'Vector Plus' || title === 'Religare Group Plan') {
       const maxDates = new Date();
@@ -144,7 +144,9 @@ export default class CommonForm extends React.PureComponent {
   }
 
   restoreData(obj) {
-    this.setState(obj);
+    if (obj !== undefined) {
+      this.setState(obj);
+    }
   }
 
   backClick = () => {

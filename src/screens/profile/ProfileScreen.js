@@ -3,10 +3,12 @@ import {
   StyleSheet,
   BackHandler,
   TouchableWithoutFeedback,
+  ScrollView
 } from 'react-native';
 import {
   Title,
   View,
+  Screen
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
@@ -28,6 +30,9 @@ import CScreen from '../component/CScreen';
 import StepIndicator from '../component/StepIndicator';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import Lodash from 'lodash';
+import { SafeAreaView } from 'react-navigation';
+import Footer from '../component/Footer';
+import ScrollTop from '../common/ScrollTop';
 
 export default class ProfileScreen extends React.PureComponent {
   constructor(props) {
@@ -39,6 +44,7 @@ export default class ProfileScreen extends React.PureComponent {
     this.specificFormRef = React.createRef();
     this.bankFormRef = React.createRef();
     this.backClick = this.backClick.bind(this);
+    this.scrollViewRef = React.createRef();
     this.state = {
       loading: false,
       imageUrl: '',
@@ -70,39 +76,39 @@ export default class ProfileScreen extends React.PureComponent {
     //this.props.scrollToTop();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
-    //this.willfocusListener = navigation.addListener('willFocus', () => {
-    Pref.getVal(Pref.saveToken, (toke) => {
-      this.setState({ token: toke }, () => {
-        Pref.getVal(Pref.userData, (parseda) => {
-          //console.log('parseda', parseda)
-          const pp = parseda.user_prof;
-          const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
-            uri: `${decodeURIComponent(pp)}`,
-          };
-          let fileName = '';
-          const fm = decodeURIComponent(pp);
-          if (pp !== undefined || pp !== null || pp !== '') {
-            const sp = fm.split("/");
-            fileName = sp[sp.length - 1];
-            //console.log('sp',sp)
-          }
-          //console.log('url', url)
-          const { mail_host, mail_password, mail_port, mail_username } = parseda;
-          this.setState({
-            userData: parseda,
-            imageUrl: url,
-            fileName: fileName,
-            mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
-            mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
-            mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
-            mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
+    this.willfocusListener = navigation.addListener('willFocus', () => {
+      Pref.getVal(Pref.saveToken, (toke) => {
+        this.setState({ token: toke }, () => {
+          Pref.getVal(Pref.userData, (parseda) => {
+            //console.log('parseda', parseda)
+            const pp = parseda.user_prof;
+            const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
+              uri: `${decodeURIComponent(pp)}`,
+            };
+            let fileName = '';
+            const fm = decodeURIComponent(pp);
+            if (pp !== undefined || pp !== null || pp !== '') {
+              const sp = fm.split("/");
+              fileName = sp[sp.length - 1];
+              //console.log('sp',sp)
+            }
+            //console.log('url', url)
+            const { mail_host, mail_password, mail_port, mail_username } = parseda;
+            this.setState({
+              userData: parseda,
+              imageUrl: url,
+              fileName: fileName,
+              mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
+              mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
+              mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
+              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
+            });
+            this.updateData(parseda);
           });
-          this.updateData(parseda);
         });
+        Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
       });
-      Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
     });
-    //});
   }
 
   // componentDidUpdate(){
@@ -257,6 +263,7 @@ export default class ProfileScreen extends React.PureComponent {
           };
         },
         () => {
+          this.scrollToTop();
           if (this.state.currentposition === 1) {
             this.bankFormRef.current.saveData(
               '',
@@ -416,7 +423,7 @@ export default class ProfileScreen extends React.PureComponent {
               red: 'Success',
               grey: 'Details updated',
               blue: 'Back to main menu',
-              profilerefresh:1
+              profilerefresh: 1
             });
             //this.updateData(data[0]);
           } else {
@@ -448,6 +455,7 @@ export default class ProfileScreen extends React.PureComponent {
   backNav = () => {
     const { currentposition } = this.state;
     if (currentposition > 0) {
+      this.scrollToTop();
       this.setState((prev) => {
         return {
           currentposition: prev.currentposition - 1,
@@ -459,65 +467,86 @@ export default class ProfileScreen extends React.PureComponent {
     }
   };
 
+  scrollToTop = () => {
+    if (this.scrollViewRef && this.scrollViewRef.current) {
+      const ref = this.scrollViewRef.current;
+      //console.log('ref',ref)
+      if (ref && ref.scrollTo) {
+        const timeout = setTimeout(() => {
+          ref.scrollTo({ x: 0, y: 0, animated: false });
+          if(timeout){
+            clearTimeout(timeout);
+          }
+        }, 100);
+      }
+    }
+  };
+
   render() {
     return (
-      <CScreen
-        scrollreset={this.state.scrollReset}
-        absolute={<Loader isShow={this.state.loading} />}
-        body={
-          <>
-            <LeftHeaders
-              title={`Edit My Profile`}
-              bottomtext={
-                <>
-                  {`${this.state.topText} `}
-                  {<Title style={styles.passText}>{`Details`}</Title>}
-                </>
-              }
-              bottomtextStyle={{
-                color: '#555555',
-                fontSize: 20,
-              }}
-              showBack
-            />
+      <SafeAreaView style={styles.mainContainer} forceInset={{ top: 'never' }}>
+        <Screen style={styles.mainContainer}>
+          <ScrollView
+            ref={this.scrollViewRef}
+            style={styles.scroller}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps={'handled'}>
 
-            <TouchableWithoutFeedback onPress={() => this.filePicker()}>
-              <View
-                style={{
-                  //marginVertical: sizeHeight(1),
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'transparent',
-                }}>
-                <Avatar.Image
-                  source={this.state.imageUrl}
-                  style={{ backgroundColor: 'transparent' }}
-                  size={124}
+
+              <View>
+                <LeftHeaders
+                  title={`Edit My Profile`}
+                  bottomtext={
+                    <>
+                      {`${this.state.topText} `}
+                      {<Title style={styles.passText}>{`Details`}</Title>}
+                    </>
+                  }
+                  bottomtextStyle={{
+                    color: '#555555',
+                    fontSize: 20,
+                  }}
+                  showBack
                 />
-              </View>
-            </TouchableWithoutFeedback>
 
-            <StepIndicator
-              stepCount={3}
-              activeCounter={this.state.currentposition}
-            />
+                <TouchableWithoutFeedback onPress={() => this.filePicker()}>
+                  <View
+                    style={{
+                      //marginVertical: sizeHeight(1),
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'transparent',
+                    }}>
+                    <Avatar.Image
+                      source={this.state.imageUrl}
+                      style={{ backgroundColor: 'transparent' }}
+                      size={124}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
 
-            <View styleName="md-gutter">
-              {this.state.currentposition === 0 ? (
-                <>
-                  <CommonForm
-                    title="Profile"
-                    ref={this.commonFormRef}
-                    saveData={this.state.dataArray[0]}
-                  />
+                <StepIndicator
+                  stepCount={3}
+                  activeCounter={this.state.currentposition}
+                />
 
-                  <SpecificForm
-                    title="Demat"
-                    heading={`Other Information`}
-                    ref={this.specificFormRef}
-                    saveData={this.state.dataArray[1]}
-                  />
-                  {/* <View>
+                <View styleName="md-gutter">
+                  {this.state.currentposition === 0 ? (
+                    <>
+                      <CommonForm
+                        title="Profile"
+                        ref={this.commonFormRef}
+                        saveData={this.state.dataArray[0]}
+                      />
+
+                      <SpecificForm
+                        title="Demat"
+                        heading={`Other Information`}
+                        ref={this.specificFormRef}
+                        saveData={this.state.dataArray[1]}
+                      />
+                      {/* <View>
                     <AnimatedInputBox
                       placeholder={'Mail Host'}
                       onChangeText={(value) =>
@@ -568,64 +597,70 @@ export default class ProfileScreen extends React.PureComponent {
                     />
 
                   </View> */}
-                </>
-              ) : this.state.currentposition === 1 ? (
-                <BankForm
-                  ref={this.bankFormRef}
-                  saveData={this.state.dataArray[2]}
-                />
-              ) : this.state.currentposition === 2 ? (
-                <FileUploadForm
-                  title="Profile"
-                  ref={this.FileUploadFormRef}
-                  heading={`File Upload`}
-                />
-              ) : null}
-            </View>
+                    </>
+                  ) : this.state.currentposition === 1 ? (
+                    <BankForm
+                      ref={this.bankFormRef}
+                      saveData={this.state.dataArray[2]}
+                    />
+                  ) : this.state.currentposition === 2 ? (
+                    <FileUploadForm
+                      title="Profile"
+                      ref={this.FileUploadFormRef}
+                      heading={`File Upload`}
+                    />
+                  ) : null}
+                </View>
 
-            <View
-              styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
-                }`}>
-              {this.state.currentposition === 1 ||
-                this.state.currentposition === 2 ? (
+                <View
+                  styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
+                    }`}>
+                  {this.state.currentposition === 1 ||
+                    this.state.currentposition === 2 ? (
+                      <Button
+                        mode={'flat'}
+                        uppercase={true}
+                        dark={true}
+                        loading={false}
+                        style={[
+                          styles.loginButtonStyle,
+                          {
+                            backgroundColor: 'transparent',
+                            borderColor: '#d5d3c1',
+                            borderWidth: 1.3,
+                          },
+                        ]}
+                        onPress={this.backNav}>
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.btntext,
+                            {
+                              color: '#b8b28f',
+                            },
+                          ])}>
+                          {'Back'}
+                        </Title>
+                      </Button>
+                    ) : null}
                   <Button
                     mode={'flat'}
-                    uppercase={true}
+                    uppercase={false}
                     dark={true}
                     loading={false}
-                    style={[
-                      styles.loginButtonStyle,
-                      {
-                        backgroundColor: 'transparent',
-                        borderColor: '#d5d3c1',
-                        borderWidth: 1.3,
-                      },
-                    ]}
-                    onPress={this.backNav}>
-                    <Title
-                      style={StyleSheet.flatten([
-                        styles.btntext,
-                        {
-                          color: '#b8b28f',
-                        },
-                      ])}>
-                      {'Back'}
-                    </Title>
+                    style={styles.loginButtonStyle}
+                    onPress={this.submitt}>
+                    <Title style={styles.btntext}>{this.state.btnText}</Title>
                   </Button>
-                ) : null}
-              <Button
-                mode={'flat'}
-                uppercase={false}
-                dark={true}
-                loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.submitt}>
-                <Title style={styles.btntext}>{this.state.btnText}</Title>
-              </Button>
+                </View>
+             
+              <ScrollTop onPress={this.scrollToTop} />
+              
+              <Footer />
             </View>
-          </>
-        }
-      />
+          </ScrollView>
+          <Loader isShow={this.state.loading} />
+        </Screen>
+      </SafeAreaView>
     );
   }
 }
@@ -634,6 +669,7 @@ export default class ProfileScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  scroller: { flex: 1 },
   dropdownbox: {
     flexDirection: 'row',
     height: 56,
@@ -764,4 +800,9 @@ const styles = StyleSheet.create({
     marginEnd: 10,
     paddingVertical: 10,
   },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: Pref.WHITE,
+  },
+
 });
