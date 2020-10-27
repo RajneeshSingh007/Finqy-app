@@ -32,7 +32,7 @@ export default class Training extends React.PureComponent {
       categoryList: [],
       cloneList: [],
       showFilter: false,
-      fileType: 0,
+      fileType: 2,
     };
   }
 
@@ -42,14 +42,14 @@ export default class Training extends React.PureComponent {
       this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, (userData) => {
-      this.setState({ userData: userData });
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({ token: value }, () => {
-          this.fetchData();
+      Pref.getVal(Pref.userData, (userData) => {
+        this.setState({ userData: userData });
+        Pref.getVal(Pref.saveToken, (value) => {
+          this.setState({ token: value }, () => {
+            this.fetchData();
+          });
         });
       });
-    });
     });
   }
 
@@ -103,9 +103,10 @@ export default class Training extends React.PureComponent {
             return io;
           });
           categoryList.push({ name: `Download`, selected: false });
+          let sort = Lodash.sortBy(catlist, ['link']).reverse();
           this.setState({
             cloneList: catlist,
-            dataList: catlist,
+            dataList: sort,
             categoryList: categoryList,
             loading: false,
           });
@@ -134,11 +135,11 @@ export default class Training extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-    console.log('link', item.link)
+    //console.log('link', item.link)
     const videoid =
       item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
     const { fileType } = this.state;
-    return item.link !== '' && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && fileType === 0 ? (
+    return item.link !== '' && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && (fileType === 0 || fileType === 2) ? (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
           <View
@@ -162,7 +163,7 @@ export default class Training extends React.PureComponent {
             style={styles.itemtext}>{`${item.header}`}</Title>
         </View>
       </View>
-    ) : item.link === '' && fileType === 1 ? (
+    ) : item.link === '' && (fileType === 1 || fileType === 2) ? (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
           <TouchableWithoutFeedback
@@ -187,14 +188,14 @@ export default class Training extends React.PureComponent {
                 }}>
                 <View style={styles.circle}>
                   {/* {item.link !== '' && item.link.includes('.png') || item.link.includes('.jpeg') || item.link.includes('.jpg') ? <Image source={{ uri: `${item.link}` }} styleName='medium' style={styles.pdf} /> : */}
-                    <IconChooser
-                      name={`file-pdf`}
-                      size={32}
-                      iconType={5}
-                      style={styles.pdf}
-                      color={'#8a8a87'}
-                    />
-                    {/* } */}
+                  <IconChooser
+                    name={`file-pdf`}
+                    size={32}
+                    iconType={5}
+                    style={styles.pdf}
+                    color={'#8a8a87'}
+                  />
+                  {/* } */}
                 </View>
               </View>
               <Title
@@ -225,9 +226,13 @@ export default class Training extends React.PureComponent {
         ? kok.product_name === item.name
         : kok.link === '',
     );
+    let sort = cloneList;
+    if(item.name === 'All'){
+      sort = Lodash.sortBy(sort, ['link']).reverse()
+    }
     this.setState({
       //categoryList: ok,
-      dataList: item.name === `All` ? cloneList : fil,
+      dataList: item.name === `All` ? sort : item.name ==='Video' ? cloneList : fil,
       showFilter: false,
       fileType: fileType,
     });
@@ -302,12 +307,35 @@ export default class Training extends React.PureComponent {
 
             {showFilter ? (
               <View styleName="vertical md-gutter" style={styles.filtercont}>
-                <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({ name: 'All' }, 0)}>
+                                <TouchableWithoutFeedback
+                  onPress={() => this.chipclick({ name: 'All' }, 2)}>
                   <Title
                     style={StyleSheet.flatten([
                       styles.passText,
                       {
+                        color: '#6e6852',
+                        fontSize: 16,
+                        lineHeight: 20,
+                        paddingVertical: 0,
+                      },
+                    ])}>
+                    {`All`}
+                  </Title>
+                </TouchableWithoutFeedback>
+                <View
+                  style={{
+                    marginTop: 4,
+                    height: 1,
+                    width: '100%',
+                    backgroundColor: '#e4cbcb',
+                  }}></View>
+                <TouchableWithoutFeedback
+                  onPress={() => this.chipclick({ name: 'Video' }, 0)}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.passText,
+                      {
+                        marginTop:10,
                         color: '#6e6852',
                         fontSize: 16,
                         lineHeight: 20,
@@ -399,7 +427,7 @@ const styles = StyleSheet.create({
     //top:56,
     right: sizeWidth(4),
     borderRadius: 8,
-    top: sizeHeight(28),
+    top: sizeHeight(24),
     ...Platform.select({
       android: {
         elevation: 4,

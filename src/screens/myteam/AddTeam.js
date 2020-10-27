@@ -71,6 +71,19 @@ export default class AddTeam extends React.Component {
     Pref.getVal(Pref.saveToken, (value) => this.setState({ token: value }));
   }
 
+  componentDidMount() {
+    this.setState({
+      name: '',
+      mobile_no: '',
+      address: '',
+      email: '',
+      aadharcard: '',
+      refercode: '',
+      pancard: '',
+    });
+
+  }
+
   submitt = () => {
     const { refercode } = this.state.userData;
     let checkData = true;
@@ -95,7 +108,7 @@ export default class AddTeam extends React.Component {
     if (body.email === '') {
       Helper.showToastMessage('Email empty', 0);
       return false;
-    } else if (body.email.includes('@') === false) {
+    } else if (Helper.emailCheck(body.email) === false) {
       Helper.showToastMessage('Invalid Email', 0);
       return false;
     }
@@ -140,39 +153,49 @@ export default class AddTeam extends React.Component {
           if (res_type === `error`) {
             Helper.showToastMessage(message, 0);
           } else {
+            // NavigationActions.navigate('Finish', {
+            //   top: 'Add Team',
+            //   red: 'Success',
+            //   grey: 'Added succesfully',
+            //   blue: 'View team',
+            //   profilerefresh: 1,
+            //   back:'ViewTeam'
+            // });
             Helper.showToastMessage(`Added successfully`, 1);
-            this.setState({
-              name: '',
-              mobile_no: '',
-              address: '',
-              email: '',
-              aadharcard: '',
-              refercode: '',
-              pancard: '',
-            });
-            this.specificFormRef.saveData(
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-              '',
-            );
+            NavigationActions.navigate('ViewTeam');
+            // this.setState({
+            //   name: '',
+            //   mobile_no: '',
+            //   address: '',
+            //   email: '',
+            //   aadharcard: '',
+            //   refercode: '',
+            //   pancard: '',
+            // });
+            // this.specificFormRef.saveData(
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            //   '',
+            // );
+
           }
         },
         (error) => {

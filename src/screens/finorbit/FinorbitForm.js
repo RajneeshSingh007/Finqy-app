@@ -80,22 +80,27 @@ export default class FinorbitForm extends React.PureComponent {
     const { navigation } = this.props;
     const url = navigation.getParam("url", "");
     const title = navigation.getParam("title", "");
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, (value) => {
-      //console.log('token', value);
-      this.setState({ token: value }, () => {
-        Pref.getVal(Pref.userData, (userData) => {
-          this.setState({
-            userData: userData,
-            imageUrl: url,
-            title: title,
-            isMounted: true,
-            currentPosition: 0,
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.saveToken, (value) => {
+        //console.log('token', value);
+        this.setState({ token: value }, () => {
+          Pref.getVal(Pref.userData, (userData) => {
+            this.setState({
+              userData: userData,
+              imageUrl: url,
+              title: title,
+              isMounted: true,
+              currentPosition: 0,
+            });
           });
         });
       });
     });
-    //});
+    //     NavigationActions.navigate("GetQuotes", {
+    //   formId: 1401,
+    //   sumin: Number(50 / 100000).toFixed(1),
+    // });
+
   }
 
   backClick = () => {
@@ -149,7 +154,7 @@ export default class FinorbitForm extends React.PureComponent {
   insertData(currentPosition, mode) {
     const { title } = this.state;
     let commons = null;
-    console.log("title", title);
+    //console.log("title", title);
     if (currentPosition === 0) {
       commons = JSON.parse(JSON.stringify(this.commonFormRef.current.state));
       this.restoreList[0] = commons;
@@ -229,7 +234,7 @@ export default class FinorbitForm extends React.PureComponent {
       }
       if (title === `Life Cum Invt. Plan`) {
         uniq = "life_cum_investment";
-      }else if(title  === 'Insure Check'){
+      } else if (title === 'Insure Check') {
         uniq = 'insure_check';
       }
       //console.log(`uniq`, uniq, title);
@@ -329,7 +334,8 @@ export default class FinorbitForm extends React.PureComponent {
           Helper.showToastMessage("Invalid mobile number", 0);
         } else if (
           commonForms.email !== "" &&
-          !commonForms.email.includes("@")
+          Helper.emailCheck(commonForms.email) === false
+          //!commonForms.email.includes("@")
         ) {
           checkData = false;
           Helper.showToastMessage("Invalid Email", 0);
@@ -559,15 +565,14 @@ export default class FinorbitForm extends React.PureComponent {
               Helper.showToastMessage("Please, Select Policy Term", 0);
             } else if (specificForms.lifestyle === "") {
               checkData = false;
-              Helper.showToastMessage("Select Lifestyle", 0);
+              Helper.showToastMessage("Please, Select Smoker Type", 0);
             } else if (specificForms.lifestyle2 === "") {
               checkData = false;
-              Helper.showToastMessage("Select Lifestyle", 0);
+              Helper.showToastMessage("Please, Select Alcohol Consumption Type", 0);
             } else if (specificForms.existing_diseases === "") {
               checkData = false;
               Helper.showToastMessage("Select Existing Disease", 0);
-            } else if (
-              title === `Term Insurance` && specificForms.existing_diseases === 'YES' &&
+            } else if (specificForms.existing_diseases === 'YES' &&
               specificForms.diseases === ""
             ) {
               checkData = false;
@@ -718,25 +723,25 @@ export default class FinorbitForm extends React.PureComponent {
           ) {
             checkData = false;
             Helper.showToastMessage("Invalid pan card number", 0);
-          }else if(title === 'Insure Check' && specificForms.type_insurance === ''){
-                checkData = false;
-                Helper.showToastMessage("Please, Select Type of Insurance", 0);
-          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_sum_assured === ''){
-                checkData = false;
-                Helper.showToastMessage("Please, Enter Life Sum Assured", 0);
-          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_sum_assured === ''){
-                checkData = false;
-                Helper.showToastMessage("Please, Enter Health Sum Assured", 0);
-          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_company === ''){
-                checkData = false;
-                Helper.showToastMessage("Please, Select Life Policy Company", 0);
-          }else if(title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_company === ''){
-                checkData = false;
-                Helper.showToastMessage("Please, Select Health Policy Company", 0);
-          }else if (title === 'Insure Check' &&  specificForms.turnover === "") {
-              checkData = false;
-              Helper.showToastMessage("Annual Turnover Empty", 0);
-            } else {
+          } else if (title === 'Insure Check' && specificForms.type_insurance === '') {
+            checkData = false;
+            Helper.showToastMessage("Please, Select Type of Insurance", 0);
+          } else if (title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_sum_assured === '') {
+            checkData = false;
+            Helper.showToastMessage("Please, Enter Life Sum Assured", 0);
+          } else if (title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_sum_assured === '') {
+            checkData = false;
+            Helper.showToastMessage("Please, Enter Health Sum Assured", 0);
+          } else if (title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_company === '') {
+            checkData = false;
+            Helper.showToastMessage("Please, Select Life Policy Company", 0);
+          } else if (title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_company === '') {
+            checkData = false;
+            Helper.showToastMessage("Please, Select Health Policy Company", 0);
+          } else if (title === 'Insure Check' && specificForms.turnover === "") {
+            checkData = false;
+            Helper.showToastMessage("Annual Turnover Empty", 0);
+          } else {
             let parseJs = JSON.parse(JSON.stringify(specificForms));
             for (var key in parseJs) {
               if (key !== "floaterItemList") {
@@ -839,7 +844,7 @@ export default class FinorbitForm extends React.PureComponent {
 
       if (checkData) {
         const limit = title === 'Insure Check' ? 1 : 3;
-        if (currentPosition <  limit) {
+        if (currentPosition < limit) {
           if (this.state.title === 'Insure Check') {
             this.setState((prevState) => {
               return {
@@ -891,7 +896,7 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             (result) => {
-              console.log('result',result)
+              console.log('result', result)
               const { response_header } = result;
               const { res_type, res } = response_header;
               this.setState({ progressLoader: false });

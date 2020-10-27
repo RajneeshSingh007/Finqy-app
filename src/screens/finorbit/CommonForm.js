@@ -434,16 +434,17 @@ export default class CommonForm extends React.PureComponent {
             containerstyle={StyleSheet.flatten([
               styles.animatedInputCont,
               {
-                //height: this.state.ofc_add === '' ? 64 : layheight,
+                //height: this.state.ofc_add === '' ? 56 : layheight,
               },
             ])}
             // multiline
             // onContentSizeChange={(event) => {
             //   layheight =
             //     this.state.ofc_add === ''
-            //       ? 64
+            //       ? 56
             //       : event.nativeEvent.contentSize.height;
             // }}
+            //selection={{start:0, end:0}}
             onChangeText={(value) => this.setState({ ofc_add: value })}
             value={this.state.ofc_add}
             editable={editable}
@@ -552,7 +553,7 @@ export default class CommonForm extends React.PureComponent {
           // />
           null}
 
-        {title === `Term Insurance` || title === `Health Insurance` ? (
+        {title === `Term Insurance` ? (
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ qualification: value })}
             value={this.state.qualification}
@@ -582,6 +583,7 @@ export default class CommonForm extends React.PureComponent {
           //   returnKeyType={'next'}
           // />
           null}
+
 
         {title !== 'Profile' ? (
           <View>
@@ -740,14 +742,104 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
+          {title === 'Health Insurance' ?    <View style={styles.radiocont}>
+            <View style={StyleSheet.flatten([styles.radiodownbox,{
+              height:124
+            }])}>
+              <Title style={styles.bbstyle}>{`Qualification *`}</Title>
+              <RadioButton.Group
+                onValueChange={(value) => this.setState({ qualification: value })}
+                value={this.state.qualification}>
+                <View styleName="horizontal" style={{ marginBottom: 8,    flexWrap:title==='Health Insurance' ? 'wrap':'nowrap'}}>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Undergraduate"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Undergraduate`}</Title>
+                  </View>
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Graduate"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Graduate`}</Title>
+                  </View>
+                  {title === 'Health Insurance' ? <> 
+                                                                                                                <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Other"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Other`}</Title>
+                  </View>
+
+
+                                                                        <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Diploma"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Diploma`}</Title>
+                  </View>
+
+
+                                    <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Postgraduate"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Post-Graduate`}</Title>
+                  </View>
+
+                                                      <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Professional"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Professional`}</Title>
+                  </View>
+                  </> : null}
+                </View>
+              </RadioButton.Group>
+            </View>
+          </View>
+        : null}
+
         {showemploy ? (
           <View style={styles.radiocont}>
-            <View style={styles.radiodownbox}>
+            <View style={StyleSheet.flatten([styles.radiodownbox,{
+              height:title === `Health Insurance` ? 90 : 56
+            }])}>
               <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' ? '*' : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>
-                <View styleName="horizontal" style={{ marginBottom: 8 }}>
+                <View styleName="horizontal" style={{ marginBottom: 8,    flexWrap:title==='Health Insurance' ? 'wrap':'nowrap'}}>
                   <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
@@ -770,6 +862,32 @@ export default class CommonForm extends React.PureComponent {
                       styleName="v-center h-center"
                       style={styles.textopen}>{`Salaried`}</Title>
                   </View>
+                  {title === 'Health Insurance' ? <> 
+                                    <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Student"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Student`}</Title>
+                  </View>
+
+                                                      <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Housewife"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Housewife`}</Title>
+                  </View>
+
+                  </> : null}
                 </View>
               </RadioButton.Group>
             </View>

@@ -86,6 +86,12 @@ export default class BankForm extends React.PureComponent {
     }
   }
 
+  restoreData = (obj) =>{
+    if(obj !== undefined){
+      this.setState(obj);
+    }
+  }
+
   saveData = (
     bank,
     bank_ifsc,

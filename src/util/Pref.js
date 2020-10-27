@@ -2487,10 +2487,6 @@ export const productList = [
     name: 'Insurance Samadhan',
     url: require('./../res/images/samadhan.png'),
   },
-  // {
-  //   name: 'Vector Plus',
-  //   url: require('./../res/images/vectorplus.png'),
-  // },
   {
     name: 'Life Cum Invt. Plan',
     url: require('./../res/images/lifecuminv.png'),
@@ -2527,10 +2523,14 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
-  // {
-  //   name: 'Insure Check',
-  //   url: require('./../res/images/sabseasan.png'),
+  //   {
+  //   name: 'Vector Plus',
+  //   url: require('./../res/images/vectorplus.png'),
   // },
+  {
+    name: 'Insure Check',
+    url: require('./../res/images/sabseasan.png'),
+  },
   //   {
   //   name: 'Religare Group Plan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2606,7 +2606,11 @@ export const productListClone = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
-  {
+    {
+    name: 'Insure Check',
+    url: require('./../res/images/sabseasan.png'),
+  },
+    {
     name: 'Hello Doctor Policy',
     url: require('./../res/images/erb.png'),
   },
@@ -2618,10 +2622,6 @@ export const productListClone = [
     name: 'Sabse Asaan Health Plan',
     url: require('./../res/images/sabseasan.png'),
   },
-  //   {
-  //   name: 'Insure Check',
-  //   url: require('./../res/images/sabseasan.png'),
-  // },
 ];
 
 export const LifeCompany = [{ value: 'Aegon Life Insurance Co. Ltd.' },
@@ -2729,6 +2729,9 @@ export const ConnectorPercentage = `${BASEUrl}tool_payout`;
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
 export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
+export const TermOfUse = `https://erb.ai/Terms%20of%20Use%20ERB.pdf`;
+
+export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 
 export const NewFormPayment = `${FinURL}policy_premium.php`;
 export const VectorFormPayment = `${LiveUrl}vp_payment.php`;

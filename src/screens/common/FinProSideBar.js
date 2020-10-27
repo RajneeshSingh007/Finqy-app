@@ -12,6 +12,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DrawerTop from '../component/DrawerTop';
 import * as Helper from '../../util/Helper';
 import NavigationActions from '../../util/NavigationActions';
+import Lodash from 'lodash';
 
 const COLOR = '#f9f8f1';
 
@@ -57,6 +58,7 @@ export default class FinProSideBar extends React.PureComponent {
       return null;
     }
     const size = list.length;
+    const sort = Lodash.sortBy(list, ['name']);
     return (
       <View style={{flex: 1, flexDirection: 'row'}}>
         <TouchableWithoutFeedback onPress={backClicked}>
@@ -69,15 +71,16 @@ export default class FinProSideBar extends React.PureComponent {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}>
               <View styleName="v-center h-center sm-gutter">
-                {list.map((item, index) => {
+                {sort.map((item, index) => {
                   return (
+                                      // item.name === 'Vector Plus' ? null :
                     <>
                       <TouchableWithoutFeedback
                         onPress={() => this.itemClick(item.name, item)}>
                         <View styleName="horizontal v-center h-center">
                           <Title
                             styleName="wrap"
-                            style={styles.text}>{`${item.name}`}</Title>
+                            style={styles.text}>{`${item.name === 'Vector Plus' ? 'MCD Policy' : item.name}`}</Title>
                         </View>
                       </TouchableWithoutFeedback>
                       {index === size - 1 ? null : <View style={styles.line} />}

@@ -47,7 +47,7 @@ const LeftHeaders = (props) => {
         flex: 0.13,
         backgroundColor: 'white',
       }}>
-      <View styleName="md-gutter" style={styles.cont}>
+      <View styleName="sm-gutter" style={styles.cont}>
         <View style={styles.con}>
           <View style={styles.leftcon}>
             <TouchableWithoutFeedback onPress={backClicked}>
@@ -71,6 +71,7 @@ const LeftHeaders = (props) => {
                   style={{
                     alignSelf: 'center',
                     justifyContent: 'center',
+                    resizeMode:'contain'
                   }}
                 />
               )}
@@ -89,7 +90,7 @@ const LeftHeaders = (props) => {
                 <View>
                   <Avatar.Image
                     source={pic === null ? require('../../res/images/account.png') :pic}
-                    size={56}
+                    size={48}
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />
                 </View>
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginEnd:8
+    //marginEnd:4
   },
   rightText: {
     color: '#bbb8ac',

@@ -45,6 +45,7 @@ export default class ProfileScreen extends React.PureComponent {
     this.bankFormRef = React.createRef();
     this.backClick = this.backClick.bind(this);
     this.scrollViewRef = React.createRef();
+    this.restoreList = [];
     this.state = {
       loading: false,
       imageUrl: '',
@@ -80,7 +81,7 @@ export default class ProfileScreen extends React.PureComponent {
       Pref.getVal(Pref.saveToken, (toke) => {
         this.setState({ token: toke }, () => {
           Pref.getVal(Pref.userData, (parseda) => {
-            //console.log('parseda', parseda)
+            console.log('parseda', parseda)
             const pp = parseda.user_prof;
             const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
               uri: `${decodeURIComponent(pp)}`,
@@ -133,6 +134,7 @@ export default class ProfileScreen extends React.PureComponent {
         userData.gst_no,
       );
     }
+    this.restoreList[0] = userData;
     if (this.specificFormRef.current !== null) {
       this.specificFormRef.current.saveData(
         '',
@@ -149,6 +151,7 @@ export default class ProfileScreen extends React.PureComponent {
         '',
         '',
       );
+      this.restoreList[1] = userData;
     }
   };
 
@@ -170,6 +173,7 @@ export default class ProfileScreen extends React.PureComponent {
         let commons = JSON.parse(
           JSON.stringify(this.commonFormRef.current.state),
         );
+        this.restoreList[0] = commons;
         delete commons.genderList;
         delete commons.employList;
         delete commons.cityList;
@@ -186,6 +190,7 @@ export default class ProfileScreen extends React.PureComponent {
         let spcommons = JSON.parse(
           JSON.stringify(this.specificFormRef.current.state),
         );
+        this.restoreList[1] = spcommons;
         delete spcommons.cityList;
         delete spcommons.showCarList;
         delete spcommons.showExisitingList;
@@ -245,12 +250,20 @@ export default class ProfileScreen extends React.PureComponent {
           JSON.stringify(this.bankFormRef.current.state),
         );
         if (commons != null) {
+          this.restoreList[2] = commons;
           this.state.dataArray[2] = commons;
           if (commons.bank_ifsc != null && String(commons.bank_ifsc).match(/[A-Za-z]{4}0[A-Z0-9a-z]{6}$/) == null) {
             checkData = false;
             Helper.showToastMessage('Invalid IFSC code', 0);
             return false;
           }
+        }
+      } else if (currentposition === 2) {
+        let fcommons = JSON.parse(
+          JSON.stringify(this.FileUploadFormRef.current.state),
+        );
+        if (fcommons != null) {
+          this.restoreList[3] = fcommons;
         }
       }
       this.setState(
@@ -274,6 +287,20 @@ export default class ProfileScreen extends React.PureComponent {
               userData.account_type,
               userData.bank_name
             );
+          }
+          if (this.state.currentposition === 0) {
+            this.commonFormRef.current.restoreData(this.restoreList[0]);
+            if (this.restoreList[1]) {
+              this.specificFormRef.current.restoreData(this.restoreList[1]);
+            }
+          } else if (this.state.currentposition === 1) {
+            if (this.restoreList[2]) {
+              this.bankFormRef.current.restoreData(this.restoreList[2]);
+            }
+          } else if (this.state.currentposition === 2) {
+            if (this.restoreList[3]) {
+              this.FileUploadFormRef.current.restoreData(this.restoreList[3]);
+            }
           }
         },
       );
@@ -366,7 +393,7 @@ export default class ProfileScreen extends React.PureComponent {
 
     let bankformCommons = this.state.dataArray[2];
 
-    console.log('bankformCommons', bankformCommons)
+    //console.log('bankformCommons', bankformCommons)
 
     for (var keys in bankformCommons) {
       const value = bankformCommons[keys];
@@ -398,7 +425,7 @@ export default class ProfileScreen extends React.PureComponent {
     } else if (fileName !== '') {
       formData.append('user_prof', fileName);
     }
-    //console.log(`formData`, formData, token);
+    console.log(`formData`, formData, token);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -408,7 +435,7 @@ export default class ProfileScreen extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          console.log(`result`, result);
+          //console.log(`result`, result);
           const { data, response_header } = result;
           const { res_type } = response_header;
           this.setState({ loading: false });
@@ -430,8 +457,8 @@ export default class ProfileScreen extends React.PureComponent {
             Helper.showToastMessage('Failed to update profile', 0);
           }
         },
-        () => {
-          //console.log(`error`, error);
+        (e) => {
+          console.log(`error`, e);
           this.setState({ loading: false });
         },
       );
@@ -463,6 +490,21 @@ export default class ProfileScreen extends React.PureComponent {
           scrollReset: true,
           topText: prev.currentposition - 1 === 1 ? "Bank" : 'User'
         };
+      }, () => {
+        if (this.state.currentposition === 0) {
+          this.commonFormRef.current.restoreData(this.restoreList[0]);
+          if (this.restoreList[1]) {
+            this.specificFormRef.current.restoreData(this.restoreList[1]);
+          }
+        } else if (this.state.currentposition === 1) {
+          if (this.restoreList[2]) {
+            this.bankFormRef.current.restoreData(this.restoreList[2]);
+          }
+        } else if (this.state.currentposition === 2) {
+          if (this.restoreList[3]) {
+            this.FileUploadFormRef.current.restoreData(this.restoreList[3]);
+          }
+        }
       });
     }
   };
@@ -474,7 +516,7 @@ export default class ProfileScreen extends React.PureComponent {
       if (ref && ref.scrollTo) {
         const timeout = setTimeout(() => {
           ref.scrollTo({ x: 0, y: 0, animated: false });
-          if(timeout){
+          if (timeout) {
             clearTimeout(timeout);
           }
         }, 100);
@@ -494,59 +536,59 @@ export default class ProfileScreen extends React.PureComponent {
             keyboardShouldPersistTaps={'handled'}>
 
 
-              <View>
-                <LeftHeaders
-                  title={`Edit My Profile`}
-                  bottomtext={
-                    <>
-                      {`${this.state.topText} `}
-                      {<Title style={styles.passText}>{`Details`}</Title>}
-                    </>
-                  }
-                  bottomtextStyle={{
-                    color: '#555555',
-                    fontSize: 20,
-                  }}
-                  showBack
-                />
+            <View>
+              <LeftHeaders
+                title={`Edit My Profile`}
+                bottomtext={
+                  <>
+                    {`${this.state.topText} `}
+                    {<Title style={styles.passText}>{`Details`}</Title>}
+                  </>
+                }
+                bottomtextStyle={{
+                  color: '#555555',
+                  fontSize: 20,
+                }}
+                showBack
+              />
 
-                <TouchableWithoutFeedback onPress={() => this.filePicker()}>
-                  <View
-                    style={{
-                      //marginVertical: sizeHeight(1),
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'transparent',
-                    }}>
-                    <Avatar.Image
-                      source={this.state.imageUrl}
-                      style={{ backgroundColor: 'transparent' }}
-                      size={124}
+              <TouchableWithoutFeedback onPress={() => this.filePicker()}>
+                <View
+                  style={{
+                    //marginVertical: sizeHeight(1),
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                  }}>
+                  <Avatar.Image
+                    source={this.state.imageUrl}
+                    style={{ backgroundColor: 'transparent' }}
+                    size={124}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+
+              <StepIndicator
+                stepCount={3}
+                activeCounter={this.state.currentposition}
+              />
+
+              <View styleName="md-gutter">
+                {this.state.currentposition === 0 ? (
+                  <>
+                    <CommonForm
+                      title="Profile"
+                      ref={this.commonFormRef}
+                      saveData={this.state.dataArray[0]}
                     />
-                  </View>
-                </TouchableWithoutFeedback>
 
-                <StepIndicator
-                  stepCount={3}
-                  activeCounter={this.state.currentposition}
-                />
-
-                <View styleName="md-gutter">
-                  {this.state.currentposition === 0 ? (
-                    <>
-                      <CommonForm
-                        title="Profile"
-                        ref={this.commonFormRef}
-                        saveData={this.state.dataArray[0]}
-                      />
-
-                      <SpecificForm
-                        title="Demat"
-                        heading={`Other Information`}
-                        ref={this.specificFormRef}
-                        saveData={this.state.dataArray[1]}
-                      />
-                      {/* <View>
+                    <SpecificForm
+                      title="Demat"
+                      heading={`Other Information`}
+                      ref={this.specificFormRef}
+                      saveData={this.state.dataArray[1]}
+                    />
+                    {/* <View>
                     <AnimatedInputBox
                       placeholder={'Mail Host'}
                       onChangeText={(value) =>
@@ -597,64 +639,64 @@ export default class ProfileScreen extends React.PureComponent {
                     />
 
                   </View> */}
-                    </>
-                  ) : this.state.currentposition === 1 ? (
-                    <BankForm
-                      ref={this.bankFormRef}
-                      saveData={this.state.dataArray[2]}
-                    />
-                  ) : this.state.currentposition === 2 ? (
-                    <FileUploadForm
-                      title="Profile"
-                      ref={this.FileUploadFormRef}
-                      heading={`File Upload`}
-                    />
-                  ) : null}
-                </View>
+                  </>
+                ) : this.state.currentposition === 1 ? (
+                  <BankForm
+                    ref={this.bankFormRef}
+                    saveData={this.state.dataArray[2]}
+                  />
+                ) : this.state.currentposition === 2 ? (
+                  <FileUploadForm
+                    title="Profile"
+                    ref={this.FileUploadFormRef}
+                    heading={`File Upload`}
+                  />
+                ) : null}
+              </View>
 
-                <View
-                  styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
-                    }`}>
-                  {this.state.currentposition === 1 ||
-                    this.state.currentposition === 2 ? (
-                      <Button
-                        mode={'flat'}
-                        uppercase={true}
-                        dark={true}
-                        loading={false}
-                        style={[
-                          styles.loginButtonStyle,
+              <View
+                styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
+                  }`}>
+                {this.state.currentposition === 1 ||
+                  this.state.currentposition === 2 ? (
+                    <Button
+                      mode={'flat'}
+                      uppercase={true}
+                      dark={true}
+                      loading={false}
+                      style={[
+                        styles.loginButtonStyle,
+                        {
+                          backgroundColor: 'transparent',
+                          borderColor: '#d5d3c1',
+                          borderWidth: 1.3,
+                        },
+                      ]}
+                      onPress={this.backNav}>
+                      <Title
+                        style={StyleSheet.flatten([
+                          styles.btntext,
                           {
-                            backgroundColor: 'transparent',
-                            borderColor: '#d5d3c1',
-                            borderWidth: 1.3,
+                            color: '#b8b28f',
                           },
-                        ]}
-                        onPress={this.backNav}>
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.btntext,
-                            {
-                              color: '#b8b28f',
-                            },
-                          ])}>
-                          {'Back'}
-                        </Title>
-                      </Button>
-                    ) : null}
-                  <Button
-                    mode={'flat'}
-                    uppercase={false}
-                    dark={true}
-                    loading={false}
-                    style={styles.loginButtonStyle}
-                    onPress={this.submitt}>
-                    <Title style={styles.btntext}>{this.state.btnText}</Title>
-                  </Button>
-                </View>
-             
+                        ])}>
+                        {'Back'}
+                      </Title>
+                    </Button>
+                  ) : null}
+                <Button
+                  mode={'flat'}
+                  uppercase={false}
+                  dark={true}
+                  loading={false}
+                  style={styles.loginButtonStyle}
+                  onPress={this.submitt}>
+                  <Title style={styles.btntext}>{this.state.btnText}</Title>
+                </Button>
+              </View>
+
               <ScrollTop onPress={this.scrollToTop} />
-              
+
               <Footer />
             </View>
           </ScrollView>

@@ -26,7 +26,7 @@ const Footer = (prop) => {
           <Subtitle style={styles.centerText}>{`About FinPro`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
-          onPress={() => NavigationActions.navigate('Agreement')}>
+          onPress={() => NavigationActions.navigate('Term')}>
           <Subtitle style={styles.centerText}>{`Read Term of use`}</Subtitle>
         </TouchableWithoutFeedback>
       </View>

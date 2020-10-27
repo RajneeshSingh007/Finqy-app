@@ -116,7 +116,7 @@ export default class VectorForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition: 2,
+              currentPosition: 0,
             });
           });
         });
@@ -204,7 +204,7 @@ export default class VectorForm extends React.PureComponent {
         if (commonForms.name === '') {
           checkData = false;
           Helper.showToastMessage('First Name empty', 0);
-        } else if (commonForms.lastname === '') {
+        } else if (commonForms.lastName === '') {
           checkData = false;
           Helper.showToastMessage('Last Name empty', 0);
         } else if (commonForms.mobile === '') {
@@ -237,7 +237,8 @@ export default class VectorForm extends React.PureComponent {
           Helper.showToastMessage('Invalid mobile number', 0);
         } else if (
           commonForms.email !== '' &&
-          !commonForms.email.includes('@')
+          Helper.emailCheck(commonForms.email) === false
+          //!commonForms.email.includes('@')
         ) {
           checkData = false;
           Helper.showToastMessage('Invalid Email', 0);

@@ -26,6 +26,7 @@ import Payment from './../screens/finorbit/Payment';
 import VectorForm from './../screens/finorbit/VectorForm';
 import VectorPayment from './../screens/finorbit/VectorPayment';
 import GetQuotes from './../screens/finorbit/GetQuotes';
+import GetQuotesView from './../screens/finorbit/GetQuotesView';
 
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
@@ -42,6 +43,7 @@ import ReferEarn from './../screens/profile/ReferEarn';
 import Certificate from './../screens/profile/Certificate';
 import ChangePass from './../screens/profile/ChangePass';
 import Agreement from './../screens/profile/Agreement';
+import Term from './../screens/profile/Term';
 
 //LeadList
 import LeadList from './../screens/leads/LeadList';
@@ -69,7 +71,7 @@ import Training from './../screens/training/Training';
 import Manager from './../screens/relmanager/Manager';
 import Qrc from './../screens/helpdesk/Qrc';
 import TCondition from './../screens/auth/TCondition';
-
+import WebComp from '../screens/component/WebComp';
 import FinishScreen from '../screens/common/FinishScreen';
 
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
@@ -384,6 +386,9 @@ const OtherNav = createDrawerNavigator(
     Payout: {screen: Payout},
     AddConnector: {screen: AddConnector},
     Finish: {screen: FinishScreen},
+    Term:{screen:Term},
+    GetQuotesView:{screen:GetQuotesView},
+    WebComp:{screen:WebComp}
   },
   {
     initialRouteName: 'Home',

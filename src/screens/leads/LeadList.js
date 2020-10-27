@@ -103,7 +103,7 @@ export default class LeadList extends React.PureComponent {
       quotemailData: '',
       quotemail: '',
       type: '',
-      itemSize: 6,
+      itemSize: 5,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -188,7 +188,7 @@ export default class LeadList extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 6 ? 6 : sort.length,
+              itemSize: sort.length >= 5 ? 5 : sort.length,
             });
           } else {
             this.setState({
@@ -470,7 +470,7 @@ export default class LeadList extends React.PureComponent {
     let plus = itemSize;
     let slicedArray = [];
     if (mode) {
-      plus += 6;
+      plus += 5;
       if (itemSize < clone.length) {
         if (plus > clone.length) {
           const rem = clone.length - itemSize;
@@ -480,14 +480,16 @@ export default class LeadList extends React.PureComponent {
         this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
-      if (itemSize <= 6) {
+      if (itemSize <= 5) {
         plus = 0;
       } else {
-        plus -= 6;
+        plus -= 5;
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
-        this.setState({dataList: slicedArray, itemSize: plus});
+        if(slicedArray.length > 0){
+          this.setState({dataList: slicedArray, itemSize: plus});
+        }
       }
     }
   };
@@ -513,10 +515,10 @@ export default class LeadList extends React.PureComponent {
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 6);
+      const data = this.returnData(clone, 0, 5);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:6});
+    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:5});
   }
 
   render() {

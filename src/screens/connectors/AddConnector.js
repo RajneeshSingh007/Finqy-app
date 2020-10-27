@@ -198,7 +198,7 @@ export default class AddConnector extends React.PureComponent {
     } else if (body.email === '') {
       Helper.showToastMessage('Email empty', 0);
       return false;
-    } else if (body.email.includes('@') === false) {
+    } else if (Helper.emailCheck(body.email) === false) {
       Helper.showToastMessage('Invalid Email', 0);
       return false;
     } else if (body.profession === '') {

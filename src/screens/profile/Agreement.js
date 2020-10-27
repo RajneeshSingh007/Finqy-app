@@ -31,17 +31,17 @@ export default class Agreement extends React.PureComponent {
 
   componentDidMount() {
     const { navigation } = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, data => {
         //console.log('data', data)
         Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(data, v));
       })
-    //});
+    });
   }
 
   fetchData = (data, v) => {
     const { refercode } = data;
-    let filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Agreement_${refercode}.pdf`;
+    let filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyAgreement.pdf`;
     const agree = `${Pref.AgreeUrl}`;
     RNFetchBlob.fs.exists(filePath)
       .then((exist) => {
@@ -101,7 +101,7 @@ export default class Agreement extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `Agreement_${this.state.referCode}`, `Agreement_${this.state.referCode}.pdf`, 'application/pdf');
+                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `${this.state.referCode}_MyAgreement`, `${this.state.referCode}_MyAgreement.pdf`, 'application/pdf');
               }}
               style={{ flex: 0.09 }}
             />

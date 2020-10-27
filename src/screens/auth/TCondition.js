@@ -36,8 +36,8 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import PlaceholderLoader from '../../util/PlaceholderLoader';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -67,10 +67,10 @@ export default class TCondition extends React.PureComponent {
         bodyDis={1}
         body={
           <>
-            <View style={{backgroundColor:'white',flex:1}}>
+            <View style={{ backgroundColor: 'white', flex: 1 }}>
               <WebView
-                style={{marginTop: 8, marginHorizontal: 16}}
-                source={{uri: `${Pref.TCondition}`}}
+                style={{ marginTop: 8, marginHorizontal: 16 }}
+                source={{ uri: `${Pref.TCondition}` }}
                 javaScriptEnabled
                 allowsBackForwardNavigationGestures
               />

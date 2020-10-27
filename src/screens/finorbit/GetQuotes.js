@@ -16,6 +16,7 @@ import Modal from "../../util/Modal";
 import IconChooser from "../common/IconChooser";
 import Share from "react-native-share";
 import Lodash from 'lodash';
+import NavigationActions from "../../util/NavigationActions";
 
 export default class GetQuotes extends React.Component {
   constructor(props) {
@@ -132,7 +133,8 @@ export default class GetQuotes extends React.Component {
       const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}$$${map[2]["companyid"]}`;
       finalUrl = `${Pref.FinURL}/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }
-    this.setState({ modalvis: true, pdfurl: finalUrl });
+    NavigationActions.navigate('GetQuotesView', {url:finalUrl,company:map});
+    //this.setState({ modalvis: true, pdfurl: finalUrl });
   };
 
   shareFile = () => {
@@ -213,7 +215,7 @@ export default class GetQuotes extends React.Component {
               topRightElement={
                 <View styleName="horizontal">
                   <TouchableWithoutFeedback
-                    onPress={() => Helper.downloadFile(this.state.pdfurl, "")}
+                    onPress={() => Helper.downloadFileWithFileName(this.state.pdfurl, "HealthInsurance_Quote", "HealthInsurance_Quote.pdf",'application/pdf',true)}
                   >
                     <View>
                       <IconChooser
@@ -277,7 +279,7 @@ export default class GetQuotes extends React.Component {
 
             <View styleName="md-gutter">
               <View style={styles.radiocont}>
-                <Title style={styles.bbstyle}>{`Compnay Selection`}</Title>
+                <Title style={styles.bbstyle}>{`Company Selection`}</Title>
                 {this.state.companyList.length > 0 ? (
                   <View styleName="vertical" style={{ marginBottom: 8 }}>
                     {this.state.companyList.map((k, i) => {

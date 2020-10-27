@@ -175,7 +175,9 @@ export default class AddressForm extends React.PureComponent {
         <View style={styles.line} /> */}
         {ispolicy ? (
           <View styleName="vertical" style={styles.radiocont}>
-            <Title style={styles.title}>{`Permanent Address`}</Title>
+            <Title style={StyleSheet.flatten([styles.title,{
+              color:'#555'
+            }])}>{`Permanent Address`}</Title>
           </View>
         ) : null}
 
@@ -286,7 +288,9 @@ export default class AddressForm extends React.PureComponent {
                 </Title>
               </View>
 
-              <Title style={StyleSheet.flatten([styles.title])}>
+              <Title style={StyleSheet.flatten([styles.title,{
+              color:'#555'
+            }])}>
                 {`Current Address`}
               </Title>
             </View>
@@ -344,14 +348,14 @@ export default class AddressForm extends React.PureComponent {
               disabled={true}
             />
 
-            <AnimatedInputBox
+            {/* <AnimatedInputBox
               changecolor
               containerstyle={styles.animatedInputCont}
               placeholder={'Referral Code'}
               onChangeText={(value) => this.setState({ref: value})}
               value={this.state.ref}
               returnKeyType={'next'}
-            />
+            /> */}
           </View>
         ) : null}
       </View>
@@ -471,7 +475,6 @@ const styles = StyleSheet.create({
     marginStart: 10,
     marginEnd: 10,
     alignContent: 'center',
-    paddingVertical: 10,
   },
   animatedInputCont: {
     marginStart: 10,

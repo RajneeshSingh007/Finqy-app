@@ -21,6 +21,16 @@ import CustomForm from '../finorbit/CustomForm';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
+import NewDropDown from '../component/NewDropDown';
+
+
+const policyList = [{
+  value: 'Health Insurance'
+}, {
+  value: 'General Insurance'
+}, {
+  value: 'Life Insurance'
+}]
 
 export default class Samadhan extends React.Component {
   constructor(props) {
@@ -42,12 +52,6 @@ export default class Samadhan extends React.Component {
       isTermSelected: false,
       showCompType: false,
       compTypeList: [
-        { value: `Claim is rejected` },
-        { value: `Claim is delayed` },
-        { value: `Policy is cancelled` },
-        { value: `No response on the claim status` },
-        { value: `Group insurance claim` },
-        { value: `Other` },
       ],
     };
   }
@@ -97,10 +101,26 @@ export default class Samadhan extends React.Component {
       return false;
     }
 
+    if (Helper.emailCheck(body.email) === false) {
+      Helper.showToastMessage('Invalid Email', 0);
+      return false;
+    }
+
+    if (body.policy_type === '') {
+      Helper.showToastMessage('Please, Select Policy Type', 0);
+      return false;
+    }
+
+    if (body.complaint_type === '') {
+      Helper.showToastMessage('Please, Select Complain Type', 0);
+      return false;
+    }
+
     if (!this.state.isTermSelected) {
       Helper.showToastMessage('Please, Select Term & Condition', 0);
       return false;
     }
+
 
     if (checkData && this.state.isTermSelected) {
       this.setState({ loading: true });
@@ -187,7 +207,7 @@ export default class Samadhan extends React.Component {
                 keyboardType={'email-address'}
               />
 
-              <View style={styles.radiocont}>
+              {/* <View style={styles.radiocont}>
                 <Title style={styles.bbstyle}>{`Policy Type *`}</Title>
 
                 <RadioButton.Group
@@ -264,9 +284,78 @@ export default class Samadhan extends React.Component {
                     </View>
                   </View>
                 </RadioButton.Group>
-              </View>
+              </View> */}
 
-              {this.state.showCompType ? (
+              <NewDropDown
+                list={policyList}
+                placeholder={'Policy Type *'}
+                selectedItem={value => {
+                  let clist = [];
+                  if (value === `Health Insurance`) {
+                    clist = [
+                      { value: `Claim is rejected` },
+                      { value: `Claim is delayed` },
+                      { value: `Policy is cancelled` },
+                      { value: `No response on the claim status` },
+                      { value: `Group insurance claim` },
+                      { value: `Other` },
+                    ];
+                  } else if (value === `Life Insurance`) {
+                    clist = [
+                      { value: `Death claim rejected` },
+                      { value: `Death claim delayed` },
+                      { value: `Maturity claim not paid` },
+                      { value: `Moneyback not paid` },
+                      { value: `Misselling and Fraud sales` },
+                      { value: `Policy Bond not received` },
+                      { value: `Free Look claim not received` },
+                      { value: `Other` },
+                    ];
+                  } else if (value === `General Insurance`) {
+                    clist = [
+                      { value: `Motor Insurance claim` },
+                      { value: `Travel Insurance claim` },
+                      { value: `Fidelity claim` },
+                      { value: `Commercial claim` },
+                      { value: `Property claim` },
+                      { value: `Other` },
+                    ];
+                  }
+                  this.setState({
+                    policy_type: value,
+                    showCompType: true,
+                    compTypeList: clist,
+                  });
+                }}
+                style={{
+                  borderRadius: 0,
+                  borderBottomColor: '#f2f1e6',
+                  borderBottomWidth: 1.3,
+                  borderWidth: 0,
+                  marginStart: 10,
+                  marginEnd: 10,
+                  paddingVertical: 10,
+                }}
+                textStyle={styles.bbstyle}
+              />
+
+              <NewDropDown
+                list={this.state.compTypeList}
+                placeholder={'Complain Type *'}
+                selectedItem={value => this.setState({ complaint_type: value })}
+                style={{
+                  borderRadius: 0,
+                  borderBottomColor: '#f2f1e6',
+                  borderBottomWidth: 1.3,
+                  borderWidth: 0,
+                  marginStart: 10,
+                  marginEnd: 10,
+                  paddingVertical: 10,
+                }}
+                textStyle={styles.bbstyle}
+              />
+
+              {/* {this.state.showCompType ? (
                 <View style={styles.radiocont}>
                   <Title style={styles.bbstyle}>{`Complaint Type *`}</Title>
 
@@ -295,7 +384,7 @@ export default class Samadhan extends React.Component {
                     </View>
                   </RadioButton.Group>
                 </View>
-              ) : null}
+              ) : null} */}
 
               <View styleName="horizontal" style={styles.copy}>
                 <Checkbox.Android
@@ -688,7 +777,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   bbstyle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
     color: '#6d6a57',
     lineHeight: 20,

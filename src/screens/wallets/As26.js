@@ -78,7 +78,7 @@ export default class As26 extends React.PureComponent {
       cloneList: [],
       modalvis: false,
       pdfurl: '',
-      itemSize: 6,
+      itemSize: 5,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -154,7 +154,7 @@ export default class As26 extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length > 6 ? 6 : sort.length,
+              itemSize: sort.length >= 5 ? 5 : sort.length,
             });
           } else {
             this.setState({ loading: false });
@@ -178,7 +178,7 @@ export default class As26 extends React.PureComponent {
     //let parse = value.replace('home/erevbiig/public_html/', '');
     //const finalUrl = `${Pref.MainUrl}/${parse}`;
     //console.log('finalUrl', value)
-    this.setState({ modalvis: true, pdfurl:value });
+    this.setState({ modalvis: true, pdfurl: value });
   };
 
   /**
@@ -231,7 +231,7 @@ export default class As26 extends React.PureComponent {
     let plus = itemSize;
     let slicedArray = [];
     if (mode) {
-      plus += 6;
+      plus += 5;
       if (itemSize < clone.length) {
         if (plus > clone.length) {
           const rem = clone.length - itemSize;
@@ -241,14 +241,16 @@ export default class As26 extends React.PureComponent {
         this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
-      if (itemSize <= 6) {
+      if (itemSize <= 5) {
         plus = 0;
       } else {
-        plus -= 6;
+        plus -= 5;
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
-        this.setState({ dataList: slicedArray, itemSize: plus });
+        if (slicedArray.length > 0) {
+          this.setState({ dataList: slicedArray, itemSize: plus });
+        }
       }
     }
   };

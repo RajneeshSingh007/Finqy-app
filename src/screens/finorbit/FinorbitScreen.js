@@ -15,7 +15,7 @@ export default class FinorbitScreen extends React.PureComponent {
     super(props);
     this.backClick = this.backClick.bind(this);
     this.state = {
-      dataList: [],
+      dataList: Pref.productList,
       loading: false,
       selectedText: '',
     };
@@ -23,18 +23,18 @@ export default class FinorbitScreen extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const { navigation } = this.props;
-    this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true });
-    });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      const productList = JSON.parse(JSON.stringify(Pref.productList));
-      // productList.push({
-      //   name: 'Insure Check',
-      // })
+    // const { navigation } = this.props;
+    // this.willfocusListener = navigation.addListener('willFocus', () => {
+    //   this.setState({ loading: true });
+    // });
+    // this.focusListener = navigation.addListener('didFocus', () => {
+    //   const productList = JSON.parse(JSON.stringify(Pref.productList));
+    //   // productList.push({
+    //   //   name: 'Insure Check',
+    //   // })
 
-      this.setState({ loading: false, dataList: productList });
-    });
+    //   this.setState({ loading: false, dataList: productList });
+    // });
   }
 
   componentWillUnMount() {
@@ -54,7 +54,17 @@ export default class FinorbitScreen extends React.PureComponent {
       <View style={styles.mainconx}>
         <View style={styles.dummy} />
         <TouchableWithoutFeedback
-          onPress={() => this.setState({ selectedText: title })}>
+          onPress={() => {
+            // if (title === 'Credit Card') {
+            //   const parseItem = {
+            //     name: 'Credit Card',
+            //     url: '',
+            //   };
+            //   NavigationActions.navigate('FinorbitForm', parseItem);
+            // } else {
+              this.setState({ selectedText: title })
+            //}
+          }}>
           <View
             styleName="v-center h-center horizontal"
             style={styles.itemcont}>
@@ -123,7 +133,7 @@ export default class FinorbitScreen extends React.PureComponent {
     const clone = JSON.parse(JSON.stringify(dataList));
     let filter = Lodash.filter(clone, (io) => {
       if (selectedText.includes('Insurance')) {
-        return io.name.includes(selectedText) || io.name.includes('Vector') || io.name.includes('Policy') || io.name.includes('Sabse') || io.name.includes('Insure Check')
+        return io.name.includes(selectedText) || io.name.includes('Policy') || io.name.includes('Sabse') || io.name.includes('Insure Check') || io.name.includes('Vector')
       } else {
         return io.name.includes(selectedText);
       }

@@ -33,7 +33,7 @@ const Download = (prop) => {
           ])}>
           {showLeft === true ? (
             <IconChooser
-              name={'whatsapp'}
+              name={'share'}
               size={24}
               color={'white'}
               style={styles.icon}

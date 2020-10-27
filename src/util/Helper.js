@@ -6,7 +6,7 @@ import { showMessage, hideMessage } from 'react-native-flash-message';
 import * as Pref from './Pref';
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
-import reactNativePushAndroid from 'react-native-push-android';
+import Lodash from 'lodash';
 
 /**
  *
@@ -401,7 +401,7 @@ export const showToastMessage = (message, type = 0) => {
           : type === 2
             ? 'info'
             : 'default',
-            duration:10000
+    duration: 10000
   });
 };
 
@@ -682,3 +682,29 @@ export const dateObj = (dt, delimeter) => {
     return new Date();
   }
 };
+
+/*
+*/
+export const emailCheck = (mail) => {
+  if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+export const inWords = (value) => {
+  var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+  var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+  const n = ('000000000' + value).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return ''; var str = '';
+  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+  str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only ' : '';
+  return Lodash.startCase(str);
+}
+
+

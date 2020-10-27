@@ -131,15 +131,14 @@ export default class LoginScreen extends React.PureComponent {
                 } else {
                   Pref.setVal(Pref.USERTYPE, type);
                   const { id, refercode } = data[0];
-                  let certPath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Certificate_${refercode}.pdf`;
-                  let agreePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Agreement_${refercode}.pdf`;
+                  let certPath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyCertificate.pdf`;
+                  let agreePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyAgreement.pdf`;
                   this.downloadFile(certPath, () => {
                     const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
-                    Helper.downloadFileWithFileName(cert, `Certificate_${refercode}`, `Certificate_${refercode}.pdf`, 'application/pdf', false);
+                    Helper.downloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
                   })
                   this.downloadFile(agreePath, () => {
-                    Helper.downloadFileWithFileName(`${Pref.AgreeUrl}`, `Agreement_${refercode}`, `Agreement_${refercode}.pdf`, 'application/pdf', false);
-
+                    Helper.downloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
                   });
                   Pref.setVal(Pref.userID, id);
                   Pref.setVal(Pref.userData, data[0]);

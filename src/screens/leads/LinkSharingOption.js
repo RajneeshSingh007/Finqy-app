@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   StyleSheet,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   Image,
@@ -14,12 +13,11 @@ import {
   Button,
 } from 'react-native-paper';
 import { sizeWidth } from '../../util/Size';
-import Icon from 'react-native-vector-icons/Feather';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Share from 'react-native-share';
-import DropDown from '../common/CommonDropDown';
 import CScreen from '../component/CScreen';
 import Lodash from 'lodash';
+import NewDropDown from '../component/NewDropDown';
 
 export default class LinkSharingOption extends React.PureComponent {
   constructor(props) {
@@ -35,23 +33,24 @@ export default class LinkSharingOption extends React.PureComponent {
       dataList: [],
       showProduct: true,
       productList: [
-        {value: 'Auto Loan',url: `${Pref.FinURL}alform.php`},
+        { value: 'Auto Loan', url: `${Pref.FinURL}alform.php` },
         { value: 'Business Loan', url: `${Pref.FinURL}blform.php` },
-        { value: 'Credit Card',url: `${Pref.FinURL}ccf.php` },
-        { value: 'Fixed Deposit',url: `${Pref.FinURL}fd.php` },
-        { value: 'Home Loan',url: `${Pref.FinURL}hlform.php` },
-        { value: 'Health Insurance',url: `${Pref.FinURL}hiform.php` },
-        { value: 'Insurance Samadhan',url: `${Pref.FinURL}isform.php` },
-        { value: 'Insure Check',url: `${Pref.FinURL}ic.php` },
-        { value: 'Loan Against Property',url: `${Pref.FinURL}lapform.php` },
-        { value: 'Life Cum Investment',url: `${Pref.FinURL}lci.php` },
-        { value: 'Motor Insurance',url: `${Pref.FinURL}mi.php` },
-        { value: 'Mutual Fund',url: `${Pref.FinURL}mfform.php` },
-        { value: 'Personal Loan',url: `${Pref.FinURL}plform.php` },
-        { value: 'Term Insurance',url: `${Pref.FinURL}tiform.php` },
-        { value: 'Hello Doctor Policy',url: `${Pref.FinURL}hp.php` },
-        { value: 'Asaan Health Policy',url: `${Pref.FinURL}shp.php` },
-        { value: 'Sabse Asaan Health Plan',url: `${Pref.FinURL}sahp.php` },
+        { value: 'Credit Card', url: `${Pref.FinURL}ccf.php` },
+        { value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php` },
+        { value: 'Home Loan', url: `${Pref.FinURL}hlform.php` },
+        { value: 'Health Insurance', url: `${Pref.FinURL}hiform.php` },
+        { value: 'Insurance Samadhan', url: `${Pref.FinURL}isform.php` },
+        { value: 'Insure Check', url: `${Pref.FinURL}ic.php` },
+        { value: 'Loan Against Property', url: `${Pref.FinURL}lapform.php` },
+        { value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php` },
+        { value: 'Motor Insurance', url: `${Pref.FinURL}mi.php` },
+        { value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php` },
+        { value: 'Personal Loan', url: `${Pref.FinURL}plform.php` },
+        { value: 'Term Insurance', url: `${Pref.FinURL}tiform.php` },
+        { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
+        { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
+        { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
+        { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
       ],
       productName: '',
     };
@@ -65,29 +64,11 @@ export default class LinkSharingOption extends React.PureComponent {
 
   shareApp = (value) => {
     const userData = this.state.userData;
-    const { rcontact, rname,refercode } = userData;
-    //const { refercode } = this.state.userData;
-    //https://play.google.com/store/apps/details?id=com.erb
-    // let fix = '';
-    // if (value.includes(' ')) {
-    //   const sp = value.toString().split(` `);
-    //   fix = sp[0];
-    // } else {
-    //   fix = value;
-    // }
-    // const url = ``;
-    // //const finalUrl = '';
-    // let finalUrl = `http://erb.ai/erbfinorbit/index.php?type=${fix}&ref=${refercode}`;
-    // if (fix === 'Hello') {
-    //   finalUrl = `https://www.erb.ai/erbfinorbit/hd.php`;
-    // } else if (fix === 'Asaan') {
-    //   finalUrl = `https://www.erb.ai/erbfinorbit/ahp.php`;
-    // } else if (fix === 'Sabse') {
-    //   finalUrl = `https://www.erb.ai/erbfinorbit/sahp.php`;
-    // }
+    const { rcontact, rname, refercode } = userData;
     const url = ``;
     const title = 'ERB Referral';
     const finalUrl = `${value}?ref=${refercode}`
+    console.log('finalUrl', finalUrl)
     const message = `Greetings!!\n\nPlease find the below product your looking for\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${rcontact}.\n\nYours Sincerely\n${rname}`
     const options = Platform.select({
       ios: {
@@ -122,7 +103,7 @@ export default class LinkSharingOption extends React.PureComponent {
   };
 
   shareBtn = () => {
-    const { productName,productList } = this.state;
+    const { productName, productList } = this.state;
     if (productName === '') {
       Helper.showToastMessage('Please, Select product', 2);
       return false;
@@ -133,7 +114,6 @@ export default class LinkSharingOption extends React.PureComponent {
   };
 
   render() {
-    const { productName } = this.state;
     return (
       <CScreen
         body={
@@ -168,47 +148,17 @@ export default class LinkSharingOption extends React.PureComponent {
                   }}>
                   {`Select Product`}
                 </Title>
-                <View style={styles.selectCont}>
-                  <TouchableWithoutFeedback
-                    onPress={() =>
-                      this.setState({
-                        showProduct: !this.state.showProduct,
-                      })
-                    }>
-                    <View style={styles.boxstyle}>
-                      <Title
-                        style={StyleSheet.flatten([
-                          styles.passText,
-                          {
-                            fontSize: 16,
-                            color: '#555555',
-                          },
-                        ])}>
-                        {productName}
-                      </Title>
-                      <Icon
-                        name={'chevron-down'}
-                        size={24}
-                        color={'#292929'}
-                        style={{
-                          padding: 4,
-                          alignSelf: 'center',
-                        }}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                  {this.state.showProduct ? (
-                    <DropDown
-                      itemCallback={(value) =>
-                        this.setState({ productName: value, showProduct: false })
-                      }
-                      list={this.state.productList}
-                      isCityList={false}
-                      enableSearch={false}
-                      autoFocus={false}
-                    />
-                  ) : null}
-                </View>
+                <NewDropDown
+                  list={this.state.productList}
+                  placeholder={''}
+                  selectedItem={(value) => this.setState({ productName: value })}
+                  style={{
+                    borderRadius: 0,
+                    borderBottomColor: Pref.RED,
+                    borderBottomWidth: 1.5,
+                    borderWidth: 0
+                  }} />
+
               </View>
 
               <View styleName="horizontal v-start h-start md-gutter">

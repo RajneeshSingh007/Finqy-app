@@ -140,36 +140,36 @@ export default class HomeScreen extends React.PureComponent {
       this.setState({ loading: false });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, (value) => {
-      if (value === undefined || value === null) {
-        const body = JSON.stringify({
-          username: `ERBFinPro`,
-          product: `FinPro App`,
-        });
-        Helper.networkHelper(
-          Pref.GetToken,
-          body,
-          Pref.methodPost,
-          (result) => {
-            const { data, response_header } = result;
-            const { res_type } = response_header;
-            if (res_type === `success`) {
-              this.setState({ token: Helper.removeQuotes(data) });
-              Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
-              const { refercode } = this.state.userData;
-              this.fetchDashboard(Helper.removeQuotes(data), refercode);
+      Pref.getVal(Pref.saveToken, (value) => {
+        if (value === undefined || value === null) {
+          const body = JSON.stringify({
+            username: `ERBFinPro`,
+            product: `FinPro App`,
+          });
+          Helper.networkHelper(
+            Pref.GetToken,
+            body,
+            Pref.methodPost,
+            (result) => {
+              const { data, response_header } = result;
+              const { res_type } = response_header;
+              if (res_type === `success`) {
+                this.setState({ token: Helper.removeQuotes(data) });
+                Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
+                const { refercode } = this.state.userData;
+                this.fetchDashboard(Helper.removeQuotes(data), refercode);
+              }
+            },
+            (error) => {
+              console.log(`error`, error)
             }
-          },
-          (error) => {
-            console.log(`error`, error)
-          }
-        );
-      } else {
-        this.setState({ token: value });
-        const { refercode } = this.state.userData;
-        this.fetchDashboard(value, refercode);
-      }
-    });
+          );
+        } else {
+          this.setState({ token: value });
+          const { refercode } = this.state.userData;
+          this.fetchDashboard(value, refercode);
+        }
+      });
     });
   }
 
@@ -282,11 +282,11 @@ export default class HomeScreen extends React.PureComponent {
         colorx = '#decf89'
       } else if (name === 'Credit Card') {
         y = leadData.total_credit_card_lead;
-      }else if (name === 'Vector Plus') {
+      } else if (name === 'Vector Plus') {
         y = leadData.religare;
         colorx = '#f78282';
         x = 'Religare'
-      }  else if (name === `Hello Doctor Policy`) {
+      } else if (name === `Hello Doctor Policy`) {
         y = leadData.aditya_birla_doc;
         x = 'Aditya Birla DOC';
         colorx = '#e89898';
@@ -294,11 +294,11 @@ export default class HomeScreen extends React.PureComponent {
         y = leadData.aditya_birla_cio;
         colorx = '#f19f9f';
         x = 'Aditya Birla CIO';
-      }else if (name === 'Asaan Health Policy') {
+      } else if (name === 'Asaan Health Policy') {
         y = leadData.aditya_birla_ci;
         colorx = '#ea9a9a';
         x = 'Aditya Birla CI';
-      } 
+      }
       mapBarData.push({ x: x, y: y, color: colorx });
       //if (y > 0) {
       mapPieData.push({
@@ -705,7 +705,7 @@ export default class HomeScreen extends React.PureComponent {
                 profilePic={profilePic}
               />
 
-              {this.state.enableFilter === false ? (
+              {/* {this.state.enableFilter === false ? ( */}
                 <View styleName="horizontal md-gutter v-center h-center">
                   <View styleName="vertical v-center h-center">
                     <View styleName="horizontal">
@@ -715,7 +715,7 @@ export default class HomeScreen extends React.PureComponent {
                           {
                             color: "#6e6e6e",
                             fontSize: 16,
-                            fontWeight: "400",
+                            fontWeight: "700",
                             marginStart: 16,
                           },
                         ])}
@@ -810,7 +810,7 @@ export default class HomeScreen extends React.PureComponent {
                     ) : null}
                   </View>
                 </View>
-              ) : (
+              {/* ) : (
                   <View styleName='vertical space-between'>
                     <Title
                       style={StyleSheet.flatten([
@@ -840,7 +840,7 @@ export default class HomeScreen extends React.PureComponent {
                       </View>
                     </TouchableWithoutFeedback>
                   </View>
-                )}
+                )} */}
               <View
                 styleName="md-gutter vertical v-center h-center"
                 style={styles.leadercont}

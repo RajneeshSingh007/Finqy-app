@@ -29,17 +29,7 @@ import Lodash from 'lodash';
 import IntroHeader from '../intro/IntroHeader';
 import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
+import NewDropDown from '../component/NewDropDown';
 
 export default class RegisterScreen extends React.PureComponent {
   constructor(props) {
@@ -154,7 +144,7 @@ export default class RegisterScreen extends React.PureComponent {
     ) {
       checkData = false;
       Helper.showToastMessage('Location empty', 0);
-    } else if (!this.state.email.includes('@')) {
+    } else if (Helper.emailCheck(this.state.email) === false) {
       checkData = false;
       Helper.showToastMessage('Invalid email', 0);
     } else if (

@@ -1,10 +1,11 @@
 import React from 'react';
-import {StyleSheet, Animated} from 'react-native';
-import {sizeWidth, sizeHeight} from '../../util/Size';
-import {Dimensions, TouchableWithoutFeedback, TextInput} from 'react-native';
-import {View, Caption} from '@shoutem/ui';
+import { StyleSheet, Animated } from 'react-native';
+import { sizeWidth, sizeHeight } from '../../util/Size';
+import { Dimensions, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { View, Caption, Title } from '@shoutem/ui';
 import * as Pref from '../../util/Pref';
 import IconChooser from '../common/IconChooser';
+import * as Helper from '../../util/Helper';
 
 const height = Dimensions.get('window').height;
 
@@ -22,11 +23,11 @@ export default class AnimatedInputBox extends React.PureComponent {
   }
 
   handleFocus = () => {
-    this.setState({isFocused: true});
+    this.setState({ isFocused: true });
     this.animate();
   };
   handleBlur = () => {
-    this.setState({isFocused: false});
+    this.setState({ isFocused: false });
     this.animate();
   };
 
@@ -49,8 +50,8 @@ export default class AnimatedInputBox extends React.PureComponent {
   render() {
     const {
       value = '',
-      onChangeText = () => {},
-      leftTextClick = () => {},
+      onChangeText = () => { },
+      leftTextClick = () => { },
       placeholder,
       leftText = false,
       leftTextStyle,
@@ -74,11 +75,13 @@ export default class AnimatedInputBox extends React.PureComponent {
       changecolor = false,
       placefont = 14,
       boldinputText = false,
+      enableWords = false,
       ...prop
     } = this.props;
     const contentExists = String(value).trim().length > 0 ? true : false;
-    const {isFocused} = this.state;
+    const { isFocused } = this.state;
     return (
+      <>
       <View
         styleName="sm-gutter"
         style={StyleSheet.flatten([
@@ -126,7 +129,7 @@ export default class AnimatedInputBox extends React.PureComponent {
             },
           ])}>
           {showLeftIcon === true ? (
-            <View style={{flex: 0.1}}>
+            <View style={{ flex: 0.1 }}>
               <IconChooser
                 name={rightIconName}
                 size={rightIconSize}
@@ -142,7 +145,7 @@ export default class AnimatedInputBox extends React.PureComponent {
             style={StyleSheet.flatten([
               styles.input,
               {
-                flex: 1,
+                //flex: 4,
                 marginTop: !isFocused ? 10 : 24,
                 marginBottom: isFocused ? 10 : 0,
                 fontWeight: boldinputText ? '700' : '400',
@@ -157,27 +160,41 @@ export default class AnimatedInputBox extends React.PureComponent {
           />
           {leftText === true ? (
             <TouchableWithoutFeedback onPress={leftTextClick}>
-              <View style={{flex: leftTextFlex}}>
+              <View style={{ flex: leftTextFlex }}>
                 <Caption style={leftTextStyle}>{`${leftTextContent}`}</Caption>
               </View>
             </TouchableWithoutFeedback>
           ) : (
-            <View style={{flex: 0.1}}>
-              {showRightIcon ? (
-                <TouchableWithoutFeedback onPress={leftTextClick}>
-                  <View>
-                    <IconChooser
-                      name={leftIconName}
-                      size={leftIconSize}
-                      color={leftIconColor}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-              ) : null}
-            </View>
-          )}
+              <View style={{ flex: 0.1 }}>
+                {showRightIcon ? (
+                  <TouchableWithoutFeedback onPress={leftTextClick}>
+                    <View>
+                      <IconChooser
+                        name={leftIconName}
+                        size={leftIconSize}
+                        color={leftIconColor}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                ) : null}
+              </View>
+            )}
         </View>
       </View>
+      {enableWords === true && value !== '' ? 
+      <View style={{
+        marginStart:16,
+        marginTop:-8
+      }}>
+                <Title style={{
+          fontSize: 13,
+          color:'#555',
+          //fontWeight:'700',
+                            fontFamily: Pref.getFontName(5),
+        }}>{Helper.inWords(value)}</Title>
+      </View>
+      : null}
+      </>
     );
   }
 }
@@ -207,14 +224,14 @@ const styles = StyleSheet.create({
     marginStart: 4,
     marginTop: 12,
   },
-  inh: {marginHorizontal: sizeWidth(5), flex: 1},
+  inh: { marginHorizontal: sizeWidth(5), flex: 1 },
   apptitle: {
     color: Pref.PRIMARY_COLOR,
     fontSize: 20,
     letterSpacing: 0.1,
     fontWeight: '700',
   },
-  logintext: {letterSpacing: 0.5, fontSize: 18, color: 'white'},
+  logintext: { letterSpacing: 0.5, fontSize: 18, color: 'white' },
   buttonlogin: {
     backgroundColor: Pref.PRIMARY_COLOR,
     height: 48,
@@ -224,9 +241,15 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 56,
-    flex: 0.8,
+    //flex: 0.8,
     color: 'black',
     letterSpacing: 0.5,
+    width: '100%',
+    //alignSelf : 'flex-start',
+    //alignContent:'flex-start',
+    //justifyContent:'flex-start',
+    textAlign: 'left',
+    //flexGrow:1
   },
   input1: {
     marginTop: sizeHeight(2.5),
@@ -237,8 +260,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: 'black',
   },
-  topcontainer: {flex: 0.15, backgroundColor: Pref.PRIMARY_COLOR},
-  logincontainer: {flex: 0.85, backgroundColor: Pref.PRIMARY_COLOR},
+  topcontainer: { flex: 0.15, backgroundColor: Pref.PRIMARY_COLOR },
+  logincontainer: { flex: 0.85, backgroundColor: Pref.PRIMARY_COLOR },
   insidelogincontainer: {
     flex: 1,
     backgroundColor: Pref.WHITE_COLOR,
@@ -252,5 +275,5 @@ const styles = StyleSheet.create({
     borderStartWidth: 1,
     borderColor: '#f1f3f7',
   },
-  container: {flex: 1},
+  container: { flex: 1 },
 });

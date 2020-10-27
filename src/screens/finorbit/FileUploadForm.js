@@ -129,7 +129,8 @@ export default class FileUploadForm extends React.PureComponent {
                 name.includes('jpg')
               ) {
                 //console.log(`res`, res);
-                this.state.fileList.push({ pancard: res });
+                this.state.fileList.push({ pancard: res});
+                //this.state.fileList.push({ pan_image: res});
               } else {
                 Helper.showToastMessage('Please, select Pdf or Image', 0);
               }
