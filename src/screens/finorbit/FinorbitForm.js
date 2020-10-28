@@ -10,13 +10,13 @@ import * as Helper from "../../util/Helper";
 import * as Pref from "../../util/Pref";
 import {
   Button,
+  ActivityIndicator
 } from "react-native-paper";
 import NavigationActions from "../../util/NavigationActions";
 import { sizeHeight, sizeWidth } from "../../util/Size";
 import CommonForm from "./CommonForm";
 import SpecificForm from "./SpecificForm";
 import FileUploadForm from "./FileUploadForm";
-//import StepIndicator from 'react-native-step-indicator';
 import ApptForm from "./ApptForm";
 import Lodash from "lodash";
 import Loader from "../../util/Loader";
@@ -24,30 +24,6 @@ import LeftHeaders from "../common/CommonLeftHeader";
 import CScreen from "../component/CScreen";
 import StepIndicator from "../component/StepIndicator";
 import { firstFormCheck } from "../../util/FormCheckHelper";
-
-// const customStyles = {
-//   stepIndicatorSize: 25,
-//   currentStepIndicatorSize: 30,
-//   separatorStrokeWidth: 2,
-//   currentStepStrokeWidth: 3,
-//   stepStrokeCurrentColor: Pref.RED,
-//   stepStrokeWidth: 3,
-//   stepStrokeFinishedColor: Pref.RED,
-//   stepStrokeUnFinishedColor: Colors.grey300,
-//   separatorFinishedColor: '#02c26a',
-//   separatorUnFinishedColor: Colors.grey300,
-//   stepIndicatorFinishedColor: Pref.RED,
-//   stepIndicatorUnFinishedColor: Pref.WHITE,
-//   stepIndicatorCurrentColor: Pref.WHITE,
-//   stepIndicatorLabelFontSize: 13,
-//   currentStepIndicatorLabelFontSize: 13,
-//   stepIndicatorLabelCurrentColor: Pref.RED,
-//   stepIndicatorLabelFinishedColor: Pref.WHITE,
-//   stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-//   labelColor: '#292929',
-//   labelSize: 12,
-//   currentStepLabelColor: Pref.RED,
-// };
 
 export default class FinorbitForm extends React.PureComponent {
   constructor(props) {
@@ -91,7 +67,7 @@ export default class FinorbitForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition:0,
+              currentPosition: 0,
             });
           });
         });
@@ -728,7 +704,7 @@ export default class FinorbitForm extends React.PureComponent {
           existence = "rcbookcopy";
         }
         //console.log('existence', existence)
-        if(this.state.currentPosition === 2){
+        if (this.state.currentPosition === 2) {
           if (title === `Motor Insurance`) {
             if (existence === 'rcbookcopy') {
               checkData = false;
@@ -881,45 +857,49 @@ export default class FinorbitForm extends React.PureComponent {
         }
         body={
           <>
-            <LeftHeaders
-              showBack
-              title={
-                // split.length === 2
-                //   ? `${split[0]} ${split[1]}`
-                //   : split.length === 3
-                //     ? `${split[0]} ${split[1]} ${split[2]}`
-                //     : split.length === 4
-                //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
-                //       : split[0]
-                `Add New Lead`
-              }
-              bottomtext={
-                <>
-                  {`${split[0]} `}
-                  {split.length === 2 ? (
-                    <Title style={styles.passText}>{`${split[1]}`}</Title>
-                  ) : split.length === 3 ? (
-                    <Title
-                      style={styles.passText}
-                    >{`${split[1]} ${split[2]}`}</Title>
-                  ) : split.length === 4 ? (
-                    <Title
-                      style={styles.passText}
-                    >{`${split[1]} ${split[2]} ${split[3]}`}</Title>
-                  ) : null}
-                </>
-              }
-              bottomtextStyle={{
-                color: "#555555",
-                fontSize: 20,
-              }}
-            />
-            <StepIndicator
-              activeCounter={this.state.currentPosition}
-              stepCount={this.state.title === 'Insure Check' ? 2 : 4}
-            />
+          <LeftHeaders
+                  showBack
+                  title={
+                    // split.length === 2
+                    //   ? `${split[0]} ${split[1]}`
+                    //   : split.length === 3
+                    //     ? `${split[0]} ${split[1]} ${split[2]}`
+                    //     : split.length === 4
+                    //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
+                    //       : split[0]
+                    `Add New Lead`
+                  }
+                  bottomtext={
+                    <>
+                      {`${split[0]} `}
+                      {split.length === 2 ? (
+                        <Title style={styles.passText}>{`${split[1]}`}</Title>
+                      ) : split.length === 3 ? (
+                        <Title
+                          style={styles.passText}
+                        >{`${split[1]} ${split[2]}`}</Title>
+                      ) : split.length === 4 ? (
+                        <Title
+                          style={styles.passText}
+                        >{`${split[1]} ${split[2]} ${split[3]}`}</Title>
+                      ) : null}
+                    </>
+                  }
+                  bottomtextStyle={{
+                    color: "#555555",
+                    fontSize: 20,
+                  }}
+                />
+                <StepIndicator
+                  activeCounter={this.state.currentPosition}
+                  stepCount={this.state.title === 'Insure Check' ? 2 : 4}
+                />
+            {title == '' ? <View style={styles.loader}>
+              <ActivityIndicator />
+            </View> : <>
+              
 
-            {/* <StepIndicator
+                {/* <StepIndicator
                 customStyles={customStyles}
                 //labels={['Personal', 'Corporate', 'Upload', 'Submit']}
                 currentPosition={this.state.currentPosition}
@@ -929,69 +909,70 @@ export default class FinorbitForm extends React.PureComponent {
                 stepCount={2}
               /> */}
 
-            <View styleName="md-gutter">
-              {this.state.currentPosition === 0 ? (
-                <CommonForm
-                  ref={this.commonFormRef}
-                  showemploy={
-                    this.state.title !== "Fixed Deposit" &&
-                    this.state.title !== "Vector Plus" &&
-                    this.state.title !== "Business Loan" &&
-                    this.state.title !== "Mutual Fund" &&
-                    this.state.title !== "Motor Insurance" &&
-                    this.state.title !== 'Life Cum Invt. Plan' &&
-                    this.state.title !== 'Insure Check'
-                  }
-                  saveData={this.state.dataArray[0]}
-                  title={this.state.title}
-                />
-              ) : this.state.currentPosition === 1 ? (
-                <SpecificForm
-                  ref={this.specificFormRef}
-                  saveData={this.state.dataArray[1]}
-                  title={this.state.title}
-                />
-              ) : this.state.currentPosition === 2 ? (
-                <FileUploadForm
-                  ref={this.FileUploadFormRef}
-                  title={this.state.title}
-                  saveData={this.state.dataArray[2]}
-                />) : this.state.currentPosition === 3 ? (
-                  <ApptForm
-                    ref={this.ApptFormRef}
-                    title={this.state.title}
-                    saveData={this.state.dataArray[3]}
-                  />
-                ) : null}
-            </View>
+                <View styleName="md-gutter">
+                  {this.state.currentPosition === 0 ? (
+                    <CommonForm
+                      ref={this.commonFormRef}
+                      showemploy={
+                        this.state.title !== "Fixed Deposit" &&
+                        this.state.title !== "Vector Plus" &&
+                        this.state.title !== "Business Loan" &&
+                        this.state.title !== "Mutual Fund" &&
+                        this.state.title !== "Motor Insurance" &&
+                        this.state.title !== 'Life Cum Invt. Plan' &&
+                        this.state.title !== 'Insure Check'
+                      }
+                      saveData={this.state.dataArray[0]}
+                      title={this.state.title}
+                    />
+                  ) : this.state.currentPosition === 1 ? (
+                    <SpecificForm
+                      ref={this.specificFormRef}
+                      saveData={this.state.dataArray[1]}
+                      title={this.state.title}
+                    />
+                  ) : this.state.currentPosition === 2 ? (
+                    <FileUploadForm
+                      ref={this.FileUploadFormRef}
+                      title={this.state.title}
+                      saveData={this.state.dataArray[2]}
+                    />) : this.state.currentPosition === 3 ? (
+                      <ApptForm
+                        ref={this.ApptFormRef}
+                        title={this.state.title}
+                        saveData={this.state.dataArray[3]}
+                      />
+                    ) : null}
+                </View>
 
-            <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
-              {this.state.currentPosition > 0 ? <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={[styles.loginButtonStyle, {
-                  backgroundColor: 'transparent',
-                  borderColor: '#d5d3c1',
-                  borderWidth: 1.3,
-                }]}
-                onPress={this.backNav}>
-                <Title style={StyleSheet.flatten([styles.btntext, {
-                  color: '#b8b28f',
-                }])}>{'Back'}</Title>
-              </Button> : null}
-              <Button
-                mode={"flat"}
-                uppercase={false}
-                dark={true}
-                loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.submitt}
-              >
-                <Title style={styles.btntext}>{this.state.bottontext}</Title>
-              </Button>
-            </View>
+                <View styleName={this.state.currentPosition > 0 ? `horizontal space-between md-gutter` : `horizontal space-between md-gutter v-end h-end`}>
+                  {this.state.currentPosition > 0 ? <Button
+                    mode={'flat'}
+                    uppercase={true}
+                    dark={true}
+                    loading={false}
+                    style={[styles.loginButtonStyle, {
+                      backgroundColor: 'transparent',
+                      borderColor: '#d5d3c1',
+                      borderWidth: 1.3,
+                    }]}
+                    onPress={this.backNav}>
+                    <Title style={StyleSheet.flatten([styles.btntext, {
+                      color: '#b8b28f',
+                    }])}>{'Back'}</Title>
+                  </Button> : null}
+                  <Button
+                    mode={"flat"}
+                    uppercase={false}
+                    dark={true}
+                    loading={false}
+                    style={styles.loginButtonStyle}
+                    onPress={this.submitt}
+                  >
+                    <Title style={styles.btntext}>{this.state.bottontext}</Title>
+                  </Button>
+                </View>
+              </>}
           </>
         }
       />
@@ -1003,6 +984,14 @@ export default class FinorbitForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  loader: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 1,
+    marginVertical: 48,
+    paddingVertical: 48,
+  },
+
   passText: {
     fontSize: 20,
     letterSpacing: 0.5,

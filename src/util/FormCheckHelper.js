@@ -56,11 +56,11 @@ export const firstFormCheck = (title, commons) => {
     } else if (commons.pincode !== "" && commons.pincode < 6) {
         Helper.showToastMessage("Invalid Pincode", 0);
     } else if (
-        title !== `Personal Loan` &&
-        title !== `Home Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Business Loan` &&
-        title !== `Auto Loan` &&
+        // title !== `Personal Loan` &&
+        // title !== `Home Loan` &&
+        // title !== `Loan Against Property` &&
+        // title !== `Business Loan` &&
+        // title !== `Auto Loan` &&
         //title !== `Motor Insurance` &&
         //commons.currentlocation === ""
         commons.pincode !== '' && (commons.state === '' || commons.currentlocation === '')

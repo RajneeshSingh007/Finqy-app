@@ -1,14 +1,16 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {StyleSheet, Text, StatusBar} from 'react-native';
-import {Colors} from 'react-native-paper';
-import {Heading, Image, Screen, View, Subtitle, Title} from '@shoutem/ui';
+import { StyleSheet, Text, StatusBar } from 'react-native';
+import { Colors } from 'react-native-paper';
+import { Heading, Image, Screen, View, Subtitle, Title } from '@shoutem/ui';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import NavigationActions from '../../util/NavigationActions';
 import * as Pref from '../../util/Pref';
-import {sizeHeight, sizeWidth} from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import IntroHeader from './IntroHeader';
+import CodePush from "react-native-code-push";
+import Loader from '../../util/Loader';
 
 const slides = [
   {
@@ -41,13 +43,66 @@ const slides = [
 ];
 
 export default class IntroScreen extends React.PureComponent {
-  componentDidMount() {
+
+  constructor(props) {
+    super(props);
     changeNavigationBarColor('white', true, true);
     StatusBar.setBackgroundColor('white', false);
     StatusBar.setBarStyle('dark-content')
+    this.state = { restartAllowed: true, downloading: -1 };
+
+  }
+  componentDidMount() {
+    this.syncImmediate();
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
 
-  _renderItem = ({item, index}) => {
+
+
+  codePushStatusDidChange(syncStatus) {
+    //console.log('syncStatus', syncStatus)
+    switch (syncStatus) {
+      case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
+        this.setState({ downloading: -1 });
+        break;
+      case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
+        this.setState({ downloading: 1 });
+        break;
+      case CodePush.SyncStatus.AWAITING_USER_ACTION:
+        this.setState({ downloading: 1 });
+        break;
+      case CodePush.SyncStatus.INSTALLING_UPDATE:
+        this.setState({ downloading: 1 });
+        break;
+      case CodePush.SyncStatus.UP_TO_DATE:
+        this.setState({ downloading: -1 });
+        break;
+      case CodePush.SyncStatus.UPDATE_IGNORED:
+        this.setState({ downloading: -1 });
+        break;
+      case CodePush.SyncStatus.UPDATE_INSTALLED:
+        this.setState({ downloading: 2 });
+        break;
+    }
+  }
+
+  codePushDownloadDidProgress() {
+  }
+
+  syncImmediate() {
+    CodePush.sync(
+      { installMode: CodePush.InstallMode.IMMEDIATE, updateDialog: true },
+      this.codePushStatusDidChange.bind(this),
+      this.codePushDownloadDidProgress.bind(this)
+    );
+  }
+
+  codepushDialog = () => {
+    const { downloading } = this.state;
+    return <Loader isShow={downloading === 1 ? true : false} />
+  }
+
+  _renderItem = ({ item, index }) => {
     return (
       <View style={styles.slide}>
         <View
@@ -89,11 +144,11 @@ export default class IntroScreen extends React.PureComponent {
             style={{
               flex: 0.5,
               resizeMode: 'contain',
-              justifyContent:'center',
-              alignSelf:'center'
+              justifyContent: 'center',
+              alignSelf: 'center'
             }}
           />
-          <View style={{flex: 0.1}}></View>
+          <View style={{ flex: 0.1 }}></View>
         </View>
       </View>
     );
@@ -126,7 +181,7 @@ export default class IntroScreen extends React.PureComponent {
     return (
       <Screen style={styles.mainContainer}>
         <IntroHeader iconClick={() => NavigationActions.navigate('Login')} />
-        <View style={{flex: 0.87}}>
+        <View style={{ flex: 0.87 }}>
           <AppIntroSlider
             data={slides}
             renderItem={this._renderItem}
@@ -145,6 +200,7 @@ export default class IntroScreen extends React.PureComponent {
             }}
           />
         </View>
+        {this.codepushDialog()}
       </Screen>
     );
   }

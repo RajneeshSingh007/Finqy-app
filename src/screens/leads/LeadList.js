@@ -1,57 +1,29 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
-  Alert,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
   Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
   Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Portal,
-  Avatar,
   ActivityIndicator,
   Searchbar,
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
 import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../common/IconChooser';
-import moment from 'moment';
 import Pdf from 'react-native-pdf';
 import Modal from '../../util/Modal';
 import Share from 'react-native-share';
@@ -155,7 +127,7 @@ export default class LeadList extends React.PureComponent {
     //referral
     this.setState({loading: true});
     const {type} = this.state;
-    const {refercode, id, username} = this.state.userData;
+    const {refercode, username} = this.state.userData;
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
       team_user: username,
@@ -168,7 +140,7 @@ export default class LeadList extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, response_header} = result;
-        const {res_type, message} = response_header;
+        const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
@@ -200,7 +172,7 @@ export default class LeadList extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      (error) => {
+      (e) => {
         this.setState({loading: false});
       },
     );
@@ -303,7 +275,7 @@ export default class LeadList extends React.PureComponent {
               </View>
             );
             rowData.push(shareView(sharewhatsapp, sharemail));
-            const policyView = (value, mail) => (
+            const policyView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -334,7 +306,7 @@ export default class LeadList extends React.PureComponent {
     return dataList;
   };
 
-  cifClick = (value, titlex) => {
+  cifClick = (value) => {
     const sp = value.split('@');
     const url = ``;
     const title = 'FinPro';
@@ -381,7 +353,7 @@ export default class LeadList extends React.PureComponent {
       (result) => {
         console.log(`result`, result);
       },
-      (error) => {},
+      () => {},
     );
   };
 
@@ -435,7 +407,7 @@ export default class LeadList extends React.PureComponent {
           quotemail: '',
         });
       },
-      (error) => {
+      () => {
         alert(`Failed to send mail`);
         this.setState({quotemodalVis: false, quotemailData: '', quotemail: ''});
       },
