@@ -132,6 +132,8 @@ export default class ProfileScreen extends React.PureComponent {
         userData.office_add,
         '',
         userData.gst_no,
+        userData.city || '',
+        userData.state || ''
       );
     }
     this.restoreList[0] = userData;

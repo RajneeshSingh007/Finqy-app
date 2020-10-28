@@ -224,7 +224,7 @@ export default class Manager extends React.PureComponent {
                 fontSize: 24,
               }}
             />
-            {this.state.loading ? (
+            {this.state.loading == true ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
@@ -241,7 +241,7 @@ export default class Manager extends React.PureComponent {
                     extraData={this.state}
                   />
                   : <View style={styles.emptycont}>
-                    <ListError subtitle={'Relation manager found...'} />
+                    <ListError subtitle={'No relation manager found...'} />
                   </View>}
               </View>}
           </>

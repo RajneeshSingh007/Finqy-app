@@ -598,6 +598,7 @@ export default class CommonForm extends React.PureComponent {
           // />
           null}
 
+        {title !== 'Profile' ? <>
         <AnimatedInputBox
           onChangeText={(value) => this.setState({ currentlocation: value })}
           value={this.state.currentlocation}
@@ -619,6 +620,7 @@ export default class CommonForm extends React.PureComponent {
           changecolor
           containerstyle={styles.animatedInputCont}
         />
+        </> : null}
 
 
         {title === `Term Insurance` ? (

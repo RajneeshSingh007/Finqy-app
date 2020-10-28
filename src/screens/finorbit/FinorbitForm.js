@@ -91,7 +91,7 @@ export default class FinorbitForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition: 0,
+              currentPosition:0,
             });
           });
         });
@@ -349,7 +349,7 @@ export default class FinorbitForm extends React.PureComponent {
               Helper.showToastMessage("Please, Select Vehicle Type", 0);
             } else if (specificForms.motor_type === "") {
               checkData = false;
-              Helper.showToastMessage("Please, Select Vehicle Type", 0);
+              Helper.showToastMessage("Please, Select Motor Type", 0);
             }
 
             // else if (specificForms.car_type === "") {
@@ -728,13 +728,15 @@ export default class FinorbitForm extends React.PureComponent {
           existence = "rcbookcopy";
         }
         //console.log('existence', existence)
-        if (title === `Motor Insurance`) {
-          if (existence === 'rcbookcopy') {
-            checkData = false;
-            Helper.showToastMessage('Please, Select RC Book', 0);
-          } else if (existence === 'policycopy') {
-            checkData = false;
-            Helper.showToastMessage('Please, Select Policy', 0);
+        if(this.state.currentPosition === 2){
+          if (title === `Motor Insurance`) {
+            if (existence === 'rcbookcopy') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select RC Book', 0);
+            } else if (existence === 'policycopy') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Policy', 0);
+            }
           }
         }
       }

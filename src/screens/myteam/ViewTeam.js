@@ -100,11 +100,11 @@ export default class ViewTeam extends React.PureComponent {
     });
   }
 
-  componentDidUpdate(prevProp, nextState) {
-    if (this.state.dataList.length == 0) {
-      this.fetch();
-    }
-  }
+  // componentDidUpdate(prevProp, nextState) {
+  //   if (this.state.dataList.length == 0) {
+  //     this.fetch();
+  //   }
+  // }
 
   fetch = () => {
     Pref.getVal(Pref.userData, (userData) => {

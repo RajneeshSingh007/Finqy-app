@@ -173,12 +173,13 @@ export default class MarketingTool extends React.PureComponent {
                 renderItem={({item, index}) => (
                   <OfferItem
                     item={item}
-                    navigate={() =>
-                      NavigationActions.navigate('OffersDetails', {
-                        item: item,
-                        type: this.state.type,
-                      })
-                    }
+                    navigate={() =>{
+                      //                       NavigationActions.navigate('OffersDetails', {
+                      //   item: item,
+                      //   type: this.state.type,
+                      // })
+
+                    }                    }
                     sharing={() =>
                       this.shareOffer(item.user_id, `${item.image}`, index)
                     }

@@ -188,8 +188,9 @@ export default class HomeScreen extends React.PureComponent {
         leadData = result;
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
-        //console.log('leadData', result)
-        this.setState({ pieData: pieData, leadData: leadData, barData: barData });
+        const filter = Lodash.filter(pieData, io => io.value != 0);
+        //console.log('leadData', filter)
+        this.setState({ pieData: filter, leadData: leadData, barData: barData });
       },
       (error) => {
         console.log(error);
@@ -310,6 +311,7 @@ export default class HomeScreen extends React.PureComponent {
     });
     const piearraySize = mapPieData.length;
     let counter = 0;
+    //console.log('mapPieData', mapPieData)
     if (mapPieData.length > 0) {
       const totalSum = Lodash.sumBy(mapPieData, op => op.value);
       pieTextData = Lodash.map(mapPieData, (i => {
@@ -328,7 +330,8 @@ export default class HomeScreen extends React.PureComponent {
     }
     this.setState({
       barData: mapBarData,
-      pieData: mapPieData.length > 0 ? ed.includes('Credit') ? [] : mapPieData : [],
+      pieData: mapPieData.length > 0 ? ed.includes('Credit') ? [] : Lodash.filter(mapPieData, io => io.value != 0)
+        : [],
       selectedProdut: ed,
       enableDropdown: false,
       enableFilter: true,
@@ -407,7 +410,8 @@ export default class HomeScreen extends React.PureComponent {
     const { leadData } = this.state;
     const barData = this.returnBarData(leadData);
     const pieData = this.returnPieData(leadData);
-    this.setState({ pieData: pieData, barData: barData, enableDropdown: false, enableFilter: false, selectedProdut: 'All Products', pieTextData: [] });
+    const filter = Lodash.filter(pieData, io => io.value != 0);
+    this.setState({ pieData: filter, barData: barData, enableDropdown: false, enableFilter: false, selectedProdut: 'All Products', pieTextData: [] });
   }
 
   getconvertedPercentage = () => {
@@ -706,110 +710,110 @@ export default class HomeScreen extends React.PureComponent {
               />
 
               {/* {this.state.enableFilter === false ? ( */}
-                <View styleName="horizontal md-gutter v-center h-center">
-                  <View styleName="vertical v-center h-center">
-                    <View styleName="horizontal">
-                      <Title
-                        style={StyleSheet.flatten([
-                          styles.itemtopText,
-                          {
-                            color: "#6e6e6e",
-                            fontSize: 16,
-                            fontWeight: "700",
-                            marginStart: 16,
-                          },
-                        ])}
-                      >
-                        {`Filter By:`}
-                      </Title>
+              <View styleName="horizontal md-gutter v-center h-center">
+                <View styleName="vertical v-center h-center">
+                  <View styleName="horizontal">
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.itemtopText,
+                        {
+                          color: "#6e6e6e",
+                          fontSize: 16,
+                          fontWeight: "700",
+                          marginStart: 16,
+                        },
+                      ])}
+                    >
+                      {`Filter By:`}
+                    </Title>
 
-                      <TouchableWithoutFeedback
-                        onPress={() =>
-                          this.setState({
-                            enableDropdown: !this.state.enableDropdown,
-                          })
-                        }
-                      >
-                        <View styleName="horizontal">
-                          <Title
-                            style={StyleSheet.flatten([
-                              styles.itemtopText,
-                              {
-                                color: "#0270e3",
-                                fontSize: 16,
-                                fontWeight: "700",
-                                marginStart: 16,
-                              },
-                            ])}
-                          >
-                            {`${this.state.selectedProdut}`}
-                          </Title>
-                          <IconChooser
-                            name={
-                              this.state.enableFilter
-                                ? "chevron-up"
-                                : "chevron-down"
-                            }
-                            size={20}
-                            color={"#0270e3"}
-                            style={{
-                              alignSelf: "center",
-                              justifyContent: "center",
-                              marginStart: 12,
-                            }}
-                          />
-                        </View>
-                      </TouchableWithoutFeedback>
-                    </View>
-                    {this.state.enableDropdown === true ? (
-                      <View
-                        styleName="vertical v-end h-end"
-                        style={styles.pfiltercont}
-                      >
-                        {productList.map((e, i) => {
-                          return (
-                            <View
-                              styleName="vertical"
-                              style={{
-                                marginVertical: 6,
-                              }}
-                            >
-                              <TouchableWithoutFeedback
-                                onPress={() => this.itemClick(e, i)}
-                              >
-                                <Title
-                                  style={StyleSheet.flatten([
-                                    styles.passText,
-                                    {
-                                      color: "#6e6852",
-                                      fontSize: 16,
-                                      lineHeight: 20,
-                                      fontWeight: "400",
-                                      paddingHorizontal: 8,
-                                      alignSelf: "flex-start",
-                                      justifyContent: "flex-start",
-                                      textAlign: "left",
-                                    },
-                                  ])}
-                                >
-                                  {`${e}`}
-                                </Title>
-                              </TouchableWithoutFeedback>
-                              <View
-                                style={{
-                                  height: 1,
-                                  width: "100%",
-                                  backgroundColor: "#dcdace",
-                                  marginVertical: 1,
-                                }}
-                              />
-                            </View>
-                          );
-                        })}
+                    <TouchableWithoutFeedback
+                      onPress={() =>
+                        this.setState({
+                          enableDropdown: !this.state.enableDropdown,
+                        })
+                      }
+                    >
+                      <View styleName="horizontal">
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.itemtopText,
+                            {
+                              color: "#0270e3",
+                              fontSize: 16,
+                              fontWeight: "700",
+                              marginStart: 16,
+                            },
+                          ])}
+                        >
+                          {`${this.state.selectedProdut}`}
+                        </Title>
+                        <IconChooser
+                          name={
+                            this.state.enableFilter
+                              ? "chevron-up"
+                              : "chevron-down"
+                          }
+                          size={20}
+                          color={"#0270e3"}
+                          style={{
+                            alignSelf: "center",
+                            justifyContent: "center",
+                            marginStart: 12,
+                          }}
+                        />
                       </View>
-                    ) : null}
+                    </TouchableWithoutFeedback>
                   </View>
+                  {this.state.enableDropdown === true ? (
+                    <View
+                      styleName="vertical v-end h-end"
+                      style={styles.pfiltercont}
+                    >
+                      {productList.map((e, i) => {
+                        return (
+                          <View
+                            styleName="vertical"
+                            style={{
+                              marginVertical: 6,
+                            }}
+                          >
+                            <TouchableWithoutFeedback
+                              onPress={() => this.itemClick(e, i)}
+                            >
+                              <Title
+                                style={StyleSheet.flatten([
+                                  styles.passText,
+                                  {
+                                    color: "#6e6852",
+                                    fontSize: 16,
+                                    lineHeight: 20,
+                                    fontWeight: "400",
+                                    paddingHorizontal: 8,
+                                    alignSelf: "flex-start",
+                                    justifyContent: "flex-start",
+                                    textAlign: "left",
+                                  },
+                                ])}
+                              >
+                                {`${e}`}
+                              </Title>
+                            </TouchableWithoutFeedback>
+                            <View
+                              style={{
+                                height: 1,
+                                width: "100%",
+                                backgroundColor: "#dcdace",
+                                marginVertical: 1,
+                              }}
+                            />
+                          </View>
+                        );
+                      })}
+                    </View>
+                  ) : null}
                 </View>
+              </View>
               {/* ) : (
                   <View styleName='vertical space-between'>
                     <Title

@@ -51,6 +51,7 @@ export default class AddTeam extends React.Component {
   constructor(props) {
     super(props);
     this.submitt = this.submitt.bind(this);
+    this.backClick = this.backClick.bind(this);
     this.specificFormRef = React.createRef();
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     this.state = {
@@ -72,6 +73,7 @@ export default class AddTeam extends React.Component {
   }
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backClick);
     this.setState({
       name: '',
       mobile_no: '',
@@ -82,6 +84,32 @@ export default class AddTeam extends React.Component {
       pancard: '',
     });
 
+    if (this.specificFormRef && this.specificFormRef.current) {
+      this.specificFormRef.current.restoreData({ pancardNo: '' })
+    }
+  }
+
+
+
+  backClick = () => {
+    this.setState({
+      name: '',
+      mobile_no: '',
+      address: '',
+      email: '',
+      aadharcard: '',
+      refercode: '',
+      pancard: '',
+    });
+    if (this.specificFormRef && this.specificFormRef.current) {
+      this.specificFormRef.current.restoreData({ pancardNo: '', aadharcardNo: '' })
+    }
+
+    return false;
+  }
+
+  componentWillUnMount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
   submitt = () => {

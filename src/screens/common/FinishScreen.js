@@ -19,6 +19,7 @@ const FinishScreen = (prop) => {
   const clicked = () => {
     if (profilerefresh === 1) {
       Codepush.restartApp();
+      //NavigationActions.navigate('Home');
     } else {
       if (back === undefined || back === null) {
         NavigationActions.navigate('Home');

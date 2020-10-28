@@ -131,7 +131,7 @@ export default class SpecificForm extends React.PureComponent {
     this.onFloatitemChange = this.onFloatitemChange.bind(this);
     this.enableCalendar = this.enableCalendar.bind(this);
     const date = new Date();
-    date.setFullYear(2000, 0, 1);
+    //date.setFullYear(2000, 0, 1);
     const maxDates = new Date();
     maxDates.setFullYear(2000, 0, 1);
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
@@ -218,7 +218,8 @@ export default class SpecificForm extends React.PureComponent {
       showInsureCheckList: 0,
       registration_type:'',
       vehicle_type:'',
-      motor_type:''
+      motor_type:'',
+      expiry_date:''
     };
   }
 
@@ -385,7 +386,7 @@ export default class SpecificForm extends React.PureComponent {
   onChange = (event, selectDate) => {
     if (event.type === 'set') {
       const fullDate = moment(selectDate).format('DD-MM-YYYY');
-      this.setState({ showCalendar: false, currentDate: selectDate });
+      this.setState({ showCalendar: false, currentDate: selectDate,expiry_date:fullDate });
     }
   };
 
@@ -1230,6 +1231,36 @@ export default class SpecificForm extends React.PureComponent {
                   </View>
                 </RadioButton.Group>
               </View>
+            </View>
+
+            <View style={styles.radiocont}>
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  this.setState({
+                    showCalendar: true,
+                  })
+                }>
+                <View style={styles.dropdownbox}>
+                  <Title
+                    style={[
+                      styles.boxsubtitle,
+                      {
+                        color:
+                          this.state.expiry_date === `Expiry Date` 
+                            ? `#6d6a57`
+                            : `#555555`,
+                      },
+                    ]}>
+                    {this.state.expiry_date === '' ? `Expiry Date` : this.state.expiry_date}
+                  </Title>
+                  <Icon
+                    name={'calendar'}
+                    size={24}
+                    color={'#6d6a57'}
+                    style={styles.downIcon}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
 
             {/* <View
@@ -2636,7 +2667,7 @@ export default class SpecificForm extends React.PureComponent {
             is24Hour={false}
             display={'spinner'}
             onChange={this.onChange}
-            maximumDate={this.state.maxDate}
+            //maximumDate={this.state.maxDate}
           />
         ) : null}
 
