@@ -213,12 +213,12 @@ export default class AddTeam extends React.Component {
           <>
             <LeftHeaders
               title={`Add Team`}
-              bottomtext={
-                <>
-                  {`Add `}
-                  {<Title style={styles.passText}>{`Team`}</Title>}
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Add `}
+              //     {<Title style={styles.passText}>{`Team`}</Title>}
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

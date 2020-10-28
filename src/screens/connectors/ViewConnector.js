@@ -57,7 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No,Username,Name,Email,Mobile,Refcode,LeadRecord,,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Connector.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Connector.csv`;
 
 export default class ViewConnector extends React.PureComponent {
   constructor(props) {

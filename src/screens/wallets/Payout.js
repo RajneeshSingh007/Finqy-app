@@ -523,12 +523,12 @@ export default class Payout extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Payout Structure'}
-              bottomtext={
-                <>
-                  {`Payout `}
-                  <Title style={styles.passText}>{`Structure`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Payout `}
+              //     <Title style={styles.passText}>{`Structure`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

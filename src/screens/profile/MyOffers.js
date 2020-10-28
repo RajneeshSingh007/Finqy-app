@@ -168,12 +168,12 @@ export default class MyOffers extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'My Offers'}
-              bottomtext={
-                <>
-                  {`My `}
-                  <Title style={styles.passText}>{`Offers`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`My `}
+              //     <Title style={styles.passText}>{`Offers`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

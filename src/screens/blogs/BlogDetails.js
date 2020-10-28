@@ -77,7 +77,7 @@ export default class BlogDetails extends React.PureComponent {
     d.setHours(time[0], time[1], time[2]);
     const date = moment(d).format('DD-MM-YYYY hh:mm A');
     return (
-      <View styleName="vertical" style={{flex: 1}}>
+      <View styleName="vertical" style={{flex: 1, marginTop:8}}>
         <Title
           styleName="v-center h-center"
           style={StyleSheet.flatten([
@@ -143,12 +143,12 @@ export default class BlogDetails extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'FinNews'}
-              bottomtext={
-                <>
-                  {`Fin`}
-                  <Title style={styles.passText}>{`News`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Fin`}
+              //     <Title style={styles.passText}>{`News`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

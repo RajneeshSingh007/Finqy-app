@@ -23,6 +23,7 @@ import Loader from "../../util/Loader";
 import LeftHeaders from "../common/CommonLeftHeader";
 import CScreen from "../component/CScreen";
 import StepIndicator from "../component/StepIndicator";
+import { firstFormCheck } from "../../util/FormCheckHelper";
 
 // const customStyles = {
 //   stepIndicatorSize: 25,
@@ -96,7 +97,7 @@ export default class FinorbitForm extends React.PureComponent {
         });
       });
     });
-    //     NavigationActions.navigate("GetQuotes", {
+    // NavigationActions.navigate("GetQuotes", {
     //   formId: 1401,
     //   sumin: Number(50 / 100000).toFixed(1),
     // });
@@ -241,108 +242,8 @@ export default class FinorbitForm extends React.PureComponent {
       formData.append(uniq, uniq);
 
       if (commonForms !== undefined) {
-        if (commonForms.name === "") {
-          checkData = false;
-          Helper.showToastMessage("Full Name empty", 0);
-        } else if (commonForms.mobile === "") {
-          checkData = false;
-          Helper.showToastMessage("Mobile Number empty", 0);
-        } else if (commonForms.mobile.match(/^[0-9]*$/g) === null) {
-          checkData = false;
-          Helper.showToastMessage("Invalid mobile number", 0);
-        } else if (
-          title !== "Term Insurance" &&
-          title !== "Health Insurance" &&
-          title !== "Fixed Deposit" &&
-          //title !== `Life Cum Invt. Plan` &&
-          //title !== `Motor Insurance` &&
-          title !== `Mutual Fund` &&
-          title !== `Vector Plus` &&
-          title !== `Home Loan` &&
-          title !== `Loan Against Property` &&
-          title !== `Personal Loan` &&
-          title !== `Business Loan` &&
-          title !== `Auto Loan` &&
-          commonForms.email === ""
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Email empty", 0);
-        } else if (
-          (title === "Term Insurance" ||
-            title === "Health Insurance") &&
-          commonForms.qualification === ""
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Qualification empty", 0);
-        } else if (
-          title !== "Fixed Deposit" &&
-          title !== `Mutual Fund` &&
-          title !== `Home Loan` &&
-          title !== `Loan Against Property` &&
-          title !== `Personal Loan` &&
-          title !== `Business Loan` &&
-          title !== `Auto Loan` &&
-          (commonForms.dob === "" || commonForms.dob === `Date of Birth *` || commonForms.dob === `Date of Birth`)
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Date of Birth empty", 0);
-        } else if (
-          title !== `Personal Loan` &&
-          title !== `Loan Against Property` &&
-          title !== `Home Loan` &&
-          title !== `Business Loan` &&
-          title !== `Auto Loan` &&
-          title !== `Motor Insurance` &&
-          title !== `Insure Check` &&
-          commonForms.gender === ""
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Please, Select Gender", 0);
-        } else if (
-          title !== `Personal Loan` &&
-          title !== "Fixed Deposit" &&
-          title !== "Business Loan" &&
-          title !== `Motor Insurance` &&
-          title !== `Mutual Fund` &&
-          title !== `Vector Plus` &&
-          title !== `Home Loan` &&
-          title !== `Loan Against Property` &&
-          title !== `Auto Loan` &&
-          title !== `Life Cum Invt. Plan` &&
-          title !== `Insure Check` &&
-          commonForms.employ === ""
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Please, Select Employment Type", 0);
-        } else if (
-          title !== `Personal Loan` &&
-          title !== `Home Loan` &&
-          title !== `Loan Against Property` &&
-          title !== `Business Loan` &&
-          title !== `Auto Loan` &&
-          //title !== `Motor Insurance` &&
-          commonForms.currentlocation === ""
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Please, Select Current Location", 0);
-        } else if (
-          Number(commonForms.mobile.length) < 10 ||
-          commonForms.mobile === "9876543210" ||
-          commons.mobile === "1234567890"
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Invalid mobile number", 0);
-        } else if (
-          commonForms.email !== "" &&
-          Helper.emailCheck(commonForms.email) === false
-          //!commonForms.email.includes("@")
-        ) {
-          checkData = false;
-          Helper.showToastMessage("Invalid Email", 0);
-        } else if (commonForms.pincode !== "" && commonForms.pincode < 6) {
-          checkData = false;
-          Helper.showToastMessage("Invalid Pincode", 0);
-        } else {
+        checkData = firstFormCheck(title, commonForms);
+        if (checkData) {
           let parseJs = JSON.parse(JSON.stringify(commonForms));
           if (parseJs.currentlocation === "Select Current Location *") {
             parseJs.currentlocation === "";
@@ -371,12 +272,13 @@ export default class FinorbitForm extends React.PureComponent {
           title !== `Business Loan` &&
           title !== `Auto Loan` &&
           title !== `Insure Check` &&
+          title !== `Term Insurance` &&
           specificForms.amount === ``
         ) {
           checkData = false;
           Helper.showToastMessage(
             title === "Term Insurance"
-              ? "Required Cover *"
+              ? "Required Cover empty"
               : title === "Home Loan" ||
                 title === "Loan Against Property" ||
                 title === `Personal Loan` ||
@@ -438,11 +340,23 @@ export default class FinorbitForm extends React.PureComponent {
           } else if (title === "Motor Insurance") {
             if (specificForms.claim_type === "") {
               checkData = false;
-              Helper.showToastMessage("Please, Select Any Claim Last Year", 0);
-            } else if (specificForms.car_type === "") {
+              Helper.showToastMessage("Please, Select Any Claims Last Year", 0);
+            } else if (specificForms.registration_type === "") {
               checkData = false;
-              Helper.showToastMessage("Please, Select Car Type", 0);
-            } else if (
+              Helper.showToastMessage("Please, Select Registration Type", 0);
+            } else if (specificForms.vehicle_type === "") {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Vehicle Type", 0);
+            } else if (specificForms.motor_type === "") {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Vehicle Type", 0);
+            }
+
+            // else if (specificForms.car_type === "") {
+            //   checkData = false;
+            //   Helper.showToastMessage("Please, Select Car Type", 0);
+            // } 
+            else if (
               specificForms.insurance === `` ||
               specificForms.insurance === `Select Insurance Type *`
             ) {
@@ -545,24 +459,6 @@ export default class FinorbitForm extends React.PureComponent {
             ) {
               checkData = false;
               Helper.showToastMessage("Required Cover Empty", 0);
-            } else if (
-              title === `Term Insurance` &&
-              specificForms.pay_type === ""
-            ) {
-              checkData = false;
-              Helper.showToastMessage("Please, Select Pay Type", 0);
-            } else if (
-              title === `Term Insurance` &&
-              specificForms.addons === ""
-            ) {
-              checkData = false;
-              Helper.showToastMessage("Please, Select Addons Type", 0);
-            } else if (
-              title === `Term Insurance` &&
-              specificForms.policy_term === ""
-            ) {
-              checkData = false;
-              Helper.showToastMessage("Please, Select Policy Term", 0);
             } else if (specificForms.lifestyle === "") {
               checkData = false;
               Helper.showToastMessage("Please, Select Smoker Type", 0);
@@ -572,11 +468,6 @@ export default class FinorbitForm extends React.PureComponent {
             } else if (specificForms.existing_diseases === "") {
               checkData = false;
               Helper.showToastMessage("Select Existing Disease", 0);
-            } else if (specificForms.existing_diseases === 'YES' &&
-              specificForms.diseases === ""
-            ) {
-              checkData = false;
-              Helper.showToastMessage("Please, Specify diseases", 0);
             } else if (
               title === `Term Insurance` && specificForms.payment_mode === '' &&
               specificForms.diseases === ""
@@ -584,11 +475,34 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Please, Select Preferred Payment Mode", 0);
             } else if (
+              title === `Term Insurance` &&
+              specificForms.pay_type === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Pay Type", 0);
+            } else if (
+              title === `Term Insurance` &&
+              specificForms.policy_term === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Policy Term", 0);
+            } else if (
+              title === `Term Insurance` &&
+              specificForms.addons === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Select Addons Type", 0);
+            } else if (
               title === `Health Insurance` &&
               specificForms.claim_type === ""
             ) {
               checkData = false;
               Helper.showToastMessage("Please, Select Type Of Insurance", 0);
+            } else if (specificForms.existing_diseases === 'YES' &&
+              specificForms.diseases === ""
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Please, Specify diseases", 0);
             } else if (
               title === `Health Insurance` &&
               specificForms.claim_type === "Family Floater"
@@ -793,8 +707,8 @@ export default class FinorbitForm extends React.PureComponent {
             }
 
             const oldInCopy = Lodash.find(allfileslist, io => {
-              if ('oldinsurancecopy' in io) {
-                io.key = 'oldinsurancecopy';
+              if ('policycopy' in io) {
+                io.key = 'policycopy';
                 return io;
               } else {
                 return undefined;
@@ -803,11 +717,11 @@ export default class FinorbitForm extends React.PureComponent {
             if (oldInCopy !== undefined) {
               const { key } = oldInCopy;
               const { name } = oldInCopy[key];
-              if (String(key) === `oldinsurancecopy` && name !== undefined && String(name).length === 0) {
+              if (String(key) === `policycopy` && name !== undefined && String(name).length === 0) {
                 existence = key;
               }
             } else {
-              existence = "oldinsurancecopy";
+              existence = "policycopy";
             }
           }
         } else {
@@ -817,10 +731,10 @@ export default class FinorbitForm extends React.PureComponent {
         if (title === `Motor Insurance`) {
           if (existence === 'rcbookcopy') {
             checkData = false;
-            Helper.showToastMessage('Please, Select RC Copy', 0);
-          } else if (existence === 'oldinsurancecopy') {
+            Helper.showToastMessage('Please, Select RC Book', 0);
+          } else if (existence === 'policycopy') {
             checkData = false;
-            Helper.showToastMessage('Please, Select Old Insurance Copy', 0);
+            Helper.showToastMessage('Please, Select Policy', 0);
           }
         }
       }
@@ -968,13 +882,14 @@ export default class FinorbitForm extends React.PureComponent {
             <LeftHeaders
               showBack
               title={
-                split.length === 2
-                  ? `${split[0]} ${split[1]}`
-                  : split.length === 3
-                    ? `${split[0]} ${split[1]} ${split[2]}`
-                    : split.length === 4
-                      ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
-                      : split[0]
+                // split.length === 2
+                //   ? `${split[0]} ${split[1]}`
+                //   : split.length === 3
+                //     ? `${split[0]} ${split[1]} ${split[2]}`
+                //     : split.length === 4
+                //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
+                //       : split[0]
+                `Add New Lead`
               }
               bottomtext={
                 <>

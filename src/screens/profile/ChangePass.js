@@ -155,12 +155,12 @@ export default class AddTeam extends React.Component {
             <LeftHeaders
               showBack
               title={'Change Password'}
-              bottomtext={
-                <>
-                  {`Change `}
-                  <Title style={styles.passText}>{`Password`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Change `}
+              //     <Title style={styles.passText}>{`Password`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

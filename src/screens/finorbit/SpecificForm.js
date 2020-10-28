@@ -216,6 +216,9 @@ export default class SpecificForm extends React.PureComponent {
       showHealthCompany: false,
       showLifeCompany: false,
       showInsureCheckList: 0,
+      registration_type:'',
+      vehicle_type:'',
+      motor_type:''
     };
   }
 
@@ -968,12 +971,10 @@ export default class SpecificForm extends React.PureComponent {
 
 
                 </View> : null} */}
-        {title !== 'Insure Check' ? (
+        {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
-              placeholder={
-                title === 'Demat' ? 'PAN Card Number' : 'PAN Card Number'
-              }
+              placeholder={'PAN Card Number'}
               onChangeText={value => this.setState({pancardNo: value})}
               value={this.state.pancardNo}
               changecolor
@@ -982,9 +983,7 @@ export default class SpecificForm extends React.PureComponent {
               returnKeyType={'next'}
             />
             <AnimatedInputBox
-              placeholder={
-                title === 'Demat' ? 'Aadhar Card Number' : 'Aadhar Card Number'
-              }
+              placeholder={'Aadhar Card Number'}
               maxLength={12}
               keyboardType={'number-pad'}
               onChangeText={value => {
@@ -1004,7 +1003,7 @@ export default class SpecificForm extends React.PureComponent {
           <View>
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Any Claim Last Year *`}</Title>
+                <Title style={styles.bbstyle}>{`Any Claims Last Year *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({claim_type: value})}
@@ -1033,22 +1032,22 @@ export default class SpecificForm extends React.PureComponent {
 
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Car Type *`}</Title>
+                <Title style={styles.bbstyle}>{`Registration Types *`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({car_type: value})}
-                  value={this.state.car_type}>
+                  onValueChange={value => this.setState({registration_type: value})}
+                  value={this.state.registration_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
                       <RadioButton
-                        value="Private Vehicle"
+                        value="Private"
                         style={{alignSelf: 'center'}}
                       />
                       <Title
                         styleName="v-center h-center"
-                        style={styles.textopen}>{`Private Vehicle`}</Title>
+                        style={styles.textopen}>{`Private`}</Title>
                     </View>
                     <View
                       styleName="horizontal"
@@ -1065,12 +1064,83 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
+           
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Vehicle Type *`}</Title>
+
+                <RadioButton.Group
+                  onValueChange={value => this.setState({vehicle_type: value})}
+                  value={this.state.vehicle_type}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Two Wheeler"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Two Wheeler`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Four Wheeler"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Four Wheeler`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+           
+            <View style={styles.radiocont}>
+              <View style={styles.radiodownbox}>
+                <Title style={styles.bbstyle}>{`Motor Type *`}</Title>
+
+                <RadioButton.Group
+                  onValueChange={value => this.setState({motor_type: value})}
+                  value={this.state.motor_type}>
+                  <View styleName="horizontal" style={{marginBottom: 8}}>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Private"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Private`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Commercial"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Commercial`}</Title>
+                    </View>
+                  </View>
+                </RadioButton.Group>
+              </View>
+            </View>
+           
             <View style={styles.radiocont}>
               <View
                 style={StyleSheet.flatten([
                   styles.radiodownbox,
                   {
-                    height: 200,
+                    height: 164,
                   },
                 ])}>
                 <Title style={styles.bbstyle}>{`Typs Of Insurance *`}</Title>
@@ -1085,25 +1155,38 @@ export default class SpecificForm extends React.PureComponent {
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
                       <RadioButton
-                        value="Comprehensive"
+                        value="Own Damages"
                         style={{alignSelf: 'center'}}
                       />
                       <Title
                         styleName="v-center h-center"
-                        style={styles.textopen}>{`Comprehensive`}</Title>
+                        style={styles.textopen}>{`Own Damages`}</Title>
                     </View>
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
                       <RadioButton
-                        value="Comprehensive+ Addons"
+                        value="Comprehensive"
                         style={{alignSelf: 'center'}}
                       />
                       <Title
                         styleName="v-center h-center"
                         style={
                           styles.textopen
-                        }>{`Comprehensive+ Addons`}</Title>
+                        }>{`Comprehensive`}</Title>
+                    </View>
+                    <View
+                      styleName="horizontal"
+                      style={{alignSelf: 'center', alignItems: 'center'}}>
+                      <RadioButton
+                        value="Comprehensive + Addons"
+                        style={{alignSelf: 'center'}}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={
+                          styles.textopen
+                        }>{`Comprehensive + Addons`}</Title>
                     </View>
                     <View
                       styleName="horizontal"
@@ -1131,7 +1214,7 @@ export default class SpecificForm extends React.PureComponent {
                           styles.textopen
                         }>{`Third Party without PA cover`}</Title>
                     </View>
-                    <View
+                    {/* <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
                       <RadioButton
@@ -1143,7 +1226,7 @@ export default class SpecificForm extends React.PureComponent {
                         style={
                           styles.textopen
                         }>{`Third Party with PA unnamed passenger`}</Title>
-                    </View>
+                    </View> */}
                   </View>
                 </RadioButton.Group>
               </View>

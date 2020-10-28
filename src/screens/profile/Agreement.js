@@ -41,7 +41,7 @@ export default class Agreement extends React.PureComponent {
 
   fetchData = (data, v) => {
     const { refercode } = data;
-    let filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyAgreement.pdf`;
+    let filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
     const agree = `${Pref.AgreeUrl}`;
     RNFetchBlob.fs.exists(filePath)
       .then((exist) => {
@@ -98,6 +98,10 @@ export default class Agreement extends React.PureComponent {
                 flex: 0.85,
                 backgroundColor: '#f9f8f1',
               }}
+              fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
             />
             <Download
               rightIconClick={() => {

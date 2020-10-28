@@ -38,8 +38,8 @@ import {
   Searchbar
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { SafeAreaView } from 'react-navigation';
+import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
 import PlaceholderLoader from '../../util/PlaceholderLoader';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -57,7 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No,Username,Email,Mobile,Pancard,Aadharcard,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Team.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Team.csv`;
 
 export default class ViewTeam extends React.PureComponent {
   constructor(props) {
@@ -86,22 +86,32 @@ export default class ViewTeam extends React.PureComponent {
       disableBack: false,
       searchQuery: '',
       cloneList: [],
-            enableSearch:false
+      enableSearch: false
     };
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.setState({userData: userData});
-        Pref.getVal(Pref.saveToken, (value) => {
-          this.setState({token: value}, () => {
-            this.fetchData();
-          });
+      this.fetch();
+    });
+  }
+
+  componentDidUpdate(prevProp, nextState) {
+    if (this.state.dataList.length == 0) {
+      this.fetch();
+    }
+  }
+
+  fetch = () => {
+    Pref.getVal(Pref.userData, (userData) => {
+      this.setState({ userData: userData });
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({ token: value }, () => {
+          this.fetchData();
         });
       });
     });
@@ -113,8 +123,8 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
-    const {refercode} = this.state.userData;
+    this.setState({ loading: true });
+    const { refercode } = this.state.userData;
     const body = JSON.stringify({
       refercode: refercode,
     });
@@ -124,12 +134,12 @@ export default class ViewTeam extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type, message} = response_header;
+        const { data, response_header } = result;
+        const { res_type, message } = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const dataList = data.reverse();
-            const {itemSize} = this.state;
+            const { itemSize } = this.state;
             this.setState({
               cloneList: dataList,
               dataList: this.returnData(dataList, 0, dataList.length).slice(
@@ -140,14 +150,14 @@ export default class ViewTeam extends React.PureComponent {
               itemSize: data.length >= 5 ? 5 : data.length,
             });
           } else {
-            this.setState({loading: false});
+            this.setState({ loading: false });
           }
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       (error) => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
@@ -198,7 +208,7 @@ export default class ViewTeam extends React.PureComponent {
    * @param {*} mode true ? next : back
    */
   pagination = (mode) => {
-    const {itemSize, cloneList} = this.state;
+    const { itemSize, cloneList } = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -210,7 +220,7 @@ export default class ViewTeam extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
+        this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
       if (itemSize <= 5) {
@@ -220,8 +230,8 @@ export default class ViewTeam extends React.PureComponent {
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
-        if(slicedArray.length>0){
-        this.setState({dataList: slicedArray, itemSize: plus});
+        if (slicedArray.length > 0) {
+          this.setState({ dataList: slicedArray, itemSize: plus });
         }
       }
     }
@@ -233,13 +243,13 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   clickedexport = () => {
-    const {cloneList} = this.state;
+    const { cloneList } = this.state;
     if (cloneList.length > 0) {
-      const data = this.returnData(cloneList,0, cloneList.length);
+      const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
+          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Team Record',
               description: 'Team record exported successfully',
@@ -254,36 +264,36 @@ export default class ViewTeam extends React.PureComponent {
   };
 
   onChangeSearch = (query) => {
-    this.setState({searchQuery: query});
-    const {cloneList,itemSize} = this.state;
+    this.setState({ searchQuery: query });
+    const { cloneList, itemSize } = this.state;
     if (cloneList.length > 0) {
       const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
 
       const result = Lodash.filter(clone, (it) => {
-        const {aadharcard, pancard, status,mobile,email,username} = it;
-        return  aadharcard && aadharcard.trim().toLowerCase().includes(trimquery) || pancard && pancard.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery) || username && username.trim().toLowerCase().includes(trimquery);
+        const { aadharcard, pancard, status, mobile, email, username } = it;
+        return aadharcard && aadharcard.trim().toLowerCase().includes(trimquery) || pancard && pancard.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery) || username && username.trim().toLowerCase().includes(trimquery);
       });
       const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({dataList: data,itemSize:count});
+      this.setState({ dataList: data, itemSize: count });
     }
   };
 
-  revertBack = () =>{
-    const { enableSearch} = this.state;
-    const {cloneList} = this.state;
+  revertBack = () => {
+    const { enableSearch } = this.state;
+    const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, 5);
-      this.setState({dataList: data});
+      this.setState({ dataList: data });
     }
-    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:5});
+    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
   }
 
 
   render() {
-            const {searchQuery, enableSearch} = this.state;
+    const { searchQuery, enableSearch } = this.state;
 
     return (
       <CScreen
@@ -291,43 +301,43 @@ export default class ViewTeam extends React.PureComponent {
           <>
             <LeftHeaders showBack title={'My Team'} />
             <View styleName="horizontal md-gutter space-between">
-                            <View styleName="horizontal">
-              <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                <Title style={styles.itemtopText}>{`Back`}</Title>
-              </TouchableWithoutFeedback>
-              <View
-                style={{
-                  height: 16,
-                  marginHorizontal: 12,
-                  backgroundColor: '#0270e3',
-                  width: 1.5,
-                }}
-              />
-              <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                <Title style={styles.itemtopText}>{`Next`}</Title>
-              </TouchableWithoutFeedback>
-                          </View>
+              <View styleName="horizontal">
+                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                  <Title style={styles.itemtopText}>{`Back`}</Title>
+                </TouchableWithoutFeedback>
+                <View
+                  style={{
+                    height: 16,
+                    marginHorizontal: 12,
+                    backgroundColor: '#0270e3',
+                    width: 1.5,
+                  }}
+                />
+                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
+                  <Title style={styles.itemtopText}>{`Next`}</Title>
+                </TouchableWithoutFeedback>
+              </View>
 
-                                        <TouchableWithoutFeedback onPress={this.revertBack}>
-                                            <View styleName="horizontal v-center h-center">
-              <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
-                            </View>
+              <TouchableWithoutFeedback onPress={this.revertBack}>
+                <View styleName="horizontal v-center h-center">
+                  <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                </View>
               </TouchableWithoutFeedback>
 
             </View>
-                                    {enableSearch === true ? <View styleName='md-gutter'>
-                <Searchbar
-                      placeholder="Search"
-                      onChangeText={this.onChangeSearch}
-                      value={searchQuery}
-                      style={{
-                        elevation:0,
-                        borderColor:'#dbd9cc',
-                        borderWidth:0.5,
-                        borderRadius:8
-                      }}
-                      clearIcon={() => null}
-                    />
+            {enableSearch === true ? <View styleName='md-gutter'>
+              <Searchbar
+                placeholder="Search"
+                onChangeText={this.onChangeSearch}
+                value={searchQuery}
+                style={{
+                  elevation: 0,
+                  borderColor: '#dbd9cc',
+                  borderWidth: 0.5,
+                  borderRadius: 8
+                }}
+                clearIcon={() => null}
+              />
             </View> : null}
 
             {this.state.loading ? (
@@ -341,15 +351,14 @@ export default class ViewTeam extends React.PureComponent {
                 tableHead={this.state.tableHead}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No teams found...'} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No teams found...'} />
+                  </View>
+                )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${
-                  this.state.itemSize
-                }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
+                  }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}

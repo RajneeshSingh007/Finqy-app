@@ -57,7 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from '../component/Download';
 //Summary
 let HEADER = `Sr. No.,Invoice No,Status,Invoice Amount,Gross Amount,TDS,Paid Amount,Payment Date,Reference No,Invoice\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Invoice.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/Invoice.csv`;
 
 export default class Invoice extends React.PureComponent {
   constructor(props) {
@@ -387,6 +387,11 @@ export default class Invoice extends React.PureComponent {
                       width: '100%',
                       height: '100%',
                     }}
+                                  fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                   />
                 </View>
               }

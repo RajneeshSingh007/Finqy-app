@@ -26,17 +26,18 @@ class NewDropDown extends React.Component {
         };
     }
 
-    // componentDidMount() {
-    //     const {
-    //         list = [],
-    //     } = this.props;
-    //     this.setState({ finalList: list, cloneList: list })
-    // }
+    componentDidMount() {
+        const {
+            list = [],
+        } = this.props;
+        this.setState({ finalList: list, cloneList: list })
+    }
 
     componentWillReceiveProps(props) {
         const {
             list = [],
         } = props;
+       // console.log('list', list)
         this.setState({ finalList: list, cloneList: list })
     }
 

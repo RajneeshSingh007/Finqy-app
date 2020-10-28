@@ -47,10 +47,10 @@ export default class LinkSharingOption extends React.PureComponent {
         { value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php` },
         { value: 'Personal Loan', url: `${Pref.FinURL}plform.php` },
         { value: 'Term Insurance', url: `${Pref.FinURL}tiform.php` },
-        { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
-        { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
-        { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
-        { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
+        // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
+        // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
+        // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
+        // { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
       ],
       productName: '',
     };
@@ -121,12 +121,12 @@ export default class LinkSharingOption extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Link Sharing'}
-              bottomtext={
-                <>
-                  {`Link `}
-                  <Title style={styles.passText}>{`Sharing`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Link `}
+              //     <Title style={styles.passText}>{`Sharing`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

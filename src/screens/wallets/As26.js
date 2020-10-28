@@ -57,7 +57,7 @@ import CScreen from '../component/CScreen';
 import Download from '../component/Download';
 
 let HEADER = `Sr. No.,Dated,Particular,View\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/AS26.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/AS26.csv`;
 
 export default class As26 extends React.PureComponent {
   constructor(props) {
@@ -346,6 +346,11 @@ export default class As26 extends React.PureComponent {
                       width: '100%',
                       height: '100%',
                     }}
+                                  fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                   />
                 </View>
               }

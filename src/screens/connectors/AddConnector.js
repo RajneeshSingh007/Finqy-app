@@ -274,12 +274,12 @@ export default class AddConnector extends React.PureComponent {
           <>
             <LeftHeaders
               title={`New Leader`}
-              bottomtext={
-                <>
-                  {`New `}
-                  {<Title style={styles.passText}>{`Leader`}</Title>}
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`New `}
+              //     {<Title style={styles.passText}>{`Leader`}</Title>}
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

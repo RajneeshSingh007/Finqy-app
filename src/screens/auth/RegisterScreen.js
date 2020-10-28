@@ -1,35 +1,33 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
   TouchableWithoutFeedback,
   Linking,
 } from 'react-native';
-import {Screen, Subtitle, Title, Text, View, Heading, Image} from '@shoutem/ui';
+import { Title, View, Image } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
   Colors,
-  TextInput,
-  DefaultTheme,
   Checkbox,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeHeight, sizeWidth} from '../../util/Size';
-import Icon from 'react-native-vector-icons/Feather';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import DropDown from '../common/CommonDropDown';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import IntroHeader from '../intro/IntroHeader';
 import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import NewDropDown from '../component/NewDropDown';
+
+const professionList = [
+  { value: 'Salaried' },
+  { value: 'Self Employed' },
+  { value: 'Others' },
+]
 
 export default class RegisterScreen extends React.PureComponent {
   constructor(props) {
@@ -52,21 +50,19 @@ export default class RegisterScreen extends React.PureComponent {
       loading: false,
       showCityList: false,
       cityList: filter,
-      mode: [{value: 'Individual'}, {value: 'Company'}],
+      mode: [{ value: 'Individual' }, { value: 'Company' }],
       modetext: 'Are You An Individual Or A Company? *',
       showmode: false,
       isTermSelected: false,
       token: '',
-      profession: 'Select Profession *',
-      professionList: [
-        {value: 'Salaried'},
-        {value: 'Self Employed'},
-        {value: 'Others'},
-      ],
+      profession: '',
       showprofession: false,
       enabledprofession: false,
+      city: '',
+      state: '',
+      pincode: ''
     };
-    Pref.getVal(Pref.saveToken, (value) => this.setState({token: value}));
+    Pref.getVal(Pref.saveToken, (value) => this.setState({ token: value }));
   }
 
   componentDidMount() {
@@ -105,16 +101,30 @@ export default class RegisterScreen extends React.PureComponent {
    */
   register = () => {
     var checkData = true;
-    console.log(this.state.modetext);
+    //console.log(this.state.modetext);
     if (this.state.name === '') {
       checkData = false;
       Helper.showToastMessage('Name empty', 0);
     } else if (this.state.email === '') {
       checkData = false;
       Helper.showToastMessage('Email empty', 0);
+    } else if (Helper.emailCheck(this.state.email) === false) {
+      checkData = false;
+      Helper.showToastMessage('Invalid email', 0);
     } else if (this.state.contact === '') {
       checkData = false;
       Helper.showToastMessage('Mobile Number empty', 0);
+    } else if (
+      this.state.contact === '9876543210' ||
+      this.state.contact === '0000000000' ||
+      this.state.contact === '1234567890' ||
+      this.state.contact.length < 10
+    ) {
+      checkData = false;
+      Helper.showToastMessage('Invalid mobile number', 0);
+    } else if (this.state.contact.match(/^[0-9]*$/g) === null) {
+      checkData = false;
+      Helper.showToastMessage('Invalid mobile number', 0);
     } else if (
       this.state.modetext === 'Are You An Individual Or A Company? *'
     ) {
@@ -125,7 +135,7 @@ export default class RegisterScreen extends React.PureComponent {
       );
     } else if (
       this.state.enabledprofession === true &&
-      this.state.profession === 'Select Profession *'
+      this.state.profession === ''
     ) {
       checkData = false;
       Helper.showToastMessage('Profession empty', 0);
@@ -138,42 +148,42 @@ export default class RegisterScreen extends React.PureComponent {
     } else if (this.state.panno === '') {
       checkData = false;
       Helper.showToastMessage('Pancard empty', 0);
-    } else if (
-      this.state.location === '' ||
-      this.state.location === 'Select location'
-    ) {
-      checkData = false;
-      Helper.showToastMessage('Location empty', 0);
-    } else if (Helper.emailCheck(this.state.email) === false) {
-      checkData = false;
-      Helper.showToastMessage('Invalid email', 0);
-    } else if (
-      this.state.contact === '9876543210' ||
-      this.state.contact === '0000000000' ||
-      this.state.contact === '1234567890' ||
-      this.state.contact.length < 10
-    ) {
-      checkData = false;
-      Helper.showToastMessage('Invalid mobile number', 0);
-    } else if (this.state.contact.match(/^[0-9]*$/g) === null) {
-      checkData = false;
-      Helper.showToastMessage('Invalid mobile number', 0);
     } else if (!Helper.checkPanCard(this.state.panno)) {
       checkData = false;
       Helper.showToastMessage('Invalid pancard number', 0);
-    } else if (!this.state.isTermSelected) {
+    } else if (
+      this.state.pincode === ''
+    ) {
+      checkData = false;
+      Helper.showToastMessage('Residence Pincode empty', 0);
+    } else if (
+      this.state.pincode !== '' && (this.state.city === '' || this.state.state === '')
+    ) {
+      checkData = false;
+      Helper.showToastMessage('Failed to find city & state, Please, check pincode', 0);
+    }
+
+    //  else if (
+    //   this.state.location === '' ||
+    //   this.state.location === 'Select location'
+    // ) {
+    //   checkData = false;
+    //   Helper.showToastMessage('Location empty', 0);
+    // } 
+
+    else if (!this.state.isTermSelected) {
       checkData = false;
       Helper.showToastMessage('Please, Select Term & Condition', 0);
     }
     if (checkData && this.state.isTermSelected) {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       const jsonData = JSON.parse(JSON.stringify(this.state));
       delete jsonData.showCityList;
       delete jsonData.cityList;
       delete jsonData.isTermSelected;
       delete jsonData.loading;
       delete jsonData.mode;
-      delete jsonData.professionList;
+      //delete jsonData.professionList;
       delete jsonData.modetext;
       delete jsonData.showmode;
       delete jsonData.showprofession;
@@ -192,14 +202,14 @@ export default class RegisterScreen extends React.PureComponent {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          this.setState({loading: false});
-          const {data, response_header} = result;
-          const {res_type} = response_header;
+          this.setState({ loading: false });
+          const { data, response_header } = result;
+          const { res_type } = response_header;
           if (res_type === `success`) {
-            const {otp} = data;
+            const { otp } = data;
             Helper.showToastMessage('OTP sent successfully', 1);
-            Helper.networkHelperGet(`${Pref.SMS_OTP}?invisible=1&otp=${otp}&authkey=345308AQ4dSpkOE55f9280a7P1&mobile=91${jsonData.contact}&template_id=5f929552dd5594798d2ead5e`, result =>{
-            }, error =>{
+            Helper.networkHelperGet(`${Pref.SMS_OTP}?invisible=1&otp=${otp}&authkey=345308AQ4dSpkOE55f9280a7P1&mobile=91${jsonData.contact}&template_id=5f929552dd5594798d2ead5e`, () => {
+            }, () => {
 
             })
             NavigationActions.navigate('OtpScreen', {
@@ -215,11 +225,52 @@ export default class RegisterScreen extends React.PureComponent {
             );
           }
         },
-        (error) => {
-          this.setState({loading: false});
+        () => {
+          this.setState({ loading: false });
           Helper.showToastMessage('something went wrong', 0);
         },
       );
+    }
+  };
+
+  fetchcityCurrentstate = (value) => {
+    const parse = String(value);
+    if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
+      if (parse.length === 6) {
+        this.setState({ pincode: parse });
+        const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
+        //console.log(`url`, url);
+        Helper.getNetworkHelper(
+          url,
+          Pref.methodGet,
+          (result) => {
+            const { res_type, data } = JSON.parse(result);
+            //console.log(`result`, result, res_type);
+            if (res_type === `error`) {
+              this.setState({ city: '', state: '', pincode: value });
+            } else {
+              if (data.length > 0) {
+                const filterActive = Lodash.filter(data, io => io.status === 'Active');
+                // console.log('filterActive', filterActive)
+                const state = String(filterActive[0]['State']).trim();
+                const city = String(filterActive[0]['City']).trim();
+                //      console.log('state', city)
+                this.setState({ city: city, state: state, pincode: value });
+              } else {
+                this.setState({ city: '', state: '', pincode: value });
+              }
+            }
+          },
+          () => {
+            this.setState({ city: '', state: '', pincode: value });
+            //console.log(`error`, error);
+          },
+        );
+      } else {
+        this.setState({ city: '', state: '', pincode: parse });
+      }
+    } else {
+      this.setState({ city: '', state: '', pincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.pincode });
     }
   };
 
@@ -235,7 +286,7 @@ export default class RegisterScreen extends React.PureComponent {
         body={
           <>
             <IntroHeader showRight={true} />
-            <View style={{flex: 0.87}} styleName="v-center h-center md-gutter">
+            <View style={{ flex: 0.87 }} styleName="v-center h-center md-gutter">
               {/* <Title style={styles.title}>{`Register`}</Title> */}
               <Title
                 style={
@@ -244,34 +295,34 @@ export default class RegisterScreen extends React.PureComponent {
 
               <View styleName="md-gutter">
                 <AnimatedInputBox
-                  onChangeText={(value) => this.setState({name: value})}
+                  onChangeText={(value) => this.setState({ name: value })}
                   value={this.state.name}
                   placeholder={'Your Name *'}
                   returnKeyType={'next'}
                   changecolor
-                  containerstyle={{
-                    marginBottom: 8,
-                  }}
+                // containerstyle={{
+                //   marginBottom: 8,
+                // }}
                 />
                 <AnimatedInputBox
                   changecolor
-                  containerstyle={{
-                    marginBottom: 8,
-                  }}
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
                   placeholder={'Your Email *'}
-                  onChangeText={(value) => this.setState({email: value})}
+                  onChangeText={(value) => this.setState({ email: value })}
                   value={this.state.email}
                   returnKeyType={'next'}
                 />
                 <AnimatedInputBox
                   changecolor
-                  containerstyle={{
-                    marginBottom: 8,
-                  }}
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
                   placeholder={'Your Mobile Number *'}
                   onChangeText={(value) => {
                     if (String(value).match(/^[0-9]*$/g) !== null) {
-                      this.setState({contact: value});
+                      this.setState({ contact: value });
                     }
                   }}
                   maxLength={10}
@@ -280,7 +331,20 @@ export default class RegisterScreen extends React.PureComponent {
                   returnKeyType={'next'}
                 />
 
-                <View style={styles.radiocont}>
+                <NewDropDown
+                  list={this.state.mode}
+                  placeholder={'Are You An Individual Or A Company? *'}
+                  selectedItem={(value) => this.setState({
+                    showmode: false,
+                    modetext: value,
+                    enabledprofession:
+                      value === 'Individual' ? true : false,
+                  })}
+                  style={styles.newdropdown}
+                  textStyle={styles.dropdowntext}
+                />
+
+                {/* <View style={styles.radiocont}>
                   <TouchableWithoutFeedback
                     onPress={() =>
                       this.setState({
@@ -298,7 +362,7 @@ export default class RegisterScreen extends React.PureComponent {
                           {
                             color:
                               this.state.modetext ===
-                              'Are You An Individual Or A Company? *'
+                                'Are You An Individual Or A Company? *'
                                 ? `#6d6a57`
                                 : `#555555`,
                             marginStart: -4,
@@ -334,100 +398,110 @@ export default class RegisterScreen extends React.PureComponent {
                       autoFocus={false}
                     />
                   ) : null}
-                </View>
+                </View> */}
 
                 {this.state.modetext === 'Company' ? (
                   <>
-                  <AnimatedInputBox
-                    changecolor
-                    containerstyle={{
-                      marginBottom: 8,
-                    }}
-                    placeholder={'Name Of The Company *'}
-                    onChangeText={(value) =>
-                      this.setState({companyname: value})
-                    }
-                    value={this.state.companyname}
-                    returnKeyType={'next'}
-                  />
-                  <AnimatedInputBox
-                    changecolor
-                    containerstyle={{
-                      marginBottom: 8,
-                    }}
-                    placeholder={'GST No.'}
-                    onChangeText={(value) =>
-                      this.setState({gst: value})
-                    }
-                    value={this.state.gst}
-                    returnKeyType={'next'}
-                    maxLength={15}
-                  />
+                    <AnimatedInputBox
+                      changecolor
+                      // containerstyle={{
+                      //   marginBottom: 8,
+                      // }}
+                      placeholder={'Name Of The Company *'}
+                      onChangeText={(value) =>
+                        this.setState({ companyname: value })
+                      }
+                      value={this.state.companyname}
+                      returnKeyType={'next'}
+                    />
+                    <AnimatedInputBox
+                      changecolor
+                      // containerstyle={{
+                      //   marginBottom: 8,
+                      // }}
+                      placeholder={'GST Number'}
+                      onChangeText={(value) =>
+                        this.setState({ gst: value })
+                      }
+                      value={this.state.gst}
+                      returnKeyType={'next'}
+                      maxLength={15}
+                    />
                   </>
                 ) : this.state.modetext === 'Individual' ? (
-                  <View style={styles.radiocont}>
-                    <TouchableWithoutFeedback
-                      onPress={() =>
-                        this.setState({
-                          showprofession: !this.state.showprofession,
-                          showCityList: false,
-                          showCityList: false,
-                        })
-                      }>
-                      <View style={styles.dropdownbox}>
-                        <Title
-                          style={StyleSheet.flatten([
-                            styles.boxsubtitle,
-                            {
-                              color:
-                                this.state.profession === 'Select Profession *'
-                                  ? `#6d6a57`
-                                  : `#555555`,
-                              marginStart: -4,
-                            },
-                          ])}>
-                          {this.state.profession}
-                        </Title>
-                        <Icon
-                          name={'chevron-down'}
-                          size={24}
-                          color={'#6d6a57'}
-                          style={{
-                            alignSelf: 'center',
-                          }}
-                        />
-                      </View>
-                    </TouchableWithoutFeedback>
-                    {this.state.showprofession ? (
-                      <DropDown
-                        title={`Select Profession`}
-                        itemCallback={(value) =>
-                          this.setState({
-                            showprofession: false,
-                            profession: value,
-                          })
-                        }
-                        ratioHeight={0.2}
-                        list={this.state.professionList}
-                        isCityList={false}
-                        enableSearch={false}
-                        autoFocus={false}
-                      />
-                    ) : null}
-                  </View>
+                  <NewDropDown
+                    list={professionList}
+                    placeholder={'Select Profession *'}
+                    selectedItem={(value) => this.setState({
+                      profession: value,
+                    })}
+                    style={styles.newdropdown}
+                    textStyle={styles.dropdowntext}
+                  />
+                  // <View style={styles.radiocont}>
+                  //   <TouchableWithoutFeedback
+                  //     onPress={() =>
+                  //       this.setState({
+                  //         showprofession: !this.state.showprofession,
+                  //         showCityList: false,
+                  //         showCityList: false,
+                  //       })
+                  //     }>
+                  //     <View style={styles.dropdownbox}>
+                  //       <Title
+                  //         style={StyleSheet.flatten([
+                  //           styles.boxsubtitle,
+                  //           {
+                  //             color:
+                  //               this.state.profession === 'Select Profession *'
+                  //                 ? `#6d6a57`
+                  //                 : `#555555`,
+                  //             marginStart: -4,
+                  //           },
+                  //         ])}>
+                  //         {this.state.profession}
+                  //       </Title>
+                  //       <Icon
+                  //         name={'chevron-down'}
+                  //         size={24}
+                  //         color={'#6d6a57'}
+                  //         style={{
+                  //           alignSelf: 'center',
+                  //         }}
+                  //       />
+                  //     </View>
+                  //   </TouchableWithoutFeedback>
+                  //   {this.state.showprofession ? (
+                  //     <DropDown
+                  //       title={`Select Profession`}
+                  //       itemCallback={(value) =>
+                  //         this.setState({
+                  //           showprofession: false,
+                  //           profession: value,
+                  // //         })
+                  //       }
+                  //       ratioHeight={0.2}
+                  //       list={this.state.professionList}
+                  //       isCityList={false}
+                  //       enableSearch={false}
+                  //       autoFocus={false}
+                  //     />
+                  //   ) : null}
+                  // </View>
+
                 ) : null}
                 <AnimatedInputBox
                   changecolor
-                  containerstyle={{
-                    marginBottom: 8,
-                  }}
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
                   placeholder={'PAN Details *'}
-                  onChangeText={(value) => this.setState({panno: value})}
+                  onChangeText={(value) => this.setState({ panno: value })}
                   value={this.state.panno}
                   maxLength={10}
                   returnKeyType={'next'}
                 />
-                <View style={styles.radiocont}>
+                {/* <View style={styles.radiocont}>
                   <TouchableWithoutFeedback
                     onPress={() =>
                       this.setState({
@@ -476,7 +550,47 @@ export default class RegisterScreen extends React.PureComponent {
                       autoFocus
                     />
                   ) : null}
-                </View>
+                </View> */}
+
+                <AnimatedInputBox
+                  changecolor
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
+                  placeholder={'Current Residence Pincode *'}
+                  onChangeText={this.fetchcityCurrentstate}
+                  value={this.state.pincode}
+                  maxLength={6}
+                  keyboardType={'numeric'}
+                //returnKeyType={'next'}
+                />
+
+                <AnimatedInputBox
+                  changecolor
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
+                  placeholder={'City'}
+                  onChangeText={(value) => this.setState({ city: value })}
+                  value={this.state.city}
+                  //returnKeyType={'next'}
+                  editable={false}
+                  disabled={true}
+                />
+
+                <AnimatedInputBox
+                  changecolor
+                  // containerstyle={{
+                  //   marginBottom: 8,
+                  // }}
+                  placeholder={'State'}
+                  onChangeText={(value) => this.setState({ state: value })}
+                  value={this.state.state}
+                  //returnKeyType={'next'}
+                  editable={false}
+                  disabled={true}
+
+                />
 
                 <View styleName="horizontal" style={styles.copy}>
                   <Checkbox.Android
@@ -516,22 +630,22 @@ export default class RegisterScreen extends React.PureComponent {
                 uppercase={true}
                 dark={true}
                 loading={false}
-                  style={[
-                    styles.loginButtonStyle,
-                    {
-                      backgroundColor: 'transparent',
-                      borderColor: '#d5d3c1',
-                      borderWidth: 1.3,
-                      width:'56%'
-                    },
-                  ]}
+                style={[
+                  styles.loginButtonStyle,
+                  {
+                    backgroundColor: 'transparent',
+                    borderColor: '#d5d3c1',
+                    borderWidth: 1.3,
+                    width: '56%'
+                  },
+                ]}
                 onPress={() => NavigationActions.goBack()}>
-                <Title                     style={StyleSheet.flatten([
-                      styles.btntext,
-                      {
-                        color: '#b8b28f',
-                      },
-                    ])}>{'Back to login'}</Title>
+                <Title style={StyleSheet.flatten([
+                  styles.btntext,
+                  {
+                    color: '#b8b28f',
+                  },
+                ])}>{'Back to login'}</Title>
               </Button>
               <Button
                 mode={'flat'}
@@ -566,6 +680,20 @@ export default class RegisterScreen extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  dropdowntext: {
+    color: '#6d6a57',
+    fontSize: 14,
+    fontFamily: Pref.getFontName(4),
+  },
+  newdropdown: {
+    borderRadius: 0,
+    borderBottomColor: '#f2f1e6',
+    borderBottomWidth: 1.3,
+    borderWidth: 0,
+    marginStart: 4,
+    marginEnd: 4,
+    //paddingVertical: 10,
+  },
   fgttext: {
     fontSize: 15,
     letterSpacing: 0.5,
@@ -581,8 +709,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontWeight: '700',
   },
-  maincontainer: {flex: 1, backgroundColor: 'white'},
-  s: {justifyContent: 'center', alignSelf: 'center'},
+  maincontainer: { flex: 1, backgroundColor: 'white' },
+  s: { justifyContent: 'center', alignSelf: 'center' },
   inputStyle: {
     height: sizeHeight(8),
     backgroundColor: 'white',

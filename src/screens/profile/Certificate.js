@@ -39,7 +39,7 @@ export default class Certificate extends React.PureComponent {
 
   fetchData = (data, v) => {
     const { refercode } = data;
-    let filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyCertificate.pdf`;
+    let filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
     const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${v}`;
     RNFetchBlob.fs.exists(filePath)
       .then((exist) => {
@@ -95,6 +95,11 @@ export default class Certificate extends React.PureComponent {
                 flex: 0.76,
                 backgroundColor: '#f9f8f1',
               }}
+              // fitWidth
+              // fitPolicy={0}
+              // enablePaging
+              // scale={1}
+
             />
             <Download
               rightIconClick={() => {

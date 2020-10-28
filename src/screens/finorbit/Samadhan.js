@@ -165,12 +165,12 @@ export default class Samadhan extends React.Component {
           <>
             <LeftHeaders
               title={`Insurance Samadhan`}
-              bottomtext={
-                <>
-                  {`Insurance `}
-                  {<Title style={styles.passText}>{`Samadhan`}</Title>}
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Insurance `}
+              //     {<Title style={styles.passText}>{`Samadhan`}</Title>}
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

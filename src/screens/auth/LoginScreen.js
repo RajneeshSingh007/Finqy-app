@@ -122,7 +122,7 @@ export default class LoginScreen extends React.PureComponent {
               Pref.methodPost,
               this.state.token,
               (result) => {
-                //console.log(`result`, result);
+                console.log(`result`, result);
                 const { data, response_header } = result;
                 const { res_type, type } = response_header;
                 this.setState({ loading: false });
@@ -131,8 +131,8 @@ export default class LoginScreen extends React.PureComponent {
                 } else {
                   Pref.setVal(Pref.USERTYPE, type);
                   const { id, refercode } = data[0];
-                  let certPath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyCertificate.pdf`;
-                  let agreePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${refercode}_MyAgreement.pdf`;
+                  let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
+                  let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
                   this.downloadFile(certPath, () => {
                     const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
                     Helper.downloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);

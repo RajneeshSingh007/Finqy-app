@@ -59,8 +59,8 @@ import CustomForm from './../finorbit/CustomForm';
 import CScreen from './../component/CScreen';
 import Download from './../component/Download';
 
-let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Cust Moble No,Product,Company,Status,Quote,Cif,Policy\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/Leadrecord.csv`;
+let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Moble No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Leadrecord.csv`;
 
 export default class LeadList extends React.PureComponent {
   constructor(props) {
@@ -86,15 +86,16 @@ export default class LeadList extends React.PureComponent {
         'Lead No',
         'Source',
         'Customer Name',
-        'Cust Moble No',
+        'Moble No',
         'Product',
         'Company',
         'Status',
         'Quote',
         'Cif',
         'Policy',
+        'Remark',
       ],
-      widthArr: [60, 120, 100, 100, 160, 100, 140, 100, 140, 100, 100, 100],
+      widthArr: [60, 120, 100, 100, 160, 100, 140, 100, 140, 100, 100, 100, 100],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -324,6 +325,7 @@ export default class LeadList extends React.PureComponent {
               </View>
             );
             rowData.push(policy === '' ? '' : policyView(policy));
+            rowData.push(item.remark);
             dataList.push(rowData);
           }
         }
@@ -591,6 +593,11 @@ export default class LeadList extends React.PureComponent {
                       width: '100%',
                       height: '100%',
                     }}
+                                  fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                   />
                 </View>
               }

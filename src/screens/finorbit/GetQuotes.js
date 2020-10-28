@@ -254,6 +254,11 @@ export default class GetQuotes extends React.Component {
                       width: "100%",
                       height: "100%",
                     }}
+                                  fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                   />
                 </View>
               }
@@ -264,12 +269,12 @@ export default class GetQuotes extends React.Component {
           <>
             <LeftHeaders
               title={`Get Your Quote`}
-              bottomtext={
-                <>
-                  {`Get Your `}
-                  {<Title style={styles.passText}>{`Quote`}</Title>}
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Get Your `}
+              //     {<Title style={styles.passText}>{`Quote`}</Title>}
+              //   </>
+              // }
               bottomtextStyle={{
                 color: "#555555",
                 fontSize: 20,

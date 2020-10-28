@@ -183,6 +183,11 @@ export default class GetQuotesView extends React.PureComponent {
                                 flex: 0.85,
                                 backgroundColor: '#f9f8f1',
                             }}
+                                          fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                         />
 
                         <TouchableWithoutFeedback onPress={this.buyNow}>

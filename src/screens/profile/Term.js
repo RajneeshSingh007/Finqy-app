@@ -70,6 +70,11 @@ export default class Term extends React.PureComponent {
                                 flex: 1,
                                 backgroundColor: '#f9f8f1',
                             }}
+                                          fitWidth
+              fitPolicy={0}
+              enablePaging
+              scale={1}
+
                         />
                         {/* <Download
               rightIconClick={() => {

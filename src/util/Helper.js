@@ -509,11 +509,11 @@ export const downloadFile = (url, name) => {
  * @param {*} url
  * @param {*} name
  */
-export const downloadFileWithFileName = (url, name, fileName, mime, notification = true) => {
+export const downloadFileWithFileName = (url, name, fileName, mime, notification = true, addext = true) => {
   if (notification) {
     showToastMessage('Download Started', 1);
   }
-  const filePath = `${RNFetchBlob.fs.dirs.SDCardDir}/ERB/Finpro/${fileName}`;
+  const filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
   const { config, fs } = RNFetchBlob;
   let DownloadDir = fs.dirs.DownloadDir;
   //const filePath = `${DownloadDir}/${fileName}`;
@@ -528,11 +528,13 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
     },
   };
   let finalUrl = url;
-  if (url.includes('.pdf')) {
+  if(addext){
+    if (url.includes('.pdf')) {
     //finalUrl = url.replace('.pdf', '');
   } else {
     //finalUrl = url;
     finalUrl += '.pdf';
+  }
   }
   //console.log('finalUrl', finalUrl)
   config(options)

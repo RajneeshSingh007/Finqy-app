@@ -2527,10 +2527,10 @@ export const productList = [
   //   name: 'Vector Plus',
   //   url: require('./../res/images/vectorplus.png'),
   // },
-  {
-    name: 'Insure Check',
-    url: require('./../res/images/sabseasan.png'),
-  },
+  // {
+  //   name: 'Insure Check',
+  //   url: require('./../res/images/sabseasan.png'),
+  // },
   //   {
   //   name: 'Religare Group Plan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2739,6 +2739,8 @@ export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
 export const AjaxWithoutToken = `${FinURL}ajax.php`;
 export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
+
+export const PostalCityUrl = `${BASEUrl}tool_view_pincode.php`;
 
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
 

@@ -150,12 +150,12 @@ export default class MarketingTool extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'FinAds Marketing'}
-              bottomtext={
-                <>
-                  {`FinAds `}
-                  <Title style={styles.passText}>{`Marketing`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`FinAds `}
+              //     <Title style={styles.passText}>{`Marketing`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

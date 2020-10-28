@@ -33,6 +33,7 @@ export default class Training extends React.PureComponent {
       cloneList: [],
       showFilter: false,
       fileType: 2,
+      height:0
     };
   }
 
@@ -258,6 +259,11 @@ export default class Training extends React.PureComponent {
     );
   }
 
+  onLayout = (event) =>{
+        const { width, height } = event.nativeEvent.layout;
+        this.setState({height:height});
+  }
+
   render() {
     const { showFilter } = this.state;
     return (
@@ -267,12 +273,12 @@ export default class Training extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'FinTrain Learning'}
-              bottomtext={
-                <>
-                  {`FinTrain `}
-                  <Title style={styles.passText}>{`Learning`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`FinTrain `}
+              //     <Title style={styles.passText}>{`Learning`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,
@@ -280,7 +286,8 @@ export default class Training extends React.PureComponent {
             />
             <View styleName="horizontal v-end h-end md-gutter">
               <TouchableWithoutFeedback
-                onPress={() => this.setState({ showFilter: !showFilter })}>
+                onPress={() => this.setState({ showFilter: !showFilter })}
+                                        onLayout={this.onLayout}>
                 <Title
                   style={StyleSheet.flatten([
                     styles.passText,
@@ -306,7 +313,9 @@ export default class Training extends React.PureComponent {
             </View>
 
             {showFilter ? (
-              <View styleName="vertical md-gutter" style={styles.filtercont}>
+              <View styleName="vertical md-gutter" style={StyleSheet.flatten([styles.filtercont,{
+                top:sizeHeight(14)+this.state.height
+              }])}>
                                 <TouchableWithoutFeedback
                   onPress={() => this.chipclick({ name: 'All' }, 2)}>
                   <Title
@@ -427,7 +436,7 @@ const styles = StyleSheet.create({
     //top:56,
     right: sizeWidth(4),
     borderRadius: 8,
-    top: sizeHeight(24),
+    //top: sizeHeight(17),
     ...Platform.select({
       android: {
         elevation: 4,

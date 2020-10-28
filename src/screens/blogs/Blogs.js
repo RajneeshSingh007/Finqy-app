@@ -194,12 +194,12 @@ export default class Blogs extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'FinNews'}
-              bottomtext={
-                <>
-                  {`Fin`}
-                  <Title style={styles.passText}>{`News`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Fin`}
+              //     <Title style={styles.passText}>{`News`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

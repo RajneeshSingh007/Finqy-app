@@ -150,12 +150,12 @@ export default class PopularPlan extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Popular Plan'}
-              bottomtext={
-                <>
-                  {`Popular `}
-                  <Title style={styles.passText}>{`Plan`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Popular `}
+              //     <Title style={styles.passText}>{`Plan`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

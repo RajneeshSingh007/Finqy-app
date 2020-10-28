@@ -650,6 +650,10 @@ export default class ProfileScreen extends React.PureComponent {
                     title="Profile"
                     ref={this.FileUploadFormRef}
                     heading={`File Upload`}
+                    cancelChq={this.state.userData && this.state.userData.cancel_chq}
+                    panCard={this.state.userData && this.state.userData.pan_image}
+                    aadharCard={this.state.userData && this.state.userData.aadhar_image}
+                    gstImage={this.state.userData && this.state.userData.gst_cert}
                   />
                 ) : null}
               </View>

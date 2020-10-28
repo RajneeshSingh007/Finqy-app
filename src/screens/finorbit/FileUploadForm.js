@@ -63,7 +63,7 @@ export default class FileUploadForm extends React.PureComponent {
 
   restoreData(obj) {
     //console.log('obj', obj)
-    if(obj !== undefined){
+    if (obj !== undefined) {
       this.setState(obj);
     }
   }
@@ -99,8 +99,36 @@ export default class FileUploadForm extends React.PureComponent {
     this.setState({ showCalendar: false, currentDate: selectDate });
   };
 
+  checkurl = (type, name) => {
+    const exist = name !== undefined && name !== null && (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg') || name.includes('.pdf'));
+    if (type === 0) {
+      return exist ? true : false
+    } else {
+      return exist ? name : ''
+    }
+  }
+
+  getExt = (type, name) => {
+    if (this.checkurl(0, name) === false) {
+      return '';
+    }
+    if (type === 0) {
+      if (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg')) {
+        return '.jpg';
+      } else {
+        return '.pdf';
+      }
+    } else {
+      if (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg')) {
+        return 'images/jpg';
+      } else {
+        return 'application/pdf';
+      }
+    }
+  }
+
   render() {
-    const { title, heading = `File Upload` } = this.props;
+    const { title, heading = `File Upload`, cancelChq = null, panCard = null, aadharCard = null, gstImage = null } = this.props;
     return (
       <View>
         {/* <View
@@ -115,6 +143,7 @@ export default class FileUploadForm extends React.PureComponent {
         </View>
         <View style={styles.line} /> */}
 
+        {title !== 'Motor Insurance' ? <>
         <CommonFileUpload
           title={'Pan Card'}
           type={2}
@@ -129,13 +158,18 @@ export default class FileUploadForm extends React.PureComponent {
                 name.includes('jpg')
               ) {
                 //console.log(`res`, res);
-                this.state.fileList.push({ pancard: res});
+                this.state.fileList.push({ pancard: res });
                 //this.state.fileList.push({ pan_image: res});
               } else {
                 Helper.showToastMessage('Please, select Pdf or Image', 0);
               }
             }
           }}
+          enableDownloads={panCard != null && this.checkurl(0, panCard)}
+          downloadUrl={this.checkurl(1, panCard)}
+          fileName={'Pancard'}
+          ext={this.getExt(0, panCard)}
+          mime={this.getExt(1, panCard)}
         />
 
         <CommonFileUpload
@@ -161,7 +195,13 @@ export default class FileUploadForm extends React.PureComponent {
               }
             }
           }}
+          enableDownloads={aadharCard != null && this.checkurl(0, aadharCard)}
+          downloadUrl={this.checkurl(1, aadharCard)}
+          fileName={'Aadharcard'}
+          ext={this.getExt(0, aadharCard)}
+          mime={this.getExt(1, aadharCard)}
         />
+         </> : null}
 
         {title === 'Profile' ? (
           <CommonFileUpload
@@ -183,6 +223,11 @@ export default class FileUploadForm extends React.PureComponent {
                 }
               }
             }}
+            enableDownloads={this.checkurl(0, cancelChq)}
+            downloadUrl={this.checkurl(1, cancelChq)}
+            fileName={'CancelledCheque'}
+            ext={this.getExt(0, cancelChq)}
+            mime={this.getExt(1, cancelChq)}
           />
         ) : null}
 
@@ -206,15 +251,19 @@ export default class FileUploadForm extends React.PureComponent {
                 }
               }
             }}
+            enableDownloads={this.checkurl(0, gstImage)}
+            downloadUrl={this.checkurl(1, gstImage)}
+            fileName={'GST Certificate'}
+            ext={this.getExt(0, gstImage)}
+            mime={this.getExt(1, gstImage)}
           />
         ) : null}
 
         {title === 'Motor Insurance' ? (
           <View>
             {/* <View style={styles.line1} /> */}
-
             <CommonFileUpload
-              title={'RC Copy *'}
+              title={'RC Book *'}
               type={2}
               pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) => {
@@ -233,8 +282,29 @@ export default class FileUploadForm extends React.PureComponent {
                 }
               }}
             />
+
             <CommonFileUpload
-              title={'Old Insurance Copy *'}
+              title={'Policy *'}
+              type={2}
+              pickedTitle={this.findFileName(`policycopy`)}
+              pickedCallback={(selected, res) => {
+                if (!selected) {
+                  const { name } = res;
+                  if (
+                    name.includes('pdf') ||
+                    name.includes('png') ||
+                    name.includes('jpeg') ||
+                    name.includes('jpg')
+                  ) {
+                    this.state.fileList.push({ policycopy: res });
+                  } else {
+                    Helper.showToastMessage('Please, select Pdf or Image', 0);
+                  }
+                }
+              }}
+            />
+            <CommonFileUpload
+              title={'Old Insurance Policy'}
               type={2}
               pickedTitle={this.findFileName(`oldinsurancecopy`)}
               pickedCallback={(selected, res) => {
@@ -255,7 +325,7 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             <CommonFileUpload
-              title={'PUC Copy'}
+              title={'PUC'}
               type={2}
               pickedTitle={this.findFileName(`puccopy`)}
               pickedCallback={(selected, res) => {

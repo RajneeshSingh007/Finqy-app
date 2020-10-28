@@ -213,12 +213,12 @@ export default class Manager extends React.PureComponent {
             <LeftHeaders
               title={'Relation Manager'}
               showBack
-              bottomtext={
-                <>
-                  {`Relation `}
-                  <Title style={styles.passText}>{`Manager`}</Title>
-                </>
-              }
+              // bottomtext={
+              //   <>
+              //     {`Relation `}
+              //     <Title style={styles.passText}>{`Manager`}</Title>
+              //   </>
+              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 24,

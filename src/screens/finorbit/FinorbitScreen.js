@@ -169,7 +169,7 @@ export default class FinorbitScreen extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={'Add New Lead'}
+              title={'Finpro'}
               showBack
               bottomtext={
                 <>

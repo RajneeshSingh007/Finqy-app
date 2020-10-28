@@ -95,6 +95,8 @@ export default class CommonForm extends React.PureComponent {
       nomineename: '',
       emailTypeCd: '',
       contactTypeCd: '',
+      currentlocation: '',
+      state: ''
     };
   }
 
@@ -208,6 +210,47 @@ export default class CommonForm extends React.PureComponent {
       lastName: lastName || '',
       nomineename: nomineename || '',
     });
+  };
+
+  fetchcityCurrentstate = (value) => {
+    const parse = String(value);
+    if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
+      if (parse.length === 6) {
+        this.setState({ pincode: parse });
+        const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
+        //console.log(`url`, url);
+        Helper.getNetworkHelper(
+          url,
+          Pref.methodGet,
+          (result) => {
+            const {res_type, data} = JSON.parse(result);
+            //console.log(`result`, result, res_type);
+            if (res_type === `error`) {
+              this.setState({ currentlocation: '', state: '', pincode: value });
+            } else {
+              if(data.length > 0){
+                const filterActive = Lodash.filter(data, io => io.status === 'Active');
+               // console.log('filterActive', filterActive)
+                const state = String(filterActive[0]['State']).trim();
+                const city = String(filterActive[0]['City']).trim();
+                          //      console.log('state', city)
+                this.setState({ currentlocation: city, state: state, pincode: value });
+              }else{
+                this.setState({ currentlocation: '', state: '', pincode: value });
+              }
+            }
+          },
+          (error) => {
+                            this.setState({ currentlocation: '', state: '', pincode: parse });
+            //console.log(`error`, error);
+          },
+        );
+      } else {
+        this.setState({ currentlocation: '', state: '', pincode: parse });
+      }
+    } else {
+      this.setState({ currentlocation: '', state: '', pincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.pincode });
+    }
   };
 
   render() {
@@ -358,7 +401,7 @@ export default class CommonForm extends React.PureComponent {
               //title === `Life Cum Invt. Plan` ||
               //title === `Motor Insurance` ||
               title === `Mutual Fund` ||
-              title === `Profile` || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Business Loan' || title === 'Auto Loan' || title === 'Term Insurance' || title == 'Fixed Deposit'
+              title === `Profile` || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Business Loan' || title === 'Auto Loan' || title === 'Term Insurance' || title == 'Fixed Deposit' || title === 'Motor Insurance'
               ? 'Email'
               : 'Email *'
           }
@@ -512,15 +555,17 @@ export default class CommonForm extends React.PureComponent {
 
         {title !== 'Profile' && title !== 'Insure Check' && newform === false ? (
           <AnimatedInputBox
-            onChangeText={(value) => {
-              if (String(value).match(/^[0-9]*$/g) !== null) {
-                this.setState({ pincode: value });
-              }
-            }}
+            // onChangeText={(value) => {
+            //   if (String(value).match(/^[0-9]*$/g) !== null) {
+            //     this.setState({ pincode: value });
+            //   }
+            // }}
+            onChangeText={this.fetchcityCurrentstate}
             maxLength={6}
             keyboardType={'number-pad'}
             value={this.state.pincode}
-            placeholder={'Current Residence Pincode'}
+            //placeholder={'Current Residence Pincode'}
+            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' ? '*' : ''}`}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
@@ -552,6 +597,29 @@ export default class CommonForm extends React.PureComponent {
           //   returnKeyType={'next'}
           // />
           null}
+
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({ currentlocation: value })}
+          value={this.state.currentlocation}
+          placeholder={`City`}
+          editable={false}
+          disabled={true}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({ state: value })}
+          value={this.state.state}
+          placeholder={'State'}
+          editable={false}
+          disabled={true}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
 
         {title === `Term Insurance` ? (
           <AnimatedInputBox
@@ -585,7 +653,7 @@ export default class CommonForm extends React.PureComponent {
           null}
 
 
-        {title !== 'Profile' ? (
+        {title !== 'Profile' && title !== 'Motor Insurance' ? (
           <View>
             <View style={styles.radiocont}>
               <TouchableWithoutFeedback
@@ -697,7 +765,7 @@ export default class CommonForm extends React.PureComponent {
               </View>
             ) : null}
 
-            {title !== 'Insure Check' ? <View style={styles.radiocont}>
+            {title !== 'Insure Check' && title !== 'Motor Insurance' ? <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' ? '*' : ''}`}</Title>
                 <RadioButton.Group
@@ -742,39 +810,39 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-          {title === 'Health Insurance' ?    <View style={styles.radiocont}>
-            <View style={StyleSheet.flatten([styles.radiodownbox,{
-              height:124
-            }])}>
-              <Title style={styles.bbstyle}>{`Qualification *`}</Title>
-              <RadioButton.Group
-                onValueChange={(value) => this.setState({ qualification: value })}
-                value={this.state.qualification}>
-                <View styleName="horizontal" style={{ marginBottom: 8,    flexWrap:title==='Health Insurance' ? 'wrap':'nowrap'}}>
+        {title === 'Health Insurance' ? <View style={styles.radiocont}>
+          <View style={StyleSheet.flatten([styles.radiodownbox, {
+            height: 124
+          }])}>
+            <Title style={styles.bbstyle}>{`Qualification *`}</Title>
+            <RadioButton.Group
+              onValueChange={(value) => this.setState({ qualification: value })}
+              value={this.state.qualification}>
+              <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' ? 'wrap' : 'nowrap' }}>
+                <View
+                  styleName="horizontal"
+                  style={{ alignSelf: 'center', alignItems: 'center' }}>
+                  <RadioButton
+                    value="Undergraduate"
+                    style={{ alignSelf: 'center' }}
+                  />
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Undergraduate`}</Title>
+                </View>
+                <View
+                  styleName="horizontal"
+                  style={{ alignSelf: 'center', alignItems: 'center' }}>
+                  <RadioButton
+                    value="Graduate"
+                    style={{ alignSelf: 'center' }}
+                  />
+                  <Title
+                    styleName="v-center h-center"
+                    style={styles.textopen}>{`Graduate`}</Title>
+                </View>
+                {title === 'Health Insurance' ? <>
                   <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Undergraduate"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Undergraduate`}</Title>
-                  </View>
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Graduate"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Graduate`}</Title>
-                  </View>
-                  {title === 'Health Insurance' ? <> 
-                                                                                                                <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
                     <RadioButton
@@ -787,7 +855,7 @@ export default class CommonForm extends React.PureComponent {
                   </View>
 
 
-                                                                        <View
+                  <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
                     <RadioButton
@@ -800,7 +868,7 @@ export default class CommonForm extends React.PureComponent {
                   </View>
 
 
-                                    <View
+                  <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
                     <RadioButton
@@ -812,7 +880,7 @@ export default class CommonForm extends React.PureComponent {
                       style={styles.textopen}>{`Post-Graduate`}</Title>
                   </View>
 
-                                                      <View
+                  <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
                     <RadioButton
@@ -823,23 +891,23 @@ export default class CommonForm extends React.PureComponent {
                       styleName="v-center h-center"
                       style={styles.textopen}>{`Professional`}</Title>
                   </View>
-                  </> : null}
-                </View>
-              </RadioButton.Group>
-            </View>
+                </> : null}
+              </View>
+            </RadioButton.Group>
           </View>
-        : null}
+        </View>
+          : null}
 
         {showemploy ? (
           <View style={styles.radiocont}>
-            <View style={StyleSheet.flatten([styles.radiodownbox,{
-              height:title === `Health Insurance` ? 90 : 56
+            <View style={StyleSheet.flatten([styles.radiodownbox, {
+              height: title === `Health Insurance` ? 90 : 56
             }])}>
               <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' ? '*' : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>
-                <View styleName="horizontal" style={{ marginBottom: 8,    flexWrap:title==='Health Insurance' ? 'wrap':'nowrap'}}>
+                <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' ? 'wrap' : 'nowrap' }}>
                   <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
@@ -862,30 +930,30 @@ export default class CommonForm extends React.PureComponent {
                       styleName="v-center h-center"
                       style={styles.textopen}>{`Salaried`}</Title>
                   </View>
-                  {title === 'Health Insurance' ? <> 
-                                    <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Student"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Student`}</Title>
-                  </View>
+                  {title === 'Health Insurance' ? <>
+                    <View
+                      styleName="horizontal"
+                      style={{ alignSelf: 'center', alignItems: 'center' }}>
+                      <RadioButton
+                        value="Student"
+                        style={{ alignSelf: 'center' }}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Student`}</Title>
+                    </View>
 
-                                                      <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Housewife"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Housewife`}</Title>
-                  </View>
+                    <View
+                      styleName="horizontal"
+                      style={{ alignSelf: 'center', alignItems: 'center' }}>
+                      <RadioButton
+                        value="Housewife"
+                        style={{ alignSelf: 'center' }}
+                      />
+                      <Title
+                        styleName="v-center h-center"
+                        style={styles.textopen}>{`Housewife`}</Title>
+                    </View>
 
                   </> : null}
                 </View>
@@ -1011,7 +1079,7 @@ export default class CommonForm extends React.PureComponent {
                     {this.state.showGenderList ? <DropDown itemCallback={value => this.setState({ showGenderList: false, gender: value })} list={this.state.genderList} /> : null}
                 </View> */}
 
-        {title !== `Profile` && newform === false ? (
+        {/* {title !== `Profile` && newform === false ? (
           <View style={styles.radiocont}>
             <TouchableWithoutFeedback
               onPress={() =>
@@ -1055,7 +1123,7 @@ export default class CommonForm extends React.PureComponent {
               />
             ) : null}
           </View>
-        ) : null}
+        ) : null} */}
         {/* {showemploy ?
                     <View
                         style={{
@@ -1091,6 +1159,7 @@ export default class CommonForm extends React.PureComponent {
                         {this.state.showEmployList ? <DropDown itemCallback={value => this.setState({ showEmployList: false, employ: value })} list={this.state.employList} /> : null}
 
                     </View> : null} */}
+
 
         {this.state.showCalendar ? (
           <DateTimePicker
