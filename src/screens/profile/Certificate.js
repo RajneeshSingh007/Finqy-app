@@ -103,7 +103,7 @@ export default class Certificate extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
               }}
               style={{ flex: 0.09 }}
             />

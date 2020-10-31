@@ -146,7 +146,7 @@ export default class LoginScreen extends React.PureComponent {
                   NavigationActions.navigate('Home');
                 }
               },
-              () => {
+              (e) => {
                 this.setState({ loading: false });
                 Helper.showToastMessage('something went wrong', 0);
               },

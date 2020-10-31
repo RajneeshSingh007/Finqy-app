@@ -68,12 +68,6 @@ export const firstFormCheck = (title, commons) => {
         //Helper.showToastMessage("Please, Select Current Location", 0);
         Helper.showToastMessage('Failed to find city & state, Please, check pincode', 0);
     } else if (
-        (title === "Term Insurance" ||
-            title === "Health Insurance") &&
-        commons.qualification === ""
-    ) {
-        Helper.showToastMessage("Qualification empty", 0);
-    } else if (
         title !== "Fixed Deposit" &&
         title !== `Mutual Fund` &&
         title !== `Home Loan` &&
@@ -96,6 +90,12 @@ export const firstFormCheck = (title, commons) => {
         commons.gender === ""
     ) {
         Helper.showToastMessage("Please, Select Gender", 0);
+    } else if (
+        (title === "Term Insurance" ||
+            title === "Health Insurance") &&
+        commons.qualification === ""
+    ) {
+        Helper.showToastMessage("Qualification empty", 0);
     } else if (
         title !== `Personal Loan` &&
         title !== "Fixed Deposit" &&

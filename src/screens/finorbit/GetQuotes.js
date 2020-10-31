@@ -133,7 +133,7 @@ export default class GetQuotes extends React.Component {
       const compId = `${map[0]["companyid"]}$$${map[1]["companyid"]}$$${map[2]["companyid"]}`;
       finalUrl = `${Pref.FinURL}/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }
-    NavigationActions.navigate('GetQuotesView', {url:finalUrl,company:map});
+    NavigationActions.navigate('GetQuotesView', {url:finalUrl,company:map,formId:formId, sumInsurred:sumInsurred});
     //this.setState({ modalvis: true, pdfurl: finalUrl });
   };
 

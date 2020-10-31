@@ -21,10 +21,10 @@ export default class ApptForm extends React.PureComponent {
     currentdate.setDate(Number(obj.date+1));
     
     const maxDate = moment().toDate();
-    maxDate.setDate(Number(obj.date+1));
-    maxDate.setMonth(Number(obj.months+1))
+    maxDate.setDate(Number(currentdate.getDate()));
+    maxDate.setMonth(Number(currentdate.getMonth()+1))
 
-    console.log('date', date.getDay(),currentdate,maxDate);
+    //console.log('date', date.getDay(),currentdate,maxDate);
     this.state = {
       showCalendar: false,
       currentDate: currentdate,

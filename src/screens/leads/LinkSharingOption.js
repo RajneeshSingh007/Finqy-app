@@ -152,6 +152,7 @@ export default class LinkSharingOption extends React.PureComponent {
                   list={this.state.productList}
                   placeholder={''}
                   selectedItem={(value) => this.setState({ productName: value })}
+                  value={this.state.productName}
                   style={{
                     borderRadius: 0,
                     borderBottomColor: Pref.RED,

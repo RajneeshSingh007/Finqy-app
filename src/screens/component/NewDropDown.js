@@ -74,6 +74,7 @@ class NewDropDown extends React.Component {
             selectedItem,
             enableSearch = false,
             textStyle,
+            value = ''
         } = this.props;
         const { visible, finalList, width, height, displayValue, query } = this.state;
         return (
@@ -102,7 +103,7 @@ class NewDropDown extends React.Component {
                                         } : {}
                                     ])}
                                 >
-                                    {placeholder === "" ? displayValue : displayValue !== '' ? displayValue : placeholder}
+                                {value != null && value !== '' ? value : placeholder === "" ? displayValue : displayValue !== '' ? displayValue : placeholder}
                                 </Title>
                                 <Icon
                                     name={"chevron-down"}

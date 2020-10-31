@@ -2,7 +2,8 @@ import React from 'react';
 import {
     StatusBar,
     StyleSheet,
-    Linking
+    Linking,
+    BackHandler
 } from 'react-native';
 import {
     View,
@@ -23,6 +24,7 @@ import { Button, Paragraph, Dialog, Portal, RadioButton } from 'react-native-pap
 export default class GetQuotesView extends React.PureComponent {
     constructor(props) {
         super(props);
+        //this.backClick = this.backClick.bind(this);
         changeNavigationBarColor(Pref.WHITE, true, true);
         StatusBar.setBackgroundColor(Pref.WHITE, false);
         StatusBar.setBarStyle('dark-content');
@@ -39,13 +41,16 @@ export default class GetQuotesView extends React.PureComponent {
     }
 
     componentDidMount() {
+        //BackHandler.addEventListener('hardwareBackPress', this.backClick);
         const { navigation } = this.props;
         const url = navigation.getParam('url', null);
         const companyList = navigation.getParam('company', []);
-        console.log('companyList', companyList);
+        const sumInsurred = navigation.getParam('sumInsurred', 0);
+        const formId = navigation.getParam('formId', null);
+        //console.log('companyList', companyList);
         Pref.getVal(Pref.userData, data => {
             //console.log('data', data)
-            this.setState({ companyList: companyList });
+            this.setState({ companyList: companyList, formId: formId, sumInsurred: sumInsurred });
             this.fetchData(url, data);
         })
 
@@ -63,7 +68,13 @@ export default class GetQuotesView extends React.PureComponent {
 
     };
 
+    // backClick = () => {
+    //     NavigationActions.navigate('GetQuotes', {formId:this.state.formId,sumInsurred:this.state.sumInsurred});
+    //     return false;
+    // }
+
     componentWillUnMount() {
+        //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
         if (this.focusListener !== undefined) this.focusListener.remove();
     }
 
@@ -183,10 +194,10 @@ export default class GetQuotesView extends React.PureComponent {
                                 flex: 0.85,
                                 backgroundColor: '#f9f8f1',
                             }}
-                                          fitWidth
-              fitPolicy={0}
-              enablePaging
-              scale={1}
+                            fitWidth
+                            fitPolicy={0}
+                            enablePaging
+                            scale={1}
 
                         />
 

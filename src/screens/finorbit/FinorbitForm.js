@@ -217,7 +217,7 @@ export default class FinorbitForm extends React.PureComponent {
       //console.log(`uniq`, uniq, title);
       formData.append(uniq, uniq);
 
-      if (commonForms !== undefined) {
+      if (commonForms !== undefined && this.state.currentPosition === 0) {
         checkData = firstFormCheck(title, commonForms);
         if (checkData) {
           let parseJs = JSON.parse(JSON.stringify(commonForms));
@@ -235,7 +235,7 @@ export default class FinorbitForm extends React.PureComponent {
         }
       }
 
-      if (specificForms !== undefined) {
+      if (specificForms !== undefined && this.state.currentPosition === 1) {
         if (
           title !== `Personal Loan` &&
           title !== `Loan Against Property` &&
@@ -293,7 +293,10 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Investment Amount empty", 0);
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -339,7 +342,10 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Please, Select Insurance Type", 0);
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -371,7 +377,10 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Select Required Cover", 0);
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -396,7 +405,10 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Select Type Of Car", 0);
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -522,7 +534,10 @@ export default class FinorbitForm extends React.PureComponent {
                         0
                       );
                     } else {
-                      if (
+                      if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                        checkData = false;
+                        Helper.showToastMessage("Invalid aadhar card number", 0);
+                      } else if (
                         specificForms.pancardNo !== "" &&
                         !Helper.checkPanCard(specificForms.pancardNo)
                       ) {
@@ -547,7 +562,10 @@ export default class FinorbitForm extends React.PureComponent {
                 }
               }
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -587,7 +605,10 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage("Select Type of Loan", 0);
             } else {
-              if (
+              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+                checkData = false;
+                Helper.showToastMessage("Invalid aadhar card number", 0);
+              } else if (
                 specificForms.pancardNo !== "" &&
                 !Helper.checkPanCard(specificForms.pancardNo)
               ) {
@@ -607,6 +628,9 @@ export default class FinorbitForm extends React.PureComponent {
                 }
               }
             }
+          } if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+            checkData = false;
+            Helper.showToastMessage("Invalid aadhar card number", 0);
           } else if (
             specificForms.pancardNo !== "" &&
             !Helper.checkPanCard(specificForms.pancardNo)
@@ -618,10 +642,13 @@ export default class FinorbitForm extends React.PureComponent {
             Helper.showToastMessage("Please, Select Type of Insurance", 0);
           } else if (title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_sum_assured === '') {
             checkData = false;
-            Helper.showToastMessage("Please, Enter Life Sum Assured", 0);
+            Helper.showToastMessage("Please, Enter Sum Assured", 0);
           } else if (title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_sum_assured === '') {
             checkData = false;
-            Helper.showToastMessage("Please, Enter Health Sum Assured", 0);
+            Helper.showToastMessage("Please, Enter Sum Assured", 0);
+          } else if (title === 'Insure Check' && specificForms.type_insurance === 'Health Insurance' && specificForms.health_sum_assured !== '' && specificForms.health_sum_assured.length < 2) {
+            checkData = false;
+            Helper.showToastMessage("Please, Invalid Sum Assured", 0);
           } else if (title === 'Insure Check' && specificForms.type_insurance === 'Life Insurance' && specificForms.life_company === '') {
             checkData = false;
             Helper.showToastMessage("Please, Select Life Policy Company", 0);
@@ -699,9 +726,129 @@ export default class FinorbitForm extends React.PureComponent {
             } else {
               existence = "policycopy";
             }
+          } else if (title === 'Auto Loan') {
+            //pan card
+            const pancard = Lodash.find(allfileslist, io => {
+              if ('pancard' in io) {
+                io.key = 'pancard';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (pancard !== undefined) {
+              const { key } = pancard;
+              const { name } = pancard[key];
+              if (String(key) === `pancard` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "pancard";
+            }
+
+            //aadhar card
+            const aadharcard = Lodash.find(allfileslist, io => {
+              if ('aadharcard' in io) {
+                io.key = 'aadharcard';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (aadharcard !== undefined) {
+              const { key } = aadharcard;
+              const { name } = aadharcard[key];
+              if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "aadharcard";
+            }
+
+            //salary slip 
+            const salaryslip = Lodash.find(allfileslist, io => {
+              if ('salaryslip' in io) {
+                io.key = 'salaryslip';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (salaryslip !== undefined) {
+              const { key } = salaryslip;
+              const { name } = salaryslip[key];
+              if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "salaryslip";
+            }
+
+            //salary slip 1 
+            const salaryslip1 = Lodash.find(allfileslist, io => {
+              if ('salaryslip1' in io) {
+                io.key = 'salaryslip1';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (salaryslip1 !== undefined) {
+              const { key } = salaryslip1;
+              const { name } = salaryslip1[key];
+              if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "salaryslip1";
+            }
+
+
+            //salary slip 2
+            const salaryslip2 = Lodash.find(allfileslist, io => {
+              if ('salaryslip2' in io) {
+                io.key = 'salaryslip2';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (salaryslip2 !== undefined) {
+              const { key } = salaryslip2;
+              const { name } = salaryslip2[key];
+              if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "salaryslip2";
+            }
+
+            //3month bank statement
+            const bankstate = Lodash.find(allfileslist, io => {
+              if ('bankstate' in io) {
+                io.key = 'bankstate';
+                return io;
+              } else {
+                return undefined;
+              }
+            });
+            if (bankstate !== undefined) {
+              const { key } = bankstate;
+              const { name } = bankstate[key];
+              if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "bankstate";
+            }
           }
+
         } else {
-          existence = "rcbookcopy";
+          if (title == 'Motor Insurance') {
+            existence = "rcbookcopy";
+          } else if (title == 'Auto Loan') {
+            existence = "pancard";
+          }
         }
         //console.log('existence', existence)
         if (this.state.currentPosition === 2) {
@@ -713,11 +860,31 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage('Please, Select Policy', 0);
             }
+          } else if (title === `Auto Loan`) {
+            if (existence === 'pancard') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Pancard', 0);
+            } else if (existence === 'aadharcard') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Aadhar Card', 0);
+            } else if (existence === 'salaryslip') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Salary Slip 1', 0);
+            } else if (existence === 'salaryslip1') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Salary Slip 2', 0);
+            } else if (existence === 'salaryslip2') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Salary Slip 3', 0);
+            } else if (existence === 'bankstate') {
+              checkData = false;
+              Helper.showToastMessage('Please, Select Bank Statement', 0);
+            }
           }
         }
       }
 
-      if (dateForm !== undefined) {
+      if (dateForm !== undefined && this.state.currentPosition === 3) {
         if (dateForm.baa === "") {
           checkData = false;
           Helper.showToastMessage("Please, Select Appointment Date", 0);
@@ -779,8 +946,8 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
-          console.log('formData', formData);
-          console.log('formUrls', formUrls);
+          //console.log('formData', formData);
+          //console.log('formUrls', formUrls);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -803,7 +970,7 @@ export default class FinorbitForm extends React.PureComponent {
                   });
                 } else {
                   NavigationActions.navigate("Finish", {
-                    top: "Edit Profile",
+                    top: "Add Single Lead",
                     red: "Success",
                     grey: "Details uploaded",
                     blue: "Add another lead?",
@@ -857,47 +1024,47 @@ export default class FinorbitForm extends React.PureComponent {
         }
         body={
           <>
-          <LeftHeaders
-                  showBack
-                  title={
-                    // split.length === 2
-                    //   ? `${split[0]} ${split[1]}`
-                    //   : split.length === 3
-                    //     ? `${split[0]} ${split[1]} ${split[2]}`
-                    //     : split.length === 4
-                    //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
-                    //       : split[0]
-                    `Add New Lead`
-                  }
-                  bottomtext={
-                    <>
-                      {`${split[0]} `}
-                      {split.length === 2 ? (
-                        <Title style={styles.passText}>{`${split[1]}`}</Title>
-                      ) : split.length === 3 ? (
-                        <Title
-                          style={styles.passText}
-                        >{`${split[1]} ${split[2]}`}</Title>
-                      ) : split.length === 4 ? (
-                        <Title
-                          style={styles.passText}
-                        >{`${split[1]} ${split[2]} ${split[3]}`}</Title>
-                      ) : null}
-                    </>
-                  }
-                  bottomtextStyle={{
-                    color: "#555555",
-                    fontSize: 20,
-                  }}
-                />
-                <StepIndicator
-                  activeCounter={this.state.currentPosition}
-                  stepCount={this.state.title === 'Insure Check' ? 2 : 4}
-                />
+            <LeftHeaders
+              showBack
+              title={
+                // split.length === 2
+                //   ? `${split[0]} ${split[1]}`
+                //   : split.length === 3
+                //     ? `${split[0]} ${split[1]} ${split[2]}`
+                //     : split.length === 4
+                //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
+                //       : split[0]
+                `Add New Lead`
+              }
+              bottomtext={
+                <>
+                  {`${split[0]} `}
+                  {split.length === 2 ? (
+                    <Title style={styles.passText}>{`${split[1]}`}</Title>
+                  ) : split.length === 3 ? (
+                    <Title
+                      style={styles.passText}
+                    >{`${split[1]} ${split[2]}`}</Title>
+                  ) : split.length === 4 ? (
+                    <Title
+                      style={styles.passText}
+                    >{`${split[1]} ${split[2]} ${split[3]}`}</Title>
+                  ) : null}
+                </>
+              }
+              bottomtextStyle={{
+                color: "#555555",
+                fontSize: 20,
+              }}
+            />
+            <StepIndicator
+              activeCounter={this.state.currentPosition}
+              stepCount={this.state.title === 'Insure Check' ? 2 : 4}
+            />
             {title == '' ? <View style={styles.loader}>
               <ActivityIndicator />
             </View> : <>
-              
+
 
                 {/* <StepIndicator
                 customStyles={customStyles}

@@ -105,7 +105,7 @@ export default class Agreement extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `${this.state.referCode}_MyAgreement`, `${this.state.referCode}_MyAgreement.pdf`, 'application/pdf');
+                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyAgreement`, `${this.state.referCode}_MyAgreement.pdf`, 'application/pdf');
               }}
               style={{ flex: 0.09 }}
             />

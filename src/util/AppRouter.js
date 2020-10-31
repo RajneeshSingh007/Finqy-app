@@ -293,6 +293,7 @@ const FinOrbitNav = createStackNavigator(
     VectorForm: {screen: VectorForm},
     VectorPayment: {screen: VectorPayment},
     GetQuotes:{screen:GetQuotes},
+    GetQuotesView:{screen:GetQuotesView},
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -387,7 +388,6 @@ const OtherNav = createDrawerNavigator(
     AddConnector: {screen: AddConnector},
     Finish: {screen: FinishScreen},
     Term:{screen:Term},
-    GetQuotesView:{screen:GetQuotesView},
     WebComp:{screen:WebComp}
   },
   {

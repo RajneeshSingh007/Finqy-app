@@ -148,6 +148,13 @@ export default class Samadhan extends React.Component {
               complaint_type: '',
             });
             Helper.showToastMessage(`Form submitted successfully`, 1);
+                  NavigationActions.navigate("Finish", {
+                    top: "Add Single Lead",
+                    red: "Success",
+                    grey: "Details uploaded",
+                    blue: "Add another lead?",
+                    back: "FinorbitScreen",
+                  });
           }
         },
         () => {
@@ -327,6 +334,7 @@ export default class Samadhan extends React.Component {
                     compTypeList: clist,
                   });
                 }}
+                value={this.state.policy_type}
                 style={{
                   borderRadius: 0,
                   borderBottomColor: '#f2f1e6',
@@ -342,6 +350,7 @@ export default class Samadhan extends React.Component {
               <NewDropDown
                 list={this.state.compTypeList}
                 placeholder={'Complain Type *'}
+                                value={this.state.complaint_type}
                 selectedItem={value => this.setState({ complaint_type: value })}
                 style={{
                   borderRadius: 0,

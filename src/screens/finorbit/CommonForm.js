@@ -85,7 +85,7 @@ export default class CommonForm extends React.PureComponent {
       email: '',
       mobile: '',
       gender: '',
-      dob: 'Date of Birth',
+      dob: '',
       employ: '',
       ofc_add: '',
       qualification: '',
@@ -127,11 +127,12 @@ export default class CommonForm extends React.PureComponent {
   componentWillReceiveProps(prop) {
     const { saveData, title } = prop;
     //console.log('title', prop)
-    if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
-      this.setState({ dob: 'Date of Birth' });
-    } else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check') {
-      this.setState({ dob: 'Date of Birth *' });
-    } else if (title === 'Vector Plus' || title === 'Religare Group Plan') {
+    // if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
+    //   this.setState({ dob: 'Date of Birth' });
+    // } else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check') {
+    //   this.setState({ dob: 'Date of Birth *' });
+    // } else 
+    if (title === 'Vector Plus' || title === 'Religare Group Plan') {
       const maxDates = new Date();
       const getyear = maxDates.getFullYear() - 18;
       maxDates.setFullYear(getyear);
@@ -623,7 +624,7 @@ export default class CommonForm extends React.PureComponent {
         </> : null}
 
 
-        {title === `Term Insurance` ? (
+        {/* {title === `Term Insurance` ? (
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ qualification: value })}
             value={this.state.qualification}
@@ -634,25 +635,25 @@ export default class CommonForm extends React.PureComponent {
             changecolor
             containerstyle={styles.animatedInputCont}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[
-          //     styles.inputStyle,
-          //     // { marginVertical: sizeHeight(1) },
-          //   ]}
-          //   label={`Qualification *`}
-          //   placeholder={'Enter qualification'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //   onChangeText={(value) => this.setState({qualification: value})}
-          //   value={this.state.qualification}
-          //   theme={theme}
-          //   editable={editable}
-          //   disabled={disabled}
-          //   returnKeyType={'next'}
-          // />
-          null}
+        ) :  <TextInput
+            mode="flat"
+            underlineColor="transparent"
+            underlineColorAndroid="transparent"
+            style={[
+              styles.inputStyle,
+              // { marginVertical: sizeHeight(1) },
+            ]}
+            label={`Qualification *`}
+            placeholder={'Enter qualification'}
+            placeholderTextColor={'#DEDEDE'}
+            onChangeText={(value) => this.setState({qualification: value})}
+            value={this.state.qualification}
+            theme={theme}
+            editable={editable}
+            disabled={disabled}
+            returnKeyType={'next'}
+          />
+          null} */}
 
 
         {title !== 'Profile' && title !== 'Motor Insurance' ? (
@@ -670,13 +671,12 @@ export default class CommonForm extends React.PureComponent {
                       styles.boxsubtitle,
                       {
                         color:
-                          this.state.dob === `Date of Birth *` ||
-                            'Date of Birth'
-                            ? `#6d6a57`
+                          this.state.dob === ''?
+                             `#6d6a57`
                             : `#555555`,
                       },
                     ]}>
-                    {this.state.dob}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' ? `*` : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -812,7 +812,7 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === 'Health Insurance' ? <View style={styles.radiocont}>
+        {title === 'Health Insurance' || title === 'Term Insurance' ? <View style={styles.radiocont}>
           <View style={StyleSheet.flatten([styles.radiodownbox, {
             height: 124
           }])}>
@@ -820,7 +820,7 @@ export default class CommonForm extends React.PureComponent {
             <RadioButton.Group
               onValueChange={(value) => this.setState({ qualification: value })}
               value={this.state.qualification}>
-              <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' ? 'wrap' : 'nowrap' }}>
+              <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' || title =='Term Insurance' ? 'wrap' : 'nowrap' }}>
                 <View
                   styleName="horizontal"
                   style={{ alignSelf: 'center', alignItems: 'center' }}>
@@ -843,34 +843,8 @@ export default class CommonForm extends React.PureComponent {
                     styleName="v-center h-center"
                     style={styles.textopen}>{`Graduate`}</Title>
                 </View>
-                {title === 'Health Insurance' ? <>
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Other"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Other`}</Title>
-                  </View>
-
-
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Diploma"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Diploma`}</Title>
-                  </View>
-
-
-                  <View
+                {title === 'Health Insurance' || title === 'Term Insurance' ? <>
+                                  <View
                     styleName="horizontal"
                     style={{ alignSelf: 'center', alignItems: 'center' }}>
                     <RadioButton
@@ -893,6 +867,31 @@ export default class CommonForm extends React.PureComponent {
                       styleName="v-center h-center"
                       style={styles.textopen}>{`Professional`}</Title>
                   </View>
+
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Diploma"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Diploma`}</Title>
+                  </View>
+
+                  <View
+                    styleName="horizontal"
+                    style={{ alignSelf: 'center', alignItems: 'center' }}>
+                    <RadioButton
+                      value="Other"
+                      style={{ alignSelf: 'center' }}
+                    />
+                    <Title
+                      styleName="v-center h-center"
+                      style={styles.textopen}>{`Other`}</Title>
+                  </View>
+
                 </> : null}
               </View>
             </RadioButton.Group>

@@ -157,10 +157,10 @@ export default class AddTeam extends React.Component {
     }
 
     const aadharcardNo = spcommons.aadharcardNo;
-    // if (aadharcardNo === '') {
-    //   Helper.showToastMessage('Aadhar card empty', 0);
-    //   return false;
-    // }
+    if (aadharcardNo !== '' && aadharcardNo.length < 12) {
+      Helper.showToastMessage('Invalid aadhar card number', 0);
+      return false;
+    }
 
     body.pancard = panCards || '';
     body.aadharcard = aadharcardNo || '';

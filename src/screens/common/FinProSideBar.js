@@ -80,7 +80,7 @@ export default class FinProSideBar extends React.PureComponent {
                         <View styleName="horizontal v-center h-center">
                           <Title
                             styleName="wrap"
-                            style={styles.text}>{`${item.name === 'Vector Plus' ? 'MCD Policy' : item.name}`}</Title>
+                            style={styles.text}>{`${item.name === 'Vector Plus' ? 'MCD Policy' : item.name === 'Life Cum Invt. Plan' ? 'Life Cum Investment Plan' : item.name}`}</Title>
                         </View>
                       </TouchableWithoutFeedback>
                       {index === size - 1 ? null : <View style={styles.line} />}

@@ -22,7 +22,7 @@ const Footer = (prop) => {
           <Subtitle style={styles.centerText}>{`© 2020 erevbay`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
-          onPress={() => Linking.openURL('https://erb.ai')}>
+          onPress={() => Linking.openURL('https://erb.ai/about.php')}>
           <Subtitle style={styles.centerText}>{`About FinPro`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback

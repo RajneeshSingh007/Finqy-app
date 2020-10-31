@@ -340,6 +340,7 @@ export default class RegisterScreen extends React.PureComponent {
                     enabledprofession:
                       value === 'Individual' ? true : false,
                   })}
+                  value={this.state.modetext}
                   style={styles.newdropdown}
                   textStyle={styles.dropdowntext}
                 />
@@ -435,6 +436,7 @@ export default class RegisterScreen extends React.PureComponent {
                     selectedItem={(value) => this.setState({
                       profession: value,
                     })}
+                    value={this.state.profession}
                     style={styles.newdropdown}
                     textStyle={styles.dropdowntext}
                   />

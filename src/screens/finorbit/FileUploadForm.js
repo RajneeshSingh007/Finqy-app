@@ -145,7 +145,7 @@ export default class FileUploadForm extends React.PureComponent {
 
         {title !== 'Motor Insurance' ? <>
         <CommonFileUpload
-          title={'Pan Card'}
+          title={`Pan Card ${title === 'Auto Loan' ? ` *`:``}`}
           type={2}
           pickedTitle={this.findFileName(`pancard`)}
           pickedCallback={(selected, res) => {
@@ -173,7 +173,8 @@ export default class FileUploadForm extends React.PureComponent {
         />
 
         <CommonFileUpload
-          title={'Aadhar Card'}
+          //title={'Aadhar Card'}
+          title={`Aadhar Card ${title === 'Auto Loan' ? ` *`:``}`}
           type={2}
           pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
           pickedCallback={(selected, res) => {
@@ -385,7 +386,7 @@ export default class FileUploadForm extends React.PureComponent {
               </View>
 
               <CommonFileUpload
-                title={'Salary Slip 1'}
+                title={`Salary Slip 1 ${title === 'Auto Loan' ? ` *`:``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip`)}
                 pickedCallback={(selected, res) => {
@@ -406,7 +407,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={'Salary Slip 2'}
+                title={`Salary Slip 2 ${title === 'Auto Loan' ? ` *`:``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip1`)}
                 pickedCallback={(selected, res) => {
@@ -428,7 +429,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={'Salary Slip 3'}
+                title={`Salary Slip 3 ${title === 'Auto Loan' ? ` *`:``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip2`)}
                 pickedCallback={(selected, res) => {
@@ -520,7 +521,7 @@ export default class FileUploadForm extends React.PureComponent {
                 title={
                   title === 'Home Loan'
                     ? '1 Year Bank Statement'
-                    : '3 Month Bank Statement'
+                    : `3 Month Bank Statement ${title === 'Auto Loan' ? ` *`:``}`
                 }
                 type={2}
                 pickedTitle={this.findFileName(`bankstate`)}

@@ -137,6 +137,7 @@ export default class ViewTeam extends React.PureComponent {
         const { data, response_header } = result;
         const { res_type, message } = response_header;
         if (res_type === `success`) {
+         // console.log('data', data)
           if (data.length > 0) {
             const dataList = data.reverse();
             const { itemSize } = this.state;
@@ -187,10 +188,10 @@ export default class ViewTeam extends React.PureComponent {
                   style={{
                     textAlign: 'center',
                     fontWeight: '400',
-                    color: Number(value) === 1 ? '#1bd741' : Pref.RED,
+                    color: value === 'Active' ? '#1bd741' : Pref.RED,
                     fontSize: 15,
                   }}>
-                  {`${Number(value) === 1 ? `Active` : `Inactive`}`}
+                  {value}
                 </Title>
               </View>
             );
