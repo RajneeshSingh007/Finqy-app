@@ -175,7 +175,7 @@ export default class FinorbitForm extends React.PureComponent {
       }
       delete commons.vectorTypeIns;
       delete commons.showItemCalendar;
-      console.log("d", commons);
+      //console.log("d", commons);
     } else if (currentPosition === 2) {
       commons = JSON.parse(
         JSON.stringify(this.FileUploadFormRef.current.state)
@@ -219,20 +219,20 @@ export default class FinorbitForm extends React.PureComponent {
 
       if (commonForms !== undefined && this.state.currentPosition === 0) {
         checkData = firstFormCheck(title, commonForms);
-        if (checkData) {
-          let parseJs = JSON.parse(JSON.stringify(commonForms));
-          if (parseJs.currentlocation === "Select Current Location *") {
-            parseJs.currentlocation === "";
-          }
-          for (var key in parseJs) {
-            const value = parseJs[key];
-            if (value !== undefined) {
-              if (Array.isArray(value) === false) {
-                formData.append(key, parseJs[key]);
-              }
-            }
-          }
-        }
+        // if (checkData) {
+        //   let parseJs = JSON.parse(JSON.stringify(commonForms));
+        //   if (parseJs.currentlocation === "Select Current Location *") {
+        //     parseJs.currentlocation === "";
+        //   }
+        //   for (var key in parseJs) {
+        //     const value = parseJs[key];
+        //     if (value !== undefined) {
+        //       if (Array.isArray(value) === false) {
+        //         formData.append(key, parseJs[key]);
+        //       }
+        //     }
+        //   }
+        // }
       }
 
       if (specificForms !== undefined && this.state.currentPosition === 1) {
@@ -281,41 +281,97 @@ export default class FinorbitForm extends React.PureComponent {
         ) {
           checkData = false;
           Helper.showToastMessage("Select Existing Card/Loan", 0);
-        } else if (title === 'Home Loan' &&
-          (specificForms.loan_property_city === "" ||
-            specificForms.loan_property_city ===
-            `Select Loan Property City *`)) {
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.company === '') {
           checkData = false;
-          Helper.showToastMessage("Select Loan Property City", 0);
+          Helper.showToastMessage("Company name empty", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover === '') {
+          checkData = false;
+          Helper.showToastMessage("Annual Turnover empty", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover.length < 2) {
+          checkData = false;
+          Helper.showToastMessage("Invalid turnover", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.amount === '') {
+          checkData = false;
+          Helper.showToastMessage("Desired Amount empty", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.amount.length < 2) {
+          checkData = false;
+          Helper.showToastMessage("Invalid desired amount", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.pancardNo === "") {
+          checkData = false;
+          Helper.showToastMessage("Pancard number empty", 0);
+        } else if (
+          specificForms.pancardNo !== "" &&
+          !Helper.checkPanCard(specificForms.pancardNo)
+        ) {
+          checkData = false;
+          Helper.showToastMessage("Invalid pan card number", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.aadharcardNo === "") {
+          checkData = false;
+          Helper.showToastMessage("Aadhar card number empty", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+          checkData = false;
+          Helper.showToastMessage("Invalid aadhar card number", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.type_loan === "") {
+          checkData = false;
+          Helper.showToastMessage("Select Type of Loan", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.existingcard === "") {
+          checkData = false;
+          Helper.showToastMessage("Select Existing Card/Loan", 0);
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.companylocation === "") {
+          checkData = false;
+          Helper.showToastMessage("Please, Select Company Location", 0);
+        } else if ((title === 'Home Loan'
+          //|| title === 'Loan Against Property'
+        ) &&
+          specificForms.pincode === "") {
+          checkData = false;
+          Helper.showToastMessage("Please, Enter Loan Property Pincode", 0);
+          //Helper.showToastMessage("Loan property pincode empty", 0);
+        } else if ((title === 'Home Loan'
+          //|| title === 'Loan Against Property'
+        ) && specificForms.pincode !== '' &&
+          specificForms.pincode.length < 6) {
+          checkData = false;
+          Helper.showToastMessage("Please, Correct Loan Property Pincode", 0);
+          //Helper.showToastMessage("Loan property pincode empty", 0);
+        } else if ((title === 'Home Loan'
+          //|| title === 'Loan Against Property'
+        ) &&
+          specificForms.pincode !== '' && (specificForms.loan_property_city === '' || specificForms.homestate === '')) {
+          checkData = false;
+          Helper.showToastMessage('Failed to find city & state, Please, check loan property pincode', 0);
+        } else if (title === "Home Loan" && specificForms.loan_property_address === "") {
+          checkData = false;
+          Helper.showToastMessage("Property Address empty", 0);
         } else {
           if (title === "Life Cum Invt. Plan") {
             if (specificForms.investment_amount === "") {
               checkData = false;
               Helper.showToastMessage("Investment Amount empty", 0);
-            } else {
-              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
-                checkData = false;
-                Helper.showToastMessage("Invalid aadhar card number", 0);
-              } else if (
-                specificForms.pancardNo !== "" &&
-                !Helper.checkPanCard(specificForms.pancardNo)
-              ) {
-                checkData = false;
-                Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
-              }
+            } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+              checkData = false;
+              Helper.showToastMessage("Invalid aadhar card number", 0);
+            } else if (
+              specificForms.pancardNo !== "" &&
+              !Helper.checkPanCard(specificForms.pancardNo)
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Invalid pan card number", 0);
             }
+            // else {
+            //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+            //   for (var key in parseJs) {
+            //     if (key !== "floaterItemList") {
+            //       const value = parseJs[key];
+            //       if (value !== undefined) {
+            //         if (Array.isArray(value) === false) {
+            //           formData.append(key, parseJs[key]);
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            //}
           } else if (title === "Motor Insurance") {
             if (specificForms.claim_type === "") {
               checkData = false;
@@ -351,19 +407,20 @@ export default class FinorbitForm extends React.PureComponent {
               ) {
                 checkData = false;
                 Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
               }
+              // else {
+              //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+              //   for (var key in parseJs) {
+              //     if (key !== "floaterItemList") {
+              //       const value = parseJs[key];
+              //       if (value !== undefined) {
+              //         if (Array.isArray(value) === false) {
+              //           formData.append(key, parseJs[key]);
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
             }
           } else if (title === "Vector Plus") {
             //required_cover
@@ -386,48 +443,79 @@ export default class FinorbitForm extends React.PureComponent {
               ) {
                 checkData = false;
                 Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
               }
+              // else {
+              //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+              //   for (var key in parseJs) {
+              //     if (key !== "floaterItemList") {
+              //       const value = parseJs[key];
+              //       if (value !== undefined) {
+              //         if (Array.isArray(value) === false) {
+              //           formData.append(key, parseJs[key]);
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
             }
           } else if (title === "Auto Loan") {
-            if (title !== `Auto Loan` && specificForms.nooldcard === "") {
+            if (specificForms.company === '') {
               checkData = false;
-              Helper.showToastMessage("Select Type Of Car", 0);
-            } else {
-              if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
-                checkData = false;
-                Helper.showToastMessage("Invalid aadhar card number", 0);
-              } else if (
-                specificForms.pancardNo !== "" &&
-                !Helper.checkPanCard(specificForms.pancardNo)
-              ) {
-                checkData = false;
-                Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
-              }
+              Helper.showToastMessage("Company name empty", 0);
+            } else if (specificForms.turnover === '') {
+              checkData = false;
+              Helper.showToastMessage("Annual Turnover empty", 0);
+            } else if (specificForms.turnover.length < 2) {
+              checkData = false;
+              Helper.showToastMessage("Invalid turnover", 0);
+            } else if (specificForms.amount === '') {
+              checkData = false;
+              Helper.showToastMessage("Desired Amount empty", 0);
+            } else if (specificForms.amount !== '' && specificForms.amount.length < 2) {
+              checkData = false;
+              Helper.showToastMessage("Invalid Desired Amount", 0);
+            } else if (specificForms.pancardNo === "") {
+              checkData = false;
+              Helper.showToastMessage("Pancard number empty", 0);
+            } else if (
+              specificForms.pancardNo !== "" &&
+              !Helper.checkPanCard(specificForms.pancardNo)
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Invalid pan card number", 0);
+            } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo === "") {
+              checkData = false;
+              Helper.showToastMessage("Aadhar card number empty", 0);
+            } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+              checkData = false;
+              Helper.showToastMessage("Invalid aadhar card number", 0);
+            } else if (specificForms.rcbook === "") {
+              checkData = false;
+              Helper.showToastMessage("Car RC number empty", 0);
+            } else if (specificForms.model === "") {
+              checkData = false;
+              Helper.showToastMessage("Car Model number empty", 0);
+            } else if (specificForms.nooldcard === "") {
+              checkData = false;
+              Helper.showToastMessage("Select Type of Car", 0);
+            } else if (specificForms.ownership === "") {
+              checkData = false;
+              Helper.showToastMessage("Select Type of Ownership", 0);
             }
+            // else {
+            //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+            //   for (var key in parseJs) {
+            //     if (key !== "floaterItemList") {
+            //       const value = parseJs[key];
+            //       if (value !== undefined) {
+            //         if (Array.isArray(value) === false) {
+            //           formData.append(key, parseJs[key]);
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+            //}
           } else if (
             title === "Term Insurance" ||
             title === `Health Insurance`
@@ -447,6 +535,12 @@ export default class FinorbitForm extends React.PureComponent {
             ) {
               checkData = false;
               Helper.showToastMessage("Required Cover Empty", 0);
+            } else if (
+              title === `Term Insurance` &&
+              specificForms.amount !== '' && specificForms.amount.length < 2
+            ) {
+              checkData = false;
+              Helper.showToastMessage("Inavlid Required Cover", 0);
             } else if (specificForms.lifestyle === "") {
               checkData = false;
               Helper.showToastMessage("Please, Select Smoker Type", 0);
@@ -543,20 +637,21 @@ export default class FinorbitForm extends React.PureComponent {
                       ) {
                         checkData = false;
                         Helper.showToastMessage("Invalid pan card number", 0);
-                      } else {
-                        let keypos = 1;
-                        let parseJs = JSON.parse(JSON.stringify(specificForms));
-                        for (var key in parseJs) {
-                          if (key !== `floaterItemList`) {
-                            const value = parseJs[key];
-                            if (value !== undefined) {
-                              if (Array.isArray(value) === false) {
-                                formData.append(key, parseJs[key]);
-                              }
-                            }
-                          }
-                        }
                       }
+                      // else {
+                      //   let keypos = 1;
+                      //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+                      //   for (var key in parseJs) {
+                      //     if (key !== `floaterItemList`) {
+                      //       const value = parseJs[key];
+                      //       if (value !== undefined) {
+                      //         if (Array.isArray(value) === false) {
+                      //           formData.append(key, parseJs[key]);
+                      //         }
+                      //       }
+                      //     }
+                      //   }
+                      // }
                     }
                   }
                 }
@@ -571,19 +666,20 @@ export default class FinorbitForm extends React.PureComponent {
               ) {
                 checkData = false;
                 Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
               }
+              // else {
+              //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+              //   for (var key in parseJs) {
+              //     if (key !== "floaterItemList") {
+              //       const value = parseJs[key];
+              //       if (value !== undefined) {
+              //         if (Array.isArray(value) === false) {
+              //           formData.append(key, parseJs[key]);
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
             }
           } else if (title === `Auto Loan`) {
             if (specificForms.turnover === "") {
@@ -614,21 +710,22 @@ export default class FinorbitForm extends React.PureComponent {
               ) {
                 checkData = false;
                 Helper.showToastMessage("Invalid pan card number", 0);
-              } else {
-                let parseJs = JSON.parse(JSON.stringify(specificForms));
-                for (var key in parseJs) {
-                  if (key !== "floaterItemList") {
-                    const value = parseJs[key];
-                    if (value !== undefined) {
-                      if (Array.isArray(value) === false) {
-                        formData.append(key, parseJs[key]);
-                      }
-                    }
-                  }
-                }
               }
+              // else {
+              //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+              //   for (var key in parseJs) {
+              //     if (key !== "floaterItemList") {
+              //       const value = parseJs[key];
+              //       if (value !== undefined) {
+              //         if (Array.isArray(value) === false) {
+              //           formData.append(key, parseJs[key]);
+              //         }
+              //       }
+              //     }
+              //   }
+              // }
             }
-          } if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+          } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
             checkData = false;
             Helper.showToastMessage("Invalid aadhar card number", 0);
           } else if (
@@ -658,38 +755,39 @@ export default class FinorbitForm extends React.PureComponent {
           } else if (title === 'Insure Check' && specificForms.turnover === "") {
             checkData = false;
             Helper.showToastMessage("Annual Turnover Empty", 0);
-          } else {
-            let parseJs = JSON.parse(JSON.stringify(specificForms));
-            for (var key in parseJs) {
-              if (key !== "floaterItemList") {
-                const value = parseJs[key];
-                if (value !== undefined) {
-                  if (Array.isArray(value) === false) {
-                    formData.append(key, parseJs[key]);
-                  }
-                }
-              }
-            }
           }
+          // else {
+          //   let parseJs = JSON.parse(JSON.stringify(specificForms));
+          //   for (var key in parseJs) {
+          //     if (key !== "floaterItemList") {
+          //       const value = parseJs[key];
+          //       if (value !== undefined) {
+          //         if (Array.isArray(value) === false) {
+          //           formData.append(key, parseJs[key]);
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
         }
       }
-
+      let allfileslist = [];
       if (fileListForms !== undefined) {
-        const allfileslist = fileListForms.fileList;
+        allfileslist = fileListForms.fileList;
         let existence = "";
         //console.log('allfileslist', allfileslist)
         if (allfileslist !== undefined && allfileslist.length > 0) {
-          const loops = Lodash.map(allfileslist, (ele) => {
-            let parseJs = JSON.parse(JSON.stringify(ele));
-            for (var key in parseJs) {
-              const value = parseJs[key];
-              if (value !== undefined) {
-                if (Array.isArray(value) === false) {
-                  formData.append(key, parseJs[key]);
-                }
-              }
-            }
-          });
+          // const loops = Lodash.map(allfileslist, (ele) => {
+          //   let parseJs = JSON.parse(JSON.stringify(ele));
+          //   for (var key in parseJs) {
+          //     const value = parseJs[key];
+          //     if (value !== undefined) {
+          //       if (Array.isArray(value) === false) {
+          //         formData.append(key, parseJs[key]);
+          //       }
+          //     }
+          //   }
+          // });
           if (title === 'Motor Insurance') {
             const rcCopy = Lodash.find(allfileslist, io => {
               if ('rcbookcopy' in io) {
@@ -717,16 +815,18 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (oldInCopy !== undefined) {
-              const { key } = oldInCopy;
-              const { name } = oldInCopy[key];
-              if (String(key) === `policycopy` && name !== undefined && String(name).length === 0) {
-                existence = key;
+            if (existence === "") {
+              if (oldInCopy !== undefined) {
+                const { key } = oldInCopy;
+                const { name } = oldInCopy[key];
+                if (String(key) === `policycopy` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "policycopy";
               }
-            } else {
-              existence = "policycopy";
             }
-          } else if (title === 'Auto Loan') {
+          } else if (title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
             //pan card
             const pancard = Lodash.find(allfileslist, io => {
               if ('pancard' in io) {
@@ -755,14 +855,16 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (aadharcard !== undefined) {
-              const { key } = aadharcard;
-              const { name } = aadharcard[key];
-              if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
-                existence = key;
+            if (existence === "") {
+              if (aadharcard !== undefined) {
+                const { key } = aadharcard;
+                const { name } = aadharcard[key];
+                if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "aadharcard";
               }
-            } else {
-              existence = "aadharcard";
             }
 
             //salary slip 
@@ -774,14 +876,17 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (salaryslip !== undefined) {
-              const { key } = salaryslip;
-              const { name } = salaryslip[key];
-              if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
-                existence = key;
+            if (existence === "") {
+
+              if (salaryslip !== undefined) {
+                const { key } = salaryslip;
+                const { name } = salaryslip[key];
+                if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "salaryslip";
               }
-            } else {
-              existence = "salaryslip";
             }
 
             //salary slip 1 
@@ -793,14 +898,17 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (salaryslip1 !== undefined) {
-              const { key } = salaryslip1;
-              const { name } = salaryslip1[key];
-              if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
-                existence = key;
+            if (existence === "") {
+
+              if (salaryslip1 !== undefined) {
+                const { key } = salaryslip1;
+                const { name } = salaryslip1[key];
+                if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "salaryslip1";
               }
-            } else {
-              existence = "salaryslip1";
             }
 
 
@@ -813,16 +921,18 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (salaryslip2 !== undefined) {
-              const { key } = salaryslip2;
-              const { name } = salaryslip2[key];
-              if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
-                existence = key;
-              }
-            } else {
-              existence = "salaryslip2";
-            }
+            if (existence === "") {
 
+              if (salaryslip2 !== undefined) {
+                const { key } = salaryslip2;
+                const { name } = salaryslip2[key];
+                if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "salaryslip2";
+              }
+            }
             //3month bank statement
             const bankstate = Lodash.find(allfileslist, io => {
               if ('bankstate' in io) {
@@ -832,21 +942,24 @@ export default class FinorbitForm extends React.PureComponent {
                 return undefined;
               }
             });
-            if (bankstate !== undefined) {
-              const { key } = bankstate;
-              const { name } = bankstate[key];
-              if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
-                existence = key;
+            if (existence === "") {
+
+              if (bankstate !== undefined) {
+                const { key } = bankstate;
+                const { name } = bankstate[key];
+                if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
+                  existence = key;
+                }
+              } else {
+                existence = "bankstate";
               }
-            } else {
-              existence = "bankstate";
             }
           }
 
         } else {
           if (title == 'Motor Insurance') {
             existence = "rcbookcopy";
-          } else if (title == 'Auto Loan') {
+          } else if (title == 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
             existence = "pancard";
           }
         }
@@ -860,7 +973,7 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage('Please, Select Policy', 0);
             }
-          } else if (title === `Auto Loan`) {
+          } else if (title === `Auto Loan` || title === 'Business Loan' || title === 'Personal Loan') {
             if (existence === 'pancard') {
               checkData = false;
               Helper.showToastMessage('Please, Select Pancard', 0);
@@ -944,10 +1057,83 @@ export default class FinorbitForm extends React.PureComponent {
           const { refercode } = this.state.userData;
           formData.append("ref", refercode);
 
+          //construct form data
+
+          //1st form 
+          if (commonForms) {
+            let parseJs = JSON.parse(JSON.stringify(commonForms));
+            if (parseJs.currentlocation === "Select Current Location *") {
+              parseJs.currentlocation === "";
+            }
+            for (var key in parseJs) {
+              const value = parseJs[key];
+              if (value !== undefined) {
+                if (Array.isArray(value) === false) {
+                  formData.append(key, parseJs[key]);
+                }
+              }
+            }
+          }
+
+          //2nd form
+          if (specificForms) {
+            let parseJs = JSON.parse(JSON.stringify(specificForms));
+            if (parseJs.floaterItemList != undefined && parseJs.floaterItemList.length > 0) {
+              let keypos = 1;
+              const loops = Lodash.map(floaterItemList, (ele) => {
+                let parseJs = JSON.parse(JSON.stringify(ele));
+                for (var key in parseJs) {
+                  const value = parseJs[key];
+                  if (value !== undefined) {
+                    if (key.includes('existing_diseases')) {
+                      formData.append(`existing_diseases${keypos}`, parseJs[key]);
+                    } else if (key.includes('diseases')) {
+                      formData.append(`diseases${keypos}`, parseJs[key]);
+                    } else {
+                      formData.append(
+                        keypos === 1
+                          ? `floater_${key}`
+                          : `floater_${key}${keypos}`,
+                        parseJs[key]
+                      );
+                    }
+                  }
+                }
+                keypos += 1;
+              });
+            }
+            for (var key in parseJs) {
+              if (key !== "floaterItemList") {
+                const value = parseJs[key];
+                if (value !== undefined) {
+                  if (Array.isArray(value) === false) {
+                    formData.append(key, parseJs[key]);
+                  }
+                }
+              }
+            }
+          }
+
+
+          //3rd form
+          if (allfileslist !== undefined && allfileslist.length > 0) {
+            const loops = Lodash.map(allfileslist, (ele) => {
+              let parseJs = JSON.parse(JSON.stringify(ele));
+              for (var key in parseJs) {
+                const value = parseJs[key];
+                if (value !== undefined) {
+                  if (Array.isArray(value) === false) {
+                    formData.append(key, parseJs[key]);
+                  }
+                }
+              }
+            });
+          }
+
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
-          //console.log('formData', formData);
-          //console.log('formUrls', formUrls);
+          console.log('formData', formData);
+          console.log('formUrls', formUrls);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -970,7 +1156,7 @@ export default class FinorbitForm extends React.PureComponent {
                   });
                 } else {
                   NavigationActions.navigate("Finish", {
-                    top: "Add Single Lead",
+                    top: "Add New Lead",
                     red: "Success",
                     grey: "Details uploaded",
                     blue: "Add another lead?",

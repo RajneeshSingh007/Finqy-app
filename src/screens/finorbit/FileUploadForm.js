@@ -1,48 +1,16 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  Platform,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
   Subtitle,
-  Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  FAB,
-} from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import Icon from 'react-native-vector-icons/Feather';
-import Icons from 'react-native-vector-icons/FontAwesome5';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { sizeWidth } from '../../util/Size';
 import moment from 'moment';
-import DropDown from '../common/CommonDropDown';
-import Lodash from 'lodash';
 import CommonFileUpload from '../common/CommonFileUpload';
-import { showMessage } from 'react-native-flash-message';
 
 export default class FileUploadForm extends React.PureComponent {
   constructor(props) {
@@ -95,7 +63,6 @@ export default class FileUploadForm extends React.PureComponent {
   }
 
   onChange = (event, selectDate) => {
-    const fullDate = moment(selectDate).format('DD-MM-YYYY');
     this.setState({ showCalendar: false, currentDate: selectDate });
   };
 
@@ -128,7 +95,7 @@ export default class FileUploadForm extends React.PureComponent {
   }
 
   render() {
-    const { title, heading = `File Upload`, cancelChq = null, panCard = null, aadharCard = null, gstImage = null } = this.props;
+    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null } = this.props;
     return (
       <View>
         {/* <View
@@ -144,65 +111,65 @@ export default class FileUploadForm extends React.PureComponent {
         <View style={styles.line} /> */}
 
         {title !== 'Motor Insurance' ? <>
-        <CommonFileUpload
-          title={`Pan Card ${title === 'Auto Loan' ? ` *`:``}`}
-          type={2}
-          pickedTitle={this.findFileName(`pancard`)}
-          pickedCallback={(selected, res) => {
-            if (!selected) {
-              const { name } = res;
-              if (
-                name.includes('pdf') ||
-                name.includes('png') ||
-                name.includes('jpeg') ||
-                name.includes('jpg')
-              ) {
-                //console.log(`res`, res);
-                this.state.fileList.push({ pancard: res });
-                //this.state.fileList.push({ pan_image: res});
-              } else {
-                Helper.showToastMessage('Please, select Pdf or Image', 0);
-              }
-            }
-          }}
-          enableDownloads={panCard != null && this.checkurl(0, panCard)}
-          downloadUrl={this.checkurl(1, panCard)}
-          fileName={'Pancard'}
-          ext={this.getExt(0, panCard)}
-          mime={this.getExt(1, panCard)}
-        />
-
-        <CommonFileUpload
-          //title={'Aadhar Card'}
-          title={`Aadhar Card ${title === 'Auto Loan' ? ` *`:``}`}
-          type={2}
-          pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
-          pickedCallback={(selected, res) => {
-            if (!selected) {
-              const { name } = res;
-              if (
-                name.includes('pdf') ||
-                name.includes('png') ||
-                name.includes('jpeg') ||
-                name.includes('jpg')
-              ) {
-                if (title === 'Demat') {
-                  this.state.fileList.push({ addressproof: res });
+          <CommonFileUpload
+            title={`Pan Card ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+            type={2}
+            pickedTitle={this.findFileName(`pancard`)}
+            pickedCallback={(selected, res) => {
+              if (!selected) {
+                const { name } = res;
+                if (
+                  name.includes('pdf') ||
+                  name.includes('png') ||
+                  name.includes('jpeg') ||
+                  name.includes('jpg')
+                ) {
+                  console.log(`res`, res);
+                  this.state.fileList.push({ pancard: res });
+                  //this.state.fileList.push({ pan_image: res});
                 } else {
-                  this.state.fileList.push({ aadharcard: res });
+                  Helper.showToastMessage('Please, select Pdf or Image', 0);
                 }
-              } else {
-                Helper.showToastMessage('Please, select Pdf or Image', 0);
               }
-            }
-          }}
-          enableDownloads={aadharCard != null && this.checkurl(0, aadharCard)}
-          downloadUrl={this.checkurl(1, aadharCard)}
-          fileName={'Aadharcard'}
-          ext={this.getExt(0, aadharCard)}
-          mime={this.getExt(1, aadharCard)}
-        />
-         </> : null}
+            }}
+            enableDownloads={panCard != null && this.checkurl(0, panCard)}
+            downloadUrl={this.checkurl(1, panCard)}
+            fileName={'Pancard'}
+            ext={this.getExt(0, panCard)}
+            mime={this.getExt(1, panCard)}
+          />
+
+          <CommonFileUpload
+            //title={'Aadhar Card'}
+            title={`Aadhar Card ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+            type={2}
+            pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
+            pickedCallback={(selected, res) => {
+              if (!selected) {
+                const { name } = res;
+                if (
+                  name.includes('pdf') ||
+                  name.includes('png') ||
+                  name.includes('jpeg') ||
+                  name.includes('jpg')
+                ) {
+                  if (title === 'Demat') {
+                    this.state.fileList.push({ addressproof: res });
+                  } else {
+                    this.state.fileList.push({ aadharcard: res });
+                  }
+                } else {
+                  Helper.showToastMessage('Please, select Pdf or Image', 0);
+                }
+              }
+            }}
+            enableDownloads={aadharCard != null && this.checkurl(0, aadharCard)}
+            downloadUrl={this.checkurl(1, aadharCard)}
+            fileName={'Aadharcard'}
+            ext={this.getExt(0, aadharCard)}
+            mime={this.getExt(1, aadharCard)}
+          />
+        </> : null}
 
         {title === 'Profile' ? (
           <CommonFileUpload
@@ -386,7 +353,7 @@ export default class FileUploadForm extends React.PureComponent {
               </View>
 
               <CommonFileUpload
-                title={`Salary Slip 1 ${title === 'Auto Loan' ? ` *`:``}`}
+                title={`Salary Slip 1 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip`)}
                 pickedCallback={(selected, res) => {
@@ -407,7 +374,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={`Salary Slip 2 ${title === 'Auto Loan' ? ` *`:``}`}
+                title={`Salary Slip 2 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip1`)}
                 pickedCallback={(selected, res) => {
@@ -429,7 +396,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={`Salary Slip 3 ${title === 'Auto Loan' ? ` *`:``}`}
+                title={`Salary Slip 3 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip2`)}
                 pickedCallback={(selected, res) => {
@@ -521,7 +488,7 @@ export default class FileUploadForm extends React.PureComponent {
                 title={
                   title === 'Home Loan'
                     ? '1 Year Bank Statement'
-                    : `3 Month Bank Statement ${title === 'Auto Loan' ? ` *`:``}`
+                    : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
                 }
                 type={2}
                 pickedTitle={this.findFileName(`bankstate`)}

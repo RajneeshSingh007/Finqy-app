@@ -18,6 +18,8 @@ import Lodash from "lodash";
 import IconChooser from "../common/IconChooser";
 import Purechart from "react-native-pure-chart";
 import DrawerTop from "../component/DrawerTop";
+import DateRangePicker from "react-native-daterange-picker";
+import moment from "moment";
 
 let sampleData = [
   { x: "Jan - 20", y: 10, color: "#87c1fc" },
@@ -80,6 +82,9 @@ export default class HomeScreen extends React.PureComponent {
     this.crousel = React.createRef();
     const allProducts = Pref.productListClone;
     this.state = {
+      startDate: null,
+      endDate: null,
+      displayedDate: moment(),
       loading: false,
       progressloader: false,
       dataList: [],
@@ -113,7 +118,9 @@ export default class HomeScreen extends React.PureComponent {
       selectedProdut: "All Products",
       enableDropdown: false,
       allProducts: allProducts,
-      pieTextData: []
+      pieTextData: [],
+      datefilter: false,
+      filterdates: '',
     };
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
@@ -128,6 +135,33 @@ export default class HomeScreen extends React.PureComponent {
     });
 
   }
+
+  setDates = (dates) => {
+    this.setState({
+      ...dates
+    });
+  };
+
+  dateFilterSubmit = (val) => {
+    const { token, userData, dates, endDate, startDate } = this.state;
+    const { refercode } = userData;
+    //const { endDate, startDate, } = dates;
+    console.log('dates', endDate, startDate)
+    if (startDate != null) {
+      const parse = moment(startDate).format('DD-MM-YYYY');
+      this.setState({ datefilter: false, endDate: null, startDate: null })
+      let endparse = null
+      if (endDate != null) {
+        endparse = moment(endDate).format('DD-MM-YYYY');
+      } else {
+        endparse = parse;
+      }
+      this.fetchDashboard(token, refercode, `${parse}@${endparse}`);
+    } else {
+      this.setState({ datefilter: false, endDate: null, startDate: null })
+    }
+  }
+
 
   componentDidMount() {
     try {
@@ -157,7 +191,7 @@ export default class HomeScreen extends React.PureComponent {
                 this.setState({ token: Helper.removeQuotes(data) });
                 Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
                 const { refercode } = this.state.userData;
-                this.fetchDashboard(Helper.removeQuotes(data), refercode);
+                this.fetchDashboard(Helper.removeQuotes(data), refercode, '');
               }
             },
             (error) => {
@@ -167,19 +201,21 @@ export default class HomeScreen extends React.PureComponent {
         } else {
           this.setState({ token: value });
           const { refercode } = this.state.userData;
-          this.fetchDashboard(value, refercode);
+          this.fetchDashboard(value, refercode, '');
         }
       });
     });
   }
 
-  fetchDashboard = (token, ref) => {
+  fetchDashboard = (token, ref, filterdates = '') => {
     const body = JSON.stringify({
       user_id: ref,
       flag: this.state.type === "referral" ? 2 : 1,
+      date_range: filterdates
     });
+    //console.log('body', body)
     Helper.networkHelperTokenPost(
-      Pref.DashBoardUrl,
+      Pref.NewDashBoardUrl,
       body,
       Pref.methodPost,
       token,
@@ -189,8 +225,12 @@ export default class HomeScreen extends React.PureComponent {
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
         const filter = Lodash.filter(pieData, io => io.value != 0);
-        //console.log('leadData', filter)
-        this.setState({ pieData: filter, leadData: leadData, barData: barData });
+        //console.log('leadData', result)
+        this.setState({
+          pieData: filter, leadData: leadData, barData: barData, datefilter: false,
+          endDate: null,
+          startDate: null
+        });
       },
       (error) => {
         console.log(error);
@@ -600,7 +640,7 @@ export default class HomeScreen extends React.PureComponent {
   };
 
   render() {
-    const { showProfile, type, userData, leadData, pieTextData, profilePic } = this.state;
+    const { showProfile, type, userData, leadData, pieTextData, profilePic, endDate, startDate, displayedDate, datefilter } = this.state;
     let name = "";
     if (Helper.nullCheck(userData) === false) {
       name = userData.rname === undefined ? userData.username : userData.rname;
@@ -696,6 +736,23 @@ export default class HomeScreen extends React.PureComponent {
                 </TouchableWithoutFeedback>
               </Portal>
             ) : null}
+            {datefilter === true ?
+              <DateRangePicker
+                onChange={this.setDates}
+                endDate={endDate}
+                startDate={startDate}
+                displayedDate={displayedDate}
+                range
+                //presetButtons
+                //buttonStyle={styles.submitbuttonpicker}
+                buttonTextStyle={{
+                  fontSize: 15,
+                  fontWeight: '700',
+                  color: 'white',
+                }}
+                submitClicked={this.dateFilterSubmit}
+                closeCallback={() => this.setState({startDate:null, endDate:null,datefilter:false})}
+              /> : null}
           </>
         }
         body={
@@ -731,6 +788,9 @@ export default class HomeScreen extends React.PureComponent {
                       onPress={() =>
                         this.setState({
                           enableDropdown: !this.state.enableDropdown,
+                          datefilter: false,
+                          endDate: null,
+                          startDate: null
                         })
                       }
                     >
@@ -764,6 +824,52 @@ export default class HomeScreen extends React.PureComponent {
                         />
                       </View>
                     </TouchableWithoutFeedback>
+
+                    <View style={{
+                      width: 1,
+                      height: '100%',
+                      backgroundColor: '#5555',
+                      alignSelf: 'center',
+                      marginStart: 6
+                    }} />
+                    <TouchableWithoutFeedback
+                      onPress={() =>
+                        this.setState({
+                          datefilter: !this.state.datefilter,
+                        })
+                      }
+                    >
+                      <View styleName="horizontal">
+                        <Title
+                          style={StyleSheet.flatten([
+                            styles.itemtopText,
+                            {
+                              color: "#0270e3",
+                              fontSize: 16,
+                              fontWeight: "700",
+                              marginStart: 16,
+                            },
+                          ])}
+                        >
+                          {`Date Range`}
+                        </Title>
+                        {/* <IconChooser
+                          name={
+                            this.state.enableFilter
+                              ? "chevron-up"
+                              : "chevron-down"
+                          }
+                          size={20}
+                          color={"#0270e3"}
+                          style={{
+                            alignSelf: "center",
+                            justifyContent: "center",
+                            marginStart: 12,
+                          }}
+                        /> */}
+                      </View>
+                    </TouchableWithoutFeedback>
+
                   </View>
                   {this.state.enableDropdown === true ? (
                     <View
@@ -812,6 +918,13 @@ export default class HomeScreen extends React.PureComponent {
                       })}
                     </View>
                   ) : null}
+                  {/* <View style={{
+                      width:'100%',
+                      height:1,
+                      backgroundColor:'#5555',
+                      alignSelf:'center',
+                      marginVertical:8
+                    }}/> */}
                 </View>
               </View>
               {/* ) : (
@@ -992,6 +1105,20 @@ export default class HomeScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  submitbuttonpicker: {
+    backgroundColor: Pref.RED,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    width: '100%',
+    borderRadius: 0,
+    marginEnd: 10,
+    marginBottom: -2,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8
+  },
   iconcenter: {
     alignSelf: "center",
     justifyContent: "center",
@@ -1047,8 +1174,8 @@ const styles = StyleSheet.create({
     right: -28,
   },
   pfiltercont: {
-    alignSelf: "flex-end",
-    justifyContent: "flex-end",
+    alignSelf: "center",
+    justifyContent: "center",
     marginTop: 8,
     paddingHorizontal: 16,
     borderColor: "#dbdacd",

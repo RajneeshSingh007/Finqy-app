@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated, Platform } from 'react-native';
 import { sizeWidth, sizeHeight } from '../../util/Size';
 import { Dimensions, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { View, Caption, Title } from '@shoutem/ui';
@@ -12,8 +12,10 @@ const height = Dimensions.get('window').height;
 export default class AnimatedInputBox extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.onContentSizeChange = this.onContentSizeChange.bind(this);
     this.state = {
       isFocused: false,
+      height:64
     };
   }
   componentWillMount() {
@@ -45,6 +47,13 @@ export default class AnimatedInputBox extends React.PureComponent {
         duration: 400,
       }).start();
     }
+  }
+
+  onContentSizeChange = (e) =>{
+    const {width, height} = e.nativeEvent.contentSize;
+    //console.log('he', height)
+    const {multiline} = this.props;
+    this.setState({height:Number(height) >= 74 ? height : multiline !== undefined ? 74 : 64});
   }
 
   render() {
@@ -82,118 +91,121 @@ export default class AnimatedInputBox extends React.PureComponent {
     const { isFocused } = this.state;
     return (
       <>
-      <View
-        styleName="sm-gutter"
-        style={StyleSheet.flatten([
-          {
-            backgroundColor: 'white',
-            height: height * inputHeight,
-          },
-          containerstyle,
-        ])}>
-        {showPlaceholder ? (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: !isFocused ? sizeHeight(2) : 0,
-              top: this._animatedIsFocused.interpolate({
-                inputRange: [0, 1],
-                outputRange: [20, 0],
-              }),
-              marginStart: 4,
-            }}>
-            <Caption
-              style={StyleSheet.flatten([
-                {
-                  fontSize: placefont,
-                  fontWeight: '700',
-                  color:
-                    changecolor && (isFocused || contentExists)
-                      ? Pref.RED
-                      : placecolor,
-                  fontFamily: Pref.getFontName(4),
-                },
-                placeholderStyle,
-              ])}>{`${placeholder}`}</Caption>
-          </Animated.View>
-        ) : null}
         <View
+          styleName="sm-gutter"
           style={StyleSheet.flatten([
-            styles.inputcontainer,
             {
-              //marginTop: -8,
-              borderBottomWidth: 1.3,
-              borderBottomColor:
-                showline === true ? 'green' : !isFocused ? '#f2f1e6' : Pref.RED,
+              backgroundColor: 'white',
+              height: this.state.height
+              //height * inputHeight,
             },
+            containerstyle,
           ])}>
-          {showLeftIcon === true ? (
-            <View style={{ flex: 0.1 }}>
-              <IconChooser
-                name={rightIconName}
-                size={rightIconSize}
-                color={rightIconColor}
-              />
-            </View>
+          {showPlaceholder ? (
+            <Animated.View
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: !isFocused ? sizeHeight(3) : 0,
+                top: this._animatedIsFocused.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [20, 0],
+                }),
+                marginStart: 4,
+              }}>
+              <Caption
+                style={StyleSheet.flatten([
+                  {
+                    fontSize: placefont,
+                    fontWeight: '700',
+                    color:
+                      changecolor && (isFocused || contentExists)
+                        ? Pref.RED
+                        : placecolor,
+                    fontFamily: Pref.getFontName(4),
+                  },
+                  placeholderStyle,
+                ])}>{`${placeholder}`}</Caption>
+            </Animated.View>
           ) : null}
-          <TextInput
-            {...prop}
-            underlineColorAndroid={'rgba(0,0,0,0)'}
-            value={value}
-            onChangeText={onChangeText}
+          <View
             style={StyleSheet.flatten([
-              styles.input,
+              styles.inputcontainer,
               {
-                //flex: 4,
-                marginTop: !isFocused ? 10 : 24,
-                marginBottom: isFocused ? 10 : 0,
-                fontWeight: boldinputText ? '700' : '400',
-                color: '#555555',
-                fontSize: 16,
-                marginStart: -4,
-                fontFamily: Pref.getFontName(4),
+                //marginTop: -8,
+                borderBottomWidth: 1.3,
+                borderBottomColor:
+                  showline === true ? 'green' : !isFocused ? '#f2f1e6' : Pref.RED,
               },
-            ])}
-            onFocus={this.handleFocus}
-            onBlur={this.handleBlur}
-          />
-          {leftText === true ? (
-            <TouchableWithoutFeedback onPress={leftTextClick}>
-              <View style={{ flex: leftTextFlex }}>
-                <Caption style={leftTextStyle}>{`${leftTextContent}`}</Caption>
-              </View>
-            </TouchableWithoutFeedback>
-          ) : (
+            ])}>
+            {showLeftIcon === true ? (
               <View style={{ flex: 0.1 }}>
-                {showRightIcon ? (
-                  <TouchableWithoutFeedback onPress={leftTextClick}>
-                    <View>
-                      <IconChooser
-                        name={leftIconName}
-                        size={leftIconSize}
-                        color={leftIconColor}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                ) : null}
+                <IconChooser
+                  name={rightIconName}
+                  size={rightIconSize}
+                  color={rightIconColor}
+                />
               </View>
-            )}
+            ) : null}
+            <TextInput
+              {...prop}
+              underlineColorAndroid={'rgba(0,0,0,0)'}
+              value={value}
+              onChangeText={onChangeText}
+              style={StyleSheet.flatten([
+                styles.input,
+                {
+                  //flex: 4,
+                  marginTop: !isFocused ? 20 : 36,
+                  marginBottom: isFocused ? 20 : 0,
+                  fontWeight: boldinputText ? '700' : '400',
+                  color: '#555555',
+                  fontSize: 16,
+                  marginStart: -4,
+                  fontFamily: Pref.getFontName(4),
+                  //height:this.state.height
+                },
+              ])}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
+              onContentSizeChange={this.onContentSizeChange}
+            />
+            {leftText === true ? (
+              <TouchableWithoutFeedback onPress={leftTextClick}>
+                <View style={{ flex: leftTextFlex }}>
+                  <Caption style={leftTextStyle}>{`${leftTextContent}`}</Caption>
+                </View>
+              </TouchableWithoutFeedback>
+            ) : (
+                <View style={{ flex: 0.1 }}>
+                  {showRightIcon ? (
+                    <TouchableWithoutFeedback onPress={leftTextClick}>
+                      <View>
+                        <IconChooser
+                          name={leftIconName}
+                          size={leftIconSize}
+                          color={leftIconColor}
+                        />
+                      </View>
+                    </TouchableWithoutFeedback>
+                  ) : null}
+                </View>
+              )}
+          </View>
         </View>
-      </View>
-      {enableWords === true && value !== '' ? 
-      <View style={{
-        marginStart:16,
-        marginTop:-8
-      }}>
-                <Title style={{
-          fontSize: 13,
-          color:'#555',
-          //fontWeight:'700',
-                            fontFamily: Pref.getFontName(5),
-        }}>{Helper.inWords(value)}</Title>
-      </View>
-      : null}
+        {enableWords === true && value !== '' ?
+          <View style={{
+            marginStart: 16,
+            marginTop: -8
+          }}>
+            <Title style={{
+              fontSize: 13,
+              color: '#555',
+              //fontWeight:'700',
+              fontFamily: Pref.getFontName(5),
+            }}>{Helper.inWords(value)}</Title>
+          </View>
+          : null}
       </>
     );
   }
@@ -249,7 +261,12 @@ const styles = StyleSheet.create({
     //alignContent:'flex-start',
     //justifyContent:'flex-start',
     textAlign: 'left',
-    //flexGrow:1
+    //flexGrow:1,
+    ...Platform.select({
+      android:{
+        textAlignVertical:'top'
+      }
+    })
   },
   input1: {
     marginTop: sizeHeight(2.5),

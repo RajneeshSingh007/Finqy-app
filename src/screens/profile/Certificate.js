@@ -59,6 +59,9 @@ export default class Certificate extends React.PureComponent {
             modalvis: true,
             remoteFileUrl: cert,
             referCode: refercode
+          }, () => {
+            Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+
           });
         }
       })
@@ -69,6 +72,9 @@ export default class Certificate extends React.PureComponent {
           modalvis: true,
           remoteFileUrl: cert,
           referCode: refercode
+
+        }, () => {
+          Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
 
         });
       });
@@ -95,10 +101,10 @@ export default class Certificate extends React.PureComponent {
                 flex: 0.76,
                 backgroundColor: '#f9f8f1',
               }}
-              // fitWidth
-              // fitPolicy={0}
-              // enablePaging
-              // scale={1}
+            // fitWidth
+            // fitPolicy={0}
+            // enablePaging
+            // scale={1}
 
             />
             <Download

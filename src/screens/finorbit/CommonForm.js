@@ -68,6 +68,7 @@ export default class CommonForm extends React.PureComponent {
     //date.setFullYear(2000,0,1);
     const maxDates = new Date();
     //maxDates.setFullYear(2010, 0, 1);
+    this.cursorSelection = {start:0, end:0};
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     this.state = {
       genderList: [{ value: 'Male' }, { value: 'Female' }, { value: 'Other' }],
@@ -402,7 +403,12 @@ export default class CommonForm extends React.PureComponent {
               //title === `Life Cum Invt. Plan` ||
               //title === `Motor Insurance` ||
               title === `Mutual Fund` ||
-              title === `Profile` || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Business Loan' || title === 'Auto Loan' || title === 'Term Insurance' || title == 'Fixed Deposit' || title === 'Motor Insurance'
+              title === `Profile` 
+              //|| title === 'Home Loan' 
+              //|| title === 'Loan Against Property' 
+              //|| title === 'Personal Loan' 
+              //|| title === 'Business Loan' 
+              || title === 'Term Insurance' || title == 'Fixed Deposit' || title === 'Motor Insurance' 
               ? 'Email'
               : 'Email *'
           }
@@ -481,15 +487,21 @@ export default class CommonForm extends React.PureComponent {
                 //height: this.state.ofc_add === '' ? 56 : layheight,
               },
             ])}
-            // multiline
+             multiline
+             maxLength={100}
             // onContentSizeChange={(event) => {
             //   layheight =
             //     this.state.ofc_add === ''
             //       ? 56
             //       : event.nativeEvent.contentSize.height;
             // }}
-            //selection={{start:0, end:0}}
-            onChangeText={(value) => this.setState({ ofc_add: value })}
+            //selection={this.cursorSelection}
+            // onSubmitEditing ={(e) =>{
+            //   this.cursorSelection ={start:0, end:0}
+            // }}
+            onChangeText={(value) => {
+              this.setState({ ofc_add: value })
+            }}
             value={this.state.ofc_add}
             editable={editable}
             disabled={disabled}
@@ -566,7 +578,7 @@ export default class CommonForm extends React.PureComponent {
             keyboardType={'number-pad'}
             value={this.state.pincode}
             //placeholder={'Current Residence Pincode'}
-            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' ? '*' : ''}`}
+            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? '*' : ''}`}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
@@ -676,7 +688,7 @@ export default class CommonForm extends React.PureComponent {
                             : `#555555`,
                       },
                     ]}>
-                    {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' ? `*` : ''}` : this.state.dob}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? `*` : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -769,7 +781,7 @@ export default class CommonForm extends React.PureComponent {
 
             {title !== 'Insure Check' && title !== 'Motor Insurance' ? <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' ? '*' : ''}`}</Title>
+                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan'  || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan'  ? '*' : ''}`}</Title>
                 <RadioButton.Group
                   onValueChange={(value) => this.setState({ gender: value })}
                   value={this.state.gender}>
@@ -904,7 +916,7 @@ export default class CommonForm extends React.PureComponent {
             <View style={StyleSheet.flatten([styles.radiodownbox, {
               height: title === `Health Insurance` ? 90 : 56
             }])}>
-              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' ? '*' : ''}`}</Title>
+              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? '*' : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>

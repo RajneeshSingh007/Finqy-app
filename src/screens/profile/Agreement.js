@@ -61,6 +61,8 @@ export default class Agreement extends React.PureComponent {
             modalvis: true,
             remoteFileUrl: agree,
             referCode: refercode
+          }, () =>{
+            Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyAgreement`, `${this.state.referCode}_MyAgreement.pdf`, 'application/pdf')
           });
         }
       })
@@ -72,7 +74,9 @@ export default class Agreement extends React.PureComponent {
           remoteFileUrl: agree,
           referCode: refercode
 
-        });
+        }, () =>{
+            Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyAgreement`, `${this.state.referCode}_MyAgreement.pdf`, 'application/pdf')
+          });
       });
   };
 

@@ -27,11 +27,11 @@ export const firstFormCheck = (title, commons) => {
         title !== `Motor Insurance` &&
         title !== `Mutual Fund` &&
         title !== `Vector Plus` &&
-        title !== `Home Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Personal Loan` &&
-        title !== `Business Loan` &&
-        title !== `Auto Loan` &&
+        //title !== `Home Loan` &&
+       //title !== `Loan Against Property` &&
+        //title !== `Personal Loan` &&
+        //title !== `Business Loan` &&
+        //title !== `Auto Loan` &&
         commons.email === ""
     ) {
         Helper.showToastMessage("Email empty", 0);
@@ -42,11 +42,11 @@ export const firstFormCheck = (title, commons) => {
     ) {
         Helper.showToastMessage("Invalid Email", 0);
     } else if (
-        title !== `Personal Loan` &&
-        title !== `Home Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Business Loan` &&
-        title !== `Auto Loan` &&
+        //title !== `Personal Loan` &&
+       //title !== `Home Loan` &&
+        //title !== `Loan Against Property` &&
+        //title !== `Business Loan` &&
+        //title !== `Auto Loan` &&
         //title !== `Motor Insurance` &&
         //commons.currentlocation === ""
         commons.pincode == ''
@@ -70,21 +70,22 @@ export const firstFormCheck = (title, commons) => {
     } else if (
         title !== "Fixed Deposit" &&
         title !== `Mutual Fund` &&
-        title !== `Home Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Personal Loan` &&
-        title !== `Business Loan` &&
-        title !== `Auto Loan` &&
+        //title !== `Home Loan` &&
+        //title !== `Loan Against Property` &&
+        //title !== `Personal Loan` &&
+        //title !== `Business Loan` &&
+        //title !== `Auto Loan` &&
+        title !== `Life Cum Invt. Plan` &&
         title !== 'Motor Insurance' &&
         (commons.dob === "" || commons.dob === `Date of Birth *` || commons.dob === `Date of Birth`)
     ) {
         Helper.showToastMessage("Date of Birth empty", 0);
     } else if (
-        title !== `Personal Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Home Loan` &&
-        title !== `Business Loan` &&
-        title !== `Auto Loan` &&
+        //title !== `Personal Loan` &&
+        //title !== `Loan Against Property` &&
+        //title !== `Home Loan` &&
+       //title !== `Business Loan` &&
+        //title !== `Auto Loan` &&
         title !== `Motor Insurance` &&
         title !== `Insure Check` &&
         commons.gender === ""
@@ -97,15 +98,15 @@ export const firstFormCheck = (title, commons) => {
     ) {
         Helper.showToastMessage("Qualification empty", 0);
     } else if (
-        title !== `Personal Loan` &&
+        //title !== `Personal Loan` &&
         title !== "Fixed Deposit" &&
         title !== "Business Loan" &&
         title !== `Motor Insurance` &&
         title !== `Mutual Fund` &&
         title !== `Vector Plus` &&
-        title !== `Home Loan` &&
-        title !== `Loan Against Property` &&
-        title !== `Auto Loan` &&
+        //title !== `Home Loan` &&
+        //title !== `Loan Against Property` &&
+        //title !== `Auto Loan` &&
         title !== `Life Cum Invt. Plan` &&
         title !== `Insure Check` &&
         commons.employ === ""

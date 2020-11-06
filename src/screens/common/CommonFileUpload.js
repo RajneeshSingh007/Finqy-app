@@ -49,15 +49,21 @@ class CommonFileUpload extends React.PureComponent {
             res.name.includes('jpeg') ||
             res.name.includes('jpg')
           ) {
-            this.setState({
-              pickedName: Lodash.truncate(res.name, {
-                length: 40,
-                separator: '...'
-              })
-            });
+            if (res.size <= 2097152) {
+              this.setState({
+                pickedName: Lodash.truncate(res.name, {
+                  length: 40,
+                  separator: '...'
+                })
+              });
+            }
           }
         }
-        this.props.pickedCallback(res.name !== '' ? false : true, res);
+        if (res.size <= 2097152) {
+          this.props.pickedCallback(res.name !== '' ? false : true, res);
+        } else {
+          Helper.showToastMessage('Please, select 2MB files')
+        }
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
           this.props.pickedCallback(true, null);
@@ -69,8 +75,8 @@ class CommonFileUpload extends React.PureComponent {
   };
 
   download = () => {
-    const { downloadUrl = '', fileName = '', ext = '', mime = 'application/pdf'} = this.props;
-    if(downloadUrl != '' && fileName != '' && ext != ''){
+    const { downloadUrl = '', fileName = '', ext = '', mime = 'application/pdf' } = this.props;
+    if (downloadUrl != '' && fileName != '' && ext != '') {
       Helper.downloadFileWithFileName(downloadUrl, fileName, `${fileName}.${ext}`, mime, true, false);
     }
   }

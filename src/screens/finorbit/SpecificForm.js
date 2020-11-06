@@ -228,7 +228,10 @@ export default class SpecificForm extends React.PureComponent {
       vehicle_type: '',
       motor_type: '',
       expiry_date: '',
-      ownership: ''
+      ownership: '',
+      pincode:'',
+      homestate:'',
+      loan_property_address:''
     };
   }
 
@@ -604,6 +607,48 @@ export default class SpecificForm extends React.PureComponent {
     );
   }
 
+
+    fetchcityCurrentstate = (value) => {
+    const parse = String(value);
+    if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
+      if (parse.length === 6) {
+        this.setState({ pincode: parse });
+        const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
+        //console.log(`url`, url);
+        Helper.getNetworkHelper(
+          url,
+          Pref.methodGet,
+          (result) => {
+            const {res_type, data} = JSON.parse(result);
+            //console.log(`result`, result, res_type);
+            if (res_type === `error`) {
+              this.setState({ loan_property_city: '', state: '', pincode: value });
+            } else {
+              if(data.length > 0){
+                const filterActive = Lodash.filter(data, io => io.status === 'Active');
+               // console.log('filterActive', filterActive)
+                const state = String(filterActive[0]['State']).trim();
+                const city = String(filterActive[0]['City']).trim();
+                          //      console.log('state', city)
+                this.setState({ loan_property_city: city, homestate: state, pincode: value });
+              }else{
+                this.setState({ loan_property_city: '', homestate: '', pincode: value });
+              }
+            }
+          },
+          (error) => {
+           this.setState({ loan_property_city: '', homestate: '', pincode: parse });
+            //console.log(`error`, error);
+          },
+        );
+      } else {
+        this.setState({ loan_property_city: '', homestate: '', pincode: parse });
+      }
+    } else {
+      this.setState({ loan_property_city: '', homestate: '', pincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.pincode });
+    }
+  };
+
   render() {
     const {
       title,
@@ -660,7 +705,7 @@ export default class SpecificForm extends React.PureComponent {
               <AnimatedInputBox
                 onChangeText={value => this.setState({ company: value })}
                 value={this.state.company}
-                placeholder={'Company Name'}
+                placeholder={`Company Name ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
                 returnKeyType={'next'}
                 changecolor
                 containerstyle={styles.animatedInputCont}
@@ -716,7 +761,7 @@ export default class SpecificForm extends React.PureComponent {
                   //title === `Auto Loan`
                   //? 'Annual Turnover/CTC *'
                   //: 
-                  'Annual Turnover/CTC'
+                  `Annual Turnover/CTC ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
                 }
                 returnKeyType={'next'}
                 changecolor
@@ -812,12 +857,13 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={
                 title === 'Term Insurance'
                   ? 'Required Cover *'
-                  : title === 'Home Loan' ||
+                  : 
+                  title === 'Home Loan' ||
                     title === 'Loan Against Property' ||
                     title === `Business Loan` ||
                     title === 'Auto Loan' ||
                     title === `Personal Loan`
-                    ? 'Desired Amount'
+                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
                     : 'Investment Amount *'
               }
               returnKeyType={'next'}
@@ -900,6 +946,7 @@ export default class SpecificForm extends React.PureComponent {
               changecolor
               containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
+                            enableWords
             />
           </View>
         ) : null}
@@ -986,7 +1033,7 @@ export default class SpecificForm extends React.PureComponent {
         {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
-              placeholder={'PAN Card Number'}
+              placeholder={`PAN Card Number${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan'  ? ' *' :''}`}
               onChangeText={value => this.setState({ pancardNo: value })}
               value={this.state.pancardNo}
               changecolor
@@ -995,7 +1042,7 @@ export default class SpecificForm extends React.PureComponent {
               returnKeyType={'next'}
             />
             <AnimatedInputBox
-              placeholder={'Aadhar Card Number'}
+              placeholder={`Aadhar Card Number ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' :''}`}
               maxLength={12}
               keyboardType={'number-pad'}
               onChangeText={value => {
@@ -2110,7 +2157,7 @@ export default class SpecificForm extends React.PureComponent {
         {title === 'Auto Loan' ? (
           <View>
             <AnimatedInputBox
-              placeholder={'Car RC Number'}
+              placeholder={`Car RC Number ${title === 'Auto Loan' ? ' *':''}`}
               onChangeText={value => this.setState({ rcbook: value })}
               value={this.state.rcbook}
               changecolor
@@ -2119,7 +2166,7 @@ export default class SpecificForm extends React.PureComponent {
               maxLength={10}
             />
             <AnimatedInputBox
-              placeholder={'Car Model Number'}
+              placeholder={`Car Model Number ${title === 'Auto Loan' ? ' *':''}`}
               onChangeText={value => this.setState({ model: value })}
               value={this.state.model}
               changecolor
@@ -2129,7 +2176,7 @@ export default class SpecificForm extends React.PureComponent {
 
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Type Of Loan`}</Title>
+                <Title style={styles.bbstyle}>{`Type Of Loan *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ nooldcard: value })}
@@ -2231,7 +2278,7 @@ export default class SpecificForm extends React.PureComponent {
           title === `Business Loan` ? (
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Types of Loan`}</Title>
+                <Title style={styles.bbstyle}>{`Type of Loan ${title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ type_loan: value })}
@@ -2278,11 +2325,12 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Term Insurance' &&
           title !== 'Health Insurance' &&
           title !== 'Life Cum Invt. Plan' &&
+          title !== 'Auto Loan' &&
           title !== 'Insure Check' ? (
             <View>
               <View style={styles.radiocont}>
                 <View style={styles.radiodownbox}>
-                  <Title style={styles.bbstyle}>{`Existing Card/Loan ${title === 'Credit Card' ? '*' : ''
+                  <Title style={styles.bbstyle}>{`Existing Card/Loan ${title === 'Credit Card' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''
                     }`}</Title>
 
                   <RadioButton.Group
@@ -2360,7 +2408,7 @@ export default class SpecificForm extends React.PureComponent {
                   <View style={styles.dropdownbox}>
                     <Title style={styles.boxsubtitle}>
                       {this.state.companylocation === ''
-                        ? `Select Company Location`
+                        ? `Select Company Location ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
                         : this.state.companylocation}
                     </Title>
                     <Icon
@@ -2400,6 +2448,8 @@ export default class SpecificForm extends React.PureComponent {
           title !== 'Health Insurance' &&
           title !== 'Life Cum Invt. Plan' &&
           title !== 'Auto Loan' &&
+          title !== 'Home Loan' &&
+          title !== 'Loan Against Property' &&
           title !== 'Insure Check' ? (
             <View style={styles.radiocont}>
               <TouchableWithoutFeedback
@@ -2442,7 +2492,61 @@ export default class SpecificForm extends React.PureComponent {
               ) : null}
             </View>
           ) : null}
+        {title === 'Home Loan' || title === 'Loan Against Property' ? <View>
+          <AnimatedInputBox
+            // onChangeText={(value) => {
+            //   if (String(value).match(/^[0-9]*$/g) !== null) {
+            //     this.setState({ pincode: value });
+            //   }
+            // }}
+            onChangeText={this.fetchcityCurrentstate}
+            maxLength={6}
+            keyboardType={'number-pad'}
+            value={this.state.pincode}
+            //placeholder={'Current Residence Pincode'}
+            placeholder={`Current Property Pincode ${title === 'Home Loan' ? ' *' : ''}`}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
 
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({ loan_property_city: value })}
+          value={this.state.loan_property_city}
+          placeholder={`City`}
+          editable={false}
+          disabled={true}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({ homestate: value })}
+          value={this.state.homestate}
+          placeholder={'State'}
+          editable={false}
+          disabled={true}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
+        <AnimatedInputBox
+          onChangeText={(value) => this.setState({ loan_property_address: value })}
+          value={this.state.loan_property_address}
+          placeholder={`Property Address${title === 'Home Loan' ? ' *' : ''}`}
+          //editable={false}
+          //disabled={true}
+          multiline
+          maxLength={100}
+          returnKeyType={'next'}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+        />
+
+
+        </View>:null}
         {title === 'Insure Check' ? (
           <View>
             <View style={styles.radiocont}>

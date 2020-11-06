@@ -2702,6 +2702,7 @@ export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
 export const FinOrbitFormUrl = `${BASEUrl}finorbit/`;
 
 export const DashBoardUrl = `${BASEUrl}tool_dashboard.php`;
+export const NewDashBoardUrl = `${BASEUrl}tool_dashboard_api.php`;
 export const LoginUrl = `${BASEUrl}tool_login.php`;
 export const EmailOTPUrl = `${BASEUrl}tool_email_otp.php`;
 export const RegisterUrl = `${BASEUrl}tool_register.php`;
@@ -2732,6 +2733,8 @@ export const TCondition = `${MainUrl}termcondition.php`;
 export const TermOfUse = `https://erb.ai/Terms%20of%20Use%20ERB.pdf`;
 
 export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
+
+export const AccountViewUrl = `${BASEUrl}tool_view_profile.php`;
 
 export const NewFormPayment = `${FinURL}policy_premium.php`;
 export const VectorFormPayment = `${LiveUrl}vp_payment.php`;

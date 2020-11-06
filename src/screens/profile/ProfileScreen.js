@@ -16,6 +16,7 @@ import {
   Button,
   Colors,
   Avatar,
+  ActivityIndicator
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import { sizeHeight, sizeWidth } from '../../util/Size';
@@ -48,7 +49,7 @@ export default class ProfileScreen extends React.PureComponent {
     this.restoreList = [];
     this.state = {
       loading: false,
-      imageUrl: '',
+      imageUrl: require('../../res/images/account.png'),
       message: '',
       userData: {},
       editable: false,
@@ -68,7 +69,8 @@ export default class ProfileScreen extends React.PureComponent {
       mail_username: '',
       mail_password: '',
       scrollReset: false,
-      topText: 'User'
+      topText: 'User',
+      loader: false
     };
   }
 
@@ -79,35 +81,63 @@ export default class ProfileScreen extends React.PureComponent {
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       Pref.getVal(Pref.saveToken, (toke) => {
-        this.setState({ token: toke }, () => {
-          Pref.getVal(Pref.userData, (parseda) => {
-            console.log('parseda', parseda)
-            const pp = parseda.user_prof;
-            const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
-              uri: `${decodeURIComponent(pp)}`,
-            };
-            let fileName = '';
-            const fm = decodeURIComponent(pp);
-            if (pp !== undefined || pp !== null || pp !== '') {
-              const sp = fm.split("/");
-              fileName = sp[sp.length - 1];
-              //console.log('sp',sp)
-            }
-            //console.log('url', url)
-            const { mail_host, mail_password, mail_port, mail_username } = parseda;
-            this.setState({
-              userData: parseda,
-              imageUrl: url,
-              fileName: fileName,
-              mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
-              mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
-              mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
-              mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
-            });
-            this.updateData(parseda);
-          });
+        this.setState({ token: toke, loader: true,currentposition: 0, scrollReset: false }, () => {
+          Pref.getVal(Pref.userID, id => {
+            Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v, uid: id }, () => {
+              const formData = new FormData();
+              formData.append('user_id', this.state.uid);
+              formData.append('type', this.state.utype);
+              Helper.networkHelperTokenContentType(
+                Pref.AccountViewUrl,
+                formData,
+                Pref.methodPost,
+                this.state.token,
+                (result) => {
+                  //console.log(`result`, result);
+                  const { data, response_header } = result;
+                  this.setState({ loader: false })
+                  const { res_type } = response_header;
+                  if (res_type === `success`) {
+                    //const { id } = data[0];
+                    //Pref.setVal(Pref.userID, id);
+                    //Pref.setVal(Pref.userData, data[0]);
+                    const parseda = JSON.parse(JSON.stringify(data[0]));
+                    const pp = parseda.user_prof;
+                    const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
+                      uri: `${decodeURIComponent(pp)}`,
+                    };
+                    let fileName = '';
+                    const fm = decodeURIComponent(pp);
+                    if (pp !== undefined || pp !== null || pp !== '') {
+                      const sp = fm.split("/");
+                      fileName = sp[sp.length - 1];
+                      //console.log('sp',sp)
+                    }
+                    //console.log('url', url)
+                    const { mail_host, mail_password, mail_port, mail_username } = parseda;
+                    this.setState({
+                      userData: parseda,
+                      imageUrl: url,
+                      fileName: fileName,
+                      mail_host: Helper.nullStringCheck(mail_host) === true ? '' : mail_host,
+                      mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
+                      mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
+                      mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
+                    });
+                    this.updateData(parseda);
+                  }
+                },
+                (e) => {
+                  this.setState({ loader: false })
+                  //console.log(`error`, e);
+                },
+              );
+            }));
+          })
+          // Pref.getVal(Pref.userData, (parseda) => {
+          //   console.log('parseda', parseda)
+          // });
         });
-        Pref.getVal(Pref.USERTYPE, (v) => this.setState({ utype: v }));
       });
     });
   }
@@ -158,7 +188,7 @@ export default class ProfileScreen extends React.PureComponent {
   };
 
   backClick = () => {
-    this.setState({ currentposition: 0, topText: 'User' });
+    this.setState({ currentposition: 0, topText: 'User',scrollReset: false });
     return false;
   }
 
@@ -254,7 +284,7 @@ export default class ProfileScreen extends React.PureComponent {
         if (commons != null) {
           this.restoreList[2] = commons;
           this.state.dataArray[2] = commons;
-          if (commons.bank_ifsc != null && String(commons.bank_ifsc).match(/[A-Za-z]{4}0[A-Z0-9a-z]{6}$/) == null) {
+          if (commons.bank_ifsc != null && commons.bank_ifsc !== '' && String(commons.bank_ifsc).match(/[A-Za-z]{4}0[A-Z0-9a-z]{6}$/) == null) {
             checkData = false;
             Helper.showToastMessage('Invalid IFSC code', 0);
             return false;
@@ -575,22 +605,24 @@ export default class ProfileScreen extends React.PureComponent {
                 activeCounter={this.state.currentposition}
               />
 
-              <View styleName="md-gutter">
-                {this.state.currentposition === 0 ? (
-                  <>
-                    <CommonForm
-                      title="Profile"
-                      ref={this.commonFormRef}
-                      saveData={this.state.dataArray[0]}
-                    />
+              {this.state.loader === false ?
+                <>
+                  <View styleName="md-gutter">
+                    {this.state.currentposition === 0 ? (
+                      <>
+                        <CommonForm
+                          title="Profile"
+                          ref={this.commonFormRef}
+                          saveData={this.state.dataArray[0]}
+                        />
 
-                    <SpecificForm
-                      title="Demat"
-                      heading={`Other Information`}
-                      ref={this.specificFormRef}
-                      saveData={this.state.dataArray[1]}
-                    />
-                    {/* <View>
+                        <SpecificForm
+                          title="Demat"
+                          heading={`Other Information`}
+                          ref={this.specificFormRef}
+                          saveData={this.state.dataArray[1]}
+                        />
+                        {/* <View>
                     <AnimatedInputBox
                       placeholder={'Mail Host'}
                       onChangeText={(value) =>
@@ -641,66 +673,78 @@ export default class ProfileScreen extends React.PureComponent {
                     />
 
                   </View> */}
-                  </>
-                ) : this.state.currentposition === 1 ? (
-                  <BankForm
-                    ref={this.bankFormRef}
-                    saveData={this.state.dataArray[2]}
-                  />
-                ) : this.state.currentposition === 2 ? (
-                  <FileUploadForm
-                    title="Profile"
-                    ref={this.FileUploadFormRef}
-                    heading={`File Upload`}
-                    cancelChq={this.state.userData && this.state.userData.cancel_chq}
-                    panCard={this.state.userData && this.state.userData.pan_image}
-                    aadharCard={this.state.userData && this.state.userData.aadhar_image}
-                    gstImage={this.state.userData && this.state.userData.gst_cert}
-                  />
-                ) : null}
-              </View>
+                      </>
+                    ) : this.state.currentposition === 1 ? (
+                      <BankForm
+                        ref={this.bankFormRef}
+                        saveData={this.state.dataArray[2]}
+                      />
+                    ) : this.state.currentposition === 2 ? (
+                      <FileUploadForm
+                        title="Profile"
+                        ref={this.FileUploadFormRef}
+                        heading={`File Upload`}
+                        cancelChq={this.state.userData && this.state.userData.cancel_chq}
+                        panCard={this.state.userData && this.state.userData.pan_image}
+                        aadharCard={this.state.userData && this.state.userData.aadhar_image}
+                        gstImage={this.state.userData && this.state.userData.gst_cert}
+                      />
+                    ) : null}
+                  </View>
 
-              <View
-                styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
-                  }`}>
-                {this.state.currentposition === 1 ||
-                  this.state.currentposition === 2 ? (
+                  <View
+                    styleName={`horizontal space-between md-gutter ${this.state.currentposition === 0 ? `v-end h-end` : ``
+                      }`}>
+                    {this.state.currentposition === 1 ||
+                      this.state.currentposition === 2 ? (
+                        <Button
+                          mode={'flat'}
+                          uppercase={true}
+                          dark={true}
+                          loading={false}
+                          style={[
+                            styles.loginButtonStyle,
+                            {
+                              backgroundColor: 'transparent',
+                              borderColor: '#d5d3c1',
+                              borderWidth: 1.3,
+                            },
+                          ]}
+                          onPress={this.backNav}>
+                          <Title
+                            style={StyleSheet.flatten([
+                              styles.btntext,
+                              {
+                                color: '#b8b28f',
+                              },
+                            ])}>
+                            {'Back'}
+                          </Title>
+                        </Button>
+                      ) : null}
                     <Button
                       mode={'flat'}
-                      uppercase={true}
+                      uppercase={false}
                       dark={true}
                       loading={false}
-                      style={[
-                        styles.loginButtonStyle,
-                        {
-                          backgroundColor: 'transparent',
-                          borderColor: '#d5d3c1',
-                          borderWidth: 1.3,
-                        },
-                      ]}
-                      onPress={this.backNav}>
-                      <Title
-                        style={StyleSheet.flatten([
-                          styles.btntext,
-                          {
-                            color: '#b8b28f',
-                          },
-                        ])}>
-                        {'Back'}
-                      </Title>
+                      style={styles.loginButtonStyle}
+                      onPress={this.submitt}>
+                      <Title style={styles.btntext}>{this.state.btnText}</Title>
                     </Button>
-                  ) : null}
-                <Button
-                  mode={'flat'}
-                  uppercase={false}
-                  dark={true}
-                  loading={false}
-                  style={styles.loginButtonStyle}
-                  onPress={this.submitt}>
-                  <Title style={styles.btntext}>{this.state.btnText}</Title>
-                </Button>
-              </View>
-
+                  </View>
+                </>
+                : <View style={
+                  {
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flex: 1,
+                    marginVertical: 48,
+                    paddingVertical: 48,
+                  }
+                }>
+                  <ActivityIndicator />
+                </View>
+              }
               <ScrollTop onPress={this.scrollToTop} />
 
               <Footer />

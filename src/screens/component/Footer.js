@@ -1,12 +1,13 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback, Linking} from 'react-native';
-import {Image, Subtitle, View} from '@shoutem/ui';
+import { StyleSheet, TouchableWithoutFeedback, Linking } from 'react-native';
+import { Image, Subtitle, View } from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
-import {Avatar} from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
+import * as Pref from '../../util/Pref';
 
 const Footer = (prop) => {
-  const {flex = 0.13, iconClick = () => {}} = prop;
+  const { flex = 0.13, iconClick = () => { } } = prop;
   return (
     <View
       styleName="md-gutter"
@@ -22,7 +23,7 @@ const Footer = (prop) => {
           <Subtitle style={styles.centerText}>{`© 2020 erevbay`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
-          onPress={() => Linking.openURL('https://erb.ai/about.php')}>
+          onPress={() => Linking.openURL(`${Pref.MainUrl}about.php`)}>
           <Subtitle style={styles.centerText}>{`About FinPro`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
