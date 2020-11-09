@@ -2696,6 +2696,7 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 export const LiveUrl = `https://erb.ai/erbfinorbit`;
 //`http://uat.erb.ai/`; //`https://erb.ai/`;
 export const MainUrl = `https://uat.erb.ai/`;
+//`https://uat.erb.ai/`;
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
 //export const FOLDERPATH = `${BASEUrl}erbfinorbit`;

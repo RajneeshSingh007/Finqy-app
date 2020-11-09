@@ -2,8 +2,7 @@ import React from 'react';
 import {
     StatusBar,
     StyleSheet,
-    Linking,
-    BackHandler
+    Linking
 } from 'react-native';
 import {
     View,
@@ -19,7 +18,7 @@ import Share from "react-native-share";
 import * as Helper from '../../util/Helper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import NavigationActions from '../../util/NavigationActions';
-import { Button, Paragraph, Dialog, Portal, RadioButton } from 'react-native-paper';
+import { Dialog, Portal, RadioButton } from 'react-native-paper';
 
 export default class GetQuotesView extends React.PureComponent {
     constructor(props) {
@@ -47,13 +46,14 @@ export default class GetQuotesView extends React.PureComponent {
         const companyList = navigation.getParam('company', []);
         const sumInsurred = navigation.getParam('sumInsurred', 0);
         const formId = navigation.getParam('formId', null);
-        //console.log('companyList', companyList);
-        Pref.getVal(Pref.userData, data => {
-            //console.log('data', data)
-            this.setState({ companyList: companyList, formId: formId, sumInsurred: sumInsurred });
-            this.fetchData(url, data);
-        })
-
+        //console.log('url', url,sumInsurred,formId);
+        this.focusListener = navigation.addListener('didFocus', () => {
+            Pref.getVal(Pref.userData, data => {
+                //console.log('data', data)
+                this.setState({ companyList: companyList, formId: formId, sumInsurred: sumInsurred });
+                this.fetchData(url, data);
+            })
+        });
     }
 
     fetchData = (url, data) => {
@@ -122,7 +122,7 @@ export default class GetQuotesView extends React.PureComponent {
 
     buyNow = () => {
         const { companyList } = this.state;
-        if (companyList.length === 0) {
+        if (companyList.length === 0 || companyList.length == 1) {
             Linking.openURL(Pref.BuyInsurance)
             //NavigationActions.navigate('WebComp', { url: `${Pref.BuyInsurance}` })
         } else {
@@ -188,7 +188,7 @@ export default class GetQuotesView extends React.PureComponent {
                         <Pdf
                             source={{
                                 uri: this.state.pdfurl,
-                                cache: true,
+                                cache: false,
                             }}
                             style={{
                                 flex: 0.85,
@@ -213,7 +213,7 @@ export default class GetQuotesView extends React.PureComponent {
 
                         <Download
                             rightIconClick={() => {
-                                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `Quotes_${this.state.referCode}`, `Quotes_${this.state.referCode}.pdf`, 'application/pdf');
+                                Helper.downloadFileWithFileName(`${this.state.pdfurl}.pdf`, `${this.state.sumInsurred}`, `${this.state.sumInsurred}.pdf`, 'application/pdf');
                             }}
                             style={{ flex: 0.09 }}
                             showLeft

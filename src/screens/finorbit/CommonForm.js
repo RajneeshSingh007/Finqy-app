@@ -1,62 +1,40 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
-  Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  FAB,
-  HelperText,
   RadioButton,
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
-import Icons from 'react-native-vector-icons/FontAwesome5';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import DropDown from '../common/CommonDropDown';
 import Lodash from 'lodash';
 import AnimatedInputBox from '../component/AnimatedInputBox';
+import NewDropDown from '../component/NewDropDown';
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
-
-let layheight = 56;
+let qualificationList = [{
+  value: 'Undergraduate'
+}, {
+  value: 'Graduate'
+}, {
+  value: 'Postgraduate'
+}, {
+  value: 'Professional'
+}, {
+  value: 'Diploma'
+}, {
+  value: 'Other'
+}]
 
 export default class CommonForm extends React.PureComponent {
   constructor(props) {
@@ -68,7 +46,7 @@ export default class CommonForm extends React.PureComponent {
     //date.setFullYear(2000,0,1);
     const maxDates = new Date();
     //maxDates.setFullYear(2010, 0, 1);
-    this.cursorSelection = {start:0, end:0};
+    this.cursorSelection = { start: 0, end: 0 };
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     this.state = {
       genderList: [{ value: 'Male' }, { value: 'Female' }, { value: 'Other' }],
@@ -126,7 +104,7 @@ export default class CommonForm extends React.PureComponent {
   }
 
   componentWillReceiveProps(prop) {
-    const { saveData, title } = prop;
+    const { title } = prop;
     //console.log('title', prop)
     // if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
     //   this.setState({ dob: 'Date of Birth' });
@@ -225,25 +203,25 @@ export default class CommonForm extends React.PureComponent {
           url,
           Pref.methodGet,
           (result) => {
-            const {res_type, data} = JSON.parse(result);
+            const { res_type, data } = JSON.parse(result);
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
               this.setState({ currentlocation: '', state: '', pincode: value });
             } else {
-              if(data.length > 0){
+              if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-               // console.log('filterActive', filterActive)
+                // console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
-                          //      console.log('state', city)
+                //      console.log('state', city)
                 this.setState({ currentlocation: city, state: state, pincode: value });
-              }else{
+              } else {
                 this.setState({ currentlocation: '', state: '', pincode: value });
               }
             }
           },
-          (error) => {
-                            this.setState({ currentlocation: '', state: '', pincode: parse });
+          () => {
+            this.setState({ currentlocation: '', state: '', pincode: parse });
             //console.log(`error`, error);
           },
         );
@@ -261,7 +239,6 @@ export default class CommonForm extends React.PureComponent {
       title,
       editable = true,
       disabled = false,
-      heading = `Personal Details`,
     } = this.props;
     const newform =
       title &&
@@ -399,16 +376,17 @@ export default class CommonForm extends React.PureComponent {
         <AnimatedInputBox
           placeholder={
             title === title === 'Fixed Deposit' ||
-              title === 'Health Insurance' ||
+              // title === 'Health Insurance' ||
               //title === `Life Cum Invt. Plan` ||
               //title === `Motor Insurance` ||
               title === `Mutual Fund` ||
-              title === `Profile` 
+              title === `Profile`
               //|| title === 'Home Loan' 
               //|| title === 'Loan Against Property' 
               //|| title === 'Personal Loan' 
               //|| title === 'Business Loan' 
-              || title === 'Term Insurance' || title == 'Fixed Deposit' || title === 'Motor Insurance' 
+              //|| title === 'Term Insurance' 
+              || title == 'Fixed Deposit' || title === 'Motor Insurance'
               ? 'Email'
               : 'Email *'
           }
@@ -487,8 +465,8 @@ export default class CommonForm extends React.PureComponent {
                 //height: this.state.ofc_add === '' ? 56 : layheight,
               },
             ])}
-             multiline
-             maxLength={100}
+            multiline
+            maxLength={100}
             // onContentSizeChange={(event) => {
             //   layheight =
             //     this.state.ofc_add === ''
@@ -612,27 +590,27 @@ export default class CommonForm extends React.PureComponent {
           null}
 
         {title !== 'Profile' ? <>
-        <AnimatedInputBox
-          onChangeText={(value) => this.setState({ currentlocation: value })}
-          value={this.state.currentlocation}
-          placeholder={`City`}
-          editable={false}
-          disabled={true}
-          returnKeyType={'next'}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-        />
+          <AnimatedInputBox
+            onChangeText={(value) => this.setState({ currentlocation: value })}
+            value={this.state.currentlocation}
+            placeholder={`City`}
+            editable={false}
+            disabled={true}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
 
-        <AnimatedInputBox
-          onChangeText={(value) => this.setState({ state: value })}
-          value={this.state.state}
-          placeholder={'State'}
-          editable={false}
-          disabled={true}
-          returnKeyType={'next'}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-        />
+          <AnimatedInputBox
+            onChangeText={(value) => this.setState({ state: value })}
+            value={this.state.state}
+            placeholder={'State'}
+            editable={false}
+            disabled={true}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
         </> : null}
 
 
@@ -683,8 +661,8 @@ export default class CommonForm extends React.PureComponent {
                       styles.boxsubtitle,
                       {
                         color:
-                          this.state.dob === ''?
-                             `#6d6a57`
+                          this.state.dob === '' ?
+                            `#6d6a57`
                             : `#555555`,
                       },
                     ]}>
@@ -781,7 +759,7 @@ export default class CommonForm extends React.PureComponent {
 
             {title !== 'Insure Check' && title !== 'Motor Insurance' ? <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan'  || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan'  ? '*' : ''}`}</Title>
+                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}</Title>
                 <RadioButton.Group
                   onValueChange={(value) => this.setState({ gender: value })}
                   value={this.state.gender}>
@@ -824,92 +802,114 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === 'Health Insurance' || title === 'Term Insurance' ? <View style={styles.radiocont}>
-          <View style={StyleSheet.flatten([styles.radiodownbox, {
-            height: 124
-          }])}>
-            <Title style={styles.bbstyle}>{`Qualification *`}</Title>
-            <RadioButton.Group
-              onValueChange={(value) => this.setState({ qualification: value })}
-              value={this.state.qualification}>
-              <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' || title =='Term Insurance' ? 'wrap' : 'nowrap' }}>
-                <View
-                  styleName="horizontal"
-                  style={{ alignSelf: 'center', alignItems: 'center' }}>
-                  <RadioButton
-                    value="Undergraduate"
-                    style={{ alignSelf: 'center' }}
-                  />
-                  <Title
-                    styleName="v-center h-center"
-                    style={styles.textopen}>{`Undergraduate`}</Title>
-                </View>
-                <View
-                  styleName="horizontal"
-                  style={{ alignSelf: 'center', alignItems: 'center' }}>
-                  <RadioButton
-                    value="Graduate"
-                    style={{ alignSelf: 'center' }}
-                  />
-                  <Title
-                    styleName="v-center h-center"
-                    style={styles.textopen}>{`Graduate`}</Title>
-                </View>
-                {title === 'Health Insurance' || title === 'Term Insurance' ? <>
-                                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Postgraduate"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Post-Graduate`}</Title>
-                  </View>
-
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Professional"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Professional`}</Title>
-                  </View>
-
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Diploma"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Diploma`}</Title>
-                  </View>
-
-                  <View
-                    styleName="horizontal"
-                    style={{ alignSelf: 'center', alignItems: 'center' }}>
-                    <RadioButton
-                      value="Other"
-                      style={{ alignSelf: 'center' }}
-                    />
-                    <Title
-                      styleName="v-center h-center"
-                      style={styles.textopen}>{`Other`}</Title>
-                  </View>
-
-                </> : null}
-              </View>
-            </RadioButton.Group>
-          </View>
-        </View>
+        {title === 'Health Insurance' || title === 'Term Insurance' ?
+          <NewDropDown
+            list={qualificationList}
+            placeholder={'Qualification *'}
+            value={this.state.qualification}
+            selectedItem={value => this.setState({ qualification: value })}
+            style={{
+              borderRadius: 0,
+              borderBottomColor: '#f2f1e6',
+              borderBottomWidth: 1.3,
+              borderWidth: 0,
+              marginStart: 10,
+              marginEnd: 10,
+              paddingVertical: 10,
+            }}
+            textStyle={{
+              color: '#6d6a57',
+              fontSize: 14,
+              fontFamily: Pref.getFontName(4),
+            }}
+          />
           : null}
+          {/* // <View style={styles.radiocont}>
+          //   <View style={StyleSheet.flatten([styles.radiodownbox, {
+          //     height: 124
+          //   }])}>
+          //     <Title style={styles.bbstyle}>{`Qualification *`}</Title>
+          //     <RadioButton.Group
+          //       onValueChange={(value) => this.setState({ qualification: value })}
+          //       value={this.state.qualification}>
+          //       <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' || title == 'Term Insurance' ? 'wrap' : 'nowrap' }}>
+          //         <View
+          //           styleName="horizontal"
+          //           style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //           <RadioButton
+          //             value="Undergraduate"
+          //             style={{ alignSelf: 'center' }}
+          //           />
+          //           <Title
+          //             styleName="v-center h-center"
+          //             style={styles.textopen}>{`Undergraduate`}</Title>
+          //         </View>
+          //         <View
+          //           styleName="horizontal"
+          //           style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //           <RadioButton
+          //             value="Graduate"
+          //             style={{ alignSelf: 'center' }}
+          //           />
+          //           <Title
+          //             styleName="v-center h-center"
+          //             style={styles.textopen}>{`Graduate`}</Title>
+          //         </View>
+          //         {title === 'Health Insurance' || title === 'Term Insurance' ? <>
+          //           <View
+          //             styleName="horizontal"
+          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //             <RadioButton
+          //               value="Postgraduate"
+          //               style={{ alignSelf: 'center' }}
+          //             />
+          //             <Title
+          //               styleName="v-center h-center"
+          //               style={styles.textopen}>{`Post-Graduate`}</Title>
+          //           </View>
+
+          //           <View
+          //             styleName="horizontal"
+          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //             <RadioButton
+          //               value="Professional"
+          //               style={{ alignSelf: 'center' }}
+          //             />
+          //             <Title
+          //               styleName="v-center h-center"
+          //               style={styles.textopen}>{`Professional`}</Title>
+          //           </View>
+
+          //           <View
+          //             styleName="horizontal"
+          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //             <RadioButton
+          //               value="Diploma"
+          //               style={{ alignSelf: 'center' }}
+          //             />
+          //             <Title
+          //               styleName="v-center h-center"
+          //               style={styles.textopen}>{`Diploma`}</Title>
+          //           </View>
+
+          //           <View
+          //             styleName="horizontal"
+          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
+          //             <RadioButton
+          //               value="Other"
+          //               style={{ alignSelf: 'center' }}
+          //             />
+          //             <Title
+          //               styleName="v-center h-center"
+          //               style={styles.textopen}>{`Other`}</Title>
+          //           </View>
+
+          //         </> : null}
+          //       </View>
+          //     </RadioButton.Group>
+          //   </View>
+          // </View> */}
+
 
         {showemploy ? (
           <View style={styles.radiocont}>

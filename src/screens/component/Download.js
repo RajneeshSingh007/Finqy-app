@@ -33,11 +33,11 @@ const Download = (prop) => {
           ])}>
           {showLeft === true ? (
             <IconChooser
-              name={'share'}
+              name={'share-2'}
               size={24}
               color={'white'}
               style={styles.icon}
-              iconType={2}
+              iconType={1}
             />
           ) : null}
         </View>

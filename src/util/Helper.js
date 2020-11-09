@@ -498,7 +498,7 @@ export const downloadFile = (url, name) => {
   config(options)
     .fetch('GET', `${url}`)
     .then((res) => {
-      console.log(`res`, res);
+      //console.log(`res`, JSON.stringify(res));
       showToastMessage('Download Complete', 1);
       // do some magic here
     });
@@ -528,23 +528,53 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
     },
   };
   let finalUrl = url;
-  if(addext){
+  if (addext) {
     if (url.includes('.pdf')) {
-    //finalUrl = url.replace('.pdf', '');
-  } else {
-    //finalUrl = url;
-    finalUrl += '.pdf';
+      //finalUrl = url.replace('.pdf', '');
+    } else {
+      //finalUrl = url;
+      finalUrl += '.pdf';
+    }
   }
+  //console.log('finalUrl', finalUrl)
+  config(options)
+    .fetch('GET', `${finalUrl}`)
+    .then((res) => {
+      console.log(`res`, res);
+      RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
+      if (notification) {
+        showToastMessage('Download Complete', 1);
+      }
+    });
+};
+
+
+/**
+ *
+ * @param {*} url
+ * @param {*} name
+ */
+export const silentDownloadFileWithFileName = (url, name, fileName, mime, notification = true, addext = true) => {
+  const filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
+  const { config } = RNFetchBlob;
+  let options = {
+    fileCache: true,
+    path:filePath,
+  };
+  let finalUrl = url;
+  if (addext) {
+    if (url.includes('.pdf')) {
+      //finalUrl = url.replace('.pdf', '');
+    } else {
+      //finalUrl = url;
+      finalUrl += '.pdf';
+    }
   }
   //console.log('finalUrl', finalUrl)
   config(options)
     .fetch('GET', `${finalUrl}`)
     .then((res) => {
       //console.log(`res`, res);
-      RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
-      if (notification) {
-        showToastMessage('Download Complete', 1);
-      }
     });
 };
 
@@ -688,7 +718,9 @@ export const dateObj = (dt, delimeter) => {
 /*
 */
 export const emailCheck = (mail) => {
-  if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
+  ///^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+.[a-zA-Z0-9-]*$/
+  ///^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ old;
+  if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+.[a-zA-Z0-9-]*$/.test(mail)) {
     return true;
   } else {
     return false;

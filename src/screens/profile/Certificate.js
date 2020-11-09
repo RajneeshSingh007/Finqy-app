@@ -60,7 +60,7 @@ export default class Certificate extends React.PureComponent {
             remoteFileUrl: cert,
             referCode: refercode
           }, () => {
-            Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+            Helper.silentDownloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
 
           });
         }
@@ -74,7 +74,7 @@ export default class Certificate extends React.PureComponent {
           referCode: refercode
 
         }, () => {
-          Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+          Helper.silentDownloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
 
         });
       });

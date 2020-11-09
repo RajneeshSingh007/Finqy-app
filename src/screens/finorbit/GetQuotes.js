@@ -51,22 +51,23 @@ export default class GetQuotes extends React.Component {
       pdfurl: "",
       companyList: [],
       formId: "",
-      loading: false,
+      loading: true,
     };
   }
 
   componentDidMount() {
     const { navigation } = this.props;
     const formId = navigation.getParam('formId', null);
-    const sumInsurred = navigation.getParam('sumin', null);
+    const sumInsurred = navigation.getParam('sumin', 0);
+    //console.log('sumInsurred', sumInsurred, formId)
     this.focusListener = navigation.addListener('didFocus', () => {
-      this.setState({ formId: formId, sumInsurred:`${Number(sumInsurred)}` });
+      this.setState({ formId: formId, sumInsurred:`${Number(sumInsurred)}`,loading:true });
       this.fetchCompany(formId, Number(sumInsurred), true);
     });
   }
 
   fetchCompany = (id, sum_insured, isFirstTime) => {
-    this.setState({ loading: true });
+    //this.setState({ loading: true });
     const formData = new FormData();
     formData.append("id", id);
     formData.append("sum_insured", sum_insured);
@@ -86,7 +87,8 @@ export default class GetQuotes extends React.Component {
                 name: cname,
                 og: e,
                 id: index + 1,
-                select: isFirstTime === true  ? index < 3 ? true : false : false,
+                select:false
+                //select: isFirstTime === true  ? index < 3 ? true : false : false,
               };
             });
             //console.log('list',list)

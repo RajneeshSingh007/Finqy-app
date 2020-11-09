@@ -1,9 +1,9 @@
 import React from 'react';
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
-import {createStackNavigator} from 'react-navigation-stack';
+import { createStackNavigator } from 'react-navigation-stack';
 
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 //intro
 import IntroScreen from './../screens/intro/IntroScreen';
@@ -74,11 +74,12 @@ import TCondition from './../screens/auth/TCondition';
 import WebComp from '../screens/component/WebComp';
 import FinishScreen from '../screens/common/FinishScreen';
 
-import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
-import {Colors, IconButton} from 'react-native-paper';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import { Colors, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
-import {BACKGROUND_COLOR} from './Pref';
-import {Platform, Dimensions, I18nManager,  Animated,
+import { BACKGROUND_COLOR } from './Pref';
+import {
+  Platform, Dimensions, I18nManager, Animated,
   Easing
 } from 'react-native';
 import Sidebar from './Sidebar';
@@ -89,7 +90,7 @@ let SlideFromRight = (index, position, width) => {
     outputRange: [width, 0],
   });
 
-  return {transform: [{translateX}]};
+  return { transform: [{ translateX }] };
 };
 
 let SlideFromBottom = (index, position, height) => {
@@ -98,7 +99,7 @@ let SlideFromBottom = (index, position, height) => {
     outputRange: [height, 0],
   });
 
-  return {transform: [{translateY}]};
+  return { transform: [{ translateY }] };
 };
 
 let CollapseTransition = (index, position) => {
@@ -114,7 +115,7 @@ let CollapseTransition = (index, position) => {
 
   return {
     opacity,
-    transform: [{scaleY}],
+    transform: [{ scaleY }],
   };
 };
 
@@ -127,10 +128,10 @@ const handleCustomTransition = (nav) => {
       useNativeDriver: true,
     },
     screenInterpolator: (sceneProps) => {
-      const {layout, position, scene} = sceneProps;
+      const { layout, position, scene } = sceneProps;
       const width = layout.initWidth;
       const height = layout.initHeight;
-      const {index, route} = scene;
+      const { index, route } = scene;
       const params = route.params || {}; // <- That's new
       const transition = params.transition || 'default'; // <- That's new
       return {
@@ -142,13 +143,13 @@ const handleCustomTransition = (nav) => {
   };
 };
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const WIDTH_DRAWER = width * 0.8;
 
 const HomeNav = createStackNavigator(
   {
-    HomeScreen: {screen: HomeScreen},
+    HomeScreen: { screen: HomeScreen },
   },
   {
     headerMode: 'none',
@@ -159,7 +160,7 @@ const HomeNav = createStackNavigator(
 
 const FinNav = createStackNavigator(
   {
-    FinorbitScreen: {screen: FinorbitScreen},
+    FinorbitScreen: { screen: FinorbitScreen },
   },
   {
     headerMode: 'none',
@@ -170,7 +171,7 @@ const FinNav = createStackNavigator(
 
 const ProNav = createStackNavigator(
   {
-    ProfScreen: {screen: ProfScreen},
+    ProfScreen: { screen: ProfScreen },
   },
   {
     headerMode: 'none',
@@ -181,7 +182,7 @@ const ProNav = createStackNavigator(
 
 const LeadNav = createStackNavigator(
   {
-    LeadList: {screen: LeadList},
+    LeadList: { screen: LeadList },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -196,14 +197,14 @@ const AppNav = createMaterialBottomTabNavigator(
     Home: {
       screen: HomeNav,
       navigationOptions: {
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
           <Icon
             name={'home'}
             size={20}
             color={focused ? '#e61e25' : '#292929'}
           />
         ),
-        tabBarOnPress: ({navigation, defaultHandler}) => {
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
           defaultHandler();
         },
         title: 'Home',
@@ -212,14 +213,14 @@ const AppNav = createMaterialBottomTabNavigator(
     LeadNav: {
       screen: LeadNav,
       navigationOptions: {
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
           <Icon
             name={'grid'}
             size={20}
             color={focused ? '#e61e25' : '#292929'}
           />
         ),
-        tabBarOnPress: ({navigation, defaultHandler}) => {
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
           defaultHandler();
         },
         title: 'Leads',
@@ -228,14 +229,14 @@ const AppNav = createMaterialBottomTabNavigator(
     Fin: {
       screen: FinNav,
       navigationOptions: {
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
           <Icon
             name={'server'}
             size={20}
             color={focused ? '#e61e25' : '#292929'}
           />
         ),
-        tabBarOnPress: ({navigation, defaultHandler}) => {
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
           defaultHandler();
         },
         title: 'Finorbit',
@@ -244,14 +245,14 @@ const AppNav = createMaterialBottomTabNavigator(
     Profile: {
       screen: ProNav,
       navigationOptions: {
-        tabBarIcon: ({focused}) => (
+        tabBarIcon: ({ focused }) => (
           <Icon
             name={'user'}
             size={20}
             color={focused ? '#e61e25' : '#292929'}
           />
         ),
-        tabBarOnPress: ({navigation, defaultHandler}) => {
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
           defaultHandler();
         },
         title: 'Profile',
@@ -266,7 +267,7 @@ const AppNav = createMaterialBottomTabNavigator(
     inactiveTintColor: Colors.grey300,
     backBehavior: 'none',
     sceneAnimationEnabled: true,
-    barStyle: {backgroundColor: Colors.white},
+    barStyle: { backgroundColor: Colors.white },
     resetOnBlur: true,
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
@@ -274,8 +275,8 @@ const AppNav = createMaterialBottomTabNavigator(
 
 const WalletNav = createStackNavigator(
   {
-    MyWallet: {screen: MyWallet},
-    Redeem: {screen: Redeem},
+    MyWallet: { screen: MyWallet },
+    Redeem: { screen: Redeem },
   },
   {
     headerMode: 'none',
@@ -286,14 +287,15 @@ const WalletNav = createStackNavigator(
 
 const FinOrbitNav = createStackNavigator(
   {
-    FinorbitScreen: {screen: FinorbitScreen},
-    FinorbitForm: {screen: FinorbitForm},
-    NewForm: {screen: NewForm},
-    Payment: {screen: Payment},
-    VectorForm: {screen: VectorForm},
-    VectorPayment: {screen: VectorPayment},
-    GetQuotes:{screen:GetQuotes},
-    GetQuotesView:{screen:GetQuotesView},
+    FinorbitScreen: { screen: FinorbitScreen },
+    FinorbitForm: { screen: FinorbitForm },
+    NewForm: { screen: NewForm },
+    Payment: { screen: Payment },
+    VectorForm: { screen: VectorForm },
+    VectorPayment: { screen: VectorPayment },
+    GetQuotes: { screen: GetQuotes },
+    GetQuotesView: { screen: GetQuotesView },
+    Samadhan: { screen: Samadhan },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -304,8 +306,8 @@ const FinOrbitNav = createStackNavigator(
 
 const BlogNav = createStackNavigator(
   {
-    Blogs: {screen: Blogs},
-    BlogDetails: {screen: BlogDetails},
+    Blogs: { screen: Blogs },
+    BlogDetails: { screen: BlogDetails },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -316,8 +318,8 @@ const BlogNav = createStackNavigator(
 
 const OfferNav = createStackNavigator(
   {
-    MyOffers: {screen: MyOffers},
-    OffersDetails: {screen: OffersDetails},
+    MyOffers: { screen: MyOffers },
+    OffersDetails: { screen: OffersDetails },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -328,8 +330,8 @@ const OfferNav = createStackNavigator(
 
 const OfferNav1 = createStackNavigator(
   {
-    PopularPlan: {screen: PopularPlan},
-    OffersDetails: {screen: OffersDetails},
+    PopularPlan: { screen: PopularPlan },
+    OffersDetails: { screen: OffersDetails },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -339,8 +341,8 @@ const OfferNav1 = createStackNavigator(
 
 const OfferNav2 = createStackNavigator(
   {
-    MarketingTool: {screen: MarketingTool},
-    OffersDetails: {screen: OffersDetails},
+    MarketingTool: { screen: MarketingTool },
+    OffersDetails: { screen: OffersDetails },
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {
@@ -350,7 +352,7 @@ const OfferNav2 = createStackNavigator(
 
 const SwitchTranNav = createSwitchNavigator(
   {
-    Training: {screen: Training},
+    Training: { screen: Training },
     Blogs: BlogNav,
   },
   {
@@ -361,34 +363,33 @@ const SwitchTranNav = createSwitchNavigator(
 
 const OtherNav = createDrawerNavigator(
   {
-    Home: {screen: HomeScreen},
+    Home: { screen: HomeScreen },
     FinorbitScreen: FinOrbitNav,
-    ProfileScreen: {screen: ProfileScreen},
+    ProfileScreen: { screen: ProfileScreen },
     MyWallet: WalletNav,
     OfferNav: OfferNav,
     OfferNav1: OfferNav1,
     OfferNav2: OfferNav2,
-    ReferEarn: {screen: ReferEarn},
-    AddTeam: {screen: AddTeam},
-    ViewTeam: {screen: ViewTeam},
-    Manager: {screen: Manager},
-    LinkSharingOption: {screen: LinkSharingOption},
-    Samadhan: {screen: Samadhan},
-    Qrc: {screen: Qrc},
-    Invoice: {screen: Invoice},
+    ReferEarn: { screen: ReferEarn },
+    AddTeam: { screen: AddTeam },
+    ViewTeam: { screen: ViewTeam },
+    Manager: { screen: Manager },
+    LinkSharingOption: { screen: LinkSharingOption },
+    Qrc: { screen: Qrc },
+    Invoice: { screen: Invoice },
     SwitchTranNav: SwitchTranNav,
-    As26: {screen: As26},
-    Certificate: {screen: Certificate},
-    ChangePass: {screen: ChangePass},
-    Agreement: {screen: Agreement},
-    LeadList: {screen: LeadList},
-    ViewConnector: {screen: ViewConnector},
-    TCondition: {screen: TCondition},
-    Payout: {screen: Payout},
-    AddConnector: {screen: AddConnector},
-    Finish: {screen: FinishScreen},
-    Term:{screen:Term},
-    WebComp:{screen:WebComp}
+    As26: { screen: As26 },
+    Certificate: { screen: Certificate },
+    ChangePass: { screen: ChangePass },
+    Agreement: { screen: Agreement },
+    LeadList: { screen: LeadList },
+    ViewConnector: { screen: ViewConnector },
+    TCondition: { screen: TCondition },
+    Payout: { screen: Payout },
+    AddConnector: { screen: AddConnector },
+    Finish: { screen: FinishScreen },
+    Term: { screen: Term },
+    WebComp: { screen: WebComp }
   },
   {
     initialRouteName: 'Home',

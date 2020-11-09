@@ -117,16 +117,64 @@ let typeofOwnership = [{
   value: 'Third Party'
 }]
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
+let healthRequiredCover = [
+  { value: `3`, name: "3Lac" },
+  { value: `3.5`, name: "3.5Lac" },
+  { value: `4`, name: "4Lac" },
+  { value: `4.5`, name: "4.5Lac" },
+  { value: `5`, name: "5Lac" },
+  { value: `5.5`, name: "5.5Lac" },
+  { value: `7`, name: "7Lac" },
+  { value: `7.5`, name: "7.5Lac" },
+  { value: `10`, name: "10Lac" },
+  { value: `15`, name: "15Lac" },
+  { value: `20`, name: "20Lac" },
+  { value: `25`, name: "25Lac" },
+  { value: `30`, name: "30Lac" },
+  { value: `35`, name: "35Lac" },
+  { value: `40`, name: "40Lac" },
+  { value: `45`, name: "45Lac" },
+  { value: `50`, name: "50Lac" },
+  { value: `75`, name: "75Lac" },
+  { value: `100`, name: "100Lac" },
+]
+
+let healthFList = [
+  { value: '2 Adult' },
+  { value: '2 Adult 1 Child' },
+  { value: '2 Adult 2 Children' },
+  { value: '1 Adult 1 Child' },
+  { value: '1 Adult 2 Children' },
+  { value: '2 Adult 3 Children' },
+  { value: '1 Adult 3 Children' },
+]
+
+let termAddons = [{
+  value:'Critical Illness'
+},{
+  value:'Accidental Death Rider'
+},{
+  value:'Critical Illness & Accidental Death Rider'
+},{
+  value:'Return Of Premium'
+},{
+  value:'Increase Of Sum Insured'
+},{
+  value:'None'
+}]
+
+let motorTypesOfInsurance = [{
+  value:'Own Damages'
+},{
+  value:'Comprehensive'
+},{
+  value:'Comprehensive + Addons'
+},{
+  value:'Third Party with PA Cover'
+},{
+  value:'Third Party without PA Cover'
+}]
+
 
 export default class SpecificForm extends React.PureComponent {
   constructor(props) {
@@ -192,15 +240,6 @@ export default class SpecificForm extends React.PureComponent {
       ],
       showmotorInsList: false,
       showtermInsList: false,
-      healthFList: [
-        { value: '2 Adult' },
-        { value: '2 Adult 1 Child' },
-        { value: '2 Adult 2 Children' },
-        { value: '1 Adult 1 Child' },
-        { value: '1 Adult 2 Children' },
-        { value: '2 Adult 3 Children' },
-        { value: '1 Adult 3 Children' },
-      ],
       showHealthFlist: false,
       maritalList: [{ value: 'Single' }, { value: 'Married' }],
       showmaritalList: false,
@@ -229,9 +268,9 @@ export default class SpecificForm extends React.PureComponent {
       motor_type: '',
       expiry_date: '',
       ownership: '',
-      pincode:'',
-      homestate:'',
-      loan_property_address:''
+      pincode: '',
+      homestate: '',
+      loan_property_address: ''
     };
   }
 
@@ -608,7 +647,7 @@ export default class SpecificForm extends React.PureComponent {
   }
 
 
-    fetchcityCurrentstate = (value) => {
+  fetchcityCurrentstate = (value) => {
     const parse = String(value);
     if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
       if (parse.length === 6) {
@@ -619,25 +658,25 @@ export default class SpecificForm extends React.PureComponent {
           url,
           Pref.methodGet,
           (result) => {
-            const {res_type, data} = JSON.parse(result);
+            const { res_type, data } = JSON.parse(result);
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
               this.setState({ loan_property_city: '', state: '', pincode: value });
             } else {
-              if(data.length > 0){
+              if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-               // console.log('filterActive', filterActive)
+                // console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
-                          //      console.log('state', city)
+                //      console.log('state', city)
                 this.setState({ loan_property_city: city, homestate: state, pincode: value });
-              }else{
+              } else {
                 this.setState({ loan_property_city: '', homestate: '', pincode: value });
               }
             }
           },
           (error) => {
-           this.setState({ loan_property_city: '', homestate: '', pincode: parse });
+            this.setState({ loan_property_city: '', homestate: '', pincode: parse });
             //console.log(`error`, error);
           },
         );
@@ -761,7 +800,7 @@ export default class SpecificForm extends React.PureComponent {
                   //title === `Auto Loan`
                   //? 'Annual Turnover/CTC *'
                   //: 
-                  `Annual Turnover/CTC ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
+                  `Annual Turnover/CTC ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
                 }
                 returnKeyType={'next'}
                 changecolor
@@ -857,13 +896,13 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={
                 title === 'Term Insurance'
                   ? 'Required Cover *'
-                  : 
+                  :
                   title === 'Home Loan' ||
                     title === 'Loan Against Property' ||
                     title === `Business Loan` ||
                     title === 'Auto Loan' ||
                     title === `Personal Loan`
-                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
+                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
                     : 'Investment Amount *'
               }
               returnKeyType={'next'}
@@ -908,19 +947,39 @@ export default class SpecificForm extends React.PureComponent {
           null}
 
         {title === 'Health Insurance' ? (
-          <AnimatedInputBox
+          <NewDropDown
+            list={healthRequiredCover}
             placeholder={'Required Cover *(Amount in Lacs)'}
-            onChangeText={value => {
-              if (String(value).match(/^[0-9]*$/g) !== null) {
-                this.setState({ required_cover: value });
-              }
-            }}
-            keyboardType={'number-pad'}
             value={this.state.required_cover}
-            returnKeyType={'next'}
-            changecolor
-            containerstyle={styles.animatedInputCont}
+            selectedItem={value => this.setState({ required_cover: value })}
+            style={{
+              borderRadius: 0,
+              borderBottomColor: '#f2f1e6',
+              borderBottomWidth: 1.3,
+              borderWidth: 0,
+              marginStart: 10,
+              marginEnd: 10,
+              paddingVertical: 10,
+            }}
+            textStyle={{
+              color: '#6d6a57',
+              fontSize: 14,
+              fontFamily: Pref.getFontName(4),
+            }}
           />
+          // <AnimatedInputBox
+          //   placeholder={'Required Cover *(Amount in Lacs)'}
+          //   onChangeText={value => {
+          //     if (String(value).match(/^[0-9]*$/g) !== null) {
+          //       this.setState({ required_cover: value });
+          //     }
+          //   }}
+          //   keyboardType={'number-pad'}
+          //   value={this.state.required_cover}
+          //   returnKeyType={'next'}
+          //   changecolor
+          //   containerstyle={styles.animatedInputCont}
+          // />
         ) : null}
 
         {title === 'Life Cum Invt. Plan' ? (
@@ -946,7 +1005,7 @@ export default class SpecificForm extends React.PureComponent {
               changecolor
               containerstyle={styles.animatedInputCont}
               returnKeyType={'next'}
-                            enableWords
+              enableWords
             />
           </View>
         ) : null}
@@ -1033,7 +1092,7 @@ export default class SpecificForm extends React.PureComponent {
         {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
-              placeholder={`PAN Card Number${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan'  ? ' *' :''}`}
+              placeholder={`PAN Card Number${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}
               onChangeText={value => this.setState({ pancardNo: value })}
               value={this.state.pancardNo}
               changecolor
@@ -1042,7 +1101,7 @@ export default class SpecificForm extends React.PureComponent {
               returnKeyType={'next'}
             />
             <AnimatedInputBox
-              placeholder={`Aadhar Card Number ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' :''}`}
+              placeholder={`Aadhar Card Number ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}
               maxLength={12}
               keyboardType={'number-pad'}
               onChangeText={value => {
@@ -1194,7 +1253,32 @@ export default class SpecificForm extends React.PureComponent {
               </View>
             </View>
 
-            <View style={styles.radiocont}>
+              <NewDropDown
+                list={motorTypesOfInsurance}
+                placeholder={'Types Of Insurance *'}
+                value={this.state.insurance}
+                selectedItem={value => {
+                  this.setState({
+                    insurance: value,
+                  });
+                }}
+                style={{
+                  borderRadius: 0,
+                  borderBottomColor: '#f2f1e6',
+                  borderBottomWidth: 1.3,
+                  borderWidth: 0,
+                  marginStart: 10,
+                  marginEnd: 10,
+                  paddingVertical: 10,
+                }}
+                textStyle={{
+                  color: '#6d6a57',
+                  fontSize: 14,
+                  fontFamily: Pref.getFontName(4),
+                }}
+              />
+
+            {/* <View style={styles.radiocont}>
               <View
                 style={StyleSheet.flatten([
                   styles.radiodownbox,
@@ -1202,7 +1286,7 @@ export default class SpecificForm extends React.PureComponent {
                     height: 164,
                   },
                 ])}>
-                <Title style={styles.bbstyle}>{`Typs Of Insurance *`}</Title>
+                <Title style={styles.bbstyle}>{`Types Of Insurance *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ insurance: value })}
@@ -1273,7 +1357,7 @@ export default class SpecificForm extends React.PureComponent {
                           styles.textopen
                         }>{`Third Party without PA cover`}</Title>
                     </View>
-                    {/* <View
+                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
                       <RadioButton
@@ -1285,11 +1369,11 @@ export default class SpecificForm extends React.PureComponent {
                         style={
                           styles.textopen
                         }>{`Third Party with PA unnamed passenger`}</Title>
-                    </View> */}
+                    </View> 
                   </View>
                 </RadioButton.Group>
               </View>
-            </View>
+            </View> */}
 
             <View style={styles.radiocont}>
               <TouchableWithoutFeedback
@@ -1716,7 +1800,32 @@ export default class SpecificForm extends React.PureComponent {
               </View>
             </View>
 
-            <View style={styles.radiocont}>
+              <NewDropDown
+                list={termAddons}
+                placeholder={'Addons *'}
+                value={this.state.addons}
+                selectedItem={value => {
+                  this.setState({
+                    addons: value,
+                  });
+                }}
+                style={{
+                  borderRadius: 0,
+                  borderBottomColor: '#f2f1e6',
+                  borderBottomWidth: 1.3,
+                  borderWidth: 0,
+                  marginStart: 10,
+                  marginEnd: 10,
+                  paddingVertical: 10,
+                }}
+                textStyle={{
+                  color: '#6d6a57',
+                  fontSize: 14,
+                  fontFamily: Pref.getFontName(4),
+                }}
+              />
+         
+            {/* <View style={styles.radiocont}>
               <View
                 style={StyleSheet.flatten([
                   styles.radiodownbox,
@@ -1803,6 +1912,7 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
+          */}
           </View>
         ) : null}
         {title === 'Health Insurance' || title === 'Vector Plus' ? (
@@ -2034,7 +2144,48 @@ export default class SpecificForm extends React.PureComponent {
           (title === 'Health Insurance' &&
             this.state.claim_type === 'Family Floater') ? (
             <View>
-              <View style={styles.radiocont}>
+              <NewDropDown
+                list={healthFList}
+                placeholder={'Members *'}
+                value={this.state.family_floater}
+                selectedItem={value => {
+                  const clone = JSON.parse(JSON.stringify(floatCloneList));
+                  if (value === `2 Adult` || value === `1 Adult 1 Child`) {
+                    clone.length = 1;
+                  } else if (
+                    value === `2 Adult 1 Child` ||
+                    value === `1 Adult 2 Children`
+                  ) {
+                    clone.length = 2;
+                  } else if (
+                    value === `2 Adult 2 Children` ||
+                    value === `1 Adult 3 Children`
+                  ) {
+                    clone.length = 3;
+                  } else if (value === `2 Adult 3 Children`) {
+                    clone.length = 4;
+                  }
+                  this.setState({
+                    family_floater: value,
+                    floaterItemList: clone,
+                  });
+                }}
+                style={{
+                  borderRadius: 0,
+                  borderBottomColor: '#f2f1e6',
+                  borderBottomWidth: 1.3,
+                  borderWidth: 0,
+                  marginStart: 10,
+                  marginEnd: 10,
+                  paddingVertical: 10,
+                }}
+                textStyle={{
+                  color: '#6d6a57',
+                  fontSize: 14,
+                  fontFamily: Pref.getFontName(4),
+                }}
+              />
+              {/* <View style={styles.radiocont}>
                 <View
                   style={StyleSheet.flatten([
                     styles.radiodownbox,
@@ -2069,7 +2220,7 @@ export default class SpecificForm extends React.PureComponent {
                     }}
                     value={this.state.family_floater}>
                     <View styleName="vertical" style={{ marginBottom: 8 }}>
-                      {this.state.healthFList.map(e => (
+                      {healthFList.map(e => (
                         <View styleName="horizontal">
                           <RadioButton
                             value={`${e.value}`}
@@ -2087,6 +2238,7 @@ export default class SpecificForm extends React.PureComponent {
                   </RadioButton.Group>
                 </View>
               </View>
+             */}
               {this.state.floaterItemList.length > 0 ? (
                 <FlatList
                   data={this.state.floaterItemList}
@@ -2146,7 +2298,7 @@ export default class SpecificForm extends React.PureComponent {
                       family_floater: value,
                     })
                   }
-                  list={this.state.healthFList}
+                  list={healthFList}
                 />
               ) : null}
             </View>
@@ -2157,7 +2309,7 @@ export default class SpecificForm extends React.PureComponent {
         {title === 'Auto Loan' ? (
           <View>
             <AnimatedInputBox
-              placeholder={`Car RC Number ${title === 'Auto Loan' ? ' *':''}`}
+              placeholder={`Car RC Number ${title === 'Auto Loan' ? ' *' : ''}`}
               onChangeText={value => this.setState({ rcbook: value })}
               value={this.state.rcbook}
               changecolor
@@ -2166,7 +2318,7 @@ export default class SpecificForm extends React.PureComponent {
               maxLength={10}
             />
             <AnimatedInputBox
-              placeholder={`Car Model Number ${title === 'Auto Loan' ? ' *':''}`}
+              placeholder={`Car Model Number ${title === 'Auto Loan' ? ' *' : ''}`}
               onChangeText={value => this.setState({ model: value })}
               value={this.state.model}
               changecolor
@@ -2212,7 +2364,7 @@ export default class SpecificForm extends React.PureComponent {
             <NewDropDown
               list={typeofOwnership}
               placeholder={'Type Of Ownership *'}
-              value = {this.state.ownership}
+              value={this.state.ownership}
               selectedItem={value => this.setState({ ownership: value })}
               style={{
                 borderRadius: 0,
@@ -2278,7 +2430,7 @@ export default class SpecificForm extends React.PureComponent {
           title === `Business Loan` ? (
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Type of Loan ${title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`}</Title>
+                <Title style={styles.bbstyle}>{`Type of Loan ${title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ type_loan: value })}
@@ -2408,7 +2560,7 @@ export default class SpecificForm extends React.PureComponent {
                   <View style={styles.dropdownbox}>
                     <Title style={styles.boxsubtitle}>
                       {this.state.companylocation === ''
-                        ? `Select Company Location ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *':''}`
+                        ? `Select Company Location ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
                         : this.state.companylocation}
                     </Title>
                     <Icon
@@ -2510,43 +2662,43 @@ export default class SpecificForm extends React.PureComponent {
             containerstyle={styles.animatedInputCont}
           />
 
-        <AnimatedInputBox
-          onChangeText={(value) => this.setState({ loan_property_city: value })}
-          value={this.state.loan_property_city}
-          placeholder={`City`}
-          editable={false}
-          disabled={true}
-          returnKeyType={'next'}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-        />
+          <AnimatedInputBox
+            onChangeText={(value) => this.setState({ loan_property_city: value })}
+            value={this.state.loan_property_city}
+            placeholder={`City`}
+            editable={false}
+            disabled={true}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
 
-        <AnimatedInputBox
-          onChangeText={(value) => this.setState({ homestate: value })}
-          value={this.state.homestate}
-          placeholder={'State'}
-          editable={false}
-          disabled={true}
-          returnKeyType={'next'}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-        />
+          <AnimatedInputBox
+            onChangeText={(value) => this.setState({ homestate: value })}
+            value={this.state.homestate}
+            placeholder={'State'}
+            editable={false}
+            disabled={true}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
 
-        <AnimatedInputBox
-          onChangeText={(value) => this.setState({ loan_property_address: value })}
-          value={this.state.loan_property_address}
-          placeholder={`Property Address${title === 'Home Loan' ? ' *' : ''}`}
-          //editable={false}
-          //disabled={true}
-          multiline
-          maxLength={100}
-          returnKeyType={'next'}
-          changecolor
-          containerstyle={styles.animatedInputCont}
-        />
+          <AnimatedInputBox
+            onChangeText={(value) => this.setState({ loan_property_address: value })}
+            value={this.state.loan_property_address}
+            placeholder={`Property Address${title === 'Home Loan' ? ' *' : ''}`}
+            //editable={false}
+            //disabled={true}
+            multiline
+            maxLength={100}
+            returnKeyType={'next'}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+          />
 
 
-        </View>:null}
+        </View> : null}
         {title === 'Insure Check' ? (
           <View>
             <View style={styles.radiocont}>

@@ -74,10 +74,9 @@ export default class FinorbitForm extends React.PureComponent {
       });
     });
     // NavigationActions.navigate("GetQuotes", {
-    //   formId: 1401,
-    //   sumin: Number(50 / 100000).toFixed(1),
+    //   formId: 1420,
+    //   sumin:10,
     // });
-
   }
 
   backClick = () => {
@@ -1141,7 +1140,7 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             (result) => {
-              console.log('result', result)
+              //console.log('result', result)
               const { response_header } = result;
               const { res_type, res } = response_header;
               this.setState({ progressLoader: false });
@@ -1152,7 +1151,7 @@ export default class FinorbitForm extends React.PureComponent {
                   const cov = Number(specificForms.required_cover);
                   NavigationActions.navigate("GetQuotes", {
                     formId: id,
-                    sumin: Number(cov / 100000).toFixed(1),
+                    sumin: cov,
                   });
                 } else {
                   NavigationActions.navigate("Finish", {

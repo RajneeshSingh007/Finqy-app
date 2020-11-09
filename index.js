@@ -44,6 +44,12 @@ function Main() {
   );
 }
 
+const releasemode = false;
+let codepushKey = Pref.STAGING_CODE_PUSH;
+if(releasemode === true){
+  codepushKey = Pref.PRODUCTION_CODE_PUSH;
+}
+
 const options = {
     updateDialog: {
         title: 'New Update Available',
@@ -55,7 +61,7 @@ const options = {
     },
     installMode: codePush.InstallMode.IMMEDIATE,
     checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-    deploymentKey: Pref.STAGING_CODE_PUSH,
+    deploymentKey: codepushKey,
 };
 
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));

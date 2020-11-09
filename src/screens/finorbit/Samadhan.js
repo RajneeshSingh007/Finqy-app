@@ -22,6 +22,7 @@ import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
 import NewDropDown from '../component/NewDropDown';
+import NavigationActions from "../../util/NavigationActions";
 
 
 const policyList = [{
@@ -60,7 +61,18 @@ export default class Samadhan extends React.Component {
     const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (value) =>
-        this.setState({ ref: value.refercode }, () => {
+        this.setState({
+          ref: value.refercode, 
+          name: '',
+          mobile: '',
+          email: '',
+          aadharcard: '',
+          refercode: '',
+          pancard: '',
+          showCompType: false,
+          policy_type: '',
+          complaint_type: '',
+        }, () => {
           Pref.getVal(Pref.saveToken, (tt) => this.setState({ token: tt }));
         }),
       );
@@ -136,21 +148,10 @@ export default class Samadhan extends React.Component {
           if (res_type === `error`) {
             Helper.showToastMessage(`Failed to submit`, 0);
           } else {
-            this.setState({
-              name: '',
-              mobile: '',
-              email: '',
-              aadharcard: '',
-              refercode: '',
-              pancard: '',
-              showCompType: false,
-              policy_type: '',
-              complaint_type: '',
-            });
             Helper.showToastMessage(`Form submitted successfully`, 1);
             NavigationActions.navigate("Finish", {
               //top: "Add New Lead",
-              top:'Insurance Samadhan',
+              top: 'Insurance Samadhan',
               red: "Success",
               grey: "Details uploaded",
               blue: "Add another lead?",
@@ -158,7 +159,7 @@ export default class Samadhan extends React.Component {
             });
           }
         },
-        () => {
+        (e) => {
           this.setState({ loading: false });
         },
       );

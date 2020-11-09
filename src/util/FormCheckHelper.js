@@ -20,8 +20,8 @@ export const firstFormCheck = (title, commons) => {
     } else if (commons.mobile.match(/^[0-9]*$/g) === null) {
         Helper.showToastMessage("Invalid mobile number", 0);
     } else if (
-        title !== "Term Insurance" &&
-        title !== "Health Insurance" &&
+        //title !== "Term Insurance" &&
+        //title !== "Health Insurance" &&
         title !== "Fixed Deposit" &&
         //title !== `Life Cum Invt. Plan` &&
         title !== `Motor Insurance` &&

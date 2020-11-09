@@ -10,7 +10,7 @@ import * as Pref from '../../util/Pref';
 import { Button, Colors } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import { sizeHeight, sizeWidth } from '../../util/Size';
-import messaging from '@react-native-firebase/messaging';
+//import messaging from '@react-native-firebase/messaging';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
 import IntroHeader from '../intro/IntroHeader';
@@ -107,52 +107,54 @@ export default class LoginScreen extends React.PureComponent {
     //console.log('token', this.state.token);
     if (errorData) {
       this.setState({ loading: true });
-      messaging()
-        .getToken()
-        .then((fcmToken) => {
-          if (fcmToken) {
-            const jsonData = JSON.stringify({
-              username: this.state.userid,
-              password: this.state.password,
-              deviceid: fcmToken,
+      const jsonData = JSON.stringify({
+        username: this.state.userid,
+        password: this.state.password,
+        deviceid: "ashdg",
+      });
+      Helper.networkHelperTokenPost(
+        Pref.LoginUrl,
+        jsonData,
+        Pref.methodPost,
+        this.state.token,
+        (result) => {
+          //console.log(`result`, result);
+          const { data, response_header } = result;
+          const { res_type, type } = response_header;
+          this.setState({ loading: false });
+          if (res_type === `error`) {
+            Helper.showToastMessage('no account found', 0);
+          } else {
+            Pref.setVal(Pref.USERTYPE, type);
+            const { id, refercode } = data[0];
+            let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
+            let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
+            this.downloadFile(certPath, () => {
+              const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
+              Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
+            })
+            this.downloadFile(agreePath, () => {
+              Helper.silentDownloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
             });
-            Helper.networkHelperTokenPost(
-              Pref.LoginUrl,
-              jsonData,
-              Pref.methodPost,
-              this.state.token,
-              (result) => {
-                console.log(`result`, result);
-                const { data, response_header } = result;
-                const { res_type, type } = response_header;
-                this.setState({ loading: false });
-                if (res_type === `error`) {
-                  Helper.showToastMessage('no account found', 0);
-                } else {
-                  Pref.setVal(Pref.USERTYPE, type);
-                  const { id, refercode } = data[0];
-                  let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
-                  let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
-                  this.downloadFile(certPath, () => {
-                    const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
-                    Helper.downloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
-                  })
-                  this.downloadFile(agreePath, () => {
-                    Helper.downloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
-                  });
-                  Pref.setVal(Pref.userID, id);
-                  Pref.setVal(Pref.userData, data[0]);
-                  Pref.setVal(Pref.loggedStatus, true);
-                  NavigationActions.navigate('Home');
-                }
-              },
-              (e) => {
-                this.setState({ loading: false });
-                Helper.showToastMessage('something went wrong', 0);
-              },
-            );
+            Pref.setVal(Pref.userID, id);
+            Pref.setVal(Pref.userData, data[0]);
+            Pref.setVal(Pref.loggedStatus, true);
+            NavigationActions.navigate('Home');
           }
-        });
+        },
+        (e) => {
+          this.setState({ loading: false });
+          Helper.showToastMessage('something went wrong', 0);
+        },
+      );
+
+      // messaging()
+      //   .getToken()
+      //   .then((fcmToken) => {
+      //     if (fcmToken) {
+
+      //     }
+      //   });
     }
   };
 
