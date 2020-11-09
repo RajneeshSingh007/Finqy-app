@@ -95,7 +95,7 @@ export default class FileUploadForm extends React.PureComponent {
   }
 
   render() {
-    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null } = this.props;
+    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null,headerchange = false } = this.props;
     return (
       <View>
         {/* <View
@@ -346,14 +346,14 @@ export default class FileUploadForm extends React.PureComponent {
                     ? `3 Months Salary Slip`
                     : title === 'Credit Card'
                       ? `3 Months Salary Slip or 1 Years ITR`
-                      : title === 'Loan Against Property' || title === 'Home Loan'
+                      : (title === 'Home Loan' || title === 'Loan Against Property') && headerchange === true ? `6 Months Salary Slip` : (title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `3 Years ITR` : title === 'Loan Against Property'
                         ? `6 Months Salary Slip or 3 Years ITR`
                         : `3 Years ITR`}
                 </Subtitle>
               </View>
 
               <CommonFileUpload
-                title={`Salary Slip 1 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+                title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 1`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip`)}
                 pickedCallback={(selected, res) => {
@@ -374,7 +374,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={`Salary Slip 2 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+                title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 2`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip1`)}
                 pickedCallback={(selected, res) => {
@@ -396,7 +396,7 @@ export default class FileUploadForm extends React.PureComponent {
               />
 
               <CommonFileUpload
-                title={`Salary Slip 3 ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+                title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 3`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip2`)}
                 pickedCallback={(selected, res) => {
@@ -416,7 +416,7 @@ export default class FileUploadForm extends React.PureComponent {
                 }}
               />
 
-              {title === 'Loan Against Property' || title === 'Home Loan' ? (
+              {(title === 'Loan Against Property' || title === 'Home Loan') && headerchange === true ? (
                 <View>
                   <CommonFileUpload
                     title={'Salary Slip 4'}

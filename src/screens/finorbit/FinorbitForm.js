@@ -48,7 +48,8 @@ export default class FinorbitForm extends React.PureComponent {
       token: "",
       userData: "",
       title: "",
-      scrollReset: false
+      scrollReset: false,
+      headerchange: false
     };
   }
 
@@ -205,6 +206,7 @@ export default class FinorbitForm extends React.PureComponent {
       let checkData = true;
       let formData = new FormData();
       let uniq = "";
+      let headerchange = false;
       if (title.includes(" ")) {
         uniq = title.trim().toLowerCase().replace(" ", "_");
       }
@@ -218,6 +220,9 @@ export default class FinorbitForm extends React.PureComponent {
 
       if (commonForms !== undefined && this.state.currentPosition === 0) {
         checkData = firstFormCheck(title, commonForms);
+        if (checkData && (title === 'Home Loan' || title === 'Loan Against Property') && commonForms.employ === 'Salaried') {
+          headerchange = true;
+        }
         // if (checkData) {
         //   let parseJs = JSON.parse(JSON.stringify(commonForms));
         //   if (parseJs.currentlocation === "Select Current Location *") {
@@ -342,36 +347,20 @@ export default class FinorbitForm extends React.PureComponent {
         } else if (title === "Home Loan" && specificForms.loan_property_address === "") {
           checkData = false;
           Helper.showToastMessage("Property Address empty", 0);
+        } else if (title === "Life Cum Invt. Plan" && specificForms.investment_amount === "") {
+          checkData = false;
+          Helper.showToastMessage("Investment Amount empty", 0);
+        } else if (title === "Life Cum Invt. Plan" && specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+          checkData = false;
+          Helper.showToastMessage("Invalid aadhar card number", 0);
+        } else if (title === "Life Cum Invt. Plan" &&
+          specificForms.pancardNo !== "" &&
+          !Helper.checkPanCard(specificForms.pancardNo)
+        ) {
+          checkData = false;
+          Helper.showToastMessage("Invalid pan card number", 0);
         } else {
-          if (title === "Life Cum Invt. Plan") {
-            if (specificForms.investment_amount === "") {
-              checkData = false;
-              Helper.showToastMessage("Investment Amount empty", 0);
-            } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
-              checkData = false;
-              Helper.showToastMessage("Invalid aadhar card number", 0);
-            } else if (
-              specificForms.pancardNo !== "" &&
-              !Helper.checkPanCard(specificForms.pancardNo)
-            ) {
-              checkData = false;
-              Helper.showToastMessage("Invalid pan card number", 0);
-            }
-            // else {
-            //   let parseJs = JSON.parse(JSON.stringify(specificForms));
-            //   for (var key in parseJs) {
-            //     if (key !== "floaterItemList") {
-            //       const value = parseJs[key];
-            //       if (value !== undefined) {
-            //         if (Array.isArray(value) === false) {
-            //           formData.append(key, parseJs[key]);
-            //         }
-            //       }
-            //     }
-            //   }
-            // }
-            //}
-          } else if (title === "Motor Insurance") {
+          if (title === "Motor Insurance") {
             if (specificForms.claim_type === "") {
               checkData = false;
               Helper.showToastMessage("Please, Select Any Claims Last Year", 0);
@@ -521,13 +510,13 @@ export default class FinorbitForm extends React.PureComponent {
           ) {
             if (specificForms.turnover === "") {
               checkData = false;
-              Helper.showToastMessage("Annual TurnOver Empty", 0);
+              Helper.showToastMessage("Annual Turnover Empty", 0);
             } else if (
               title === `Health Insurance` &&
               specificForms.required_cover === ""
             ) {
               checkData = false;
-              Helper.showToastMessage("Required Cover Empty", 0);
+              Helper.showToastMessage("Please, Select Required Cover", 0);
             } else if (
               title === `Term Insurance` &&
               specificForms.amount === ""
@@ -539,7 +528,7 @@ export default class FinorbitForm extends React.PureComponent {
               specificForms.amount !== '' && specificForms.amount.length < 2
             ) {
               checkData = false;
-              Helper.showToastMessage("Inavlid Required Cover", 0);
+              Helper.showToastMessage("Invalid Required Cover", 0);
             } else if (specificForms.lifestyle === "") {
               checkData = false;
               Helper.showToastMessage("Please, Select Smoker Type", 0);
@@ -600,6 +589,7 @@ export default class FinorbitForm extends React.PureComponent {
                   const floaterItemList = JSON.parse(
                     JSON.stringify(specificForms.floaterItemList)
                   );
+                  //console.log('floaterItemList', floaterItemList)
                   if (floaterItemList.length > 0) {
                     let checker = false;
                     for (
@@ -614,13 +604,17 @@ export default class FinorbitForm extends React.PureComponent {
                         gender === "" ||
                         dob === "" ||
                         relation === "" ||
-                        diseases === "" ||
                         existing_diseases === ""
+                      ) {
+                        checker = true;
+                      } else if (
+                        existing_diseases === "Yes" && diseases === ''
                       ) {
                         checker = true;
                       }
                     }
-                    if (checker) {
+                    //console.log('checker',checker)
+                    if (checker === true) {
                       checkData = false;
                       Helper.showToastMessage(
                         "Please, Fill all member details",
@@ -997,20 +991,20 @@ export default class FinorbitForm extends React.PureComponent {
       }
 
       if (dateForm !== undefined && this.state.currentPosition === 3) {
-        if (dateForm.baa === "") {
-          checkData = false;
-          Helper.showToastMessage("Please, Select Appointment Date", 0);
-        } else {
-          let parseJs = JSON.parse(JSON.stringify(dateForm));
-          for (var key in parseJs) {
-            const value = parseJs[key];
-            if (value !== undefined) {
-              if (Array.isArray(value) === false) {
-                formData.append(key, parseJs[key]);
-              }
+        // if (dateForm.baa === "") {
+        //checkData = false;
+        //Helper.showToastMessage("Please, Select Appointment Date", 0);
+        //} else {
+        let parseJs = JSON.parse(JSON.stringify(dateForm));
+        for (var key in parseJs) {
+          const value = parseJs[key];
+          if (value !== undefined) {
+            if (Array.isArray(value) === false) {
+              formData.append(key, parseJs[key]);
             }
           }
         }
+        //}
       }
 
       if (checkData) {
@@ -1021,7 +1015,8 @@ export default class FinorbitForm extends React.PureComponent {
               return {
                 currentPosition: prevState.currentPosition + 1,
                 bottontext: prevState.currentPosition + 1 > 0 ? "Submit" : "Next",
-                scrollReset: true
+                scrollReset: true,
+                headerchange: headerchange
               };
             }, () => {
               if (this.state.currentPosition === 0) {
@@ -1035,7 +1030,8 @@ export default class FinorbitForm extends React.PureComponent {
               return {
                 currentPosition: prevState.currentPosition + 1,
                 bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
-                scrollReset: true
+                scrollReset: true,
+                headerchange: headerchange
               };
             }, () => {
               if (this.state.currentPosition === 0) {
@@ -1288,6 +1284,7 @@ export default class FinorbitForm extends React.PureComponent {
                       ref={this.FileUploadFormRef}
                       title={this.state.title}
                       saveData={this.state.dataArray[2]}
+                      headerchange={this.state.headerchange}
                     />) : this.state.currentPosition === 3 ? (
                       <ApptForm
                         ref={this.ApptFormRef}

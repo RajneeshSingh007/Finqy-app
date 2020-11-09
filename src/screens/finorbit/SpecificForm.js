@@ -489,6 +489,7 @@ export default class SpecificForm extends React.PureComponent {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View>
+          <Title style={styles.textstyle12}>{`Member ${index+1}`}</Title>
           {/* <View
             style={{
               marginTop: sizeHeight(2),
@@ -3092,5 +3093,14 @@ const styles = StyleSheet.create({
   },
   downIcon: {
     alignSelf: 'center',
+  },
+  textstyle12: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Pref.RED,
+    lineHeight: 20,
+    marginStart: 8,
+    paddingVertical:8,
+    marginVertical:4
   },
 });

@@ -32,7 +32,7 @@ export default class ApptForm extends React.PureComponent {
       maxDates:maxDate,
       mode: 'date',
       currentTime: '',
-      baa: 'Schedule an Appointment',
+      baa: '',
       remark: '',
     };
   }
@@ -114,7 +114,7 @@ export default class ApptForm extends React.PureComponent {
                       : `#555555`,
                   alignSelf: 'center',
                 }}>
-                {this.state.baa}
+                {this.state.baa === '' ? `Schedule an Appointment` : this.state.baa}
               </Title>
               <Icon
                 name={'calendar'}

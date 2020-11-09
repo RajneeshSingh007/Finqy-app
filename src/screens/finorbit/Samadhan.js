@@ -148,7 +148,7 @@ export default class Samadhan extends React.Component {
           if (res_type === `error`) {
             Helper.showToastMessage(`Failed to submit`, 0);
           } else {
-            Helper.showToastMessage(`Form submitted successfully`, 1);
+            Helper.showToastMessage(`Submitted successfully`, 1);
             NavigationActions.navigate("Finish", {
               //top: "Add New Lead",
               top: 'Insurance Samadhan',
