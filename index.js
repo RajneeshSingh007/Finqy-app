@@ -44,7 +44,7 @@ function Main() {
   );
 }
 
-const releasemode = false;
+const releasemode = true;
 let codepushKey = Pref.STAGING_CODE_PUSH;
 if(releasemode === true){
   codepushKey = Pref.PRODUCTION_CODE_PUSH;
