@@ -1,63 +1,28 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
-  Alert,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
-  Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Avatar,
   ActivityIndicator,
   Searchbar
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
 import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../common/IconChooser';
-import moment from 'moment';
 import CScreen from '../component/CScreen';
-import Download from './../component/Download';
 
-let HEADER = `Sr. No,Username,Name,Email,Mobile,Refcode,LeadRecord,,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Connector.csv`;
 
 export default class ViewConnector extends React.PureComponent {
   constructor(props) {
@@ -66,7 +31,7 @@ export default class ViewConnector extends React.PureComponent {
     this.refdataClick = this.refdataClick.bind(this);
     this.state = {
       dataList: [],
-      loading: false,
+      loading: true,
       showCalendar: false,
       currentDate: date,
       dates: '',
@@ -78,12 +43,12 @@ export default class ViewConnector extends React.PureComponent {
         'Name',
         'Email',
         'Mobile',
-        'Refcode',
+        'Refercode',
         'LeadRecord',
-        '',
+       //'',
         'Status',
       ],
-      widthArr: [60, 100, 140, 140, 100, 100, 100, 100, 100],
+      widthArr: [60, 100, 140, 140, 100, 140, 100, 100],
       itemSize: 5,
       disableNext: false,
       disableBack: false,
@@ -128,10 +93,11 @@ export default class ViewConnector extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, response_header} = result;
-        const {res_type, message} = response_header;
+        const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
-            const dataList = data;
+            const dataList = data.reverse();
+            //console.log('dataList', dataList)
             const {itemSize} = this.state;
             this.setState({
               cloneList: dataList,
@@ -149,7 +115,7 @@ export default class ViewConnector extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      (error) => {
+      () => {
         this.setState({loading: false});
       },
     );
@@ -170,7 +136,7 @@ export default class ViewConnector extends React.PureComponent {
    */
   returnData = (sort, start = 0, end) => {
     const dataList = [];
-    console.log(start, end);
+    //console.log(start, end);
     if (sort.length > 0) {
       if (start >= 0) {
         for (let i = start; i < end; i++) {
@@ -182,7 +148,7 @@ export default class ViewConnector extends React.PureComponent {
             rowData.push(`${item.rname}`);
             rowData.push(`${item.email}`);
             rowData.push(`${item.rcontact}`);
-            rowData.push(`${Lodash.capitalize(item.pancard)}`);
+            //rowData.push(`${Lodash.capitalize(item.pancard)}`);
             rowData.push(`${item.refercode}`);
             const refdataView = (value) => (
               <TouchableWithoutFeedback
@@ -192,7 +158,7 @@ export default class ViewConnector extends React.PureComponent {
                     style={{
                       textAlign: 'center',
                       fontWeight: '400',
-                      color: Pref.RED,
+                      color: '#0270e3',
                       fontSize: 15,
                     }}>
                     {`View`}
@@ -210,7 +176,7 @@ export default class ViewConnector extends React.PureComponent {
                     color: Number(value) === 1 ? '#1bd741' : Pref.RED,
                     fontSize: 15,
                   }}>
-                  {`${Number(value) === 1 ? `Active` : `Inactive`}`}
+                  {`${Number(value) === 1 ? `Active` : `Deactive`}`}
                 </Title>
               </View>
             );
@@ -374,7 +340,7 @@ export default class ViewConnector extends React.PureComponent {
       //       //   const {dataList} = this.state;
       //       //   if (dataList.length > 0) {
       //       //     Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //       //       console.log(result);
+      //       //       //console.log(result);
       //       //       if (result) {
       //       //         alert(
       //       //           'Data exported successfully \n You can check in Download/ErbFinPro/ directory',

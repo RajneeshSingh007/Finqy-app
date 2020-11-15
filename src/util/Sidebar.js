@@ -639,7 +639,7 @@ export default class Sidebar extends React.Component {
       //   freshchatUser.phoneCountryCode = '+91';
       //   freshchatUser.phone = userData.rcontact;
       //   Freshchat.setUser(freshchatUser, (error) => {
-      //     console.log(error);
+      //     //console.log(error);
       //   });
       //   Freshchat.showConversations();
       // } else {

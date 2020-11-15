@@ -303,7 +303,7 @@ export default class Invoice extends React.PureComponent {
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
-        console.log(result);
+        //console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
@@ -439,7 +439,7 @@ export default class Invoice extends React.PureComponent {
       // const {dataList} = this.state;
       // if (dataList.length > 0) {
       //   Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //     console.log(result);
+      //     //console.log(result);
       //     if (result) {
       //       RNFetchBlob.fs.scanFile([
       //         {path: FILEPATH, mime: 'text/csv'},

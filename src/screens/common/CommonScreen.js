@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {Avatar, Card} from 'react-native-paper';
-import PushNotificationAndroid from 'react-native-push-android';
 import Icon from 'react-native-vector-icons/Feather';
 import {SafeAreaView} from 'react-navigation';
 import {sizeHeight, sizeWidth} from '../../util/Size';

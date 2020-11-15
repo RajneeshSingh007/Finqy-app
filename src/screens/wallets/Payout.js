@@ -112,6 +112,10 @@ export default class Payout extends React.PureComponent {
     );
   };
 
+  // returnperce = (check) =>{
+  //   return Helper.nullStringCheck(check) ? '' : '%'
+  // }
+
   /**
    *
    * @param {*} item
@@ -175,7 +179,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[0].split('_')[1]}%`}</Title>
+                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' :  arraydata[0].split('_')[1]}%`}</Title>
               </Title>
               <View style={styles.line} />
               <Title
@@ -200,7 +204,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[1].split('_')[1]}%`}</Title>
+                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1].split('_')[1]}%`}</Title>
               </Title>
               <View style={styles.line} />
               <Title
@@ -225,7 +229,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[1].split('_')[1]}%`}</Title>
+                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1].split('_')[1]}%`}</Title>
               </Title>
             </View>
           ) : null}
@@ -257,7 +261,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[0]}%`}</Title>
+                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' : arraydata[0]}%`}</Title>
               </Title>
             </View>
           ) : null}
@@ -293,7 +297,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[0]
+                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' : arraydata[0]
                   .replace('c', '')
                   .replace('a', '')
                   .replace('ua', '')}%`}</Title>
@@ -323,7 +327,7 @@ export default class Payout extends React.PureComponent {
                       color: '#0270e3',
                       fontWeight: '400',
                     },
-                  ])}>{`${arraydata[1]
+                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1]
                   .replace('c', '')
                   .replace('tp', '')
                   .replace('ua', '')}%`}</Title>

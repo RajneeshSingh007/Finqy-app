@@ -146,7 +146,7 @@ export default class HomeScreen extends React.PureComponent {
     const { token, userData, dates, endDate, startDate } = this.state;
     const { refercode } = userData;
     //const { endDate, startDate, } = dates;
-    console.log('dates', endDate, startDate)
+    //console.log('dates', endDate, startDate)
     if (startDate != null) {
       const parse = moment(startDate).format('DD-MM-YYYY');
       this.setState({ datefilter: false, endDate: null, startDate: null })
@@ -167,7 +167,7 @@ export default class HomeScreen extends React.PureComponent {
     try {
       Helper.requestPermissions();
     } catch (e) {
-      // console.log(e);
+      // //console.log(e);
     }
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener("willFocus", () => {
@@ -195,7 +195,7 @@ export default class HomeScreen extends React.PureComponent {
               }
             },
             (error) => {
-              console.log(`error`, error)
+              //console.log(`error`, error)
             }
           );
         } else {
@@ -225,7 +225,7 @@ export default class HomeScreen extends React.PureComponent {
         const barData = this.returnBarData(result);
         const pieData = this.returnPieData(result);
         const filter = Lodash.filter(pieData, io => io.value != 0);
-        //console.log('leadData', result)
+        //console.log('leadData', barData)
         this.setState({
           pieData: filter, leadData: leadData, barData: barData, datefilter: false,
           endDate: null,
@@ -233,7 +233,7 @@ export default class HomeScreen extends React.PureComponent {
         });
       },
       (error) => {
-        console.log(error);
+        //console.log(error);
       }
     );
   };
@@ -651,7 +651,7 @@ export default class HomeScreen extends React.PureComponent {
         bgColor={Pref.WHITE}
         absolute={
           <>
-            {showProfile ? (
+            {/* {showProfile ? (
               <Portal>
                 <TouchableWithoutFeedback onPress={this.dismisssProfile}>
                   <View
@@ -670,7 +670,7 @@ export default class HomeScreen extends React.PureComponent {
                           styleName="vertical md-gutter"
                           style={styles.filtercont}
                         >
-                          {/* <View style={styles.tri}></View> */}
+                           <View style={styles.tri}></View> 
                           <Title
                             style={StyleSheet.flatten([
                               styles.passText,
@@ -735,7 +735,7 @@ export default class HomeScreen extends React.PureComponent {
                   </View>
                 </TouchableWithoutFeedback>
               </Portal>
-            ) : null}
+            ) : null} */}
             {datefilter === true ?
               <DateRangePicker
                 onChange={this.setDates}
@@ -759,11 +759,12 @@ export default class HomeScreen extends React.PureComponent {
           <TouchableWithoutFeedback onPress={this.dismisssProfile}>
             <View>
               <LeftHeaders
-                profile={() => this.setState({ showProfile: !showProfile })}
+                //profile={() => this.setState({ showProfile: !showProfile })}
                 backClicked={() => NavigationActions.openDrawer()}
                 title={`Hi,`}
                 name={name}
                 profilePic={profilePic}
+                type={type}
               />
 
               {/* {this.state.enableFilter === false ? ( */}

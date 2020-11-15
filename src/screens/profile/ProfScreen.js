@@ -1,25 +1,11 @@
 import React from "react";
-import { Linking, StatusBar, StyleSheet, TouchableOpacity, ScrollView, BackHandler, FlatList, TouchableWithoutFeedback, Dimensions, Platform, View,Alert } from "react-native";
-import * as Helper from '../../util/Helper';
+import { StyleSheet, View } from "react-native";
 import * as Pref from '../../util/Pref';
-import { Avatar, List, Checkbox, Chip, Button, Card, Colors, Snackbar, TextInput, DataTable, Modal, Portal, DefaultTheme } from "react-native-paper";
-import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import Icons from 'react-native-vector-icons/FontAwesome5';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import moment from 'moment';
-import Lodash from 'lodash';
-import ImagePicker from 'react-native-image-picker';
-import { Loader } from '../../util/Loader';
-import MenuProvider from '../../util/MenuProvider.js';
+import { Card } from "react-native-paper";
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import Row from '../common/CommonRow';
 import Headers from '../common/CommonHeader';
-import { Heading } from '@shoutem/ui';
 
 export default class ProfScreen extends React.PureComponent {
     constructor(props) {

@@ -1,17 +1,17 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback, ScrollView} from 'react-native';
-import {Text, View, Subtitle, Heading, Title} from '@shoutem/ui';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {View, Subtitle, Title} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {Button, Card, Colors} from 'react-native-paper';
+import {Button, Colors} from 'react-native-paper';
 import {sizeHeight, sizeWidth} from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
 import CustomForm from '../finorbit/CustomForm';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
 import DropDown from '../common/CommonDropDown';
 import Icon from 'react-native-vector-icons/Feather';
 import CScreen from '../component/CScreen';
+import NavigationActions from '../../util/NavigationActions';
 
 export default class AddConnector extends React.PureComponent {
   constructor(props) {
@@ -247,10 +247,11 @@ export default class AddConnector extends React.PureComponent {
               enbleerror: false,
             });
             Helper.showToastMessage(`Added successfully`, 1);
+            NavigationActions.navigate('ViewConnector');
           }
         },
-        (e) => {
-          console.log(e);
+        () => {
+          //console.log(e);
           this.setState({loading: false});
         },
       );

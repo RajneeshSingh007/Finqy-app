@@ -70,7 +70,7 @@ export default class RegisterScreen extends React.PureComponent {
     try {
       Helper.requestPermissions();
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
   }
 
@@ -251,10 +251,10 @@ export default class RegisterScreen extends React.PureComponent {
             } else {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-                // console.log('filterActive', filterActive)
+                // //console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
-                //      console.log('state', city)
+                //      //console.log('state', city)
                 this.setState({ city: city, state: state, pincode: value });
               } else {
                 this.setState({ city: '', state: '', pincode: value });

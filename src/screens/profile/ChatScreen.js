@@ -169,7 +169,7 @@ export default class ChatScreen extends React.PureComponent {
                                             underlineColorAndroid="transparent"
                                             onContentSizeChange={(event) => {
                                                 layheight = this.state.chatMessage === '' ? 56 : event.nativeEvent.contentSize.height;
-                                                console.log('layheight', layheight);
+                                                //console.log('layheight', layheight);
                                                 // this.setState({ height: event.nativeEvent.contentSize.height })
                                             }}
                                             placeholder={"Enter a message"}

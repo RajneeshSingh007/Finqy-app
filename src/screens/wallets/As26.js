@@ -1,56 +1,26 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
-  Alert,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
   Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
-  Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Portal,
-  Avatar,
   ActivityIndicator,
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
+import { sizeHeight } from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
 import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../common/IconChooser';
-import moment from 'moment';
 import Pdf from 'react-native-pdf';
 import Modal from '../../util/Modal';
 import CScreen from '../component/CScreen';
@@ -121,7 +91,7 @@ export default class As26 extends React.PureComponent {
 
   fetchData = () => {
     this.setState({ loading: true });
-    const { refercode, id } = this.state.userData;
+    const { id } = this.state.userData;
     const body = JSON.stringify({
       user_id: Number(id),
     });
@@ -133,9 +103,10 @@ export default class As26 extends React.PureComponent {
       (result) => {
         //console.log('result', result)
         const { data, response_header } = result;
-        const { res_type, message } = response_header;
+        const { res_type } = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
+            console.log('data', data)
             const sorting = data.sort((a, b) => {
               const sp = a.created.split(' ');
               const spz = b.created.split(' ');
@@ -163,7 +134,7 @@ export default class As26 extends React.PureComponent {
           this.setState({ loading: false });
         }
       },
-      (error) => {
+      () => {
         this.setState({ loading: false });
       },
     );
@@ -260,7 +231,7 @@ export default class As26 extends React.PureComponent {
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
-        console.log(result);
+        //console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
@@ -398,7 +369,7 @@ export default class As26 extends React.PureComponent {
       // const {dataList} = this.state;
       // if (dataList.length > 0) {
       //   Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //     console.log(result);
+      //     //console.log(result);
       //     if (result) {
       //       RNFetchBlob.fs.scanFile([
       //         {path: FILEPATH, mime: 'text/csv'},

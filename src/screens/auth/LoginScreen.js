@@ -10,7 +10,6 @@ import * as Pref from '../../util/Pref';
 import { Button, Colors } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import { sizeHeight, sizeWidth } from '../../util/Size';
-//import messaging from '@react-native-firebase/messaging';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Loader from '../../util/Loader';
 import IntroHeader from '../intro/IntroHeader';
@@ -46,7 +45,7 @@ export default class LoginScreen extends React.PureComponent {
     try {
       Helper.requestPermissions();
     } catch (e) {
-      console.log(e);
+      //console.log(e);
     }
     const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
@@ -123,7 +122,8 @@ export default class LoginScreen extends React.PureComponent {
           const { res_type, type } = response_header;
           this.setState({ loading: false });
           if (res_type === `error`) {
-            Helper.showToastMessage('no account found', 0);
+            const {message} = response_header;
+            Helper.showToastMessage(`${message}`, 0);
           } else {
             Pref.setVal(Pref.USERTYPE, type);
             const { id, refercode } = data[0];
@@ -147,21 +147,13 @@ export default class LoginScreen extends React.PureComponent {
           Helper.showToastMessage('something went wrong', 0);
         },
       );
-
-      // messaging()
-      //   .getToken()
-      //   .then((fcmToken) => {
-      //     if (fcmToken) {
-
-      //     }
-      //   });
     }
   };
 
   downloadFile = (filePath, callback = () => { }) => {
     RNFetchBlob.fs.exists(filePath)
       .then((exist) => {
-        console.log(exist, filePath)
+        //console.log(exist, filePath)
         if (exist) {
         } else {
           callback();
@@ -200,7 +192,11 @@ export default class LoginScreen extends React.PureComponent {
 
               <View styleName="md-gutter">
                 <AnimatedInputBox
-                  onChangeText={(value) => this.setState({ userid: value })}
+                  onChangeText={(value) => {
+                    if (String(value).match(/^[0-9]*$/g) !== null) {
+                      this.setState({ userid: value })
+                    }
+                  }}
                   value={this.state.userid}
                   placeholder={'Enter your mobile number'}
                   maxLength={10}

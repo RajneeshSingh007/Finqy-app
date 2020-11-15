@@ -1,23 +1,14 @@
-import { Heading, Image, Screen, Subtitle, Title, View } from "@shoutem/ui";
+import { Subtitle, Title, View } from "@shoutem/ui";
 import React from "react";
-import { ScrollView, StatusBar, StyleSheet, TouchableWithoutFeedback, FlatList } from "react-native";
-import { Colors,Avatar, Card } from "react-native-paper";
-import PushNotificationAndroid from "react-native-push-android";
-import Icon from 'react-native-vector-icons/Feather';
-import * as Helper from '../../util/Helper';
+import { StyleSheet } from "react-native";
+import { Colors,Card } from "react-native-paper";
 import { sizeHeight, sizeWidth } from '../../util/Size';
-import NavigationActions from "../../util/NavigationActions";
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
-import LeftHeaders from '../common/CommonLeftHeader';
-import ProgressCircle from 'react-native-progress-circle'
 import Fade from '../../util/Fade';
-import * as Pref from '../../util/Pref';
 
 const size = 96;
 
 const CircularCardLeft = props => {
-    const { color, clickName, title, subtitle, data = {}, progress, progressTitle, showProgress = true, clicked, cardStyle, titleColor = 'white', subtitleColor ='white'} = props;
+    const { color, title, subtitle, progress, progressTitle, showProgress = true, clicked, cardStyle, titleColor = 'white', subtitleColor ='white'} = props;
 
     return (
         <Card elevation={2} style={[styles.container, { backgroundColor: color, }, cardStyle]} onPress={clicked}>
@@ -34,7 +25,7 @@ const CircularCardLeft = props => {
                         }}> {subtitle}</Subtitle>
                     </View>
                     {showProgress ? <View style={styles.incir}>
-                        <ProgressCircle
+                        {/* <ProgressCircle
                             percent={progress}
                             radius={48}
                             borderWidth={7}
@@ -49,7 +40,7 @@ const CircularCardLeft = props => {
                                 fontSize: 15, fontFamily: 'Rubik', letterSpacing: 1, color: '#292929', alignSelf: 'center',
                                 fontWeight: '400',
                             }}> {progressTitle}</Subtitle> : null}
-                        </ProgressCircle>
+                        </ProgressCircle> */}
 
                         {/* <View style={styles.circulin}> */}
                         {/* </View>

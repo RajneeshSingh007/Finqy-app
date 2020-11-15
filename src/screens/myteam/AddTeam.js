@@ -1,44 +1,23 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
   Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  FAB,
-  Avatar,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import CustomForm from '../finorbit/CustomForm';
-import FileUploadForm from '../finorbit/FileUploadForm';
-import DocumentPicker from 'react-native-document-picker';
 import LeftHeaders from '../common/CommonLeftHeader';
 import SpecificForm from '../finorbit/SpecificForm';
 import Lodash from 'lodash';
@@ -174,8 +153,8 @@ export default class AddTeam extends React.Component {
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log('result', result);
-          const { data, response_header } = result;
+          //console.log('result', result);
+          const { response_header } = result;
           const { res_type, message } = response_header;
           this.setState({ loading: false });
           if (res_type === `error`) {
@@ -226,7 +205,7 @@ export default class AddTeam extends React.Component {
 
           }
         },
-        (error) => {
+        () => {
           this.setState({ loading: false });
         },
       );

@@ -34,6 +34,7 @@ export default class FinorbitForm extends React.PureComponent {
     this.FileUploadFormRef = React.createRef();
     this.ApptFormRef = React.createRef();
     //this.backClick = this.backClick.bind(this);
+    this.headerchange = false;
     this.restoreList = [];
     this.state = {
       loading: false,
@@ -49,7 +50,7 @@ export default class FinorbitForm extends React.PureComponent {
       userData: "",
       title: "",
       scrollReset: false,
-      headerchange: false
+      //headerchange: false
     };
   }
 
@@ -170,9 +171,9 @@ export default class FinorbitForm extends React.PureComponent {
       delete commons.showvectorInsuList;
       delete commons.vectorCoverList;
       delete commons.showvectorCoverList;
-      if (title !== "Health Insurance") {
-        delete commons.floaterItemList;
-      }
+      // if (title !== "Health Insurance") {
+      //   delete commons.floaterItemList;
+      // }
       delete commons.vectorTypeIns;
       delete commons.showItemCalendar;
       //console.log("d", commons);
@@ -206,7 +207,7 @@ export default class FinorbitForm extends React.PureComponent {
       let checkData = true;
       let formData = new FormData();
       let uniq = "";
-      let headerchange = false;
+      //let headerchange = false;
       if (title.includes(" ")) {
         uniq = title.trim().toLowerCase().replace(" ", "_");
       }
@@ -214,6 +215,8 @@ export default class FinorbitForm extends React.PureComponent {
         uniq = "life_cum_investment";
       } else if (title === 'Insure Check') {
         uniq = 'insure_check';
+      } else if (title === 'Loan Against Property') {
+        uniq = 'loan_against_property';
       }
       //console.log(`uniq`, uniq, title);
       formData.append(uniq, uniq);
@@ -221,7 +224,9 @@ export default class FinorbitForm extends React.PureComponent {
       if (commonForms !== undefined && this.state.currentPosition === 0) {
         checkData = firstFormCheck(title, commonForms);
         if (checkData && (title === 'Home Loan' || title === 'Loan Against Property') && commonForms.employ === 'Salaried') {
-          headerchange = true;
+          this.headerchange = true;
+        } else if (checkData && (title === 'Home Loan' || title === 'Loan Against Property') && commonForms.employ === 'Self Employed') {
+          this.headerchange = false;
         }
         // if (checkData) {
         //   let parseJs = JSON.parse(JSON.stringify(commonForms));
@@ -294,10 +299,10 @@ export default class FinorbitForm extends React.PureComponent {
         } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover.length < 2) {
           checkData = false;
           Helper.showToastMessage("Invalid turnover", 0);
-        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.amount === '') {
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan" || title === 'Loan Against Property') && specificForms.amount === '') {
           checkData = false;
           Helper.showToastMessage("Desired Amount empty", 0);
-        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.amount.length < 2) {
+        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan" || title === 'Loan Against Property') && specificForms.amount.length < 2) {
           checkData = false;
           Helper.showToastMessage("Invalid desired amount", 0);
         } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.pancardNo === "") {
@@ -344,7 +349,7 @@ export default class FinorbitForm extends React.PureComponent {
           specificForms.pincode !== '' && (specificForms.loan_property_city === '' || specificForms.homestate === '')) {
           checkData = false;
           Helper.showToastMessage('Failed to find city & state, Please, check loan property pincode', 0);
-        } else if (title === "Home Loan" && specificForms.loan_property_address === "") {
+        } else if ((title === "Home Loan" || title === 'Loan Against Property') && specificForms.loan_property_address === "") {
           checkData = false;
           Helper.showToastMessage("Property Address empty", 0);
         } else if (title === "Life Cum Invt. Plan" && specificForms.investment_amount === "") {
@@ -485,7 +490,7 @@ export default class FinorbitForm extends React.PureComponent {
               Helper.showToastMessage("Car Model number empty", 0);
             } else if (specificForms.nooldcard === "") {
               checkData = false;
-              Helper.showToastMessage("Select Type of Car", 0);
+              Helper.showToastMessage("Select Type of Loan", 0);
             } else if (specificForms.ownership === "") {
               checkData = false;
               Helper.showToastMessage("Select Type of Ownership", 0);
@@ -819,7 +824,7 @@ export default class FinorbitForm extends React.PureComponent {
                 existence = "policycopy";
               }
             }
-          } 
+          }
           // else if (title === 'Business Loan') {
           //   //|| title === 'Personal Loan'
           //   //title === 'Auto Loan' || 
@@ -955,7 +960,7 @@ export default class FinorbitForm extends React.PureComponent {
         } else {
           if (title == 'Motor Insurance') {
             existence = "rcbookcopy";
-          } 
+          }
           // else if (title == 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
           //   existence = "pancard";
           // }
@@ -970,7 +975,7 @@ export default class FinorbitForm extends React.PureComponent {
               checkData = false;
               Helper.showToastMessage('Please, Select Policy', 0);
             }
-          } 
+          }
           // else if (title === `Auto Loan` || title === 'Business Loan' || title === 'Personal Loan') {
           //   if (existence === 'pancard') {
           //     checkData = false;
@@ -1012,6 +1017,7 @@ export default class FinorbitForm extends React.PureComponent {
         //}
       }
 
+      //console.log('headerchangex', this.headerchange)
       if (checkData) {
         const limit = title === 'Insure Check' ? 1 : 3;
         if (currentPosition < limit) {
@@ -1021,7 +1027,7 @@ export default class FinorbitForm extends React.PureComponent {
                 currentPosition: prevState.currentPosition + 1,
                 bottontext: prevState.currentPosition + 1 > 0 ? "Submit" : "Next",
                 scrollReset: true,
-                headerchange: headerchange
+                //headerchange: headerchange
               };
             }, () => {
               if (this.state.currentPosition === 0) {
@@ -1036,7 +1042,7 @@ export default class FinorbitForm extends React.PureComponent {
                 currentPosition: prevState.currentPosition + 1,
                 bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
                 scrollReset: true,
-                headerchange: headerchange
+                //headerchange: headerchange
               };
             }, () => {
               if (this.state.currentPosition === 0) {
@@ -1078,8 +1084,11 @@ export default class FinorbitForm extends React.PureComponent {
           //2nd form
           if (specificForms) {
             let parseJs = JSON.parse(JSON.stringify(specificForms));
-            if (parseJs.floaterItemList != undefined && parseJs.floaterItemList.length > 0) {
+            if (parseJs.floaterItemList !== undefined && parseJs.floaterItemList !== null && parseJs.floaterItemList.length > 0) {
               let keypos = 1;
+              const floaterItemList = JSON.parse(
+                JSON.stringify(specificForms.floaterItemList)
+              );
               const loops = Lodash.map(floaterItemList, (ele) => {
                 let parseJs = JSON.parse(JSON.stringify(ele));
                 for (var key in parseJs) {
@@ -1103,14 +1112,14 @@ export default class FinorbitForm extends React.PureComponent {
               });
             }
             for (var key in parseJs) {
-              if (key !== "floaterItemList") {
-                const value = parseJs[key];
-                if (value !== undefined) {
-                  if (Array.isArray(value) === false) {
-                    formData.append(key, parseJs[key]);
-                  }
+              //if (key !== "floaterItemList") {
+              const value = parseJs[key];
+              if (value !== undefined) {
+                if (Array.isArray(value) === false) {
+                  formData.append(key, parseJs[key]);
                 }
               }
+              //}
             }
           }
 
@@ -1132,8 +1141,8 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
 
-          console.log('formData', formData);
-          console.log('formUrls', formUrls);
+          //console.log('formData', formData);
+          //console.log('formUrls', formUrls);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -1168,7 +1177,7 @@ export default class FinorbitForm extends React.PureComponent {
               }
             },
             (e) => {
-              console.log(e);
+              //console.log(e);
               this.setState({ progressLoader: false });
               Helper.showToastMessage("Something went wrong", 0);
               //Helper.showToastMessage("Form submitted successfully", 1);
@@ -1186,15 +1195,15 @@ export default class FinorbitForm extends React.PureComponent {
     }
   }
 
-  findImage() {
-    const { title } = this.props;
-    const productList = JSON.parse(JSON.stringify(Pref.productList));
-    const search = Lodash.find(productList, (io) => io.name === title);
-    console.log(title, search);
-    return search === undefined
-      ? require("../../res/images/logo.png")
-      : search.url;
-  }
+  // findImage() {
+  //   const { title } = this.props;
+  //   const productList = JSON.parse(JSON.stringify(Pref.productList));
+  //   const search = Lodash.find(productList, (io) => io.name === title);
+  //   //console.log(title, search);
+  //   return search === undefined
+  //     ? require("../../res/images/logo.png")
+  //     : search.url;
+  // }
 
   render() {
     const { title } = this.state;
@@ -1289,7 +1298,7 @@ export default class FinorbitForm extends React.PureComponent {
                       ref={this.FileUploadFormRef}
                       title={this.state.title}
                       saveData={this.state.dataArray[2]}
-                      headerchange={this.state.headerchange}
+                      headerchange={this.headerchange}
                     />) : this.state.currentPosition === 3 ? (
                       <ApptForm
                         ref={this.ApptFormRef}

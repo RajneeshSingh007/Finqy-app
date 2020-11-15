@@ -233,14 +233,14 @@ export default class OtpScreen extends React.PureComponent {
       jsonData.password = pass;
       jsonData.cnf_password = pass;
 
-      console.log(`jsonData`, jsonData, this.state.token);
+      //console.log(`jsonData`, jsonData, this.state.token);
       Helper.networkHelperTokenPost(
         Pref.RegisterUrl,
         JSON.stringify(jsonData),
         Pref.methodPost,
         this.state.token,
         (result) => {
-          console.log('result', result);
+          //console.log('result', result);
           this.setState({loading: false});
           const {response_header} = result;
           const {res_type, message} = response_header;
@@ -252,7 +252,7 @@ export default class OtpScreen extends React.PureComponent {
           }
         },
         (error) => {
-          console.log(error);
+          //console.log(error);
           this.setState({loading: false});
           Helper.showToastMessage('something went wrong', 0);
         },

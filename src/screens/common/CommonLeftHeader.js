@@ -1,11 +1,13 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableWithoutFeedback,
+  Platform, Alert
 } from 'react-native';
 import * as Pref from '../../util/Pref';
 import {
   Avatar,
+  Portal,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import { sizeHeight, sizeWidth } from '../../util/Size';
@@ -23,16 +25,19 @@ const LeftHeaders = (props) => {
     },
     bottomtext = '',
     bottomtextStyle,
-    profile = () => { }  
+    profile = () => { },
+    name = '',
+    type = '',
   } = props;
 
   const [pic, setPic] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
-        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg')&& !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
+        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         setPic(profilePic);
       }
     });
@@ -41,60 +46,170 @@ const LeftHeaders = (props) => {
     };
   }, []);
 
+  const dismisssProfile = () => setShowProfile(false);
+
+  const visProfile = () => setShowProfile(true);
+
+  const logout = () => {
+    Alert.alert("Logout", "Are you sure want to Logout?", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Ok",
+        onPress: () => {
+          Pref.setVal(Pref.saveToken, null);
+          Pref.setVal(Pref.userData, null);
+          Pref.setVal(Pref.userID, null);
+          Pref.setVal(Pref.USERTYPE, "");
+          Pref.setVal(Pref.loggedStatus, false);
+          NavigationActions.navigate("IntroScreen");
+        },
+      },
+    ]);
+  }
+
   return (
-    <View
-      style={{
-        flex: 0.13,
-        backgroundColor: 'white',
-      }}>
-      <View styleName="sm-gutter" style={styles.cont}>
-        <View style={styles.con}>
-          <View style={styles.leftcon}>
-            <TouchableWithoutFeedback onPress={backClicked}>
-              <View style={styles.circle}>
-                <IconChooser
-                  name={showBack === true ? 'chevron-left' : 'menu'}
-                  size={18}
-                  color={Pref.RED}
-                  style={styles.icon}
-                />
+    <>
+      {showProfile === true ? <Portal>
+        <TouchableWithoutFeedback onPress={dismisssProfile}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              backgroundColor: "rgba(0,0,0,0)",
+            }}
+            onPress={dismisssProfile}
+          >
+            <View style={{ flex: 0.1 }} />
+            <View style={{ flex: 0.1 }}>
+              <View style={{ flex: 1, flexDirection: "row" }}>
+                <View style={{ flex: 0.2 }} />
+                <View
+                  styleName="vertical md-gutter"
+                  style={styles.filtercont}
+                >
+                  {/* <View style={styles.tri}></View> */}
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.passText,
+                      {
+                        lineHeight: 24,
+                        fontSize: 18,
+                      },
+                    ])}
+                  >
+                    {Lodash.truncate(name, {
+                      length: 24,
+                      separator: "...",
+                    })}
+                  </Title>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.passText,
+                      {
+                        color: Pref.RED,
+                        fontSize: 16,
+                        lineHeight: 20,
+                        paddingVertical: 0,
+                        marginBottom: 8,
+                        marginTop: 4,
+                      },
+                    ])}
+                  >
+                    {`${type === "connector"
+                      ? `Connector`
+                      : type === `referral`
+                        ? "Referral"
+                        : `Team`
+                      } Partner`}
+                  </Title>
+
+                  <View style={styles.line}></View>
+
+                  <TouchableWithoutFeedback onPress={logout}>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.passText,
+                        {
+                          marginTop: 8,
+                          color: "#0270e3",
+                          fontSize: 14,
+                          lineHeight: 20,
+                          paddingVertical: 0,
+                          textDecorationColor: "#0270e3",
+                          textDecorationStyle: "solid",
+                          textDecorationLine: "underline",
+                        },
+                      ])}
+                    >
+                      {`Logout`}
+                    </Title>
+                  </TouchableWithoutFeedback>
+                </View>
+                <View style={{ flex: 0.2 }} />
               </View>
-            </TouchableWithoutFeedback>
+            </View>
+            <View style={{ flex: 0.8 }} />
           </View>
-          <View style={{ flex: 0.6 }}>
-            {showBack === true ? (
-              <Title style={styles.centertext}>{Lodash.truncate(title)}</Title>
-            ) : (
-                <Image
-                  source={require('../../res/images/squarelogo.png')}
-                  styleName="medium"
-                  style={{
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                    resizeMode:'contain'
-                  }}
-                />
-              )}
-          </View>
-          <View style={styles.rightcon}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                //console.log('title', title);
-                //if (title === 'Hi,') {
-                  profile();
-                //} else {
-                  //NavigationActions.openDrawer();
-                //}
-              }}>
-              {/* {title === 'Hi,' ? ( */}
+        </TouchableWithoutFeedback>
+      </Portal> : null}
+
+      <View
+        style={{
+          flex: 0.13,
+          backgroundColor: 'white',
+        }}>
+        <View styleName="sm-gutter" style={styles.cont}>
+          <View style={styles.con}>
+            <View style={styles.leftcon}>
+              <TouchableWithoutFeedback onPress={backClicked}>
+                <View style={styles.circle}>
+                  <IconChooser
+                    name={showBack === true ? 'chevron-left' : 'menu'}
+                    size={18}
+                    color={Pref.RED}
+                    style={styles.icon}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+            <View style={{ flex: 0.6 }}>
+              {showBack === true ? (
+                <Title style={styles.centertext}>{Lodash.truncate(title)}</Title>
+              ) : (
+                  <Image
+                    source={require('../../res/images/squarelogo.png')}
+                    styleName="medium"
+                    style={{
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      resizeMode: 'contain'
+                    }}
+                  />
+                )}
+            </View>
+            <View style={styles.rightcon}>
+              <TouchableWithoutFeedback
+                onPress={visProfile}
+              // onPress={() => {
+              //   //console.log('title', title);
+              //   //if (title === 'Hi,') {
+              //   profile();
+              //   //} else {
+              //   //NavigationActions.openDrawer();
+              //   //}
+              // }}
+              >
+                {/* {title === 'Hi,' ? ( */}
                 <View>
                   <Avatar.Image
-                    source={pic === null ? require('../../res/images/account.png') :pic}
+                    source={pic === null ? require('../../res/images/account.png') : pic}
                     size={48}
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />
                 </View>
-              {/* //   <Title
+                {/* //   <Title
               //     style={StyleSheet.flatten([
               //       styles.belowtext,
               //       {
@@ -122,22 +237,58 @@ const LeftHeaders = (props) => {
               //       />
               //     </View>
               //   )} */}
-            </TouchableWithoutFeedback>
+              </TouchableWithoutFeedback>
+            </View>
           </View>
         </View>
+        <View style={styles.line} />
+        {bottomtext !== '' ? (
+          <Title style={StyleSheet.flatten([styles.belowtext, bottomtextStyle])}>
+            {bottomtext}
+          </Title>
+        ) : null}
+        {bottomBody}
       </View>
-      <View style={styles.line} />
-      {bottomtext !== '' ? (
-        <Title style={StyleSheet.flatten([styles.belowtext, bottomtextStyle])}>
-          {bottomtext}
-        </Title>
-      ) : null}
-      {bottomBody}
-    </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  filtercont: {
+    flex: 0.6,
+    //position: 'absolute',
+    //zIndex: 99,
+    borderColor: "#dbdacd",
+    borderWidth: 0.8,
+    backgroundColor: Pref.WHITE,
+    alignSelf: "flex-end",
+    borderRadius: 8,
+    //top: 24,
+    ...Platform.select({
+      android: {
+        elevation: 4,
+      },
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
+  },
+  passText: {
+    fontSize: 20,
+    letterSpacing: 0.5,
+    color: "#555555",
+    fontWeight: "700",
+    lineHeight: 20,
+    alignSelf: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
   cont: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -217,7 +368,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     flexDirection: 'row',
     alignItems: 'center',
-    marginStart:8
+    marginStart: 8
   },
   rightcon: {
     flex: 0.2,

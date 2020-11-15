@@ -1,58 +1,25 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
-  Alert,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
-  Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
-  Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Avatar,
   ActivityIndicator,
   Searchbar
 } from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import { sizeHeight } from '../../util/Size';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
 import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../common/IconChooser';
-import moment from 'moment';
 import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
@@ -65,7 +32,7 @@ export default class ViewTeam extends React.PureComponent {
     const date = new Date();
     this.state = {
       dataList: [],
-      loading: false,
+      loading: true,
       showCalendar: false,
       currentDate: date,
       dates: '',
@@ -135,9 +102,9 @@ export default class ViewTeam extends React.PureComponent {
       this.state.token,
       (result) => {
         const { data, response_header } = result;
-        const { res_type, message } = response_header;
+        const { res_type } = response_header;
         if (res_type === `success`) {
-         // console.log('data', data)
+         // //console.log('data', data)
           if (data.length > 0) {
             const dataList = data.reverse();
             const { itemSize } = this.state;
@@ -157,7 +124,7 @@ export default class ViewTeam extends React.PureComponent {
           this.setState({ loading: false });
         }
       },
-      (error) => {
+      () => {
         this.setState({ loading: false });
       },
     );
@@ -169,7 +136,7 @@ export default class ViewTeam extends React.PureComponent {
    */
   returnData = (sort, start = 0, end) => {
     const dataList = [];
-    console.log(start, end);
+    //console.log(start, end);
     if (sort.length > 0) {
       if (start >= 0) {
         for (let i = start; i < end; i++) {
@@ -248,7 +215,7 @@ export default class ViewTeam extends React.PureComponent {
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
-        console.log(result);
+        //console.log(result);
         if (result) {
           RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
@@ -383,7 +350,7 @@ export default class ViewTeam extends React.PureComponent {
       //   const {dataList} = this.state;
       //   if (dataList.length > 0) {
       //     Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //       console.log(result);
+      //       //console.log(result);
       //       if (result) {
       //         RNFetchBlob.fs.scanFile([
       //           {path: FILEPATH, mime: 'text/csv'},

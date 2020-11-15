@@ -41,7 +41,7 @@ export default class MyComPost extends React.PureComponent {
 
         Pref.getVal(Pref.userID, value => {
             const rm = Helper.removeQuotes(value);
-            console.log('rm', rm)
+            //console.log('rm', rm)
             if (rm !== '') {
                 this.setState({ uid: rm });
             }
@@ -77,12 +77,12 @@ export default class MyComPost extends React.PureComponent {
     fetchData = () => {
         Pref.getVal(Pref.userID, value => {
             const rm = Helper.removeQuotes(value);
-            console.log('rm', rm)
+            //console.log('rm', rm)
             if (rm !== '') {
                 const body = {
                     uid: rm
                 };
-                console.log('bod', body)
+                //console.log('bod', body)
                 Helper.networkHelper(Pref.FetchMyCUrl, JSON.stringify(body), Pref.methodPost, result => {
                     const { response_header, response } = result;
                     this.setState({ loadingz: false, showQuesView: false, });
@@ -128,7 +128,7 @@ export default class MyComPost extends React.PureComponent {
             };
             Helper.networkHelper(Pref.PostCQuesUrl, JSON.stringify(body), Pref.methodPost, result => {
                 const { response_header, response } = result;
-                console.log('result', result);
+                //console.log('result', result);
                 this.setState({ progressLoader: false, showQuesView: false, });
                 if (response_header.res_type === 'success') {
                     const merg = this.state.dataList;
@@ -168,7 +168,7 @@ export default class MyComPost extends React.PureComponent {
                         qid: id
                     };
                     Helper.networkHelper(Pref.DeleteComPost, JSON.stringify(body), Pref.methodPost, result => {
-                        console.log('result', result)
+                        //console.log('result', result)
                         const { response_header } = result;
                         this.setState({ progressLoader: false, showQuesView: false, });
                         if (response_header.res_type === 'success') {
@@ -181,7 +181,7 @@ export default class MyComPost extends React.PureComponent {
                             Helper.showToastMessage('Failed to delete', 0);
                         }
                     }, error => {
-                            console.log('error', error)
+                            //console.log('error', error)
                         this.setState({ progressLoader: false, showQuesView: false, });
                     })
                 }

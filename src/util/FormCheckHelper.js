@@ -22,10 +22,10 @@ export const firstFormCheck = (title, commons) => {
     } else if (
         //title !== "Term Insurance" &&
         //title !== "Health Insurance" &&
-        title !== "Fixed Deposit" &&
+        //title !== "Fixed Deposit" &&
         //title !== `Life Cum Invt. Plan` &&
-        title !== `Motor Insurance` &&
-        title !== `Mutual Fund` &&
+        //title !== `Motor Insurance` &&
+        //title !== `Mutual Fund` &&
         title !== `Vector Plus` &&
         //title !== `Home Loan` &&
        //title !== `Loan Against Property` &&

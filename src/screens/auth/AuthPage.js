@@ -12,7 +12,7 @@ export default class AuthPage extends React.PureComponent {
 	 */
     componentDidMount() {
         Pref.getVal(Pref.loggedStatus, value => {
-            console.log(`loggedStatus`, value)
+            //console.log(`loggedStatus`, value)
             if (value === undefined || value === null){
                 Helper.itemClick(this.props, "Login");
             }else {

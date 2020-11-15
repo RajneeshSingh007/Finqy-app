@@ -210,10 +210,10 @@ export default class CommonForm extends React.PureComponent {
             } else {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-                // console.log('filterActive', filterActive)
+                // //console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
-                //      console.log('state', city)
+                //      //console.log('state', city)
                 this.setState({ currentlocation: city, state: state, pincode: value });
               } else {
                 this.setState({ currentlocation: '', state: '', pincode: value });
@@ -375,18 +375,20 @@ export default class CommonForm extends React.PureComponent {
         /> */}
         <AnimatedInputBox
           placeholder={
-            title === title === 'Fixed Deposit' ||
+            title === 
+            //title === 'Fixed Deposit' ||
               // title === 'Health Insurance' ||
               //title === `Life Cum Invt. Plan` ||
               //title === `Motor Insurance` ||
-              title === `Mutual Fund` ||
+              //title === `Mutual Fund` ||
               title === `Profile`
               //|| title === 'Home Loan' 
               //|| title === 'Loan Against Property' 
               //|| title === 'Personal Loan' 
               //|| title === 'Business Loan' 
               //|| title === 'Term Insurance' 
-              || title == 'Fixed Deposit' || title === 'Motor Insurance'
+              //|| title == 'Fixed Deposit' 
+              //|| title === 'Motor Insurance'
               ? 'Email'
               : 'Email *'
           }

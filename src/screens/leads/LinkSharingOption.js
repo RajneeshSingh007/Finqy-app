@@ -68,7 +68,7 @@ export default class LinkSharingOption extends React.PureComponent {
     const url = ``;
     const title = 'ERB Referral';
     const finalUrl = `${value}?ref=${refercode}`
-    console.log('finalUrl', finalUrl)
+    //console.log('finalUrl', finalUrl)
     const message = `Greetings!!\n\nPlease find the below product your looking for\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${rcontact}.\n\nYours Sincerely\n${rname}`
     const options = Platform.select({
       ios: {

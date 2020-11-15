@@ -162,7 +162,7 @@ export default class Redeem extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          console.log(result);
+          //console.log(result);
           const {data, response_header} = result;
           const {res_type, message} = response_header;
           this.setState({showLoading: false});
@@ -174,7 +174,7 @@ export default class Redeem extends React.PureComponent {
           }
         },
         (error) => {
-          console.log(error);
+          //console.log(error);
           this.setState({showLoading: false});
         },
       );
@@ -343,7 +343,7 @@ export default class Redeem extends React.PureComponent {
       //                               const { walletc, wallet } = this.state;
       //                               if(value !== ''){
       //                                   const valx = Number(value);
-      //                                   console.log('valx', valx);
+      //                                   //console.log('valx', valx);
       //                                   if (valx > 0  && valx <= wallet) {
       //                                       const minamt = wallet - valx;
       //                                       this.setState({ amount: value, walletc: minamt })

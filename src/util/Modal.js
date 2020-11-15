@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import {
   View,
   Modal,
@@ -195,12 +195,12 @@ const styles = StyleSheet.create({
   },
 });
 
-ModalComponent.propTypes = {
-  visible: PropTypes.bool,
-  setModalVisible: PropTypes.func,
-  ratioHeight: PropTypes.number,
-  topRightElement: PropTypes.node,
-};
+// ModalComponent.propTypes = {
+//   visible: PropTypes.bool,
+//   setModalVisible: PropTypes.func,
+//   ratioHeight: PropTypes.number,
+//   topRightElement: PropTypes.node,
+// };
 
 ModalComponent.defaultProps = {
   topBottomElement: null,

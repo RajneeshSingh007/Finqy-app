@@ -17,7 +17,7 @@ export default class MarketingTool extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       bannerList: [],
       token: '',
       type: -1,
@@ -82,7 +82,7 @@ export default class MarketingTool extends React.PureComponent {
         }
       },
       (error) => {
-        console.log('error', error);
+        //console.log('error', error);
         this.setState({loading: false});
       },
     );

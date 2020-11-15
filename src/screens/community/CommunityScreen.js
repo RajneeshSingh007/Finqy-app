@@ -116,7 +116,7 @@ export default class CommunityScreen extends React.PureComponent {
             };
             Helper.networkHelper(Pref.PostCQuesUrl, JSON.stringify(body), Pref.methodPost, result => {
                 const { response_header, response } = result;
-                console.log('result', result);
+                //console.log('result', result);
                 this.setState({ progressLoader: false, showQuesView: false, });
                 if (response_header.res_type === 'success') {
                     const merg = this.state.dataList;

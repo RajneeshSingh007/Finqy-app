@@ -1,29 +1,29 @@
 import React from "react";
 import { View, Image, TouchableOpacity, Animated, Easing, Text, StyleSheet} from "react-native";
 import Pulse from "./Pulse";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 import { Avatar, Colors } from "react-native-paper";
 
 export default class PulseLoader extends React.PureComponent {
-    static propTypes = {
-        interval: PropTypes.number,
-        size: PropTypes.number,
-        pulseMaxSize: PropTypes.number,
-        avatar: PropTypes.any,
-        avatarBackgroundColor: PropTypes.string,
-        pressInValue: PropTypes.number,
-        pressDuration: PropTypes.number,
-        borderColor: PropTypes.string,
-        backgroundColor: PropTypes.string,
-        getStyle: PropTypes.func,
-        elevation: PropTypes.number,
-        pressed: PropTypes.func,
-        topText: PropTypes.string,
-        bottomText: PropTypes.string,
-        topTextStyle: PropTypes.any,
-        bottomTextStyle: PropTypes.any,
-        showText: PropTypes.bool,
-    };
+    // static propTypes = {
+    //     interval: PropTypes.number,
+    //     size: PropTypes.number,
+    //     pulseMaxSize: PropTypes.number,
+    //     avatar: PropTypes.any,
+    //     avatarBackgroundColor: PropTypes.string,
+    //     pressInValue: PropTypes.number,
+    //     pressDuration: PropTypes.number,
+    //     borderColor: PropTypes.string,
+    //     backgroundColor: PropTypes.string,
+    //     getStyle: PropTypes.func,
+    //     elevation: PropTypes.number,
+    //     pressed: PropTypes.func,
+    //     topText: PropTypes.string,
+    //     bottomText: PropTypes.string,
+    //     topTextStyle: PropTypes.any,
+    //     bottomTextStyle: PropTypes.any,
+    //     showText: PropTypes.bool,
+    // };
     constructor(props) {
         super(props);
 

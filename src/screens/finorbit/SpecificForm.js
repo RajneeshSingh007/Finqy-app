@@ -311,7 +311,7 @@ export default class SpecificForm extends React.PureComponent {
 
   componentWillReceiveProps(prop) {
     // const { saveData, title } = prop;
-    // console.log('title', title)
+    // //console.log('title', title)
     // if (title === `Vector Plus` || title === `Health Insurance`) {
     //   this.setState({
     //     healthFList: [
@@ -666,10 +666,10 @@ export default class SpecificForm extends React.PureComponent {
             } else {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-                // console.log('filterActive', filterActive)
+                // //console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
-                //      console.log('state', city)
+                //      //console.log('state', city)
                 this.setState({ loan_property_city: city, homestate: state, pincode: value });
               } else {
                 this.setState({ loan_property_city: '', homestate: '', pincode: value });
@@ -903,7 +903,7 @@ export default class SpecificForm extends React.PureComponent {
                     title === `Business Loan` ||
                     title === 'Auto Loan' ||
                     title === `Personal Loan`
-                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
+                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' || title === 'Loan Against Property' ? ' *' : ''}`
                     : 'Investment Amount *'
               }
               returnKeyType={'next'}
@@ -2688,7 +2688,7 @@ export default class SpecificForm extends React.PureComponent {
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ loan_property_address: value })}
             value={this.state.loan_property_address}
-            placeholder={`Property Address${title === 'Home Loan' ? ' *' : ''}`}
+            placeholder={`Property Address${title === 'Home Loan' || title === 'Loan Against Property' ? ' *' : ''}`}
             //editable={false}
             //disabled={true}
             multiline

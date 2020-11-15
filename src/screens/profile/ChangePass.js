@@ -85,7 +85,7 @@ export default class AddTeam extends React.Component {
     body.user_id = id;
     body.type = this.state.utype;
 
-    console.log(`body`, body);
+    //console.log(`body`, body);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -112,7 +112,7 @@ export default class AddTeam extends React.Component {
           }
         },
         (error) => {
-          console.log(`error`, error);
+          //console.log(`error`, error);
           this.setState({ loading: false });
         },
       );

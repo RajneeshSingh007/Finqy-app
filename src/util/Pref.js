@@ -2693,13 +2693,22 @@ export const HealthCompany = [{ value: "Acko General Insurance Limited" },
  */
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
-export const LiveUrl = `https://erb.ai/erbfinorbit`;
-//`http://uat.erb.ai/`; //`https://erb.ai/`;
-export const MainUrl = `https://uat.erb.ai/`;
-//`https://uat.erb.ai/`;
-export const FinURL = `${MainUrl}erbfinorbit/`;
-export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
+
+//production url
+export const MainUrl = `https://erb.ai/`;
+
+//test url
+//export const MainUrl = `https://uat.erb.ai/`;
+
+//production
+export const BASEUrl = `${MainUrl}finpro/appapi/`;
+
+//test location
+//export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
+
+//disabled
 //export const FOLDERPATH = `${BASEUrl}erbfinorbit`;
+
 export const FinOrbitFormUrl = `${BASEUrl}finorbit/`;
 
 export const DashBoardUrl = `${BASEUrl}tool_dashboard.php`;
@@ -2727,22 +2736,33 @@ export const As26Url = `${BASEUrl}tool_get_26as.php`;
 export const CertUrl = `${BASEUrl}tool_cert.php`;
 export const PayoutUrl = `${BASEUrl}tool_payout_structure.php`;
 export const ConnectorPercentage = `${BASEUrl}tool_payout`;
+export const AccountViewUrl = `${BASEUrl}tool_view_profile.php`;
 
+//forgot
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
 export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
-export const TermOfUse = `https://erb.ai/Terms%20of%20Use%20ERB.pdf`;
+export const TermOfUse = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 
+//insurance
 export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 
-export const AccountViewUrl = `${BASEUrl}tool_view_profile.php`;
 
+///////////////////////////////////////////////////////////
+/**
+ * disabled 
+ */
+//export const LiveUrl = `https://erb.ai/erbfinorbit`;
+export const FinURL = `${MainUrl}erbfinorbit/`;
 export const NewFormPayment = `${FinURL}policy_premium.php`;
-export const VectorFormPayment = `${LiveUrl}vp_payment.php`;
-export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
+//export const VectorFormPayment = `${LiveUrl}vp_payment.php`;
+//export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
+export const VectorFormPayment = `${FinURL}vp_payment.php`;
+export const GroupFormPayment = `${FinURL}gp_payment.php`;
 export const AjaxWithoutToken = `${FinURL}ajax.php`;
 export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
+///////////////////////////////////////////////////////////////
 
 export const PostalCityUrl = `${BASEUrl}tool_view_pincode.php`;
 

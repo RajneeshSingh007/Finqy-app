@@ -7,8 +7,10 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import FlashMessage from "react-native-flash-message";
 import CodePush from "react-native-code-push";
 import Loader from './src/util/Loader';
+import Crashes from 'appcenter-crashes';
 
 let currentScreenx = ''
+
 class App extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -21,6 +23,10 @@ class App extends React.PureComponent {
 
     componentDidMount() {
         this.syncImmediate();
+        Crashes.setEnabled(true)
+            .then(res => {
+                console.log('res', res)
+            }).catch(e => console.log(e))
         //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     }
 
@@ -87,7 +93,7 @@ class App extends React.PureComponent {
 
     codepushDialog = () => {
         const { downloading } = this.state;
-        return <Loader isShow={downloading === 1 ? true : false}  />
+        return <Loader isShow={downloading === 1 ? true : false} />
     }
 
 

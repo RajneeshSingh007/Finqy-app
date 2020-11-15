@@ -135,7 +135,7 @@ export default class ProfileScreen extends React.PureComponent {
             }));
           })
           // Pref.getVal(Pref.userData, (parseda) => {
-          //   console.log('parseda', parseda)
+          //   //console.log('parseda', parseda)
           // });
         });
       });
@@ -457,7 +457,7 @@ export default class ProfileScreen extends React.PureComponent {
     } else if (fileName !== '') {
       formData.append('user_prof', fileName);
     }
-    console.log(`formData`, formData, token);
+    //console.log(`formData`, formData, token);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -490,7 +490,7 @@ export default class ProfileScreen extends React.PureComponent {
           }
         },
         (e) => {
-          console.log(`error`, e);
+          //console.log(`error`, e);
           this.setState({ loading: false });
         },
       );

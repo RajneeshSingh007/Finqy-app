@@ -89,6 +89,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "43915579330-bab34bc1qgul09hjf1uidf4ovqv1dvhe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erb.finpro",
+            "certificate_hash": "6e4143cbcbf8c1192cd79ad4ff685993b60688e2"
+          }
+        },
+        {
+          "client_id": "43915579330-5ukfjiuig9ng0n3tapqpfu2oubj32i9f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erb.finpro",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "43915579330-vbb9m65ojotphhmvb75v8vavrsh55jlu.apps.googleusercontent.com",
           "client_type": 3
         }

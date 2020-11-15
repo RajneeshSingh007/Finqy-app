@@ -1,80 +1,27 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
   BackHandler,
-  Platform,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import {
-  Image,
-  Screen,
-  Subtitle,
   Title,
-  Text,
-  Caption,
   View,
-  Heading,
-  TouchableOpacity,
-  DropDownMenu,
-  DropDownModal,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
-  Colors,
-  Snackbar,
-  TextInput,
-  DefaultTheme,
-  HelperText,
-  FAB,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import CommonForm from './CommonForm';
-import SpecificForm from './SpecificForm';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import AddressForm from './AddressForm';
-//import StepIndicator from 'react-native-step-indicator';
-import ApptForm from './ApptForm';
 import Lodash from 'lodash';
 import Loader from '../../util/Loader';
 import LeftHeaders from '../common/CommonLeftHeader';
 import BannerCard from '../common/BannerCard';
-import Carousel from 'react-native-snap-carousel';
-import {Pagination} from 'react-native-snap-carousel';
-import FormProgress from '../../util/FormProgress';
 import CScreen from '../component/CScreen';
 import StepIndicator from '../component/StepIndicator';
-
-// const customStyles = {
-//   stepIndicatorSize: 25,
-//   currentStepIndicatorSize: 30,
-//   separatorStrokeWidth: 2,
-//   currentStepStrokeWidth: 3,
-//   stepStrokeCurrentColor: Pref.RED,
-//   stepStrokeWidth: 3,
-//   stepStrokeFinishedColor: Pref.RED,
-//   stepStrokeUnFinishedColor: Colors.grey300,
-//   separatorFinishedColor: '#02c26a',
-//   separatorUnFinishedColor: Colors.grey300,
-//   stepIndicatorFinishedColor: Pref.RED,
-//   stepIndicatorUnFinishedColor: Pref.WHITE,
-//   stepIndicatorCurrentColor: Pref.WHITE,
-//   stepIndicatorLabelFontSize: 13,
-//   currentStepIndicatorLabelFontSize: 13,
-//   stepIndicatorLabelCurrentColor: Pref.RED,
-//   stepIndicatorLabelFinishedColor: Pref.WHITE,
-//   stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-//   labelColor: '#292929',
-//   labelSize: 12,
-//   currentStepLabelColor: Pref.RED,
-// };
 
 export default class NewForm extends React.PureComponent {
   constructor(props) {
@@ -130,7 +77,7 @@ export default class NewForm extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
-  _renderItem = ({item, index}) => {
+  _renderItem = ({item}) => {
     // if(item.url === 'abc'){
     //     return (<CardRow
     //         color={Colors.grey300}
@@ -152,7 +99,7 @@ export default class NewForm extends React.PureComponent {
   }
 
   submitt = () => {
-    const {currentPosition, title} = this.state;
+    const {currentPosition} = this.state;
     this.insertData(currentPosition, true);
   };
 
@@ -321,7 +268,7 @@ export default class NewForm extends React.PureComponent {
               }
             },
             (error) => {
-              console.log('erorr', error);
+              //console.log('erorr', error);
               this.setState({progressLoader: false});
               Helper.showToastMessage('something wents wrong...', 0);
             },

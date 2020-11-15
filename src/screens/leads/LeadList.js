@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
   Searchbar,
 } from 'react-native-paper';
-import {sizeHeight} from '../../util/Size';
+import { sizeHeight } from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -80,24 +80,25 @@ export default class LeadList extends React.PureComponent {
       disableNext: false,
       disableBack: false,
       searchQuery: '',
-      enableSearch:false
+      enableSearch: false,
+      orderBy: 'asc'
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true, dataList: []});
+      this.setState({ loading: true, dataList: [] });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        this.setState({userData: userData});
+        this.setState({ userData: userData });
         Pref.getVal(Pref.USERTYPE, (v) => {
-          this.setState({type: v}, () => {
+          this.setState({ type: v }, () => {
             Pref.getVal(Pref.saveToken, (value) => {
-              this.setState({token: value}, () => {
-                const {navigation} = this.props;
+              this.setState({ token: value }, () => {
+                const { navigation } = this.props;
                 const ref = navigation.getParam('ref', null);
                 this.fetchData(ref);
               });
@@ -109,9 +110,9 @@ export default class LeadList extends React.PureComponent {
   }
 
   backclick = () => {
-    const {modalvis} = this.state;
+    const { modalvis } = this.state;
     if (modalvis) {
-      this.setState({modalvis: false, pdfurl: ''});
+      this.setState({ modalvis: false, pdfurl: '' });
       return true;
     }
     return false;
@@ -125,9 +126,9 @@ export default class LeadList extends React.PureComponent {
 
   fetchData = (ref) => {
     //referral
-    this.setState({loading: true});
-    const {type} = this.state;
-    const {refercode, username} = this.state.userData;
+    this.setState({ loading: true });
+    const { type } = this.state;
+    const { refercode, username } = this.state.userData;
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
       team_user: username,
@@ -139,8 +140,8 @@ export default class LeadList extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
@@ -153,7 +154,7 @@ export default class LeadList extends React.PureComponent {
               );
             });
             const sort = sorting.reverse();
-            const {itemSize} = this.state;
+            const { itemSize } = this.state;
             this.setState({
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
@@ -169,11 +170,11 @@ export default class LeadList extends React.PureComponent {
             });
           }
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
-      (e) => {
-        this.setState({loading: false});
+      () => {
+        this.setState({ loading: false });
       },
     );
   };
@@ -199,7 +200,7 @@ export default class LeadList extends React.PureComponent {
             rowData.push(item.product);
             rowData.push(item.bank === 'null' ? '' : item.bank);
             rowData.push(item.status);
-            const {quotes, mail, sharewhatsapp, sharemail, policy} = item;
+            const { quotes, mail, sharewhatsapp, sharemail, policy } = item;
             const quotesView = (value, mail) => (
               <View
                 style={{
@@ -224,7 +225,7 @@ export default class LeadList extends React.PureComponent {
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.quotesClick(mail, 'Mail')}>
-                    <View style={{marginStart: 8}}>
+                    <View style={{ marginStart: 8 }}>
                       <IconChooser
                         name={'mail'}
                         size={20}
@@ -248,7 +249,7 @@ export default class LeadList extends React.PureComponent {
                 }}>
                 {value !== '' ? (
                   <TouchableWithoutFeedback
-                    onPress={() => this.cifClick(value)}>
+                    onPress={() => this.cifClick(value, false)}>
                     <View>
                       <IconChooser
                         name={`whatsapp`}
@@ -261,8 +262,8 @@ export default class LeadList extends React.PureComponent {
                 ) : null}
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
-                    onPress={() => this.cifClick(value)}>
-                    <View style={{marginStart: 8}}>
+                    onPress={() => this.cifClick(value, true)}>
+                    <View style={{ marginStart: 8 }}>
                       <IconChooser
                         name={'mail'}
                         size={20}
@@ -306,28 +307,84 @@ export default class LeadList extends React.PureComponent {
     return dataList;
   };
 
-  cifClick = (value) => {
+  // sortData = (key) => {
+  //   const { dataList,orderBy } = this.state;
+  //   //const orderchangedlist = Lodash.orderBy(dataList, [key], ['desc'])
+  //   //console.log('orderchangedlist', orderchangedlist, dataList);
+  //   var result = Lodash.orderBy(dataList, item => item[key], [orderBy]);
+  //   result = Lodash.map(result, (item, index) =>{
+  //     item[0] = Number(index+1);
+  //     return item;
+  //   })
+  //   //console.log('result', result)
+  //   this.setState({ dataList: result,orderBy:orderBy === 'asc' ? 'desc' : 'asc'})
+  // }
+
+  // headerItem = (title, key) => {
+  //   const item =
+  //     <TouchableWithoutFeedback
+  //       onPress={() => this.sortData(key)}>
+  //       <View
+  //         style={{
+  //           flexDirection: 'row',
+  //           alignSelf: 'center',
+  //           alignItems: 'center',
+  //           justifyContent: 'center',
+  //         }}>
+  //         <Title style={{
+  //           textAlign: 'center',
+  //           fontWeight: '700',
+  //           color: '#656259',
+  //           fontSize: 16,
+  //         }}>
+  //           {title}
+  //         </Title>
+  //         <View>
+  //           <IconChooser
+  //             name={`sort`}
+  //             size={18}
+  //             iconType={2}
+  //             color={`#555555`}
+  //             style={{
+  //               marginStart: 6
+  //             }}
+  //           />
+  //         </View>
+  //       </View>
+  //     </TouchableWithoutFeedback>
+  //   return item;
+  // }
+
+  /**
+   * mode single, multiple
+   * @param {*} value 
+   * @param {*} mode 
+   */
+  cifClick = (value, mode) => {
+    const { userData } = this.state;
+    const { rcontact, rname } = userData;
     const sp = value.split('@');
     const url = ``;
-    const title = 'FinPro';
-    const message = `${sp[0]}`;
+    const title = '';
+    const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${sp[0]}
+    \n\nFor further details contact:\n\nRP name : ${rname}\n\nMobile no : ${rcontact}\n\nRegards\n\nTeam ERB`;
     const options = Platform.select({
       ios: {
         activityItemSources: [
           {
-            placeholderItem: {type: 'url', content: url},
+            placeholderItem: { type: 'url', content: url },
             item: {
-              default: {type: 'url', content: url},
+              default: { type: 'url', content: url },
             },
             subject: {
               default: title,
             },
-            linkMetadata: {originalUrl: url, url, title},
+            linkMetadata: { originalUrl: url, url, title },
           },
           {
-            placeholderItem: {type: 'text', content: message},
+            placeholderItem: { type: 'text', content: message },
             item: {
-              default: {type: 'text', content: message},
+              default: { type: 'text', content: message },
               message: null, // Specify no text to share via Messages app.
             },
           },
@@ -340,7 +397,6 @@ export default class LeadList extends React.PureComponent {
         message: `${message}`,
       },
     });
-    Share.open(options);
     const body = JSON.stringify({
       fid: `${sp[1]}`,
       form_name: `${sp[2]}`,
@@ -351,10 +407,18 @@ export default class LeadList extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        console.log(`result`, result);
+        //console.log(`result`, result);
       },
-      () => {},
+      (e) => {
+        //console.log('e', e);
+      },
     );
+    if (mode === true) {
+      options.social = Share.Social.EMAIL;
+      Share.shareSingle(options);
+    } else {
+      Share.open(options);
+    }
   };
 
   quotesClick = (value, title) => {
@@ -367,7 +431,7 @@ export default class LeadList extends React.PureComponent {
       });
     } else {
       if (value.includes('pdf')) {
-        this.setState({modalvis: true, pdfurl: value, pdfTitle: title});
+        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title });
       } else {
         Helper.downloadFile(value, title);
       }
@@ -375,12 +439,12 @@ export default class LeadList extends React.PureComponent {
   };
 
   invoiceViewClick = (value, title) => {
-    this.setState({modalvis: true, pdfurl: value, pdfTitle: title});
+    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title });
   };
 
   emailSubmit = () => {
-    const {quotemailData, quotemail, userData} = this.state;
-    const {rname, rcontact} = userData;
+    const { quotemailData, quotemail, userData } = this.state;
+    const { rname, rcontact } = userData;
     const sp = quotemailData.split('@');
     const body = JSON.stringify({
       email: `${quotemail}`,
@@ -388,16 +452,18 @@ export default class LeadList extends React.PureComponent {
       form_id: `${sp.length === 4 ? sp[1] : sp[0]}`,
       username: rname,
       mobile: rcontact,
+      //quote_file:`${sp.length === 4 ? sp[3] : sp[2]}`
     });
+    //console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.AjaxUrl,
       body,
       Pref.methodPost,
       this.state.token,
       (result) => {
-        console.log(`result`, result);
-        const {response_header} = result;
-        const {res_type} = response_header;
+        //console.log(`result`, result);
+        const { response_header } = result;
+        const { res_type } = response_header;
         if (res_type === 'success') {
           alert(`Email sent successfully`);
         }
@@ -409,18 +475,18 @@ export default class LeadList extends React.PureComponent {
       },
       () => {
         alert(`Failed to send mail`);
-        this.setState({quotemodalVis: false, quotemailData: '', quotemail: ''});
+        this.setState({ quotemodalVis: false, quotemailData: '', quotemail: '' });
       },
     );
   };
 
   clickedexport = () => {
-    const {cloneList} = this.state;
+    const { cloneList } = this.state;
     if (cloneList.length > 0) {
-      const data = this.returnData(cloneList,0, cloneList.length);
+      const data = this.returnData(cloneList, 0, cloneList.length);
       Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
         if (result) {
-          RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
+          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Lead Record',
               description: 'Lead record exported successfully',
@@ -439,7 +505,7 @@ export default class LeadList extends React.PureComponent {
    * @param {*} mode true ? next : back
    */
   pagination = (mode) => {
-    const {itemSize, cloneList} = this.state;
+    const { itemSize, cloneList } = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -451,7 +517,7 @@ export default class LeadList extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
+        this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
       if (itemSize <= 5) {
@@ -461,42 +527,42 @@ export default class LeadList extends React.PureComponent {
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
-        if(slicedArray.length > 0){
-          this.setState({dataList: slicedArray, itemSize: plus});
+        if (slicedArray.length > 0) {
+          this.setState({ dataList: slicedArray, itemSize: plus });
         }
       }
     }
   };
 
   onChangeSearch = (query) => {
-    this.setState({searchQuery: query});
-    const {cloneList,itemSize} = this.state;
+    this.setState({ searchQuery: query });
+    const { cloneList, itemSize } = this.state;
     if (cloneList.length > 0) {
       const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
       const result = Lodash.filter(clone, (it) => {
-        const {date, leadno, source_type, name, mobile, product, bank, status} = it;
+        const { date, leadno, source_type, name, mobile, product, bank, status } = it;
         return date && date.trim().toLowerCase().includes(trimquery) || leadno && leadno.trim().toLowerCase().includes(trimquery) || source_type && source_type.trim().toLowerCase().includes(trimquery) || name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery) || bank && bank.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery);
       });
       const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({dataList: data,itemSize:count});
+      this.setState({ dataList: data, itemSize: count });
     }
   };
 
-  revertBack = () =>{
-    const { enableSearch} = this.state;
-    const {cloneList} = this.state;
+  revertBack = () => {
+    const { enableSearch } = this.state;
+    const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, 5);
-      this.setState({dataList: data});
+      this.setState({ dataList: data });
     }
-    this.setState({searchQuery: '', enableSearch:!enableSearch,itemSize:5});
+    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
   }
 
   render() {
-    const {searchQuery, enableSearch} = this.state;
+    const { searchQuery, enableSearch } = this.state;
     return (
       <CScreen
         body={
@@ -520,7 +586,7 @@ export default class LeadList extends React.PureComponent {
             <Modal
               visible={this.state.modalvis}
               setModalVisible={() =>
-                this.setState({pdfurl: '', modalvis: false})
+                this.setState({ pdfurl: '', modalvis: false })
               }
               ratioHeight={0.87}
               backgroundColor={`white`}
@@ -537,7 +603,7 @@ export default class LeadList extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`,this.state.pdfTitle, `${this.state.pdfTitle}.pdf`,'application/pdf')}>
+                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`, this.state.pdfTitle, `${this.state.pdfTitle}.pdf`, 'application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"
@@ -565,10 +631,10 @@ export default class LeadList extends React.PureComponent {
                       width: '100%',
                       height: '100%',
                     }}
-                                  fitWidth
-              fitPolicy={0}
-              enablePaging
-              scale={1}
+                    fitWidth
+                    fitPolicy={0}
+                    enablePaging
+                    scale={1}
 
                   />
                 </View>
@@ -608,9 +674,9 @@ export default class LeadList extends React.PureComponent {
                     label={`Email`}
                     placeholder={`Enter email id`}
                     value={this.state.quotemail}
-                    onChange={(v) => this.setState({quotemail: v})}
+                    onChange={(v) => this.setState({ quotemail: v })}
                     keyboardType={'email-address'}
-                    style={{marginHorizontal: 12}}
+                    style={{ marginHorizontal: 12 }}
                   />
 
                   <Button
@@ -634,42 +700,42 @@ export default class LeadList extends React.PureComponent {
             />
             <View styleName="horizontal md-gutter space-between">
               <View styleName="horizontal">
-              <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                <Title style={styles.itemtopText}>{`Back`}</Title>
-              </TouchableWithoutFeedback>
-              <View
-                style={{
-                  height: 16,
-                  marginHorizontal: 12,
-                  backgroundColor: '#0270e3',
-                  width: 1.5,
-                }}
-              />
-              <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                <Title style={styles.itemtopText}>{`Next`}</Title>
-              </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                  <Title style={styles.itemtopText}>{`Back`}</Title>
+                </TouchableWithoutFeedback>
+                <View
+                  style={{
+                    height: 16,
+                    marginHorizontal: 12,
+                    backgroundColor: '#0270e3',
+                    width: 1.5,
+                  }}
+                />
+                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
+                  <Title style={styles.itemtopText}>{`Next`}</Title>
+                </TouchableWithoutFeedback>
               </View>
               <TouchableWithoutFeedback onPress={this.revertBack}>
-                                            <View styleName="horizontal v-center h-center">
-              <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
-                            </View>
+                <View styleName="horizontal v-center h-center">
+                  <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                </View>
               </TouchableWithoutFeedback>
 
             </View>
 
             {enableSearch === true ? <View styleName='md-gutter'>
-                <Searchbar
-                      placeholder="Search"
-                      onChangeText={this.onChangeSearch}
-                      value={searchQuery}
-                      style={{
-                        elevation:0,
-                        borderColor:'#dbd9cc',
-                        borderWidth:0.5,
-                        borderRadius:8
-                      }}
-                      clearIcon={() => null}
-                    />
+              <Searchbar
+                placeholder="Search"
+                onChangeText={this.onChangeSearch}
+                value={searchQuery}
+                style={{
+                  elevation: 0,
+                  borderColor: '#dbd9cc',
+                  borderWidth: 0.5,
+                  borderRadius: 8
+                }}
+                clearIcon={() => null}
+              />
             </View> : null}
 
             {this.state.loading ? (
@@ -683,182 +749,20 @@ export default class LeadList extends React.PureComponent {
                 tableHead={this.state.tableHead}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No Lead Record Found...'} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No Lead Record Found...'} />
+                  </View>
+                )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${
-                  this.state.itemSize
-                }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
+                  }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}
           </>
         }
       />
-      // <CommonScreen
-      //   title={'Finorbit'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={
-      // <LeftHeaders
-      //   title={'My Lead Record'}
-      //   showAvtar
-      //   showBack
-      //   showBottom
-      //   bottomIconName={'download'}
-      //   bottomIconTitle={`Excel`}
-      //   bottombg={Colors.red600}
-      //   bottomClicked={this.clickedexport}
-      // />
-      //   }
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      // <Modal
-      //   visible={this.state.modalvis}
-      //   setModalVisible={() =>
-      //     this.setState({pdfurl: '', modalvis: false})
-      //   }
-      //   ratioHeight={0.87}
-      //   backgroundColor={`white`}
-      //   topCenterElement={
-      //     <Subtitle
-      //       style={{
-      //         color: '#292929',
-      //         fontSize: 17,
-      //         fontWeight: '700',
-      //         letterSpacing: 1,
-      //       }}>
-      //       {this.state.pdfTitle}
-      //     </Subtitle>
-      //   }
-      //   topRightElement={
-      //     <TouchableWithoutFeedback
-      //       onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
-      //       <View>
-      //         <IconChooser
-      //           name="download"
-      //           size={24}
-      //           color={Colors.blue900}
-      //         />
-      //       </View>
-      //     </TouchableWithoutFeedback>
-      //   }
-      //   children={
-      //     <View
-      //       style={{
-      //         flex: 1,
-      //         width: '100%',
-      //         height: '100%',
-      //         backgroundColor: 'white',
-      //       }}>
-      //       <Pdf
-      //         source={{
-      //           uri: this.state.pdfurl,
-      //           cache: true,
-      //         }}
-      //         style={{
-      //           flex: 1,
-      //           width: '100%',
-      //           height: '100%',
-      //         }}
-      //       />
-      //     </View>
-      //   }
-      // />
-
-      // <Modal
-      //   visible={this.state.quotemodalVis}
-      //   setModalVisible={() =>
-      //     this.setState({
-      //       quotemodalVis: false,
-      //       quotemailData: '',
-      //       quotemail: '',
-      //     })
-      //   }
-      //   ratioHeight={0.6}
-      //   backgroundColor={`white`}
-      //   topCenterElement={
-      //     <Subtitle
-      //       style={{
-      //         color: '#292929',
-      //         fontSize: 17,
-      //         fontWeight: '700',
-      //         letterSpacing: 1,
-      //       }}>
-      //       {`Share via E-Mail`}
-      //     </Subtitle>
-      //   }
-      //   topRightElement={null}
-      //   children={
-      //     <View
-      //       style={{
-      //         flex: 1,
-      //         backgroundColor: 'white',
-      //       }}>
-      //       <CustomForm
-      //         label={`Email`}
-      //         placeholder={`Enter email id`}
-      //         value={this.state.quotemail}
-      //         onChange={(v) => this.setState({quotemail: v})}
-      //         keyboardType={'email-address'}
-      //         style={{marginHorizontal: 24}}
-      //       />
-
-      //       <Button
-      //         mode={'flat'}
-      //         uppercase={true}
-      //         dark={true}
-      //         loading={false}
-      //         style={[styles.button]}
-      //         onPress={this.emailSubmit}>
-      //         <Text
-      //           style={{
-      //             color: 'white',
-      //             fontSize: 16,
-      //             letterSpacing: 1,
-      //           }}>
-      //           {`Submit`}
-      //         </Text>
-      //       </Button>
-      //     </View>
-      //   }
-      // />
-      // {this.state.loading ? (
-      //   <View
-      //     style={{
-      //       justifyContent: 'center',
-      //       alignSelf: 'center',
-      //       flex: 1,
-      //     }}>
-      //     <ActivityIndicator />
-      //   </View>
-      // ) : this.state.dataList.length > 0 ? (
-      //   <CommonTable
-      //     dataList={this.state.dataList}
-      //     widthArr={this.state.widthArr}
-      //     tableHead={this.state.tableHead}
-      //     style={{marginTop: sizeHeight(6)}}
-      //   />
-      // ) : (
-      //   <View
-      //     style={{
-      //       flex: 1,
-      //       justifyContent: 'center',
-      //       alignItems: 'center',
-      //       alignContents: 'center',
-      //       color: '#767676',
-      //     }}>
-      //     <ListError subtitle={'No lead record found...'} />
-      //   </View>
-      // )}
-      //     </>
-      //   }
-      // />
     );
   }
 }

@@ -25,7 +25,7 @@ export default class MyOffers extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       bannerList: [],
       token: '',
       type: -1,

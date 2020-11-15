@@ -37,7 +37,7 @@ class NewDropDown extends React.Component {
         const {
             list = [],
         } = props;
-       // console.log('list', list)
+       // //console.log('list', list)
         this.setState({ finalList: list, cloneList: list })
     }
 

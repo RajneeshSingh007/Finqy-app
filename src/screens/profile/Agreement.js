@@ -45,7 +45,7 @@ export default class Agreement extends React.PureComponent {
     const agree = `${Pref.AgreeUrl}`;
     RNFetchBlob.fs.exists(filePath)
       .then((exist) => {
-        console.log(exist,filePath)
+        //console.log(exist,filePath)
         if (exist) {
           this.setState({
             pdfurl: `file://${filePath}`,

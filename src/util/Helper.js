@@ -62,29 +62,29 @@ export const requestPermissions = async () => {
   try {
     if (Platform.OS === 'android') {
       const value = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-        PermissionsAndroid.PERMISSIONS.READ_SMS,
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        //PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        //PermissionsAndroid.PERMISSIONS.READ_SMS,
+        //PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        //PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.CAMERA,
+        //PermissionsAndroid.PERMISSIONS.CAMERA,
       ]).then((result) => {
         if (
-          result['android.permission.CALL_PHONE'] &&
-          result['android.permission.READ_SMS'] &&
-          result['android.permission.ACCESS_FINE_LOCATION'] &&
+          //result['android.permission.CALL_PHONE'] &&
+          //result['android.permission.READ_SMS'] &&
+          //result['android.permission.ACCESS_FINE_LOCATION'] &&
           result['android.permission.READ_EXTERNAL_STORAGE'] &&
-          result['android.permission.CAMERA'] &&
+          //result['android.permission.CAMERA'] &&
           result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
         ) {
           //granted
         } else if (
-          result['android.permission.CALL_PHONE'] ||
-          result['android.permission.READ_SMS'] ||
-          result['android.permission.ACCESS_FINE_LOCATION'] ||
+          //result['android.permission.CALL_PHONE'] ||
+          //result['android.permission.READ_SMS'] ||
+          //result['android.permission.ACCESS_FINE_LOCATION'] ||
           result['android.permission.READ_EXTERNAL_STORAGE'] ||
-          result['android.permission.CAMERA'] ||
+          //result['android.permission.CAMERA'] ||
           result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
           'never_ask_again'
         ) {
@@ -211,7 +211,7 @@ export const networkHelperContentType = (
       callback(responseJson);
     })
     .catch((error) => {
-      ////console.log(error);
+      //console.log(error);
       errorCallback(error);
     });
 };
@@ -285,7 +285,7 @@ export const networkHelperToken = (
       callback(responseJson);
     })
     .catch((error) => {
-      ////console.log(error);
+      //console.log(error);
       errorCallback(error);
     });
 };
@@ -540,7 +540,7 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
   config(options)
     .fetch('GET', `${finalUrl}`)
     .then((res) => {
-      console.log(`res`, res);
+      //console.log(`res`, res);
       RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
       if (notification) {
         showToastMessage('Download Complete', 1);

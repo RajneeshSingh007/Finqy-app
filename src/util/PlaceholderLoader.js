@@ -6,13 +6,13 @@ import {
   PlaceholderMedia,
   ShineOverlay,
 } from "rn-placeholder";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 
 export default class PlaceholderLoader extends Component {
-  static propTypes = {
-    visibilty: PropTypes.bool,
-    children: PropTypes.object,
-  };
+  // static propTypes = {
+  //   visibilty: PropTypes.bool,
+  //   children: PropTypes.object,
+  // };
 
   render() {
     const { visibilty, children } = this.props;

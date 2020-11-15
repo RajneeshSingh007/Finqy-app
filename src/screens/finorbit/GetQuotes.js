@@ -87,8 +87,8 @@ export default class GetQuotes extends React.Component {
                 name: cname,
                 og: e,
                 id: index + 1,
-                select:false
-                //select: isFirstTime === true  ? index < 3 ? true : false : false,
+                select:false,
+                select: isFirstTime === true  ? index < 3 ? true : false : false,
               };
             });
             //console.log('list',list)

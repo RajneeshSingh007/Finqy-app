@@ -83,5 +83,7 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	    <key>AppSecret</key>
+    <string>{APP_SECRET_VALUE}</string>
 </dict>
 </plist>
