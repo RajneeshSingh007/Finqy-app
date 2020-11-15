@@ -120,29 +120,33 @@ export default class AddTeam extends React.Component {
       return false;
     }
 
+    const panCards = body.pancard;
+    if (panCards === '') {
+      Helper.showToastMessage('Pancard number empty', 0);
+      return false;
+    } else if (panCards !== '' && !Helper.checkPanCard(panCards)) {
+      Helper.showToastMessage('Invalid Pancard number', 0);
+      return false;
+    }
+
+    if (body.aadharcard !== '' && body.aadharcard.length < 12) {
+      Helper.showToastMessage('Invalid aadhar card number', 0);
+      return false;
+    }
+
     if (body.address === '') {
       Helper.showToastMessage('Please, Select location', 0);
       return false;
     }
 
-    let spcommons = JSON.parse(
-      JSON.stringify(this.specificFormRef.current.state),
-    );
-    const panCards = spcommons.pancardNo;
-    var regex = /([A-Z]){5}([0-9]){4}([A-Z]){1}$/;
-    if (panCards !== '' && !regex.test(panCards.toUpperCase())) {
-      Helper.showToastMessage('Invalid Pancard number', 0);
-      return false;
-    }
+    // let spcommons = JSON.parse(
+    //   JSON.stringify(this.specificFormRef.current.state),
+    // );
 
-    const aadharcardNo = spcommons.aadharcardNo;
-    if (aadharcardNo !== '' && aadharcardNo.length < 12) {
-      Helper.showToastMessage('Invalid aadhar card number', 0);
-      return false;
-    }
+    //const aadharcardNo = spcommons.aadharcardNo;
 
-    body.pancard = panCards || '';
-    body.aadharcard = aadharcardNo || '';
+    //body.pancard = panCards || '';
+    //body.aadharcard = aadharcardNo || '';
     body.refercode = refercode;
 
     if (checkData) {
@@ -274,12 +278,32 @@ export default class AddTeam extends React.Component {
                 multiline
               /> */}
 
-              <SpecificForm
+              <CustomForm
+                value={this.state.pancard}
+                onChange={(v) => this.setState({ pancard: v })}
+                label={`PAN Card Number *`}
+                placeholder={`Enter pan card number`}
+                keyboardType={'text'}
+                maxLength={10}
+              />
+
+
+              <CustomForm
+                value={this.state.aadharcard}
+                onChange={(v) => this.setState({ aadharcard: v })}
+                label={`Aadhar Card Number`}
+                placeholder={`Enter aadhar card number`}
+                keyboardType={'text'}
+                maxLength={12}
+                keyboardType={'numeric'}
+              />
+
+              {/* <SpecificForm
                 title="Demat"
                 showHeader={false}
                 heading={`Other Information`}
                 ref={this.specificFormRef}
-              />
+              /> */}
 
               <View style={styles.radiocont}>
                 <TouchableWithoutFeedback
@@ -326,7 +350,7 @@ export default class AddTeam extends React.Component {
                 ) : null}
               </View>
 
-              <View styleName="horizontal space-between md-gutter v-end h-end">
+              <View styleName="horizontal space-between md-gutter v-center h-center">
                 {/* <Button
                 mode={'flat'}
                 uppercase={true}
@@ -603,6 +627,7 @@ const styles = StyleSheet.create({
     width: '40%',
     paddingVertical: 4,
     fontWeight: '700',
+    marginTop:12
   },
   boxsubtitle: {
     fontSize: 16,
