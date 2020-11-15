@@ -81,7 +81,8 @@ export default class LeadList extends React.PureComponent {
       disableBack: false,
       searchQuery: '',
       enableSearch: false,
-      orderBy: 'asc'
+      orderBy: 'asc',
+      fileName:''
     };
   }
 
@@ -430,16 +431,21 @@ export default class LeadList extends React.PureComponent {
         quotemail: sp[0].includes('@') ? sp[0] : '',
       });
     } else {
+      const split = value.split('/');
+      const fileName = split[split.length -1];
       if (value.includes('pdf')) {
-        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title });
+        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title,fileName:fileName });
       } else {
-        Helper.downloadFile(value, title);
+        Helper.downloadFileWithFileName(value, fileName, fileName, '*/*')
+        //Helper.downloadFile(value, title);
       }
     }
   };
 
   invoiceViewClick = (value, title) => {
-    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title });
+    const split = value.split('/');
+    const fileName = split[split.length -1];
+    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title,fileName:fileName});
   };
 
   emailSubmit = () => {
@@ -603,7 +609,7 @@ export default class LeadList extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`, this.state.pdfTitle, `${this.state.pdfTitle}.pdf`, 'application/pdf')}>
+                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`, this.state.fileName, `${this.state.fileName}`, 'application/pdf')}>
                   <View>
                     <IconChooser
                       name="download"
