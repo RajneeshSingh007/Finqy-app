@@ -375,7 +375,7 @@ export default class CommonForm extends React.PureComponent {
         /> */}
         <AnimatedInputBox
           placeholder={
-            title === 
+            //title === 
             //title === 'Fixed Deposit' ||
               // title === 'Health Insurance' ||
               //title === `Life Cum Invt. Plan` ||

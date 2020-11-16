@@ -24,7 +24,7 @@ import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No,Username,Email,Mobile,Pancard,Aadharcard,Status\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Team.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 export default class ViewTeam extends React.PureComponent {
   constructor(props) {
@@ -104,13 +104,13 @@ export default class ViewTeam extends React.PureComponent {
         const { data, response_header } = result;
         const { res_type } = response_header;
         if (res_type === `success`) {
-         // //console.log('data', data)
+          // //console.log('data', data)
           if (data.length > 0) {
             const dataList = data.reverse();
             const { itemSize } = this.state;
             this.setState({
               cloneList: dataList,
-              dataList: this.returnData(dataList, 0, dataList.length).slice(
+              dataList: this.returnData(dataList, 0, dataList.length, false).slice(
                 0,
                 itemSize,
               ),
@@ -134,7 +134,7 @@ export default class ViewTeam extends React.PureComponent {
    *
    * @param {*} data
    */
-  returnData = (sort, start = 0, end) => {
+  returnData = (sort, start = 0, end, enablestatus = false) => {
     const dataList = [];
     //console.log(start, end);
     if (sort.length > 0) {
@@ -162,7 +162,7 @@ export default class ViewTeam extends React.PureComponent {
                 </Title>
               </View>
             );
-            rowData.push(stdataView(item.status));
+            rowData.push(enablestatus === true ? item.status : stdataView(item.status));
             dataList.push(rowData);
           }
         }
@@ -187,7 +187,7 @@ export default class ViewTeam extends React.PureComponent {
           const rem = clone.length - itemSize;
           plus = itemSize + rem;
         }
-        slicedArray = this.returnData(clone, itemSize, plus);
+        slicedArray = this.returnData(clone, itemSize, plus, false);
         this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
@@ -197,7 +197,7 @@ export default class ViewTeam extends React.PureComponent {
         plus -= 5;
       }
       if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
+        slicedArray = this.returnData(clone, plus, itemSize, false);
         if (slicedArray.length > 0) {
           this.setState({ dataList: slicedArray, itemSize: plus });
         }
@@ -211,18 +211,21 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   clickedexport = () => {
-    const { cloneList } = this.state;
+    const { cloneList, userData } = this.state;
     if (cloneList.length > 0) {
-      const data = this.returnData(cloneList, 0, cloneList.length);
-      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
+      const data = this.returnData(cloneList, 0, cloneList.length, true);
+      const { refercode, username } = userData;
+      const name = `${refercode}_MyTeam`;
+      const finalFilePath = `${FILEPATH}${name}.csv`;
+      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
         //console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
+          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
-              title: 'Team Record',
+              title: name,
               description: 'Team record exported successfully',
               mime: 'text/comma-separated-values',
-              path: FILEPATH,
+              path: finalFilePath,
               showNotification: true,
             }),
             Helper.showToastMessage('Download Complete', 1);
@@ -242,7 +245,7 @@ export default class ViewTeam extends React.PureComponent {
         const { aadharcard, pancard, status, mobile, email, username } = it;
         return aadharcard && aadharcard.trim().toLowerCase().includes(trimquery) || pancard && pancard.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery) || username && username.trim().toLowerCase().includes(trimquery);
       });
-      const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const data = result.length > 0 ? this.returnData(result, 0, result.length, false) : [];
       const count = result.length > 0 ? result.length : itemSize;
       this.setState({ dataList: data, itemSize: count });
     }
@@ -253,7 +256,7 @@ export default class ViewTeam extends React.PureComponent {
     const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 5);
+      const data = this.returnData(clone, 0, 5, false);
       this.setState({ dataList: data });
     }
     this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });

@@ -26,12 +26,14 @@ const LeftHeaders = (props) => {
     bottomtext = '',
     bottomtextStyle,
     profile = () => { },
-    name = '',
-    type = '',
+    //name = '',
+    //type = '',
   } = props;
 
   const [pic, setPic] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [userData, setuserData] = useState(null);
+  const [type, settype] = useState(null);
 
   useEffect(() => {
     Pref.getVal(Pref.userData, (value) => {
@@ -39,8 +41,13 @@ const LeftHeaders = (props) => {
         const pp = value.user_prof;
         let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         setPic(profilePic);
+        setuserData(value);
       }
     });
+
+    Pref.getVal(Pref.USERTYPE, type =>{
+      settype(type);
+    })
 
     return () => {
     };
@@ -99,7 +106,7 @@ const LeftHeaders = (props) => {
                       },
                     ])}
                   >
-                    {Lodash.truncate(name, {
+                    {Lodash.truncate(userData !== null ? userData.rname : '', {
                       length: 24,
                       separator: "...",
                     })}

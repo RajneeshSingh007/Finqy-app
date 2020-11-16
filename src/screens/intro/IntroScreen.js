@@ -11,6 +11,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import IntroHeader from './IntroHeader';
 import CodePush from "react-native-code-push";
 import Loader from '../../util/Loader';
+import * as Helper from '../../util/Helper';
 
 const slides = [
   {
@@ -53,7 +54,30 @@ export default class IntroScreen extends React.PureComponent {
 
   }
   componentDidMount() {
-    this.syncImmediate();
+    //const { navigation } = this.props;
+    //this.focusListener = navigation.addListener('didFocus', () => {
+      this.syncImmediate();
+      const body = JSON.stringify({
+        username: `ERBFinPro`,
+        product: `FinPro App`,
+      });
+      Helper.networkHelper(
+        Pref.GetToken,
+        body,
+        Pref.methodPost,
+        (result) => {
+          //console.log('result', result)
+          const { data, response_header } = result;
+          const { res_type } = response_header;
+          if (res_type === `success`) {
+            Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
+          }
+        },
+        (error) => {
+          //console.log(`error`, error)
+        },
+      );
+    //});
     //BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
 

@@ -32,7 +32,7 @@ import CScreen from './../component/CScreen';
 import Download from './../component/Download';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Moble No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
-let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/Leadrecord.csv`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 export default class LeadList extends React.PureComponent {
   constructor(props) {
@@ -82,7 +82,7 @@ export default class LeadList extends React.PureComponent {
       searchQuery: '',
       enableSearch: false,
       orderBy: 'asc',
-      fileName:''
+      fileName: ''
     };
   }
 
@@ -432,9 +432,9 @@ export default class LeadList extends React.PureComponent {
       });
     } else {
       const split = value.split('/');
-      const fileName = split[split.length -1];
+      const fileName = split[split.length - 1];
       if (value.includes('pdf')) {
-        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title,fileName:fileName });
+        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title, fileName: fileName });
       } else {
         Helper.downloadFileWithFileName(value, fileName, fileName, '*/*')
         //Helper.downloadFile(value, title);
@@ -444,8 +444,8 @@ export default class LeadList extends React.PureComponent {
 
   invoiceViewClick = (value, title) => {
     const split = value.split('/');
-    const fileName = split[split.length -1];
-    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title,fileName:fileName});
+    const fileName = split[split.length - 1];
+    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title, fileName: fileName });
   };
 
   emailSubmit = () => {
@@ -487,17 +487,20 @@ export default class LeadList extends React.PureComponent {
   };
 
   clickedexport = () => {
-    const { cloneList } = this.state;
+    const { cloneList,userData } = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
-      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
+      const { refercode, username } = userData;
+      const name = `${refercode}_MyLeadRecord`;
+      const finalFilePath = `${FILEPATH}${name}.csv`;
+      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
         if (result) {
-          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
+          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
-              title: 'Lead Record',
+              title: name,
               description: 'Lead record exported successfully',
               mime: 'text/comma-separated-values',
-              path: FILEPATH,
+              path: finalFilePath,
               showNotification: true,
             }),
             Helper.showToastMessage('Download Complete', 1);

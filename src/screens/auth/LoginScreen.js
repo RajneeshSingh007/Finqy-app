@@ -76,6 +76,7 @@ export default class LoginScreen extends React.PureComponent {
           this.setState({ token: value });
         }
       });
+   
     });
   }
 

@@ -123,6 +123,7 @@ export default class ProfileScreen extends React.PureComponent {
                       mail_port: Helper.nullStringCheck(mail_port) === true ? '' : mail_port,
                       mail_username: Helper.nullStringCheck(mail_username) === true ? '' : mail_username,
                       mail_password: Helper.nullStringCheck(mail_password) === true ? '' : mail_password,
+                      currentposition:0
                     });
                     this.updateData(parseda);
                   }
@@ -168,11 +169,19 @@ export default class ProfileScreen extends React.PureComponent {
     }
     this.restoreList[0] = userData;
     if (this.specificFormRef.current !== null) {
+      let aadharno = "";
+      if(Helper.nullStringCheck(userData.aadharno) === true){
+        aadharno = "";
+      }else if(userData.aadharno === "0"){
+        aadharno = "";   
+      }else {
+        aadharno = userData.aadharno
+      }
       this.specificFormRef.current.saveData(
         '',
         '',
         '',
-        userData.aadharno,
+        aadharno,
         userData.panno,
         '',
         '',
@@ -188,7 +197,7 @@ export default class ProfileScreen extends React.PureComponent {
   };
 
   backClick = () => {
-    this.setState({ currentposition: 0, topText: 'User',scrollReset: false });
+    this.setState({ currentposition: 0, topText: 'User',scrollReset: false,btnText:'Next' });
     return false;
   }
 
