@@ -91,7 +91,10 @@ export default class CScreen extends React.Component {
               style={styles.scroller}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps={'handled'}>
+              keyboardShouldPersistTaps={'handled'}
+              contentContainerStyle={{
+                flexGrow:1
+              }}>
               {body}
               {showfooter === true ?
                 <View>

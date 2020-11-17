@@ -30,14 +30,11 @@ import GetQuotesView from './../screens/finorbit/GetQuotesView';
 
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
-import ProfScreen from './../screens/profile/ProfScreen';
 import MyOffers from './../screens/profile/MyOffers';
 import PopularPlan from './../screens/profile/PopularPlan';
 import MarketingTool from './../screens/profile/MarketingTool';
 import OffersDetails from './../screens/profile/OffersDetails';
 import MyWallet from './../screens/profile/MyWallet';
-import About from './../screens/profile/About';
-import ChatScreen from './../screens/profile/ChatScreen';
 import Redeem from './../screens/profile/Redeem';
 import ReferEarn from './../screens/profile/ReferEarn';
 import Certificate from './../screens/profile/Certificate';
@@ -74,24 +71,12 @@ import TCondition from './../screens/auth/TCondition';
 import WebComp from '../screens/component/WebComp';
 import FinishScreen from '../screens/common/FinishScreen';
 
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import { Colors, IconButton } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Feather';
-import { BACKGROUND_COLOR } from './Pref';
 import {
-  Platform, Dimensions, I18nManager, Animated,
+  Dimensions, Animated,
   Easing
 } from 'react-native';
 import Sidebar from './Sidebar';
 
-let SlideFromRight = (index, position, width) => {
-  const translateX = position.interpolate({
-    inputRange: [index - 1, index],
-    outputRange: [width, 0],
-  });
-
-  return { transform: [{ translateX }] };
-};
 
 let SlideFromBottom = (index, position, height) => {
   const translateY = position.interpolate({
@@ -119,7 +104,7 @@ let CollapseTransition = (index, position) => {
   };
 };
 
-const handleCustomTransition = (nav) => {
+const handleCustomTransition = () => {
   return {
     transitionSpec: {
       duration: 750,
@@ -146,132 +131,6 @@ const handleCustomTransition = (nav) => {
 const { width } = Dimensions.get('window');
 
 const WIDTH_DRAWER = width * 0.8;
-
-const HomeNav = createStackNavigator(
-  {
-    HomeScreen: { screen: HomeScreen },
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'HomeScreen',
-    transitionConfig: (nav) => handleCustomTransition(nav),
-  },
-);
-
-const FinNav = createStackNavigator(
-  {
-    FinorbitScreen: { screen: FinorbitScreen },
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'FinorbitScreen',
-    transitionConfig: (nav) => handleCustomTransition(nav),
-  },
-);
-
-const ProNav = createStackNavigator(
-  {
-    ProfScreen: { screen: ProfScreen },
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'ProfScreen',
-    transitionConfig: (nav) => handleCustomTransition(nav),
-  },
-);
-
-const LeadNav = createStackNavigator(
-  {
-    LeadList: { screen: LeadList },
-    transitionConfig: (nav) => handleCustomTransition(nav),
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'LeadList',
-  },
-);
-
-//whole app nav
-const AppNav = createMaterialBottomTabNavigator(
-  {
-    Home: {
-      screen: HomeNav,
-      navigationOptions: {
-        tabBarIcon: ({ focused }) => (
-          <Icon
-            name={'home'}
-            size={20}
-            color={focused ? '#e61e25' : '#292929'}
-          />
-        ),
-        tabBarOnPress: ({ navigation, defaultHandler }) => {
-          defaultHandler();
-        },
-        title: 'Home',
-      },
-    },
-    LeadNav: {
-      screen: LeadNav,
-      navigationOptions: {
-        tabBarIcon: ({ focused }) => (
-          <Icon
-            name={'grid'}
-            size={20}
-            color={focused ? '#e61e25' : '#292929'}
-          />
-        ),
-        tabBarOnPress: ({ navigation, defaultHandler }) => {
-          defaultHandler();
-        },
-        title: 'Leads',
-      },
-    },
-    Fin: {
-      screen: FinNav,
-      navigationOptions: {
-        tabBarIcon: ({ focused }) => (
-          <Icon
-            name={'server'}
-            size={20}
-            color={focused ? '#e61e25' : '#292929'}
-          />
-        ),
-        tabBarOnPress: ({ navigation, defaultHandler }) => {
-          defaultHandler();
-        },
-        title: 'Finorbit',
-      },
-    },
-    Profile: {
-      screen: ProNav,
-      navigationOptions: {
-        tabBarIcon: ({ focused }) => (
-          <Icon
-            name={'user'}
-            size={20}
-            color={focused ? '#e61e25' : '#292929'}
-          />
-        ),
-        tabBarOnPress: ({ navigation, defaultHandler }) => {
-          defaultHandler();
-        },
-        title: 'Profile',
-      },
-    },
-  },
-  {
-    initialRouteName: 'Home',
-    shifting: false,
-    labeled: true,
-    activeTintColor: '#e61e25',
-    inactiveTintColor: Colors.grey300,
-    backBehavior: 'none',
-    sceneAnimationEnabled: true,
-    barStyle: { backgroundColor: Colors.white },
-    resetOnBlur: true,
-    transitionConfig: (nav) => handleCustomTransition(nav),
-  },
-);
 
 const WalletNav = createStackNavigator(
   {

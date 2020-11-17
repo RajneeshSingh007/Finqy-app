@@ -1,68 +1,26 @@
 import React from 'react';
 import {
-  StatusBar,
   StyleSheet,
-  ScrollView,
-  BackHandler,
-  FlatList,
-  TouchableWithoutFeedback,
-  Linking,
 } from 'react-native';
 import {
-  TouchableOpacity,
-  Image,
-  Screen,
-  Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Avatar,
   DefaultTheme,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {SafeAreaView} from 'react-navigation';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
-import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
-import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
-import Row from '../common/CommonRow';
 import BankForm from './BankForm';
 import OnlineRedeem from '../../util/OnlineRedeem';
 import Loader from '../../util/Loader';
-import CustomForm from '../finorbit/CustomForm';
 import CScreen from '../component/CScreen';
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'transparent',
-    accent: 'transparent',
-    backgroundColor: Colors.white,
-    surface: Colors.white,
-  },
-};
 
 export default class Redeem extends React.PureComponent {
   constructor(props) {
@@ -163,7 +121,7 @@ export default class Redeem extends React.PureComponent {
         token,
         (result) => {
           //console.log(result);
-          const {data, response_header} = result;
+          const {response_header} = result;
           const {res_type, message} = response_header;
           this.setState({showLoading: false});
           if (res_type === 'success') {
@@ -173,7 +131,7 @@ export default class Redeem extends React.PureComponent {
             Helper.showToastMessage('Failed to send request');
           }
         },
-        (error) => {
+        () => {
           //console.log(error);
           this.setState({showLoading: false});
         },

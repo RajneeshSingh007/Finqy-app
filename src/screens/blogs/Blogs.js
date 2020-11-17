@@ -5,10 +5,10 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
 } from 'react-native';
-import {Image, Title, View} from '@shoutem/ui';
+import { Image, Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
+import { Colors, ActivityIndicator, Chip } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
@@ -23,7 +23,7 @@ export default class Blogs extends React.PureComponent {
     this.renderCatItems = this.renderCatItems.bind(this);
     this.state = {
       dataList: [],
-      loading: false,
+      loading: true,
       showCalendar: false,
       dates: '',
       token: '',
@@ -35,15 +35,15 @@ export default class Blogs extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.back);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        this.setState({userData: userData});
+        this.setState({ userData: userData });
         Pref.getVal(Pref.saveToken, (value) => {
-          this.setState({token: value}, () => {
+          this.setState({ token: value }, () => {
             this.fetchData();
           });
         });
@@ -63,26 +63,26 @@ export default class Blogs extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
+    this.setState({ loading: true });
     Helper.networkHelperToken(
       Pref.BlogsUrl,
       Pref.methodGet,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === `success`) {
           let categoryList = this.state.categoryList;
           categoryList = [];
-          categoryList.push({name: `All`, selected: true});
+          categoryList.push({ name: `All`, selected: true });
           const catlist = Lodash.map(data, (io) => {
-            const {category} = io;
+            const { category } = io;
             const find = Lodash.find(
               categoryList,
               (ui) => ui.name === category,
             );
             if (find === undefined) {
-              categoryList.push({name: category, selected: false});
+              categoryList.push({ name: category, selected: false });
             }
             return io;
           });
@@ -93,11 +93,11 @@ export default class Blogs extends React.PureComponent {
             loading: false,
           });
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       () => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
@@ -117,20 +117,13 @@ export default class Blogs extends React.PureComponent {
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
           onPress={() =>
-            NavigationActions.navigate(`BlogDetails`, {item: item})
+            NavigationActions.navigate(`BlogDetails`, { item: item })
           }>
           <View styleName="vertical" style={styles.itemContainer}>
             <Image
-              source={{uri: `${encodeURI(url)}`}}
+              source={{ uri: `${encodeURI(url)}` }}
               styleName="large"
-              style={{
-                justifyContent: 'center',
-                alignSelf: 'center',
-                marginTop: 8,
-                width: '90%',
-                height: 200,
-                resizeMode: 'contain',
-              }}
+              style={styles.itemimage}
             />
             <Title
               styleName="v-start h-start"
@@ -150,7 +143,7 @@ export default class Blogs extends React.PureComponent {
   }
 
   chipclick = (item) => {
-    const {categoryList, cloneList} = this.state;
+    const { categoryList, cloneList } = this.state;
     const sel = item.selected;
     const ok = Lodash.map(categoryList, (io) => {
       if (io.name === item.name) {
@@ -179,10 +172,9 @@ export default class Blogs extends React.PureComponent {
           marginVertical: 4,
           elevation: 2,
         }}
-        textStyle={{color: item.selected ? `white` : `black`, fontSize: 14}}
-        onPress={() => this.chipclick(item, index)}>{`${
-        item.name === `All` ? `    All    ` : Lodash.capitalize(name)
-      }`}</Chip>
+        textStyle={{ color: item.selected ? `white` : `black`, fontSize: 14 }}
+        onPress={() => this.chipclick(item, index)}>{`${item.name === `All` ? `    All    ` : Lodash.capitalize(name)
+          }`}</Chip>
     );
   }
 
@@ -213,7 +205,7 @@ export default class Blogs extends React.PureComponent {
             ) : this.state.dataList.length > 0 ? (
               <FlatList
                 data={this.state.dataList}
-                renderItem={({item, index}) => this.renderItems(item)}
+                renderItem={({ item, index }) => this.renderItems(item)}
                 nestedScrollEnabled={true}
                 keyExtractor={(item, index) => `${index}`}
                 showsVerticalScrollIndicator={true}
@@ -223,8 +215,8 @@ export default class Blogs extends React.PureComponent {
                   <FlatList
                     horizontal
                     data={this.state.categoryList}
-                    style={{marginVertical: 16, marginStart: 8}}
-                    renderItem={({item, index}) =>
+                    style={{ marginVertical: 16, marginStart: 8 }}
+                    renderItem={({ item, index }) =>
                       this.renderCatItems(item, index)
                     }
                     nestedScrollEnabled={true}
@@ -236,10 +228,10 @@ export default class Blogs extends React.PureComponent {
                 )}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No FinNews found...'} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No FinNews found...'} />
+                  </View>
+                )}
           </>
         }
       />
@@ -248,6 +240,16 @@ export default class Blogs extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  itemimage: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 8,
+    width: '90%',
+    height: 200,
+    resizeMode: 'contain',
+    marginStart: 8,
+    marginEnd: 8,
+  },
   emptycont: {
     flex: 0.7,
     justifyContent: 'center',

@@ -267,7 +267,7 @@ export default class NewForm extends React.PureComponent {
                 Helper.showToastMessage('something wents wrong...', 0);
               }
             },
-            (error) => {
+            () => {
               //console.log('erorr', error);
               this.setState({progressLoader: false});
               Helper.showToastMessage('something wents wrong...', 0);
@@ -396,140 +396,6 @@ export default class NewForm extends React.PureComponent {
           </>
         }
       />
-      // <CommonScreen
-      //   // showTopBar
-      //   // showRightIcon={true}
-      //   showProfile={false}
-      //   title={''}
-      //   loading={this.state.loading}
-      //   absoluteBody={
-      //     <>
-      //       <Loader isShow={this.state.progressLoader} />
-      //     </>
-      //   }
-      //   body={
-      //     <>
-      //       <LeftHeaders
-      //         showAvtar
-      //         showBack
-      //         rightImage
-      //         title={this.state.title}
-      //         rightUrl={this.findImage()}
-      //         style={{marginBottom: 8}}
-      //         // bottomBody={
-      //         //     <View style={{marginStart:sizeWidth(10)}}>
-      //         //         <Title style={{
-      //         //             fontSize: 17, fontFamily: 'Rubik', letterSpacing: 1, color: 'white', alignSelf: 'flex-start', fontWeight: '400', paddingVertical: sizeHeight(0.5),
-      //         //         }}> {'Apply for a loan'}</Title>
-      //         //     </View>
-      //         // }
-      //       />
-      //       <View style={{flex: 1}}>
-      //         {this.state.bannerList.length > 0 ? (
-      //           <View style={{flex: 0.2}}>
-      //             <Carousel
-      //               ref={this.crousel}
-      //               data={this.state.bannerList}
-      //               renderItem={this._renderItem}
-      //               sliderWidth={sizeWidth(100)}
-      //               itemWidth={sizeWidth(100)}
-      //               autoplay
-      //               enableSnap
-      //               loop
-      //               inactiveSlideScale={0.95}
-      //               inactiveSlideOpacity={0.8}
-      //               scrollEnabled
-      //               shouldOptimizeUpdates
-      //               onSnapToItem={(slideIndex) =>
-      //                 this.setState({pageIndex: slideIndex})
-      //               }
-      //               onBeforeSnapToItem={(slideIndex) =>
-      //                 this.setState({pageIndex: slideIndex})
-      //               }
-      //               containerCustomStyle={{marginTop: sizeHeight(0.5)}}
-      //             />
-      //             <Pagination
-      //               carouselRef={this.crousel}
-      //               dotColor={Pref.PRIMARY_COLOR}
-      //               dotsLength={this.state.bannerList.length}
-      //               inactiveDotColor={Colors.grey300}
-      //               inactiveDotScale={1}
-      //               tappableDots
-      //               activeDotIndex={this.state.pageIndex}
-      //               containerStyle={{marginTop: -16, marginBottom: -20}}
-      //             />
-      //           </View>
-      //         ) : null}
-
-      //         <View style={{flex: 0.8}}>
-      //           {/* <View
-      //             style={{
-      //               marginHorizontal: sizeWidth(2),
-      //               marginBottom: sizeHeight(1),
-      //               marginTop: sizeHeight(2),
-      //             }}>
-      //             <StepIndicator
-      //               customStyles={customStyles}
-      //               labels={['Personal', 'Submit']}
-      //               currentPosition={this.state.currentPosition}
-      //               //onPress={(pos) => this.onPageChange(pos)}
-      //               stepCount={2}
-      //             />
-      //           </View> */}
-
-      //           <Card
-      //             style={{
-      //               marginHorizontal: sizeWidth(2),
-      //               marginVertical: sizeHeight(1),
-      //               paddingHorizontal: sizeWidth(1),
-      //             }}>
-      //             <ScrollView
-      //               showsVerticalScrollIndicator={true}
-      //               style={{flex: 1}}>
-      // {this.state.currentPosition === 0 ? (
-      //   <CommonForm
-      //     ref={this.commonFormRef}
-      //     showemploy={
-      //       !newform &&
-      //       this.state.title !== 'Fixed Deposit' &&
-      //       this.state.title !== 'Vector Plus' &&
-      //       this.state.title !== 'Business Loan' &&
-      //       this.state.title !== 'Mutual Fund' &&
-      //       this.state.title !== 'Motor Insurance'
-      //     }
-      //     saveData={this.state.dataArray[0]}
-      //     title={this.state.title}
-      //   />
-      // ) : this.state.currentPosition === 1 ? (
-      //   <AddressForm
-      //     ref={this.addressFormRef}
-      //     title={this.state.title}
-      //   />
-      // ) : null}
-
-      //               <Button
-      //                 mode={'flat'}
-      //                 uppercase={true}
-      //                 dark={true}
-      //                 loading={false}
-      //                 style={[styles.loginButtonStyle]}
-      //                 onPress={this.submitt}>
-      //                 <Text
-      //                   style={{
-      //                     color: 'white',
-      //                     fontSize: 16,
-      //                     letterSpacing: 1,
-      //                   }}>
-      //                   {this.state.bottontext}
-      //                 </Text>
-      //               </Button>
-      //             </ScrollView>
-      //           </Card>
-      //         </View>
-      //       </View>
-      //     </>
-      //   }
-      // />
     );
   }
 }

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Animated, StyleSheet, Easing, Platform } from "react-native";
-import { TouchableOpacity, Image, Screen, Subtitle, Title, View, } from "@shoutem/ui";
-import { Button, Card, Colors, Snackbar, TextInput, DataTable, Modal, Portal, Avatar } from "react-native-paper";
-import NavigationActions from '../../util/NavigationActions';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
+import { Image, } from "@shoutem/ui";
+import { Card } from "react-native-paper";
+import { sizeHeight, sizeWidth } from '../../util/Size';
 
 const BannerCard = props => {
     const [fadeAnim] = useState(new Animated.Value(0));
