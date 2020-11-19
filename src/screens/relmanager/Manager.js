@@ -102,7 +102,7 @@ export default class Manager extends React.PureComponent {
                 style={StyleSheet.flatten([styles.itemtext, {
                   color: '#bcbaa1'
                 }])}>
-                {`ERB SPEC`}
+                {`SPOC`}
               </Title> :
                 <Title
                   styleName="v-start h-start"

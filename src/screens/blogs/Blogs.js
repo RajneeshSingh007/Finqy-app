@@ -4,6 +4,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   BackHandler,
+  Platform
 } from 'react-native';
 import { Image, Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
@@ -170,7 +171,20 @@ export default class Blogs extends React.PureComponent {
           backgroundColor: item.selected ? Colors.blueGrey900 : `white`,
           marginHorizontal: 8,
           marginVertical: 4,
-          elevation: 2,
+          ...Platform.select({
+            android: {
+              elevation: 2,
+            },
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+            },
+          }),
         }}
         textStyle={{ color: item.selected ? `white` : `black`, fontSize: 14 }}
         onPress={() => this.chipclick(item, index)}>{`${item.name === `All` ? `    All    ` : Lodash.capitalize(name)

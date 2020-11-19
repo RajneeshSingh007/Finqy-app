@@ -33,7 +33,7 @@ export default class Training extends React.PureComponent {
       cloneList: [],
       showFilter: false,
       fileType: 2,
-      height:0
+      height: 0
     };
   }
 
@@ -228,12 +228,12 @@ export default class Training extends React.PureComponent {
         : kok.link === '',
     );
     let sort = cloneList;
-    if(item.name === 'All'){
+    if (item.name === 'All') {
       sort = Lodash.sortBy(sort, ['link']).reverse()
     }
     this.setState({
       //categoryList: ok,
-      dataList: item.name === `All` ? sort : item.name ==='Video' ? cloneList : fil,
+      dataList: item.name === `All` ? sort : item.name === 'Video' ? cloneList : fil,
       showFilter: false,
       fileType: fileType,
     });
@@ -248,7 +248,21 @@ export default class Training extends React.PureComponent {
           backgroundColor: item.selected ? Colors.blueGrey900 : `white`,
           marginHorizontal: 8,
           marginVertical: 4,
-          elevation: 2,
+          //elevation: 2,
+          ...Platform.select({
+            android: {
+              elevation: 2,
+            },
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+            },
+          }),
         }}
         textStyle={{
           color: item.selected ? `white` : `black`,
@@ -259,9 +273,9 @@ export default class Training extends React.PureComponent {
     );
   }
 
-  onLayout = (event) =>{
-        const { width, height } = event.nativeEvent.layout;
-        this.setState({height:height});
+  onLayout = (event) => {
+    const { width, height } = event.nativeEvent.layout;
+    this.setState({ height: height });
   }
 
   render() {
@@ -287,7 +301,7 @@ export default class Training extends React.PureComponent {
             <View styleName="horizontal v-end h-end md-gutter">
               <TouchableWithoutFeedback
                 onPress={() => this.setState({ showFilter: !showFilter })}
-                                        onLayout={this.onLayout}>
+                onLayout={this.onLayout}>
                 <Title
                   style={StyleSheet.flatten([
                     styles.passText,
@@ -313,10 +327,10 @@ export default class Training extends React.PureComponent {
             </View>
 
             {showFilter ? (
-              <View styleName="vertical md-gutter" style={StyleSheet.flatten([styles.filtercont,{
-                top:sizeHeight(14)+this.state.height
+              <View styleName="vertical md-gutter" style={StyleSheet.flatten([styles.filtercont, {
+                top: sizeHeight(14) + this.state.height
               }])}>
-                                <TouchableWithoutFeedback
+                <TouchableWithoutFeedback
                   onPress={() => this.chipclick({ name: 'All' }, 2)}>
                   <Title
                     style={StyleSheet.flatten([
@@ -344,7 +358,7 @@ export default class Training extends React.PureComponent {
                     style={StyleSheet.flatten([
                       styles.passText,
                       {
-                        marginTop:10,
+                        marginTop: 10,
                         color: '#6e6852',
                         fontSize: 16,
                         lineHeight: 20,
