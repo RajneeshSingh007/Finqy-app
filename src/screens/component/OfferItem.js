@@ -26,7 +26,7 @@ const OfferItem = (prop) => {
       <View styleName="vertical" style={styles.itemContainer}>
         <TouchableWithoutFeedback onPress={navigate}>
           <Image
-            source={{uri: `${item.image}`}}
+            source={{uri: `${item.inner_img}`}}
             styleName="large"
             style={styles.image}
           />
@@ -39,7 +39,7 @@ const OfferItem = (prop) => {
               numberOfLines={1}
               style={styles.itemtext}>
               {Lodash.truncate(`${item.header}`, {
-                length: 16,
+                length: 36,
                 separator: '...',
               })}
             </Title>

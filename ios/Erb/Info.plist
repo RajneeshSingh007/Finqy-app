@@ -84,6 +84,6 @@
 		<string>Zocial.ttf</string>
 	</array>
 	    <key>AppSecret</key>
-    <string>{APP_SECRET_VALUE}</string>
+    <string>{2ba2886e-9555-4edf-8de4-524ce9d464af}</string>
 </dict>
 </plist>

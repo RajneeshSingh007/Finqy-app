@@ -2718,7 +2718,8 @@ export const EmailOTPUrl = `${BASEUrl}tool_email_otp.php`;
 export const RegisterUrl = `${BASEUrl}tool_register.php`;
 export const GetToken = `${BASEUrl}get_token.php`;
 export const AddTeam = `${BASEUrl}tool_add_team.php`;
-export const OffersUrl = `${BASEUrl}tool_offers.php`;
+//export const OffersUrl = `${BASEUrl}tool_offers.php`;
+export const OffersUrl = `${BASEUrl}tool_new_offers.php`;
 export const ViewTeamUrl = `${BASEUrl}tool_view_team.php`;
 export const TrainingUrl = `${BASEUrl}tool_training.php`;
 export const RelationManagerUrl = `${BASEUrl}tool_managers.php`;
@@ -2772,6 +2773,9 @@ export const BASEImageUrl = `${BASEUrl}getbase64.php`
 //code push
 export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
 export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
+
+export const PRODUCTION_CODE_PUSH_IOS = 'PavWWJS5tedBdJlTQim3Y6G3_3uJ7yZvFeAk3';
+export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
 //OTP SMS
 export const SMS_OTP = `https://api.msg91.com/api/v5/otp`
 

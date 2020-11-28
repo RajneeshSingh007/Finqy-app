@@ -106,7 +106,7 @@ const LeftHeaders = (props) => {
                       },
                     ])}
                   >
-                    {Lodash.truncate(userData !== null ? userData.rname : '', {
+                    {Lodash.truncate(userData !== null && userData.rname != null && userData.rname != ''  ? userData.rname : type !== "connector" && type !== "Referral" ? userData.username : '', {
                       length: 24,
                       separator: "...",
                     })}

@@ -12,7 +12,7 @@ import {
 import stores from './src/mobx';
 import {Provider} from 'mobx-react';
 import * as Pref from '././src/util/Pref';
-import {StatusBar} from 'react-native';
+import {StatusBar,Platform} from 'react-native';
 import codePush from "react-native-code-push";
 
 const theme = {
@@ -45,9 +45,9 @@ function Main() {
 }
 
 const releasemode = true;
-let codepushKey = Pref.STAGING_CODE_PUSH;
+let codepushKey = Platform.OS === 'ios' ? Pref.STAGING_CODE_PUSH_IOS : Pref.STAGING_CODE_PUSH;
 if(releasemode === true){
-  codepushKey = Pref.PRODUCTION_CODE_PUSH;
+  codepushKey = Platform.OS === 'ios' ? Pref.PRODUCTION_CODE_PUSH_IOS : Pref.PRODUCTION_CODE_PUSH;
 }
 
 const options = {

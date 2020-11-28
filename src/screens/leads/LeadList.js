@@ -133,8 +133,10 @@ export default class LeadList extends React.PureComponent {
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
       team_user: username,
-      flag: type === 'referral' ? 1 : 2,
+      flag: type === 'referral' ? 2 : 1,
+      type:type
     });
+    //console.log('body', body)
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,

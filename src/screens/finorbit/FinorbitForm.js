@@ -207,7 +207,6 @@ export default class FinorbitForm extends React.PureComponent {
       let checkData = true;
       let formData = new FormData();
       let uniq = "";
-      //let headerchange = false;
       if (title.includes(" ")) {
         uniq = title.trim().toLowerCase().replace(" ", "_");
       }
@@ -228,20 +227,6 @@ export default class FinorbitForm extends React.PureComponent {
         } else if (checkData && (title === 'Home Loan' || title === 'Loan Against Property') && commonForms.employ === 'Self Employed') {
           this.headerchange = false;
         }
-        // if (checkData) {
-        //   let parseJs = JSON.parse(JSON.stringify(commonForms));
-        //   if (parseJs.currentlocation === "Select Current Location *") {
-        //     parseJs.currentlocation === "";
-        //   }
-        //   for (var key in parseJs) {
-        //     const value = parseJs[key];
-        //     if (value !== undefined) {
-        //       if (Array.isArray(value) === false) {
-        //         formData.append(key, parseJs[key]);
-        //       }
-        //     }
-        //   }
-        // }
       }
 
       if (specificForms !== undefined && this.state.currentPosition === 1) {
@@ -290,7 +275,9 @@ export default class FinorbitForm extends React.PureComponent {
         ) {
           checkData = false;
           Helper.showToastMessage("Select Existing Card/Loan", 0);
-        } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.company === '') {
+        } else if ((
+          //title === "Home Loan" || 
+        title === "Business Loan" || title === "Personal Loan") && specificForms.company === '') {
           checkData = false;
           Helper.showToastMessage("Company name empty", 0);
         } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover === '') {

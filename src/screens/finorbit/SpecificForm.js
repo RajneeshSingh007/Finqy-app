@@ -745,7 +745,9 @@ export default class SpecificForm extends React.PureComponent {
               <AnimatedInputBox
                 onChangeText={value => this.setState({ company: value })}
                 value={this.state.company}
-                placeholder={`Company Name ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
+                placeholder={`Company Name ${title === 'Auto Loan' || 
+                //title === 'Home Loan' || 
+                title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
                 returnKeyType={'next'}
                 changecolor
                 containerstyle={styles.animatedInputCont}

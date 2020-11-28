@@ -503,19 +503,21 @@ export default class FileUploadForm extends React.PureComponent {
                 //     : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
                 // }
                 type={2}
+                fileType={1}
                 pickedTitle={this.findFileName(`bankstate`)}
                 pickedCallback={(selected, res) => {
                   if (!selected) {
                     const { name } = res;
                     if (
-                      name.includes('pdf') ||
-                      name.includes('png') ||
-                      name.includes('jpeg') ||
-                      name.includes('jpg')
+                      name.includes('pdf') 
+                      //||
+                     // name.includes('png') ||
+                     // name.includes('jpeg') ||
+                     // name.includes('jpg')
                     ) {
                       this.state.fileList.push({ bankstate: res });
                     } else {
-                      Helper.showToastMessage('Please, select Pdf or Image', 0);
+                      Helper.showToastMessage('Please, select Pdf', 0);
                     }
                   }
                 }}

@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet, FlatList, TouchableWithoutFeedback} from 'react-native';
-import {Image, Title, View} from '@shoutem/ui';
+import { StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Image, Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {ActivityIndicator} from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {sizeWidth} from '../../util/Size';
+import { sizeWidth } from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -30,7 +30,7 @@ export default class PopularPlan extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (parseda) => {
         Pref.getVal(Pref.saveToken, (value) => {
@@ -45,7 +45,7 @@ export default class PopularPlan extends React.PureComponent {
         });
       });
       Pref.getVal(Pref.USERTYPE, (v) => {
-        this.setState({utype: v});
+        this.setState({ utype: v });
       });
     });
   }
@@ -56,13 +56,15 @@ export default class PopularPlan extends React.PureComponent {
   }
 
   fetchData = (type, parseda) => {
-    this.setState({loading: true});
-    const {rname, rcontact, id} = parseda;
+    this.setState({ loading: true });
+    const { rname, rcontact, id, username, mobile } = parseda;
+    const { utype } = this.state;
     const body = JSON.stringify({
       offer_type: `${type}`,
-      rname: `${rname}`,
-      rcontact: `${rcontact}`,
+      rname: utype === 'team' ? `${username}` : `${rname}`,
+      rcontact: utype === 'team' ? `${mobile}` : `${rcontact}`,
       id: `${id}`,
+      type: utype
     });
 
     Helper.networkHelperTokenPost(
@@ -71,8 +73,8 @@ export default class PopularPlan extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === 'success') {
           this.setState({
             loading: false,
@@ -80,25 +82,25 @@ export default class PopularPlan extends React.PureComponent {
             type: type,
           });
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       () => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
 
   shareOffer = (id, image) => {
-    this.setState({fullLoader: true});
+    this.setState({ fullLoader: true });
     Helper.networkHelperGet(
       `${Pref.BASEImageUrl}?url=${image}`,
       (result) => {
-        this.setState({fullLoader: false});
+        this.setState({ fullLoader: false });
         this.shareofers(id, result);
       },
       () => {
-        this.setState({fullLoader: false});
+        this.setState({ fullLoader: false });
         this.shareofers(id, '');
       },
     );
@@ -113,19 +115,19 @@ export default class PopularPlan extends React.PureComponent {
       ios: {
         activityItemSources: [
           {
-            placeholderItem: {type: 'url', content: url},
+            placeholderItem: { type: 'url', content: url },
             item: {
-              default: {type: 'url', content: url},
+              default: { type: 'url', content: url },
             },
             subject: {
               default: title,
             },
-            linkMetadata: {originalUrl: url, url, title},
+            linkMetadata: { originalUrl: url, url, title },
           },
           {
-            placeholderItem: {type: 'text', content: message},
+            placeholderItem: { type: 'text', content: message },
             item: {
-              default: {type: 'text', content: message},
+              default: { type: 'text', content: message },
               message: null, // Specify no text to share via Messages app.
             },
           },
@@ -168,9 +170,9 @@ export default class PopularPlan extends React.PureComponent {
               </View>
             ) : this.state.bannerList.length > 0 ? (
               <FlatList
-                style={{marginHorizontal: sizeWidth(2)}}
+                style={{ marginHorizontal: sizeWidth(2) }}
                 data={this.state.bannerList}
-                renderItem={({item, index}) => (
+                renderItem={({ item, index }) => (
                   <OfferItem
                     item={item}
                     navigate={() =>
@@ -193,10 +195,10 @@ export default class PopularPlan extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No popular plan found...'} url={''} />
-              </View>
-            )}
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No popular plan found...'} url={''} />
+                  </View>
+                )}
           </>
         }
       />

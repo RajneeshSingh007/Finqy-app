@@ -16,6 +16,7 @@ import ListError from '../common/ListError';
 import IconChooser from '../common/IconChooser';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import CScreen from '../component/CScreen';
+import Share from 'react-native-share';
 
 export default class Training extends React.PureComponent {
   constructor(props) {
@@ -131,14 +132,57 @@ export default class Training extends React.PureComponent {
   };
 
   /**
+   * 
+   * @param {*} item 
+   * @param {*} mode 
+   */
+  itemshare = (item, mode) => {
+    const videoId = item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
+    const url = mode === 1 ? `https://www.youtube.com/watch?v=${videoId}` : `${Pref.MainUrl}/erevbay_admin/${item.product_name}/${item.pdf_file}`;
+    const title = 'Finpro';
+    //const message = `https://erb.ai/corporate_tool/refer_offer.php?offer_id=${id}`;
+    const message = ``;
+    const options = Platform.select({
+      ios: {
+        activityItemSources: [
+          {
+            placeholderItem: {type: 'url', content: url},
+            item: {
+              default: {type: 'url', content: url},
+            },
+            subject: {
+              default: title,
+            },
+            linkMetadata: {originalUrl: url, url, title},
+          },
+          {
+            placeholderItem: {type: 'text', content: message},
+            item: {
+              default: {type: 'text', content: message},
+              message: null, // Specify no text to share via Messages app.
+            },
+          },
+        ],
+      },
+      default: {
+        title,
+        subject: title,
+        url: url,
+        message: message,
+      },
+    });
+    Share.open(options);    
+  }
+
+
+  /**
    *
    * @param {*} item
    * @param {*} index
    */
   renderItems(item) {
     //console.log('link', item.link)
-    const videoid =
-      item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
+    const videoid = item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
     const { fileType } = this.state;
     return item.link !== '' && !item.link.includes('.png') && !item.link.includes('.jpeg') && !item.link.includes('.jpg') && (fileType === 0 || fileType === 2) ? (
       <View styleName="sm-gutter">
@@ -162,6 +206,19 @@ export default class Training extends React.PureComponent {
             styleName="v-start h-start"
             numberOfLines={1}
             style={styles.itemtext}>{`${item.header}`}</Title>
+          <View styleName="horizontal v-center h-center space-between">
+            <TouchableWithoutFeedback onPress={() => this.itemshare(item, 1)}>
+              <View style={styles.circle1}>
+                <IconChooser
+                  name="whatsapp"
+                  size={20}
+                  color={'white'}
+                  iconType={2}
+                  style={styles.icon}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
       </View>
     ) : item.link === '' && (fileType === 1 || fileType === 2) ? (
@@ -203,10 +260,23 @@ export default class Training extends React.PureComponent {
                 styleName="v-start h-start"
                 numberOfLines={1}
                 style={styles.itemtext}>{`${item.header}`}</Title>
+              <View styleName="horizontal v-center h-center space-between">
+                <TouchableWithoutFeedback onPress={() => this.itemshare(item, 2)}>
+                  <View style={styles.circle1}>
+                    <IconChooser
+                      name="whatsapp"
+                      size={20}
+                      color={'white'}
+                      iconType={2}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
             </View>
           </TouchableWithoutFeedback>
         </View>
-      </View>
+      </View >
     ) : null;
   }
 
@@ -542,4 +612,22 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 2,
   },
+  circle1: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 6,
+    borderRadius: 16,
+    //borderColor: '#000',
+    //borderStyle: 'solid',
+    //borderWidth: 3,
+    backgroundColor: '#1bd741',
+    marginStart:8,
+  },
+  icon:{
+    alignSelf:'center',
+    alignContent:'center',
+    justifyContent:'center',
+  }
 });

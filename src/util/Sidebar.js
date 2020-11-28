@@ -231,7 +231,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `Erb Popular Plan`,
+          name: `ERB Popular Plan`,
           expand: false,
           click: 'PopularPlan',
           options: {},
@@ -239,7 +239,7 @@ export default class Sidebar extends React.Component {
           icontype: 2,
         },
         {
-          name: `FinAds Marketing`,
+          name: `My Marketing Tool`,
           expand: false,
           click: 'MarketingTool',
           options: {},
@@ -324,7 +324,7 @@ export default class Sidebar extends React.Component {
             name: `My Profile`,
             expand: false,
             heading: true,
-          iconname: require('../res/images/menuicon1.png'),
+            iconname: require('../res/images/menuicon1.png'),
             icontype: 0,
             sub: [
               {
@@ -358,7 +358,7 @@ export default class Sidebar extends React.Component {
             name: `My FinPro`,
             expand: false,
             heading: true,
-          iconname: require('../res/images/menuicon2.png'),
+            iconname: require('../res/images/menuicon2.png'),
             icontype: 2,
             sub: [
               // {
@@ -399,7 +399,7 @@ export default class Sidebar extends React.Component {
             name: `My Wallet`,
             expand: false,
             heading: true,
-          iconname: require('../res/images/menuicon3.png'),
+            iconname: require('../res/images/menuicon4.png'),
             icontype: 2,
             sub: [
               {
@@ -434,15 +434,23 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: `MyOffers`,
             options: {},
-          iconname: require('../res/images/menuicon4.png'),
+            iconname: require('../res/images/menuicon5.png'),
             icontype: 2,
           },
           {
-            name: `FinAds Marketing`,
+            name: `ERB Popular Plan`,
+            expand: false,
+            click: 'PopularPlan',
+            options: {},
+            iconname: require('../res/images/menuicon6.png'),
+            icontype: 2,
+          },
+          {
+            name: `My Marketing Tool`,
             expand: false,
             click: 'MarketingTool',
             options: {},
-          iconname: require('../res/images/menuicon5.png'),
+            iconname: require('../res/images/menuicon7.png'),
             icontype: 2,
           },
           {
@@ -450,7 +458,7 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Training',
             options: {},
-          iconname: require('../res/images/menuicon6.png'),
+            iconname: require('../res/images/menuicon8.png'),
             icontype: 2,
           },
           {
@@ -458,8 +466,31 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Blogs',
             options: {},
-          iconname: require('../res/images/menuicon7.png'),
+            iconname: require('../res/images/menuicon9.png'),
             icontype: 2,
+          },
+                    {
+            name: `Helpdesk`,
+            expand: false,
+            heading: true,
+            iconname: require('../res/images/menuicon10.png'),
+            icontype: 2,
+
+            sub: [
+              {
+                name: `Relation Manager`,
+                expand: false,
+                click: 'Manager',
+                options: {},
+              },
+              // {
+              //   name: `Raise QRC`,
+              //   expand: false,
+              //   click: 'Qrc',
+              //   options: {},
+              // },
+            ],
+            click: '',
           },
           // {
           //   name: `Logout`,
@@ -477,7 +508,7 @@ export default class Sidebar extends React.Component {
             name: `My FinPro`,
             expand: false,
             heading: true,
-          iconname: require('../res/images/menuicon2.png'),
+            iconname: require('../res/images/menuicon2.png'),
             icontype: 2,
             sub: [
               // {
@@ -514,12 +545,28 @@ export default class Sidebar extends React.Component {
             ],
             click: '',
           },
+          // {
+          //   name: `My Offers`,
+          //   expand: false,
+          //   click: `MyOffers`,
+          //   options: {},
+          //   iconname: require('../res/images/menuicon5.png'),
+          //   icontype: 2,
+          // },
           {
-            name: `FinAds Marketing`,
+            name: `ERB Popular Plan`,
+            expand: false,
+            click: 'PopularPlan',
+            options: {},
+            iconname: require('../res/images/menuicon6.png'),
+            icontype: 2,
+          },
+          {
+            name: `My Marketing Tool`,
             expand: false,
             click: 'MarketingTool',
-            options: { type: 1 },
-          iconname: require('../res/images/menuicon7.png'),
+            options: {},
+            iconname: require('../res/images/menuicon7.png'),
             icontype: 2,
           },
           {
@@ -527,14 +574,23 @@ export default class Sidebar extends React.Component {
             expand: false,
             click: 'Training',
             options: {},
-          iconname: require('../res/images/menuicon8.png'),
+            iconname: require('../res/images/menuicon8.png'),
             icontype: 2,
           },
+                    {
+            name: `FinNews`,
+            expand: false,
+            click: 'Blogs',
+            options: {},
+            iconname: require('../res/images/menuicon9.png'),
+            icontype: 2,
+          },
+
           {
             name: `Helpdesk`,
             expand: false,
             heading: true,
-          iconname: require('../res/images/menuicon10.png'),
+            iconname: require('../res/images/menuicon10.png'),
             icontype: 2,
 
             sub: [
@@ -686,11 +742,11 @@ export default class Sidebar extends React.Component {
                             source={item.iconname}
                             style={
                               {
-                              width: 24,
-                              height: 24,
-                              tintColor: '#626161',
-                              resizeMode:'contain'
-                            }
+                                width: 24,
+                                height: 24,
+                                tintColor: '#626161',
+                                resizeMode: 'contain'
+                              }
                             }
                           />
 

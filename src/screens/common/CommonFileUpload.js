@@ -30,7 +30,7 @@ class CommonFileUpload extends React.PureComponent {
   }
 
   filePicker = async () => {
-    const { type = 0, mode = false } = this.props;
+    const { type = 0, mode = false,fileType = -1 } = this.props;
     if (mode === false) {
       try {
         const res = await DocumentPicker.pick({
@@ -45,11 +45,11 @@ class CommonFileUpload extends React.PureComponent {
         if (res.name !== '') {
           if (
             res.name.includes('pdf') ||
-            res.name.includes('png') ||
-            res.name.includes('jpeg') ||
-            res.name.includes('jpg')
+           fileType === -1 && res.name.includes('png') ||
+           fileType === -1 && res.name.includes('jpeg') ||
+           fileType === -1 && res.name.includes('jpg')
           ) {
-            if (res.size <= 2097152) {
+            if (res.size <= 10485760) {
               this.setState({
                 pickedName: Lodash.truncate(res.name, {
                   length: 40,
@@ -59,10 +59,12 @@ class CommonFileUpload extends React.PureComponent {
             }
           }
         }
-        if (res.size <= 2097152) {
+        //2097152 2mb
+        //10485760 10mb
+        if (res.size <= 10485760) {
           this.props.pickedCallback(res.name !== '' ? false : true, res);
         } else {
-          Helper.showToastMessage('Please, select 2MB files')
+          Helper.showToastMessage('Please, select 10MB files')
         }
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
@@ -83,7 +85,7 @@ class CommonFileUpload extends React.PureComponent {
 
   render() {
     const { pickedName } = this.state;
-    const { pickedTitle = null, enableDownloads = false, } = this.props;
+    const { pickedTitle = null, enableDownloads = false, fileType = -1 } = this.props;
     return (
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <TouchableWithoutFeedback onPress={this.filePicker}>
@@ -109,7 +111,7 @@ class CommonFileUpload extends React.PureComponent {
                       color: '#bbbbbb',
                     },
                   ])}>
-                  {pickedName === '' ? ` PDF/Image` : ''}
+                  {pickedName === '' ? fileType != -1 ? `PDF` : ` PDF/Image` : ''}
                 </Title>
               </Title>
               {pickedName !== '' ? (
