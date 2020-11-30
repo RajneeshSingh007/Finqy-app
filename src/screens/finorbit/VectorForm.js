@@ -91,7 +91,7 @@ export default class VectorForm extends React.PureComponent {
     //         url={this.state.imageUrl}
     //     />)
     // }
-    return <BannerCard url={{ uri: `${Pref.BASEUrl}${item.url}` }} />;
+    return <BannerCard url={{ uri: `${Pref.ApiDirUrl}${item.url}` }} />;
   };
 
   onPageChange(position) {

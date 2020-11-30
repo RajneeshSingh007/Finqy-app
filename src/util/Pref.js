@@ -2695,49 +2695,52 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 
 
 //production url
-export const MainUrl = `https://erb.ai/`;
+//export const MainUrl = `https://erb.ai/`;
 
 //test url
-//export const MainUrl = `https://uat.erb.ai/`;
+export const MainUrl = `https://uat.erb.ai/`;
 
 //production
-export const BASEUrl = `${MainUrl}finpro/appapi/`;
+//export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
 
 //test location
-//export const BASEUrl = `${MainUrl}corporate_tool/Apis/`;
+export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 
 //disabled
-//export const FOLDERPATH = `${BASEUrl}erbfinorbit`;
+//export const FOLDERPATH = `${ApiDirUrl}erbfinorbit`;
 
-export const FinOrbitFormUrl = `${BASEUrl}finorbit/`;
+export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
 
-export const DashBoardUrl = `${BASEUrl}tool_dashboard.php`;
-export const NewDashBoardUrl = `${BASEUrl}tool_dashboard_api.php`;
-export const LoginUrl = `${BASEUrl}tool_login.php`;
-export const EmailOTPUrl = `${BASEUrl}tool_email_otp.php`;
-export const RegisterUrl = `${BASEUrl}tool_register.php`;
-export const GetToken = `${BASEUrl}get_token.php`;
-export const AddTeam = `${BASEUrl}tool_add_team.php`;
-//export const OffersUrl = `${BASEUrl}tool_offers.php`;
-export const OffersUrl = `${BASEUrl}tool_new_offers.php`;
-export const ViewTeamUrl = `${BASEUrl}tool_view_team.php`;
-export const TrainingUrl = `${BASEUrl}tool_training.php`;
-export const RelationManagerUrl = `${BASEUrl}tool_managers.php`;
-export const BlogsUrl = `${BASEUrl}tool_blogs.php`;
-export const WalletInvoiceUrl = `${BASEUrl}tool_get_invoice.php`;
-export const ChangePass = `${BASEUrl}tool_change_pass.php`;
-export const LeadRecordUrl = `${BASEUrl}tool_lead_record.php`;
-export const ViewConnectorUrl = `${BASEUrl}tool_view_connector.php`;
-export const WalletUrl = `${BASEUrl}tool_get_wallet.php`;
-export const AjaxUrl = `${BASEUrl}tool_ajax.php`;
-export const UpdateAccountUrl = `${BASEUrl}tool_update_profile.php`;
-export const WalletRedeemUrl = `${BASEUrl}tool_wallet_redeem.php`;
-export const ConnectorregisterUrl = `${BASEUrl}tool_connector_register.php`;
-export const As26Url = `${BASEUrl}tool_get_26as.php`;
-export const CertUrl = `${BASEUrl}tool_cert.php`;
-export const PayoutUrl = `${BASEUrl}tool_payout_structure.php`;
-export const ConnectorPercentage = `${BASEUrl}tool_payout`;
-export const AccountViewUrl = `${BASEUrl}tool_view_profile.php`;
+export const FinOrbitFormUrl = `${ApiDirUrl}finorbit/`;
+
+export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
+export const NewDashBoardUrl = `${ApiDirUrl}tool_dashboard_api.php`;
+export const LoginUrl = `${ApiDirUrl}tool_login.php`;
+export const EmailOTPUrl = `${ApiDirUrl}tool_email_otp.php`;
+export const RegisterUrl = `${ApiDirUrl}tool_register.php`;
+export const GetToken = `${ApiDirUrl}get_token.php`;
+export const AddTeam = `${ApiDirUrl}tool_add_team.php`;
+//export const OffersUrl = `${ApiDirUrl}tool_offers.php`;
+export const OffersUrl = `${ApiDirUrl}tool_new_offers.php`;
+export const ViewTeamUrl = `${ApiDirUrl}tool_view_team.php`;
+export const TrainingUrl = `${ApiDirUrl}tool_training.php`;
+export const RelationManagerUrl = `${ApiDirUrl}tool_managers.php`;
+export const BlogsUrl = `${ApiDirUrl}tool_blogs.php`;
+export const WalletInvoiceUrl = `${ApiDirUrl}tool_get_invoice.php`;
+export const ChangePass = `${ApiDirUrl}tool_change_pass.php`;
+export const LeadRecordUrl = `${ApiDirUrl}tool_lead_record.php`;
+export const ViewConnectorUrl = `${ApiDirUrl}tool_view_connector.php`;
+export const WalletUrl = `${ApiDirUrl}tool_get_wallet.php`;
+export const AjaxUrl = `${ApiDirUrl}tool_ajax.php`;
+export const UpdateAccountUrl = `${ApiDirUrl}tool_update_profile.php`;
+export const WalletRedeemUrl = `${ApiDirUrl}tool_wallet_redeem.php`;
+export const ConnectorregisterUrl = `${ApiDirUrl}tool_connector_register.php`;
+export const As26Url = `${ApiDirUrl}tool_get_26as.php`;
+export const CertUrl = `${ApiDirUrl}tool_cert.php`;
+//export const PayoutUrl = `${ApiDirUrl}tool_payout_structure.php`;
+export const PayoutUrl = `${ApiDirUrl}tool_payout_rp.php`;
+export const ConnectorPercentage = `${ApiDirUrl}tool_payout`;
+export const AccountViewUrl = `${ApiDirUrl}tool_view_profile.php`;
 
 //forgot
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
@@ -2765,11 +2768,11 @@ export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
 ///////////////////////////////////////////////////////////////
 
-export const PostalCityUrl = `${BASEUrl}tool_view_pincode.php`;
+export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
 
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
 
-export const BASEImageUrl = `${BASEUrl}getbase64.php`
+export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 //code push
 export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
 export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';

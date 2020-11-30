@@ -191,12 +191,12 @@ export default class Invoice extends React.PureComponent {
   invoiceViewClick = (value) => {
     const { utype } = this.state;
     //http://uat.erb.ai/Finprond/new_invoice.php?id=92
-    //pdfurl: `${Pref.BASEUrl}${value}`,
-    //console.log('value', `${Pref.BASEUrl}${value}${utype}`)
+    //pdfurl: `${Pref.ApiDirUrl}${value}`,
+    //console.log('value', `${Pref.ApiDirUrl}${value}${utype}`)
     //http://uat.erb.ai/corporate_tool/Apis/tool_invoice_pdf.php?id=83&user_id=erb83
     this.setState({
       modalvis: true,
-      pdfurl: `${Pref.BASEUrl}${value}&type=${utype}`,
+      pdfurl: `${Pref.ApiDirUrl}${value}&type=${utype}`,
     });
   };
 

@@ -30,6 +30,8 @@ import Share from 'react-native-share';
 import CustomForm from './../finorbit/CustomForm';
 import CScreen from './../component/CScreen';
 import Download from './../component/Download';
+import NavigationActions from '../../util/NavigationActions';
+import { constructObjEditLead } from '../../util/FormCheckHelper';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Moble No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
@@ -66,8 +68,9 @@ export default class LeadList extends React.PureComponent {
         'Cif',
         'Policy',
         'Remark',
+        '',
       ],
-      widthArr: [60, 120, 100, 100, 160, 100, 140, 100, 140, 100, 100, 100, 100],
+      widthArr: [60, 120, 100, 100, 160, 100, 140, 100, 140, 100, 100, 100, 100,40],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -182,6 +185,22 @@ export default class LeadList extends React.PureComponent {
     );
   };
 
+  editLead = (item) =>{
+    const {product} = item;
+    //console.log('item', item)
+    let pname = "";
+    if(product === 'Mutual Fund'){  
+      pname = 'Mutual Fund';
+    }else if(product === `Health Insurance`){
+      pname = `Health Insurance`;
+    }else if(product === `Life Cum Investment`){
+      pname = `Life Cum Invt. Plan`;
+    }else{
+      pname = product;
+    }
+    NavigationActions.navigate('FinorbitForm', {leadData:constructObjEditLead(item), title:pname,url:'',edit:true});
+  }
+
   /**
    *
    * @param {*} data
@@ -193,6 +212,7 @@ export default class LeadList extends React.PureComponent {
         for (let i = start; i < end; i++) {
           const item = sort[i];
           if (item !== undefined && item !== null) {
+            const { quotes, mail, sharewhatsapp, sharemail, policy } = item;
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
             rowData.push(item.date);
@@ -201,9 +221,8 @@ export default class LeadList extends React.PureComponent {
             rowData.push(item.name);
             rowData.push(item.mobile);
             rowData.push(item.product);
-            rowData.push(item.bank === 'null' ? '' : item.bank);
+            rowData.push(item.bank === 'null' || item.bank === '' ? '' : item.bank);
             rowData.push(item.status);
-            const { quotes, mail, sharewhatsapp, sharemail, policy } = item;
             const quotesView = (value, mail) => (
               <View
                 style={{
@@ -302,6 +321,30 @@ export default class LeadList extends React.PureComponent {
             );
             rowData.push(policy === '' ? '' : policyView(policy));
             rowData.push(item.remark);
+            
+            const editView = (value) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.editLead(value)}>
+                  <View>
+                    <IconChooser
+                      name={`edit-2`}
+                      size={20}
+                      color={`#9f9880`}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            );
+            
+            rowData.push(item.product !== 'Insure Check' && item.product !== 'Insurance Samadhan' ? editView(item) : '');
+            
             dataList.push(rowData);
           }
         }

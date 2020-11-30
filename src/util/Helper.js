@@ -683,6 +683,19 @@ export const nullStringCheck = (data) => {
   return data === undefined || data === null || data == '' ? true : false;
 };
 
+export const arrayObjCheck = (data) =>{
+  return data !== undefined && Array.isArray(data) === false && typeof data !== 'object' ? true : false
+}
+
+/**
+ * string check with return data
+ * @param {*} data
+ */
+export const nullStringCheckWithReturn = (data) => {
+  return data === undefined || data === null || data == '' ? '' : Lodash.capitalize(data);
+};
+
+
 /**
  * string check
  * @param {*} data

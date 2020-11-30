@@ -1,15 +1,14 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Subtitle, Title, View} from '@shoutem/ui';
-import {Colors} from 'react-native-paper';
-import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Title, View } from '@shoutem/ui';
+import { sizeWidth } from '../../util/Size';
 import Icon from 'react-native-vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import * as Pref from '../../util/Pref';
 import CustomForm from './CustomForm';
+import * as Helper from '../../util/Helper';
 
-let date = new Date();
 
 export default class ApptForm extends React.PureComponent {
   constructor(props) {
@@ -18,18 +17,18 @@ export default class ApptForm extends React.PureComponent {
     const currentdate = moment().toDate();
     const obj = moment().toObject();
 
-    currentdate.setDate(Number(obj.date+1));
-    
+    currentdate.setDate(Number(obj.date + 1));
+
     const maxDate = moment().toDate();
     maxDate.setDate(Number(currentdate.getDate()));
-    maxDate.setMonth(Number(currentdate.getMonth()+1))
+    maxDate.setMonth(Number(currentdate.getMonth() + 1));
 
     //console.log('date', date.getDay(),currentdate,maxDate);
     this.state = {
       showCalendar: false,
       currentDate: currentdate,
       showdatesx: currentdate,
-      maxDates:maxDate,
+      maxDates: maxDate,
       mode: 'date',
       currentTime: '',
       baa: '',
@@ -37,11 +36,17 @@ export default class ApptForm extends React.PureComponent {
     };
   }
 
-  restoreData(obj){
-    //console.log('obj', obj);
-    if(obj !== undefined){
-          this.setState(obj);
+  componentDidMount() {
+    const { editItemRestore } = this.props;
+    if (Helper.nullCheck(editItemRestore) === false) {
+      this.restoreData(editItemRestore);
+    }
+  }
 
+  restoreData(obj) {
+    //console.log('obj', obj);
+    if (obj !== undefined) {
+      this.setState(obj);
     }
   }
 
@@ -63,23 +68,22 @@ export default class ApptForm extends React.PureComponent {
           const current = moment(this.state.showdatesx).format(
             'DD-MM-YYYY hh:mm A',
           );
-          this.setState({baa: current, mode: 'date', showCalendar: false});
+          this.setState({ baa: current, mode: 'date', showCalendar: false });
           // } else {
           //     alert('Please, select 00 or 30 min');
           //     this.setState({ showCalendar: false, mode: 'date' });
           // }
         } else {
           alert('Please, select time between 10AM - 7PM');
-          this.setState({showCalendar: false, mode: 'date'});
+          this.setState({ showCalendar: false, mode: 'date' });
         }
       }
     } else {
-      this.setState({showCalendar: false, mode: 'date'});
+      this.setState({ showCalendar: false, mode: 'date' });
     }
   };
 
   render() {
-    const {title} = this.props;
     return (
       <View>
         {/* <View
@@ -114,7 +118,9 @@ export default class ApptForm extends React.PureComponent {
                       : `#555555`,
                   alignSelf: 'center',
                 }}>
-                {this.state.baa === '' ? `Schedule an Appointment` : this.state.baa}
+                {this.state.baa === ''
+                  ? `Schedule an Appointment`
+                  : this.state.baa}
               </Title>
               <Icon
                 name={'calendar'}
@@ -130,7 +136,7 @@ export default class ApptForm extends React.PureComponent {
 
         <CustomForm
           value={this.state.remark}
-          onChange={(v) => this.setState({remark: v})}
+          onChange={v => this.setState({ remark: v })}
           label={`Remark`}
           placeholder={`Say something...`}
           keyboardType={'done'}

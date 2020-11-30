@@ -58,6 +58,7 @@ import AddConnector from './../screens/connectors/AddConnector';
 import Invoice from './../screens/wallets/Invoice';
 import As26 from './../screens/wallets/As26';
 import Payout from './../screens/wallets/Payout';
+import PayoutForm from './../screens/wallets/PayoutForm';
 
 //blog
 import Blogs from './../screens/blogs/Blogs';
@@ -220,6 +221,14 @@ const SwitchTranNav = createSwitchNavigator(
   },
 );
 
+const payoutNav = createStackNavigator({
+  Payout: { screen: Payout },
+  PayoutForm: {screen: PayoutForm}
+}, {
+  headerMode: 'none',
+  transitionConfig: (nav) => handleCustomTransition(nav),
+})
+
 const OtherNav = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
@@ -244,11 +253,11 @@ const OtherNav = createDrawerNavigator(
     LeadList: { screen: LeadList },
     ViewConnector: { screen: ViewConnector },
     TCondition: { screen: TCondition },
-    Payout: { screen: Payout },
     AddConnector: { screen: AddConnector },
     Finish: { screen: FinishScreen },
     Term: { screen: Term },
-    WebComp: { screen: WebComp }
+    WebComp: { screen: WebComp },
+    Payout: { screen: payoutNav }
   },
   {
     initialRouteName: 'Home',

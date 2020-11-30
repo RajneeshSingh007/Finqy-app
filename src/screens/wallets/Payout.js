@@ -1,643 +1,291 @@
+
 import React from 'react';
-import {StyleSheet, FlatList} from 'react-native';
-import {Image, Subtitle, Title, View} from '@shoutem/ui';
-import * as Helper from '../../util/Helper';
+import { StyleSheet, BackHandler, TouchableWithoutFeedback } from 'react-native';
+import { Title, View, Image } from '@shoutem/ui';
 import * as Pref from '../../util/Pref';
-import {Card, ActivityIndicator} from 'react-native-paper';
-import {sizeHeight, sizeWidth} from '../../util/Size';
-import CommonScreen from '../common/CommonScreen';
-import LeftHeaders from '../common/CommonLeftHeader';
-import ListError from '../common/ListError';
-import CScreen from '../component/CScreen';
+import { Portal } from 'react-native-paper';
 import Lodash from 'lodash';
+import LeftHeaders from '../common/CommonLeftHeader';
+import CScreen from '../component/CScreen';
+import IconChooser from '../common/IconChooser';
+import PayoutSideBar from '../common/PayoutSideBar';
+import * as Helper from '../../util/Helper';
+import {
+  Button,
+  ActivityIndicator,
+  Searchbar,
+} from 'react-native-paper';
 
 export default class Payout extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.renderItems = this.renderItems.bind(this);
+    //this.backClick = this.backClick.bind(this);
     this.state = {
       dataList: [],
-      loading: false,
-      showCalendar: false,
-      dates: '',
+      loading: true,
+      selectedText: '',
+      userData: null,
       token: '',
-      userData: '',
-      categoryList: [],
-      cloneList: [],
+      ogData: null
     };
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
-    this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
-    });
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, (userData) => {
-      this.setState({userData: userData});
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
-          this.fetchData();
-        });
-      });
-    });
+    Pref.getVal(Pref.saveToken, (value) => this.setState({ token: value }, () => {
+      Pref.getVal(Pref.userData, udata => {
+        this.setState({ userData: udata });
+        this.fetchData(udata, this.state.token);
+      })
+    }));
     //});
   }
 
+  fetchData = (udata) => {
+    const { id } = udata;
+    const body = JSON.stringify(
+      { refercode: id }
+    )
+    //console.log('body',body)
+    Helper.networkHelperTokenPost(Pref.PayoutUrl, body, Pref.methodPost, this.state.token, result => {
+      const { response_header, product } = result;
+      const { res_type } = response_header;
+      if (res_type === 'success') {
+        const mapobje = Lodash.map(product, io => {
+          return { name: io }
+        })
+        //console.log('mapobje', mapobje, result);
+        this.setState({ loading: false, dataList: mapobje, ogData: result });
+      } else {
+        this.setState({ loading: false, dataList: [] });
+      }
+    }, error => {
+      //console.log('error', error)
+      this.setState({ loading: false, dataList: [] });
+    })
+  }
+
   componentWillUnMount() {
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = () => {
-    this.setState({loading: true});
-    const {userData} = this.state;
-    const {id} = userData;
-    const body = JSON.stringify({refercode: id});
-    Helper.networkHelperTokenPost(
-      Pref.PayoutUrl,
-      body,
-      Pref.methodPost,
-      this.state.token,
-      (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
-        if (res_type === `success`) {
-          const {
-            hl,
-            lap,
-            pl,
-            bl,
-            al,
-            cc,
-            fd,
-            hi,
-            is,
-            ic,
-            lcip,
-            mi,
-            mf,
-            ti,
-            vp,
-          } = data;
-          const finalData = [];
-          finalData.push({data: hl, name: 'Home Insurance'});
-          finalData.push({data: lap, name: 'Loan Against Property'});
-          finalData.push({data: pl, name: 'Personal Insurance'});
-          finalData.push({data: bl, name: 'Business Insurance'});
-          finalData.push({data: al, name: 'Health Insurance'});
-          finalData.push({data: cc, name: 'Credit Card'});
-          finalData.push({data: fd, name: 'Fixed Deposit'});
-          finalData.push({data: hi, name: 'Health Insurance'});
-          finalData.push({data: is, name: 'Insurance Samadhan'});
-          finalData.push({data: ic, name: 'Insure Check'});
-          finalData.push({data: lcip, name: 'Life Cum Invt. Plan'});
-          finalData.push({data: mi, name: 'Motor Insurance'});
-          finalData.push({data: mf, name: 'Mutual Fund'});
-          finalData.push({data: ti, name: 'Term Insurance'});
-          finalData.push({data: vp, name: 'Vector Plus'});
+  // backClick = () => {
+  //   NavigationActions.goBack();
+  //   return true;
+  // };
 
-          this.setState({
-            cloneList: data,
-            dataList: finalData,
-            loading: false,
-          });
-        } else {
-          this.setState({loading: false});
-        }
-      },
-      () => {
-        this.setState({loading: false});
-      },
+  renderFinProItems = (iconName, title) => {
+    const { selectedText } = this.state;
+    return (
+      <View style={styles.mainconx}>
+        <View style={styles.dummy} />
+        <TouchableWithoutFeedback
+          onPress={() => {
+            // if (title === 'Credit Card') {
+            //   const parseItem = {
+            //     name: 'Credit Card',
+            //     url: '',
+            //   };
+            //   NavigationActions.navigate('FinorbitForm', parseItem);
+            // } else {
+            this.setState({ selectedText: title })
+            //}
+          }}>
+          <View
+            styleName="v-center h-center horizontal"
+            style={styles.itemcont}>
+            <View style={styles.mainconx}>
+              <View style={{ flex: 0.05 }} />
+              <View style={{ flex: 0.25 }}>
+                <View
+                  style={StyleSheet.flatten([
+                    styles.circle,
+                    {
+                      backgroundColor:
+                        selectedText === title ? '#0270e3' : Pref.RED,
+                    },
+                  ])}>
+                  <Image
+                    source={iconName}
+                    style={StyleSheet.flatten([styles.icon, {
+                      width: 20,
+                      height: 20,
+                      resizeMode: 'contain'
+                    }])}
+                  />
+                  {/* <IconChooser
+                    name={iconName}
+                    size={17}
+                    color={'white'}
+                    style={styles.icon}
+                  /> */}
+                </View>
+              </View>
+              <View style={{ flex: 0.5, flexDirection: 'row' }}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.itemtext1,
+                    {
+                      marginStart: 8,
+                      color: selectedText === title ? '#0270e3' : '#97948c',
+                    },
+                  ])}>
+                  {title}
+                </Title>
+              </View>
+              <View
+                style={{
+                  flex: 0.2,
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                }}>
+                <IconChooser
+                  name="chevron-right"
+                  size={20}
+                  color={selectedText === title ? '#0270e3' : '#97948c'}
+                //style={styles.icon}
+                />
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        <View style={styles.dummy} />
+      </View>
     );
   };
 
-  // returnperce = (check) =>{
-  //   return Helper.nullStringCheck(check) ? '' : '%'
-  // }
-
-  /**
-   *
-   * @param {*} item
-   * @param {*} index
-   */
-  renderItems(item) {
-    const arraydata = item.data;
-    if (arraydata == undefined || arraydata.length === 0) {
-      return null;
+  getFilterList = () => {
+    const { selectedText, dataList } = this.state;
+    const clone = JSON.parse(JSON.stringify(dataList));
+    let filter = Lodash.filter(clone, (io) => {
+      if (selectedText.includes('Insurance')) {
+        return io.name.includes(selectedText) || io.name.includes('Policy') || io.name.includes('Sabse') || io.name.includes('Insure Check') || io.name.includes('Vector')
+      } else {
+        return io.name.includes(selectedText);
+      }
+    });
+    if (selectedText.includes('Investment')) {
+      filter = Lodash.filter(
+        clone,
+        (io) =>
+          !io.name.includes('Loan') &&
+          !io.name.includes('Insurance') &&
+          !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse') && !io.name.includes('Insure Check')
+      );
     }
-    const size = arraydata.length;
-    return (
-      <View styleName="sm-gutter">
-        <View styleName="vertical" style={styles.itemContainer}>
-          <Image
-            source={{uri: `${arraydata[size - 1]}`}}
-            styleName="large"
-            style={styles.image}
-          />
-          <Title
-            styleName="v-start h-start"
-            numberOfLines={1}
-            style={StyleSheet.flatten([
-              styles.itemtext,
-              {
-                marginStart: 16,
-                marginEnd: 16,
-                paddingVertical: 16,
-              },
-            ])}>
-            {`${item.name}`}
-          </Title>
-
-          {size === 4 ? (
-            <View
-              styleName="sm-gutter"
-              style={{
-                paddingVertical: 24,
-                marginStart: 12,
-                marginEnd: 12,
-              }}>
-              <Title
-                styleName="v-start h-start"
-                numberOfLines={1}
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`Slab (0-10 Lakh) - `}
-                <Title
-                  styleName="v-start h-start"
-                  numberOfLines={1}
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' :  arraydata[0].split('_')[1]}%`}</Title>
-              </Title>
-              <View style={styles.line} />
-              <Title
-                styleName="v-start h-start"
-                numberOfLines={3}
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`Slab (10-20 Lakh) - `}
-                <Title
-                  styleName="v-start h-start"
-                  numberOfLines={1}
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1].split('_')[1]}%`}</Title>
-              </Title>
-              <View style={styles.line} />
-              <Title
-                styleName="v-start h-start"
-                numberOfLines={3}
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`Slab (20+ Lakh) - `}
-                <Title
-                  styleName="v-start h-start"
-                  numberOfLines={1}
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1].split('_')[1]}%`}</Title>
-              </Title>
-            </View>
-          ) : null}
-          {size === 2 ? (
-            <View
-              styleName="sm-gutter"
-              style={{
-                paddingVertical: 24,
-                marginStart: 12,
-                marginEnd: 12,
-              }}>
-              <Title
-                styleName="v-start h-start"
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`Commission - `}
-                <Title
-                  styleName="v-start h-start"
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' : arraydata[0]}%`}</Title>
-              </Title>
-            </View>
-          ) : null}
-          {size === 3 ? (
-            <View
-              styleName="sm-gutter"
-              style={{
-                paddingVertical: 24,
-                marginStart: 12,
-                marginEnd: 12,
-              }}>
-              <Title
-                styleName="v-start h-start"
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`${
-                  item.name.includes('Motor')
-                    ? `Comprehensive`
-                    : `Commission Senior`
-                } - `}
-                <Title
-                  styleName="v-start h-start"
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[0]) ? '' : arraydata[0]
-                  .replace('c', '')
-                  .replace('a', '')
-                  .replace('ua', '')}%`}</Title>
-              </Title>
-              <View style={styles.line} />
-              <Title
-                styleName="v-start h-start"
-                style={StyleSheet.flatten([
-                  styles.itemtext,
-                  {
-                    fontSize: 14,
-                    color: '#9a937a',
-                    fontWeight: '400',
-                  },
-                ])}>
-                {`${
-                  item.name.includes('Motor')
-                    ? `Third Party`
-                    : `Commission Non Senior`
-                } - `}
-                <Title
-                  styleName="v-start h-start"
-                  style={StyleSheet.flatten([
-                    styles.itemtext,
-                    {
-                      fontSize: 14,
-                      color: '#0270e3',
-                      fontWeight: '400',
-                    },
-                  ])}>{`${Helper.nullStringCheck(arraydata[1]) ? '' : arraydata[1]
-                  .replace('c', '')
-                  .replace('tp', '')
-                  .replace('ua', '')}%`}</Title>
-              </Title>
-            </View>
-          ) : null}
-        </View>
-      </View>
-      // <Card
-      //   elevation={2}
-      //   style={{
-      //     borderRadius: 8,
-      //     marginVertical: sizeHeight(1.3),
-      //     marginHorizontal: sizeWidth(3),
-      //   }}>
-      //   <View styleName="horizontal">
-      //     <View style={{width: '42%', height: '100%'}}>
-      //       <Image
-      //         styleName="fill-parent"
-      //         source={{uri: `${arraydata[size - 1]}`}}
-      //         style={{height: '100%', resizeMode: 'stretch'}}
-      //       />
-      //     </View>
-      // {size === 4 ? (
-      //   <View
-      //     styleName="sm-gutter"
-      //     style={{
-      //       marginVertical: 16,
-      //       marginHorizontal: 12,
-      //     }}>
-      //     <Title
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 15,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: Pref.RED,
-      //         fontWeight: '700',
-      //       }}>{`${item.name}`}</Title>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`Slab (0-10 Lakh) - ${
-      //       arraydata[0].split('_')[1]
-      //     }%`}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={3}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`Slab (10-20 Lakh) - ${
-      //       arraydata[1].split('_')[1]
-      //     }%`}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={3}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`Slab (20+ Lakh) - ${
-      //       arraydata[2].split('_')[1]
-      //     }%`}</Subtitle>
-      //   </View>
-      // ) : null}
-      // {size === 2 ? (
-      //   <View
-      //     styleName="sm-gutter"
-      //     style={{
-      //       marginVertical: 16,
-      //       marginHorizontal: 12,
-      //     }}>
-      //     <Title
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 15,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: Pref.RED,
-      //         fontWeight: '700',
-      //       }}>{`${item.name}`}</Title>
-
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`Commission - ${arraydata[0]}%`}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: '#292929',
-      //         fontWeight: '700',
-      //       }}>{``}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: '#292929',
-      //         fontWeight: '700',
-      //       }}>{``}</Subtitle>
-      //   </View>
-      // ) : null}
-      // {size === 3 ? (
-      //   <View
-      //     styleName="sm-gutter"
-      //     style={{
-      //       marginVertical: 16,
-      //       marginHorizontal: 12,
-      //     }}>
-      //     <Title
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 15,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: Pref.RED,
-      //         fontWeight: '700',
-      //       }}>{`${item.name}`}</Title>
-
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`${
-      //       item.name.includes('Motor')
-      //         ? `Comprehensive`
-      //         : `Commission Senior`
-      //     } - ${arraydata[0]
-      //       .replace('c', '')
-      //       .replace('a', '')
-      //       .replace('ua', '')}%`}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         color: '#292929',
-      //         fontWeight: '400',
-      //       }}>{`${
-      //       item.name.includes('Motor')
-      //         ? `Third Party`
-      //         : `Commission Non Senior`
-      //     } - ${arraydata[1]
-      //       .replace('c', '')
-      //       .replace('tp', '')
-      //       .replace('ua', '')}%`}</Subtitle>
-      //     <Subtitle
-      //       styleName="v-start h-start"
-      //       numberOfLines={1}
-      //       style={{
-      //         fontSize: 14,
-      //         fontFamily: 'Rubik',
-      //         letterSpacing: 1,
-      //         color: '#292929',
-      //         fontWeight: '700',
-      //       }}>{``}</Subtitle>
-      //   </View>
-      // ) : null}
-      //   </View>
-      // </Card>
-    );
-  }
+    return filter;
+  };
 
   render() {
+    const { selectedText, ogData } = this.state;
     return (
       <CScreen
+        absolute={
+          <>
+            {selectedText !== '' ? (
+              <Portal>
+                <PayoutSideBar
+                  list={this.getFilterList()}
+                  backClicked={() => this.setState({ selectedText: '' })}
+                  ogData={ogData}
+                />
+              </Portal>
+            ) : null}
+          </>
+        }
         body={
           <>
             <LeftHeaders
+              title={'My Payout Structure'}
               showBack
-              title={'Payout Structure'}
-              // bottomtext={
-              //   <>
-              //     {`Payout `}
-              //     <Title style={styles.passText}>{`Structure`}</Title>
-              //   </>
-              // }
-              bottomtextStyle={{
-                color: '#555555',
-                fontSize: 20,
-              }}
+            // bottomtext={' '}
+            // bottomtextStyle={{
+            //   color: '#555555',
+            //   fontSize: 20,
+            // }}
             />
+
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
-            ) : this.state.dataList.length > 0 ? (
-              <FlatList
-                data={this.state.dataList}
-                renderItem={({item, index}) => this.renderItems(item)}
-                nestedScrollEnabled={true}
-                keyExtractor={(item, index) => `${index}`}
-                showsVerticalScrollIndicator={true}
-                showsHorizontalScrollIndicator={false}
-                extraData={this.state}
-              />
-            ) : (
-              <View style={styles.emptycont}>
-                <ListError subtitle={'No payout structure found...'} />
-              </View>
-            )}
+            ) : <>
+                {this.renderFinProItems(require('../../res/images/docicon.png'), 'Credit Card')}
+                {this.renderFinProItems(require('../../res/images/symbol.png'), 'Loan')}
+                {this.renderFinProItems(require('../../res/images/insuranceicn.png'), 'Insurance')}
+                {this.renderFinProItems(require('../../res/images/investicon.png'), 'Investment')}
+
+              </>}
+            <Image
+              source={require('../../res/images/finpro.jpg')}
+              styleName="large"
+              style={{
+                resizeMode: 'contain',
+              }}
+            />
           </>
         }
       />
-      // <CommonScreen
-      //   title={'Finorbit'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={
-      //     <LeftHeaders
-      //       title={'My Payout Structure'}
-      //       showBack
-      //       style={{marginBottom: 8}}
-      //     />
-      //   }
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      // {this.state.loading ? (
-      //   <View
-      //     style={{
-      //       justifyContent: 'center',
-      //       alignSelf: 'center',
-      //       flex: 1,
-      //     }}>
-      //     <ActivityIndicator />
-      //   </View>
-      // ) : this.state.dataList.length > 0 ? (
-      //   <FlatList
-      //     data={this.state.dataList}
-      //     renderItem={({item, index}) => this.renderItems(item)}
-      //     nestedScrollEnabled={true}
-      //     keyExtractor={(item, index) => `${index}`}
-      //     showsVerticalScrollIndicator={true}
-      //     showsHorizontalScrollIndicator={false}
-      //     extraData={this.state}
-      //   />
-      // ) : (
-      //   <View
-      //     style={{
-      //       flex: 0.7,
-      //       justifyContent: 'center',
-      //       alignItems: 'center',
-      //       alignContents: 'center',
-      //     }}>
-      //     <ListError subtitle={'No payout structure found...'} />
-      //   </View>
-      // )}
-      //     </>
-      //   }
-      // />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  line: {
-    backgroundColor: '#dad9d3',
-    height: 1,
-    width: '90%',
-    marginVertical:12
+  sideItem: {
+    color: '#6e6852',
+    fontWeight: '400',
+    fontSize: 14,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    letterSpacing: 0.5,
   },
-  gap: {
+  dummy: { flex: 0.2 },
+  mainconx: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemcont: {
+    backgroundColor: '#f9f8f1',
+    borderColor: '#bbbbba',
+    borderWidth: 1,
+    borderRadius: 56,
+    marginVertical: 10,
+    paddingVertical: 12,
+    flex: 0.6,
+  },
+  divider: {
+    backgroundColor: '#dedede',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     marginHorizontal: 8,
   },
-  image: {
+  itemContainer: {
+    marginVertical: 10,
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 16,
+    marginHorizontal: 16,
+  },
+  emptycont: {
+    flex: 0.7,
     justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: 8,
-    width: '90%',
-    height: 156,
-    resizeMode: 'stretch',
-  },
-  footerCon: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-  },
-  icon: {
-    alignSelf: 'center',
+    alignItems: 'center',
     alignContent: 'center',
+    marginVertical: 48,
+    paddingVertical: 56,
+  },
+  loader: {
     justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 1,
+    marginVertical: 48,
+    paddingVertical: 48,
   },
   subtitle: {
     fontSize: 14,
@@ -655,38 +303,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     fontWeight: '700',
   },
-  itemtext: {
-    letterSpacing: 0.5,
-    fontWeight: '700',
-    lineHeight: 20,
-    // alignSelf: 'center',
-    // justifyContent: 'center',
-    // textAlign: 'center',
-    color: '#686868',
-    fontSize: 16,
-  },
-  emptycont: {
-    flex: 0.7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-    marginVertical: 48,
-    paddingVertical: 56,
-  },
-  loader: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    flex: 1,
-    marginVertical: 48,
-    paddingVertical: 48,
-  },
-  itemContainer: {
-    marginVertical: 10,
-    borderColor: '#bcbaa1',
-    borderWidth: 0.8,
-    borderRadius: 16,
-    marginHorizontal: 16,
-  },
   passText: {
     fontSize: 20,
     letterSpacing: 0.5,
@@ -699,16 +315,56 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginBottom: 12,
   },
+  gap: {
+    marginHorizontal: 8,
+  },
+  image: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 8,
+    width: '90%',
+    height: 156,
+    resizeMode: 'contain',
+  },
+  footerCon: {
+    paddingBottom: 12,
+    paddingHorizontal: 12,
+    paddingTop: 4,
+  },
+  icon: {
+    alignSelf: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  itemtext: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#686868',
+    fontSize: 16,
+    marginStart: 16,
+    marginEnd: 16,
+  },
+  itemtext1: {
+    letterSpacing: 0.5,
+    fontWeight: '700',
+    lineHeight: 20,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#97948c',
+    fontSize: 16,
+  },
   circle: {
     width: 36,
     height: 36,
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 4,
-    borderRadius: 16,
-    //borderColor: '#000',
-    //borderStyle: 'solid',
-    //borderWidth: 3,
-    backgroundColor: '#1bd741',
+    borderRadius: 36 / 2,
   },
 });
+

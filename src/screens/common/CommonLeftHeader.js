@@ -14,6 +14,7 @@ import { sizeHeight, sizeWidth } from '../../util/Size';
 import { Image, View, Title } from '@shoutem/ui';
 import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
+import * as Helper from '../../util/Helper';
 
 const LeftHeaders = (props) => {
   const {
@@ -183,6 +184,15 @@ const LeftHeaders = (props) => {
             </View>
             <View style={{ flex: 0.6 }}>
               {showBack === true ? (
+                title === 'Finpro' ? <Image
+                    source={require('../../res/images/squarelogo.png')}
+                    styleName="medium"
+                    style={{
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                      resizeMode: 'contain'
+                    }}
+                  /> :
                 <Title style={styles.centertext}>{Lodash.truncate(title)}</Title>
               ) : (
                   <Image
@@ -302,7 +312,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centertext: {
-    fontSize: 18,
+    fontSize: 20,
     letterSpacing: 0.5,
     color: '#555555',
     lineHeight: 36,
@@ -310,6 +320,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     paddingVertical: 16,
+    fontFamily:Pref.getFontName(5)
   },
   belowtext: {
     fontSize: 18,

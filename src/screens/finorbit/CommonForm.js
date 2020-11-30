@@ -49,8 +49,8 @@ export default class CommonForm extends React.PureComponent {
     this.cursorSelection = { start: 0, end: 0 };
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     this.state = {
-      genderList: [{ value: 'Male' }, { value: 'Female' }, { value: 'Other' }],
-      employList: [{ value: 'Self Employed' }, { value: 'Salaried' }],
+      //genderList: [{ value: 'Male' }, { value: 'Female' }, { value: 'Other' }],
+      //employList: [{ value: 'Self Employed' }, { value: 'Salaried' }],
       cityList: filter,
       showCityList: false,
       showGenderList: false,
@@ -74,12 +74,15 @@ export default class CommonForm extends React.PureComponent {
       nomineename: '',
       emailTypeCd: '',
       contactTypeCd: '',
-      currentlocation: '',
       state: ''
     };
   }
 
   componentDidMount() {
+    const {editItemRestore} = this.props;
+    if(Helper.nullCheck(editItemRestore) === false){
+      this.restoreData(editItemRestore);
+    }
 
     // if (saveData !== undefined && saveData !== null) {
     //   this.saveData(

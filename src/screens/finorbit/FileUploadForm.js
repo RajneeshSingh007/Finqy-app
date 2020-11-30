@@ -100,7 +100,19 @@ export default class FileUploadForm extends React.PureComponent {
   }
 
   render() {
-    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null, headerchange = false } = this.props;
+    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null, headerchange = false,
+      rcCopy = null,
+      oldInsCopy = null,
+      puccopy = null,
+      salarySlip = null,
+      salarySlip1 = null,
+      salarySlip2 = null,
+      salarySlip3 = null,
+      salarySlip4 = null,
+      salarySlip5 = null,
+      bankState = null,
+      policycopy = null
+    } = this.props;
     return (
       <View>
         {/* <View
@@ -178,59 +190,58 @@ export default class FileUploadForm extends React.PureComponent {
         </> : null}
 
         {title === 'Profile' ? (
-          <CommonFileUpload
-            title={'Cancelled Cheque'}
-            type={2}
-            pickedTitle={this.findFileName(`cancel_chq`)}
-            pickedCallback={(selected, res) => {
-              if (!selected) {
-                const { name } = res;
-                if (
-                  name.includes('pdf') ||
-                  name.includes('png') ||
-                  name.includes('jpeg') ||
-                  name.includes('jpg')
-                ) {
-                  this.state.fileList.push({ cancel_chq: res });
-                } else {
-                  Helper.showToastMessage('Please, select Pdf or Image', 0);
+          <>
+            <CommonFileUpload
+              title={'Cancelled Cheque'}
+              type={2}
+              pickedTitle={this.findFileName(`cancel_chq`)}
+              pickedCallback={(selected, res) => {
+                if (!selected) {
+                  const { name } = res;
+                  if (
+                    name.includes('pdf') ||
+                    name.includes('png') ||
+                    name.includes('jpeg') ||
+                    name.includes('jpg')
+                  ) {
+                    this.state.fileList.push({ cancel_chq: res });
+                  } else {
+                    Helper.showToastMessage('Please, select Pdf or Image', 0);
+                  }
                 }
-              }
-            }}
-            enableDownloads={this.checkurl(0, cancelChq)}
-            downloadUrl={this.checkurl(1, cancelChq)}
-            fileName={'CancelledCheque'}
-            ext={this.getExt(0, cancelChq)}
-            mime={this.getExt(1, cancelChq)}
-          />
-        ) : null}
-
-        {title === 'Profile' ? (
-          <CommonFileUpload
-            title={'GST Certificate'}
-            type={2}
-            pickedTitle={this.findFileName(`gst_cert`)}
-            pickedCallback={(selected, res) => {
-              if (!selected) {
-                const { name } = res;
-                if (
-                  name.includes('pdf') ||
-                  name.includes('png') ||
-                  name.includes('jpeg') ||
-                  name.includes('jpg')
-                ) {
-                  this.state.fileList.push({ gst_cert: res });
-                } else {
-                  Helper.showToastMessage('Please, select Pdf or Image', 0);
+              }}
+              enableDownloads={this.checkurl(0, cancelChq)}
+              downloadUrl={this.checkurl(1, cancelChq)}
+              fileName={'CancelledCheque'}
+              ext={this.getExt(0, cancelChq)}
+              mime={this.getExt(1, cancelChq)}
+            />
+            <CommonFileUpload
+              title={'GST Certificate'}
+              type={2}
+              pickedTitle={this.findFileName(`gst_cert`)}
+              pickedCallback={(selected, res) => {
+                if (!selected) {
+                  const { name } = res;
+                  if (
+                    name.includes('pdf') ||
+                    name.includes('png') ||
+                    name.includes('jpeg') ||
+                    name.includes('jpg')
+                  ) {
+                    this.state.fileList.push({ gst_cert: res });
+                  } else {
+                    Helper.showToastMessage('Please, select Pdf or Image', 0);
+                  }
                 }
-              }
-            }}
-            enableDownloads={this.checkurl(0, gstImage)}
-            downloadUrl={this.checkurl(1, gstImage)}
-            fileName={'GST Certificate'}
-            ext={this.getExt(0, gstImage)}
-            mime={this.getExt(1, gstImage)}
-          />
+              }}
+              enableDownloads={this.checkurl(0, gstImage)}
+              downloadUrl={this.checkurl(1, gstImage)}
+              fileName={'GST Certificate'}
+              ext={this.getExt(0, gstImage)}
+              mime={this.getExt(1, gstImage)}
+            />
+          </>
         ) : null}
 
         {title === 'Motor Insurance' ? (
@@ -255,6 +266,12 @@ export default class FileUploadForm extends React.PureComponent {
                   }
                 }
               }}
+              enableDownloads={rcCopy != null && this.checkurl(0, rcCopy)}
+              downloadUrl={this.checkurl(1, rcCopy)}
+              fileName={'RC_Book'}
+              ext={this.getExt(0, rcCopy)}
+              mime={this.getExt(1, rcCopy)}
+
             />
 
             <CommonFileUpload
@@ -276,6 +293,11 @@ export default class FileUploadForm extends React.PureComponent {
                   }
                 }
               }}
+              enableDownloads={policycopy != null && this.checkurl(0, policycopy)}
+              downloadUrl={this.checkurl(1, policycopy)}
+              fileName={'Policy'}
+              ext={this.getExt(0, policycopy)}
+              mime={this.getExt(1, policycopy)}
             />
             <CommonFileUpload
               title={'Old Insurance Policy'}
@@ -296,6 +318,11 @@ export default class FileUploadForm extends React.PureComponent {
                   }
                 }
               }}
+              enableDownloads={oldInsCopy != null && this.checkurl(0, oldInsCopy)}
+              downloadUrl={this.checkurl(1, oldInsCopy)}
+              fileName={'Old_Insurance_Policy'}
+              ext={this.getExt(0, oldInsCopy)}
+              mime={this.getExt(1, oldInsCopy)}
             />
 
             <CommonFileUpload
@@ -317,6 +344,11 @@ export default class FileUploadForm extends React.PureComponent {
                   }
                 }
               }}
+              enableDownloads={puccopy != null && this.checkurl(0, puccopy)}
+              downloadUrl={this.checkurl(1, puccopy)}
+              fileName={'PUC'}
+              ext={this.getExt(0, puccopy)}
+              mime={this.getExt(1, puccopy)}
             />
           </View>
         ) : null}
@@ -378,6 +410,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }
                   }
                 }}
+                enableDownloads={salarySlip != null && this.checkurl(0, salarySlip)}
+                downloadUrl={this.checkurl(1, salarySlip)}
+                fileName={'Salary_Slip'}
+                ext={this.getExt(0, salarySlip)}
+                mime={this.getExt(1, salarySlip)}
               />
 
               <CommonFileUpload
@@ -401,6 +438,11 @@ export default class FileUploadForm extends React.PureComponent {
 
                   }
                 }}
+                enableDownloads={salarySlip1 != null && this.checkurl(0, salarySlip1)}
+                downloadUrl={this.checkurl(1, salarySlip1)}
+                fileName={'Salary_Slip1'}
+                ext={this.getExt(0, salarySlip1)}
+                mime={this.getExt(1, salarySlip1)}
               />
 
               <CommonFileUpload
@@ -423,6 +465,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }
                   }
                 }}
+                enableDownloads={salarySlip2 != null && this.checkurl(0, salarySlip2)}
+                downloadUrl={this.checkurl(1, salarySlip2)}
+                fileName={'Salary_Slip2'}
+                ext={this.getExt(0, salarySlip2)}
+                mime={this.getExt(1, salarySlip2)}
               />
 
               {(title === 'Loan Against Property' || title === 'Home Loan') && headerchange === true ? (
@@ -446,6 +493,11 @@ export default class FileUploadForm extends React.PureComponent {
                         }
                       }
                     }}
+                    enableDownloads={salarySlip3 != null && this.checkurl(0, salarySlip3)}
+                    downloadUrl={this.checkurl(1, salarySlip3)}
+                    fileName={'Salary_Slip3'}
+                    ext={this.getExt(0, salarySlip3)}
+                    mime={this.getExt(1, salarySlip3)}
                   />
                   <CommonFileUpload
                     title={'Salary Slip 5'}
@@ -467,6 +519,11 @@ export default class FileUploadForm extends React.PureComponent {
 
                       }
                     }}
+                    enableDownloads={salarySlip4 != null && this.checkurl(0, salarySlip4)}
+                    downloadUrl={this.checkurl(1, salarySlip4)}
+                    fileName={'Salary_Slip4'}
+                    ext={this.getExt(0, salarySlip4)}
+                    mime={this.getExt(1, salarySlip4)}
                   />
                   <CommonFileUpload
                     title={'Salary Slip 6'}
@@ -487,6 +544,11 @@ export default class FileUploadForm extends React.PureComponent {
                         }
                       }
                     }}
+                    enableDownloads={salarySlip5 != null && this.checkurl(0, salarySlip5)}
+                    downloadUrl={this.checkurl(1, salarySlip5)}
+                    fileName={'Salary_Slip5'}
+                    ext={this.getExt(0, salarySlip5)}
+                    mime={this.getExt(1, salarySlip5)}
                   />
                 </View>
               ) : null}
@@ -509,11 +571,11 @@ export default class FileUploadForm extends React.PureComponent {
                   if (!selected) {
                     const { name } = res;
                     if (
-                      name.includes('pdf') 
+                      name.includes('pdf')
                       //||
-                     // name.includes('png') ||
-                     // name.includes('jpeg') ||
-                     // name.includes('jpg')
+                      // name.includes('png') ||
+                      // name.includes('jpeg') ||
+                      // name.includes('jpg')
                     ) {
                       this.state.fileList.push({ bankstate: res });
                     } else {
@@ -521,6 +583,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }
                   }
                 }}
+                enableDownloads={bankState != null && this.checkurl(0, bankState)}
+                downloadUrl={this.checkurl(1, bankState)}
+                fileName={'Bank_state'}
+                ext={this.getExt(0, bankState)}
+                mime={this.getExt(1, bankState)}
               />
             </View>
           ) : null}

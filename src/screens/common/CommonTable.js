@@ -5,8 +5,7 @@ import {sizeWidth, sizeHeight} from '../../util/Size';
 import {Table, Row} from 'react-native-table-component';
 
 const CommonTable = (props) => {
-  const {widthArr, tableHead, dataList = [], style} = props;
-
+  const {widthArr, tableHead, dataList = [], headerTextStyle ={}, headerStyle={}, textStyle={},rowStyle={}} = props;  
   return (
     <ScrollView
       horizontal
@@ -16,19 +15,26 @@ const CommonTable = (props) => {
         style={[
           {
             marginHorizontal: sizeWidth(2),
-            height: sizeHeight(56),
+            //height: sizeHeight(56),
             backgroundColor: 'white',
+            flex:1
           },
         ]}>
-        <Table>
+        {/* <Table>
           <Row
             data={tableHead}
             widthArr={widthArr}
             style={styles.header}
             textStyle={styles.headerText}
           />
-        </Table>
+        </Table> */}
         <FlatList
+          ListHeaderComponent={() => <Row
+            data={tableHead}
+            widthArr={widthArr}
+            style={StyleSheet.flatten([styles.header, headerStyle])}
+            textStyle={StyleSheet.flatten([styles.headerText, headerTextStyle])}
+          />}
           data={dataList}
           keyExtractor={(item, index) => `${index}`}
           renderItem={({item, index}) => (
@@ -36,8 +42,8 @@ const CommonTable = (props) => {
               key={index}
               data={item}
               widthArr={widthArr}
-              style={[styles.row, index % 2 && {backgroundColor: '#ffffff'}]}
-              textStyle={styles.text}
+              style={[styles.row, index % 2 && {backgroundColor: '#ffffff'},rowStyle]}
+              textStyle={StyleSheet.flatten([styles.text,textStyle])}
             />
           )}
         />
@@ -66,6 +72,8 @@ const styles = StyleSheet.create({
   container: {flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'},
   header: {
     height: 56,
+    marginStart:8,
+    marginEnd:8
     // backgroundColor: Colors.blueGrey900,
     // borderColor: '#dedede',
     // borderWidth: 0.5,

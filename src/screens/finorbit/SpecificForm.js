@@ -150,29 +150,29 @@ let healthFList = [
 ]
 
 let termAddons = [{
-  value:'Critical Illness'
-},{
-  value:'Accidental Death Rider'
-},{
-  value:'Critical Illness & Accidental Death Rider'
-},{
-  value:'Return Of Premium'
-},{
-  value:'Increase Of Sum Insured'
-},{
-  value:'None'
+  value: 'Critical Illness'
+}, {
+  value: 'Accidental Death Rider'
+}, {
+  value: 'Critical Illness & Accidental Death Rider'
+}, {
+  value: 'Return Of Premium'
+}, {
+  value: 'Increase Of Sum Insured'
+}, {
+  value: 'None'
 }]
 
 let motorTypesOfInsurance = [{
-  value:'Own Damages'
-},{
-  value:'Comprehensive'
-},{
-  value:'Comprehensive + Addons'
-},{
-  value:'Third Party with PA Cover'
-},{
-  value:'Third Party without PA Cover'
+  value: 'Own Damages'
+}, {
+  value: 'Comprehensive'
+}, {
+  value: 'Comprehensive + Addons'
+}, {
+  value: 'Third Party with PA Cover'
+}, {
+  value: 'Third Party without PA Cover'
 }]
 
 
@@ -193,6 +193,23 @@ export default class SpecificForm extends React.PureComponent {
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     const { title } = this.props;
     this.state = {
+      showHealthCompany: false,
+      showLifeCompany: false,
+      showCarList: false,
+      showCompanyCityList: false,
+      showExisitingList: false,
+      showCalendar: false,
+      showLoanCityList: false,
+      showmotorInsList: false,
+      showtermInsList: false,
+      showHealthFlist: false,
+      showmaritalList: false,
+      showvectorInsuList: false,
+      showvectorCoverList: false,
+      showItemCalendar: false,
+      cityList: filter,
+      currentDate: date,
+      maxDate: maxDates,
       company: '',
       amount: '',
       companylocation: '',
@@ -220,35 +237,6 @@ export default class SpecificForm extends React.PureComponent {
       lifestyle2: '',
       payment_mode: '',
       existing_diseases: '',
-      vectorTypeIns: `Select Type of Insurance`,
-      vectorCover: `Select Required Cover`,
-      cityList: filter,
-      currentDate: date,
-      maxDate: maxDates,
-      showCarList: false,
-      showCompanyCityList: false,
-      showExisitingList: false,
-      showCalendar: false,
-      showLoanCityList: false,
-      motorInsList: [{ value: 'New' }, { value: 'Renewal' }],
-      exisitingList: [{ value: 'Yes' }, { value: 'No' }],
-      employList: [{ value: 'Self Employed' }, { value: 'Salaried' }],
-      carList: [{ value: 'New' }, { value: 'Old' }],
-      termInsList: [
-        { value: title === 'Term Insurance' ? 'ROP' : 'Single' },
-        { value: title === 'Term Insurance' ? 'Without ROP' : 'Family Floater' },
-      ],
-      showmotorInsList: false,
-      showtermInsList: false,
-      showHealthFlist: false,
-      maritalList: [{ value: 'Single' }, { value: 'Married' }],
-      showmaritalList: false,
-      vectorInsuList: [{ value: `Individual` }, { value: 'Family Floater' }],
-      showvectorInsuList: false,
-      vectorCoverList: [{ value: `50K` }, { value: '1 Lac' }],
-      showvectorCoverList: false,
-      floaterItemList: [],
-      showItemCalendar: false,
       policy_term: '',
       pay_type: '',
       addons: '',
@@ -260,8 +248,6 @@ export default class SpecificForm extends React.PureComponent {
       life_sum_assured: '',
       life_company: '',
       health_company: '',
-      showHealthCompany: false,
-      showLifeCompany: false,
       showInsureCheckList: 0,
       registration_type: '',
       vehicle_type: '',
@@ -270,11 +256,16 @@ export default class SpecificForm extends React.PureComponent {
       ownership: '',
       pincode: '',
       homestate: '',
-      loan_property_address: ''
+      loan_property_address: '',
+      floaterItemList: [],
     };
   }
 
   componentDidMount() {
+    const { editItemRestore } = this.props;
+    if (Helper.nullCheck(editItemRestore) === false) {
+      this.restoreData(editItemRestore);
+    }
     // if (saveData !== undefined && saveData !== null) {
     //   this.saveData(
     //     saveData.company,
@@ -489,7 +480,7 @@ export default class SpecificForm extends React.PureComponent {
     return (
       <ScrollView keyboardShouldPersistTaps={'handled'}>
         <View>
-          <Title style={styles.textstyle12}>{`Member ${index+1}`}</Title>
+          <Title style={styles.textstyle12}>{`Member ${index + 1}`}</Title>
           {/* <View
             style={{
               marginTop: sizeHeight(2),
@@ -745,9 +736,9 @@ export default class SpecificForm extends React.PureComponent {
               <AnimatedInputBox
                 onChangeText={value => this.setState({ company: value })}
                 value={this.state.company}
-                placeholder={`Company Name ${title === 'Auto Loan' || 
-                //title === 'Home Loan' || 
-                title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
+                placeholder={`Company Name ${title === 'Auto Loan' ||
+                  //title === 'Home Loan' || 
+                  title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
                 returnKeyType={'next'}
                 changecolor
                 containerstyle={styles.animatedInputCont}
@@ -1256,30 +1247,30 @@ export default class SpecificForm extends React.PureComponent {
               </View>
             </View>
 
-              <NewDropDown
-                list={motorTypesOfInsurance}
-                placeholder={'Types Of Insurance *'}
-                value={this.state.insurance}
-                selectedItem={value => {
-                  this.setState({
-                    insurance: value,
-                  });
-                }}
-                style={{
-                  borderRadius: 0,
-                  borderBottomColor: '#f2f1e6',
-                  borderBottomWidth: 1.3,
-                  borderWidth: 0,
-                  marginStart: 10,
-                  marginEnd: 10,
-                  paddingVertical: 10,
-                }}
-                textStyle={{
-                  color: '#6d6a57',
-                  fontSize: 14,
-                  fontFamily: Pref.getFontName(4),
-                }}
-              />
+            <NewDropDown
+              list={motorTypesOfInsurance}
+              placeholder={'Types Of Insurance *'}
+              value={this.state.insurance}
+              selectedItem={value => {
+                this.setState({
+                  insurance: value,
+                });
+              }}
+              style={{
+                borderRadius: 0,
+                borderBottomColor: '#f2f1e6',
+                borderBottomWidth: 1.3,
+                borderWidth: 0,
+                marginStart: 10,
+                marginEnd: 10,
+                paddingVertical: 10,
+              }}
+              textStyle={{
+                color: '#6d6a57',
+                fontSize: 14,
+                fontFamily: Pref.getFontName(4),
+              }}
+            />
 
             {/* <View style={styles.radiocont}>
               <View
@@ -1803,31 +1794,31 @@ export default class SpecificForm extends React.PureComponent {
               </View>
             </View>
 
-              <NewDropDown
-                list={termAddons}
-                placeholder={'Addons *'}
-                value={this.state.addons}
-                selectedItem={value => {
-                  this.setState({
-                    addons: value,
-                  });
-                }}
-                style={{
-                  borderRadius: 0,
-                  borderBottomColor: '#f2f1e6',
-                  borderBottomWidth: 1.3,
-                  borderWidth: 0,
-                  marginStart: 10,
-                  marginEnd: 10,
-                  paddingVertical: 10,
-                }}
-                textStyle={{
-                  color: '#6d6a57',
-                  fontSize: 14,
-                  fontFamily: Pref.getFontName(4),
-                }}
-              />
-         
+            <NewDropDown
+              list={termAddons}
+              placeholder={'Addons *'}
+              value={this.state.addons}
+              selectedItem={value => {
+                this.setState({
+                  addons: value,
+                });
+              }}
+              style={{
+                borderRadius: 0,
+                borderBottomColor: '#f2f1e6',
+                borderBottomWidth: 1.3,
+                borderWidth: 0,
+                marginStart: 10,
+                marginEnd: 10,
+                paddingVertical: 10,
+              }}
+              textStyle={{
+                color: '#6d6a57',
+                fontSize: 14,
+                fontFamily: Pref.getFontName(4),
+              }}
+            />
+
             {/* <View style={styles.radiocont}>
               <View
                 style={StyleSheet.flatten([
@@ -3102,7 +3093,7 @@ const styles = StyleSheet.create({
     color: Pref.RED,
     lineHeight: 20,
     marginStart: 8,
-    paddingVertical:8,
-    marginVertical:4
+    paddingVertical: 8,
+    marginVertical: 4
   },
 });
