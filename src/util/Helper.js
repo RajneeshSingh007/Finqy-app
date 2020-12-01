@@ -559,7 +559,7 @@ export const silentDownloadFileWithFileName = (url, name, fileName, mime, notifi
   const { config } = RNFetchBlob;
   let options = {
     fileCache: true,
-    path:filePath,
+    path: filePath,
   };
   let finalUrl = url;
   if (addext) {
@@ -683,8 +683,12 @@ export const nullStringCheck = (data) => {
   return data === undefined || data === null || data == '' ? true : false;
 };
 
-export const arrayObjCheck = (data) =>{
-  return data !== undefined && Array.isArray(data) === false && typeof data !== 'object' ? true : false
+export const arrayObjCheck = (data, checkObject) => {
+  if (checkObject) {
+    return data !== undefined && Array.isArray(data) === false && typeof data !== 'object' ? true : false
+  } else {
+    return data !== undefined && Array.isArray(data) === false ? true : false
+  }
 }
 
 /**
@@ -692,7 +696,11 @@ export const arrayObjCheck = (data) =>{
  * @param {*} data
  */
 export const nullStringCheckWithReturn = (data) => {
-  return data === undefined || data === null || data == '' ? '' : Lodash.capitalize(data);
+  return data === undefined || data === null || data == '' ? '' :     
+      data.split(/ /g).map(word =>
+        `${word.substring(0,1).toUpperCase()}${word.substring(1)}`)
+    .join(" ") 
+  //Lodash.capitalize(data);
 };
 
 

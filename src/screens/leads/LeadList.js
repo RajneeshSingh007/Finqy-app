@@ -31,7 +31,7 @@ import CustomForm from './../finorbit/CustomForm';
 import CScreen from './../component/CScreen';
 import Download from './../component/Download';
 import NavigationActions from '../../util/NavigationActions';
-import { constructObjEditLead } from '../../util/FormCheckHelper';
+import { constructObjEditLead,constructObjEditSamadhan } from '../../util/FormCheckHelper';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Moble No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
@@ -198,7 +198,11 @@ export default class LeadList extends React.PureComponent {
     }else{
       pname = product;
     }
-    NavigationActions.navigate('FinorbitForm', {leadData:constructObjEditLead(item), title:pname,url:'',edit:true});
+    if(product === 'Insurance Samadhan'){
+      NavigationActions.navigate('Samadhan', {leadData:constructObjEditSamadhan(item), title:pname,url:'',edit:true});
+    }else{
+      NavigationActions.navigate('FinorbitForm', {leadData:constructObjEditLead(item), title:pname,url:'',edit:true});
+    }
   }
 
   /**
@@ -342,8 +346,11 @@ export default class LeadList extends React.PureComponent {
                 </TouchableWithoutFeedback>
               </View>
             );
-            
-            rowData.push(item.product !== 'Insure Check' && item.product !== 'Insurance Samadhan' ? editView(item) : '');
+            if(Helper.nullCheck(item.editenable) === false && item.editenable === 0){
+              rowData.push(editView(item));
+            }else{
+              rowData.push('');
+            }
             
             dataList.push(rowData);
           }

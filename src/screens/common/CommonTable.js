@@ -15,7 +15,7 @@ const CommonTable = (props) => {
         style={[
           {
             marginHorizontal: sizeWidth(2),
-            //height: sizeHeight(56),
+            height: sizeHeight(56),
             backgroundColor: 'white',
             flex:1
           },

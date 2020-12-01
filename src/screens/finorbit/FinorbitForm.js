@@ -70,26 +70,26 @@ export default class FinorbitForm extends React.PureComponent {
     const editLeadData = navigation.getParam("leadData", null);
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
-      //console.log('token', value);
-      this.setState({ token: value }, () => {
-        Pref.getVal(Pref.userData, (userData) => {
-          const checknullEdit = Helper.nullCheck(editLeadData);
-          this.setState({
-            userData: userData,
-            imageUrl: url,
-            title: title,
-            isMounted: true,
-            currentPosition: 0,
-            editMode: editMode,
-            editLeadData: editLeadData,
-            editFirst: checknullEdit === false ? editLeadData.first : null,
-            editSecond: checknullEdit === false ? editLeadData.second : null,
-            editThird: checknullEdit === false ? editLeadData.third : null,
-            editFour: checknullEdit === false ? editLeadData.four : null,
+        //console.log('token', value);
+        this.setState({ token: value }, () => {
+          Pref.getVal(Pref.userData, (userData) => {
+            const checknullEdit = Helper.nullCheck(editLeadData);
+            this.setState({
+              userData: userData,
+              imageUrl: url,
+              title: title,
+              isMounted: true,
+              currentPosition: 0,
+              editMode: editMode,
+              editLeadData: editLeadData,
+              editFirst: checknullEdit === false ? editLeadData.first : null,
+              editSecond: checknullEdit === false ? editLeadData.second : null,
+              editThird: checknullEdit === false ? editLeadData.third : null,
+              editFour: checknullEdit === false ? editLeadData.four : null,
+            });
           });
         });
       });
-    });
     });
 
     // NavigationActions.navigate("GetQuotes", {
@@ -100,9 +100,9 @@ export default class FinorbitForm extends React.PureComponent {
 
   backClick = () => {
     const { title, currentPosition, editMode } = this.state;
-    if(editMode === true){
+    if (editMode === true) {
       NavigationActions.navigate("LeadList");
-    }else{
+    } else {
       NavigationActions.goBack();
     }
     return true;
@@ -142,7 +142,7 @@ export default class FinorbitForm extends React.PureComponent {
    * submit form
    */
   formSubmit = () => {
-    const { title, currentPosition, editMode,editLeadData } = this.state;
+    const { title, currentPosition, editMode, editLeadData } = this.state;
     let commons = null;
     //console.log("title", title);
     if (currentPosition === 0) {
@@ -492,7 +492,7 @@ export default class FinorbitForm extends React.PureComponent {
           }
           for (var key in parseJs) {
             const value = parseJs[key];
-            if (Helper.arrayObjCheck(value)) {
+            if (Helper.arrayObjCheck(value, true)) {
               formData.append(key, parseJs[key]);
             }
           }
@@ -500,6 +500,7 @@ export default class FinorbitForm extends React.PureComponent {
 
         //2nd form
         if (specificForms) {
+          delete specificForms.pincode;
           let parseJs = JSON.parse(JSON.stringify(specificForms));
           if (Helper.nullCheck(parseJs.floaterItemList) === false && parseJs.floaterItemList.length > 0) {
             let keypos = 1;
@@ -512,15 +513,15 @@ export default class FinorbitForm extends React.PureComponent {
                 const value = parseJs[key];
                 if (Helper.nullCheck(value) === false) {
                   if (key.includes('existing_diseases')) {
-                    formData.append(`existing_diseases${keypos}`, parseJs[key]);
+                    formData.append(`existing_diseases${keypos}`, value);
                   } else if (key.includes('diseases')) {
-                    formData.append(`diseases${keypos}`, parseJs[key]);
+                    formData.append(`diseases${keypos}`, value);
                   } else {
                     formData.append(
                       keypos === 1
                         ? `floater_${key}`
                         : `floater_${key}${keypos}`,
-                      parseJs[key]
+                      value
                     );
                   }
                 }
@@ -529,12 +530,10 @@ export default class FinorbitForm extends React.PureComponent {
             });
           }
           for (var key in parseJs) {
-            //if (key !== "floaterItemList") {
             const value = parseJs[key];
-            if (Helper.arrayObjCheck(value)) {
+            if (Helper.arrayObjCheck(value, true)) {
               formData.append(key, parseJs[key]);
             }
-            //}
           }
         }
 
@@ -544,7 +543,7 @@ export default class FinorbitForm extends React.PureComponent {
             let parseJs = JSON.parse(JSON.stringify(ele));
             for (var key in parseJs) {
               const value = parseJs[key];
-              if (Helper.arrayObjCheck(value)) {
+              if (Helper.arrayObjCheck(value, false)) {
                 formData.append(key, parseJs[key]);
               }
             }
@@ -560,7 +559,7 @@ export default class FinorbitForm extends React.PureComponent {
           let parseJs = JSON.parse(JSON.stringify(dateForm));
           for (var key in parseJs) {
             const value = parseJs[key];
-            if (Helper.arrayObjCheck(value)) {
+            if (Helper.arrayObjCheck(value, true)) {
               formData.append(key, parseJs[key]);
             }
           }
@@ -568,99 +567,57 @@ export default class FinorbitForm extends React.PureComponent {
         }
 
         if (editMode === false) {
-
-          const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
-
-          //console.log('formData', formData);
-          //console.log('formUrls', formUrls);
-
-          Helper.networkHelperTokenContentType(
-            formUrls,
-            formData,
-            Pref.methodPost,
-            this.state.token,
-            (result) => {
-              //console.log('result', result)
-              const { response_header } = result;
-              const { res_type, res } = response_header;
-              this.setState({ progressLoader: false });
-              if (res_type === "success") {
-                Helper.showToastMessage("Form submitted successfully", 1);
-                if (title === `Health Insurance`) {
-                  const { id } = res;
-                  const cov = Number(specificForms.required_cover);
-                  NavigationActions.navigate("GetQuotes", {
-                    formId: id,
-                    sumin: cov,
-                  });
-                } else {
-                  NavigationActions.navigate("Finish", {
-                    top: "Add New Lead",
-                    red: "Success",
-                    grey: "Details uploaded",
-                    blue: "Add another lead?",
-                    back: "FinorbitScreen",
-                  });
-                }
-              } else {
-                Helper.showToastMessage("failed to submit form", 0);
-              }
-            },
-            (e) => {
-              //console.log(e);
-              this.setState({ progressLoader: false });
-              Helper.showToastMessage("Something went wrong", 0);
-            }
-          );
+          formData.append("formid", "");
         } else {
-          const {og} = editLeadData;
-          const {id} = og;
-          formData.append("formid",id);
-
-          //const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
-
-          //console.log('formData', formData);
-          //console.log('formUrls', formUrls);
-
-          // Helper.networkHelperTokenContentType(
-          //   formUrls,
-          //   formData,
-          //   Pref.methodPost,
-          //   this.state.token,
-          //   (result) => {
-          //     //console.log('result', result)
-          //     const { response_header } = result;
-          //     const { res_type, res } = response_header;
-          //     this.setState({ progressLoader: false });
-          //     if (res_type === "success") {
-          //       Helper.showToastMessage("Form updated successfully", 1);
-          //       if (title === `Health Insurance`) {
-          //         const { id } = res;
-          //         const cov = Number(specificForms.required_cover);
-          //         NavigationActions.navigate("GetQuotes", {
-          //           formId: id,
-          //           sumin: cov,
-          //         });
-          //       } else {
-          //         NavigationActions.navigate("Finish", {
-          //           top: "Edit Lead",
-          //           red: "Success",
-          //           grey: "Details updated",
-          //           blue: "Add another lead?",
-          //           back: "FinorbitScreen",
-          //         });
-          //       }
-          //     } else {
-          //       Helper.showToastMessage("failed to submit form", 0);
-          //     }
-          //   },
-          //   (e) => {
-          //     //console.log(e);
-          //     this.setState({ progressLoader: false });
-          //     Helper.showToastMessage("Something went wrong", 0);
-          //   }
-          // );
+          const { og } = editLeadData;
+          const { id } = og.alldata;
+          formData.append("formid", id);
         }
+
+        const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
+
+        console.log('formData', formData);
+        console.log('formUrls', formUrls);
+
+        Helper.networkHelperTokenContentType(
+          formUrls,
+          formData,
+          Pref.methodPost,
+          this.state.token,
+          (result) => {
+            console.log('result', result)
+            const { response_header } = result;
+            const { res_type, res } = response_header;
+            this.setState({ progressLoader: false });
+            if (res_type === "success") {
+              Helper.showToastMessage(editMode === false ? "Form submitted successfully" : "Form updated successfully", 1);
+              if (title === `Health Insurance` && editMode === false) {
+                const { id } = res;
+                const cov = Number(specificForms.required_cover);
+                NavigationActions.navigate("GetQuotes", {
+                  formId: id,
+                  sumin: cov,
+                });
+              } else {
+                NavigationActions.navigate("Finish", {
+                  top: editMode === false ? "Add New Lead" : "Edit Lead",
+                  red: "Success",
+                  grey: editMode === false ? "Details uploaded" : "Details updated",
+                  blue: editMode === false ? "Add another lead?" : "Back to Lead Record",
+                  back: editMode === false ? "FinorbitScreen" : "LeadList",
+                });
+              }
+            } else {
+              Helper.showToastMessage("Failed to submit form", 0);
+            }
+          },
+          (e) => {
+            console.log(e);
+            this.setState({ progressLoader: false });
+            Helper.showToastMessage("Something went wrong", 0);
+          }
+        );
+
       }
     }
   }
@@ -690,7 +647,7 @@ export default class FinorbitForm extends React.PureComponent {
                 //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
                 //       : split[0]
                 title === '' ? '' :
-                !editMode ? `Add New Lead` : `Edit Lead`
+                  !editMode ? `Add New Lead` : `Edit Lead`
               }
               bottomtext={
                 <>

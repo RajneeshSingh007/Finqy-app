@@ -59,6 +59,7 @@ import Invoice from './../screens/wallets/Invoice';
 import As26 from './../screens/wallets/As26';
 import Payout from './../screens/wallets/Payout';
 import PayoutForm from './../screens/wallets/PayoutForm';
+import PayoutPolicy from './../screens/wallets/PayoutPolicy';
 
 //blog
 import Blogs from './../screens/blogs/Blogs';
@@ -257,7 +258,8 @@ const OtherNav = createDrawerNavigator(
     Finish: { screen: FinishScreen },
     Term: { screen: Term },
     WebComp: { screen: WebComp },
-    Payout: { screen: payoutNav }
+    Payout: { screen: payoutNav },
+    PayoutPolicy:{screen:PayoutPolicy}
   },
   {
     initialRouteName: 'Home',

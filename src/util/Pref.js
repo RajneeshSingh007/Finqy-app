@@ -2695,19 +2695,26 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 
 
 //production url
-//export const MainUrl = `https://erb.ai/`;
+export const MainUrl = `https://erb.ai/`;
 
 //test url
-export const MainUrl = `https://uat.erb.ai/`;
+//export const MainUrl = `https://uat.erb.ai/`;
 
 //production
-//export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
+export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
 
 //test location
-export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+//export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 
 //disabled
 //export const FOLDERPATH = `${ApiDirUrl}erbfinorbit`;
+
+
+//prod
+export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
+
+//test
+//export const PayoutPolicy = `https://uat.erb.ai/Finprond/Payout%20Policy.pdf`;
 
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
 
@@ -2747,6 +2754,7 @@ export const ForgotUrl = `${MainUrl}forgot_all.php`;
 export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
 export const TermOfUse = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
+
 
 //insurance
 export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;

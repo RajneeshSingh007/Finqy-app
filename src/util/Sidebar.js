@@ -199,6 +199,12 @@ export default class Sidebar extends React.Component {
               click: 'As26',
               options: {},
             },
+                          {
+                name:`Payout Policy`,
+                expand:false,
+                click:'PayoutPolicy',
+                options:{}
+              },
           ],
           click: '',
         },
@@ -424,6 +430,12 @@ export default class Sidebar extends React.Component {
                 expand: false,
                 click: 'As26',
                 options: {},
+              },
+              {
+                name:`Payout Policy`,
+                expand:false,
+                click:'PayoutPolicy',
+                options:{}
               },
             ],
             click: '',

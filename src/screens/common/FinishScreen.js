@@ -76,7 +76,7 @@ export default FinishScreen;
 
 const styles = StyleSheet.create({
   contain: {
-    flex: 0.77,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f8f1',

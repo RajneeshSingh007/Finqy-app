@@ -27,12 +27,13 @@ export default class Term extends React.PureComponent {
     }
 
     componentDidMount() {
-        //this.focusListener = navigation.addListener('didFocus', () => {
-        Pref.getVal(Pref.userData, data => {
-            //console.log('data', data)
-            Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(data, v));
-        })
-        //});
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener('didFocus', () => {
+            Pref.getVal(Pref.userData, data => {
+                //console.log('data', data)
+                Pref.getVal(Pref.USERTYPE, (v) => this.fetchData(data, v));
+            })
+        });
     }
 
     fetchData = (data) => {
@@ -60,7 +61,7 @@ export default class Term extends React.PureComponent {
                 body={
                     <View style={{ flex: 1 }}>
                         <LeftHeaders title={`Term Of Use`} showBack />
-                        <View style={{ flex: 0.02 }}></View>
+                        {/* <View style={{ flex: 0.02 }}></View> */}
                         <Pdf
                             source={{
                                 uri: this.state.pdfurl,
@@ -70,10 +71,10 @@ export default class Term extends React.PureComponent {
                                 flex: 1,
                                 backgroundColor: '#f9f8f1',
                             }}
-                                          fitWidth
-              fitPolicy={0}
-              enablePaging
-              scale={1}
+                            fitWidth
+                            fitPolicy={0}
+                            enablePaging
+                            scale={1}
 
                         />
                         {/* <Download

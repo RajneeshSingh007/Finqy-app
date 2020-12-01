@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centertext: {
-    fontSize: 20,
+    fontSize: 19,
     letterSpacing: 0.5,
     color: '#555555',
     lineHeight: 36,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     paddingVertical: 16,
-    fontFamily:Pref.getFontName(5)
+    //fontFamily:Pref.getFontName(4)
   },
   belowtext: {
     fontSize: 18,

@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Linking,
   TouchableWithoutFeedback,
+  BackHandler
 } from 'react-native';
 import {
   Title,
@@ -36,6 +37,7 @@ const policyList = [{
 export default class Samadhan extends React.Component {
   constructor(props) {
     super(props);
+    this.backClick = this.backClick.bind(this);
     this.submitt = this.submitt.bind(this);
     this.specificFormRef = React.createRef();
     this.state = {
@@ -52,17 +54,23 @@ export default class Samadhan extends React.Component {
       loading: false,
       isTermSelected: false,
       showCompType: false,
-      compTypeList: [
-      ],
+      compTypeList: [],
+      editMode: false,
+      editLeadData: null,
+      formid: ''
     };
   }
 
   componentDidMount() {
+    BackHandler.addEventListener("hardwareBackPress", this.backClick);
     const { navigation } = this.props;
+    const editMode = navigation.getParam("edit", false);
+    const editLeadData = navigation.getParam("leadData", null);
+    //console.log('editLeadData', editLeadData)
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (value) =>
         this.setState({
-          ref: value.refercode, 
+          ref: value.refercode,
           name: '',
           mobile: '',
           email: '',
@@ -72,18 +80,43 @@ export default class Samadhan extends React.Component {
           showCompType: false,
           policy_type: '',
           complaint_type: '',
+          editLeadData: editLeadData,
+          editMode: editMode
         }, () => {
+          if (editMode === true && editLeadData !== null) {
+            this.setState({
+              name: editLeadData.name,
+              mobile: editLeadData.mobile,
+              email: editLeadData.email,
+              policy_type: editLeadData.policy_type,
+              complaint_type: editLeadData.complaint_type,
+              formid: editLeadData.formid,
+              isTermSelected: true
+            });
+          }
           Pref.getVal(Pref.saveToken, (tt) => this.setState({ token: tt }));
         }),
       );
     });
   }
 
+  backClick = () => {
+    const { editMode } = this.state;
+    if (editMode === true) {
+      NavigationActions.navigate("LeadList");
+    } else {
+      NavigationActions.goBack();
+    }
+    return true;
+  };
+
   componentWillUnMount() {
+    BackHandler.removeEventListener("hardwareBackPress", this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
   submitt = () => {
+    const { editMode } = this.state;
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
     //const { userData } = body;
@@ -153,9 +186,9 @@ export default class Samadhan extends React.Component {
               //top: "Add New Lead",
               top: 'Insurance Samadhan',
               red: "Success",
-              grey: "Details uploaded",
-              blue: "Add another lead?",
-              back: "FinorbitScreen",
+              grey: editMode === false ? "Details uploaded" : 'Details updated',
+              blue: editMode === false ? "Add another lead?" : 'Back to lead record',
+              back: editMode === false ? "FinorbitScreen" : 'LeadList',
             });
           }
         },
@@ -174,6 +207,7 @@ export default class Samadhan extends React.Component {
           <>
             <LeftHeaders
               title={`Insurance Samadhan`}
+              backClicked={this.backClick}
               // bottomtext={
               //   <>
               //     {`Insurance `}

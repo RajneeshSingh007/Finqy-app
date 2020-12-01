@@ -254,7 +254,7 @@ export default class SpecificForm extends React.PureComponent {
       motor_type: '',
       expiry_date: '',
       ownership: '',
-      pincode: '',
+      lppincode: '',
       homestate: '',
       loan_property_address: '',
       floaterItemList: [],
@@ -449,13 +449,20 @@ export default class SpecificForm extends React.PureComponent {
     } else if (type === 3) {
       item.relation = value;
     } else if (type === 4) {
-      item.existing_diseases = value;
+      //item.existing_diseases = value;
+      if(value == 'No'){
+        item.diseases = '';
+        item.existing_diseases = 'No';
+      }else{
+        item.existing_diseases = 'Yes';
+      }
     } else if (type === 5) {
       item.diseases = value;
     }
     //console.log(`item`, item);
     const { floaterItemList } = this.state;
     floaterItemList[index] = item;
+    //console.log('item',item)
     this.setState({ floaterItemList: floaterItemList }, () => {
       this.forceUpdate();
     });
@@ -643,7 +650,7 @@ export default class SpecificForm extends React.PureComponent {
     const parse = String(value);
     if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
       if (parse.length === 6) {
-        this.setState({ pincode: parse });
+        this.setState({ lppincode: parse });
         const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
         //console.log(`url`, url);
         Helper.getNetworkHelper(
@@ -653,7 +660,7 @@ export default class SpecificForm extends React.PureComponent {
             const { res_type, data } = JSON.parse(result);
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
-              this.setState({ loan_property_city: '', state: '', pincode: value });
+              this.setState({ loan_property_city: '', state: '', lppincode: value });
             } else {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
@@ -661,22 +668,22 @@ export default class SpecificForm extends React.PureComponent {
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
                 //      //console.log('state', city)
-                this.setState({ loan_property_city: city, homestate: state, pincode: value });
+                this.setState({ loan_property_city: city, homestate: state, lppincode: value });
               } else {
-                this.setState({ loan_property_city: '', homestate: '', pincode: value });
+                this.setState({ loan_property_city: '', homestate: '', lppincode: value });
               }
             }
           },
           (error) => {
-            this.setState({ loan_property_city: '', homestate: '', pincode: parse });
+            this.setState({ loan_property_city: '', homestate: '', lppincode: parse });
             //console.log(`error`, error);
           },
         );
       } else {
-        this.setState({ loan_property_city: '', homestate: '', pincode: parse });
+        this.setState({ loan_property_city: '', homestate: '', lppincode: parse });
       }
     } else {
-      this.setState({ loan_property_city: '', homestate: '', pincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.pincode });
+      this.setState({ loan_property_city: '', homestate: '', lppincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.lppincode });
     }
   };
 
@@ -2640,16 +2647,10 @@ export default class SpecificForm extends React.PureComponent {
           ) : null}
         {title === 'Home Loan' || title === 'Loan Against Property' ? <View>
           <AnimatedInputBox
-            // onChangeText={(value) => {
-            //   if (String(value).match(/^[0-9]*$/g) !== null) {
-            //     this.setState({ pincode: value });
-            //   }
-            // }}
             onChangeText={this.fetchcityCurrentstate}
             maxLength={6}
             keyboardType={'number-pad'}
-            value={this.state.pincode}
-            //placeholder={'Current Residence Pincode'}
+            value={this.state.lppincode}
             placeholder={`Current Property Pincode ${title === 'Home Loan' ? ' *' : ''}`}
             returnKeyType={'next'}
             changecolor

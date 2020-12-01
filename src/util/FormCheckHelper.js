@@ -218,14 +218,17 @@ export const secondFormCheck = (title, specificForms) => {
         //|| title === 'Loan Against Property'
         //) 
         &&
-        specificForms.pincode === "") {
+        specificForms.lppincode === "") {
         result = false;
         Helper.showToastMessage("Please, Enter Loan Property Pincode", 0);
         //Helper.showToastMessage("Loan property pincode empty", 0);
-    } else if ((title === 'Home Loan'
+    } else if (
+       // (
+            title === 'Home Loan'
         //|| title === 'Loan Against Property'
-    ) && specificForms.pincode !== '' &&
-        specificForms.pincode.length < 6) {
+    //) 
+    && specificForms.lppincode !== '' &&
+        specificForms.lppincode.length < 6) {
         result = false;
         Helper.showToastMessage("Please, Correct Loan Property Pincode", 0);
         //Helper.showToastMessage("Loan property pincode empty", 0);
@@ -235,7 +238,7 @@ export const secondFormCheck = (title, specificForms) => {
         //|| title === 'Loan Against Property'
         //) 
         &&
-        specificForms.pincode !== '' && (specificForms.loan_property_city === '' || specificForms.homestate === '')) {
+        specificForms.lppincode !== '' && (specificForms.loan_property_city === '' || specificForms.homestate === '')) {
         result = false;
         Helper.showToastMessage('Failed to find city & state, Please, check loan property pincode', 0);
     } else if ((title === "Home Loan" || title === 'Loan Against Property') && specificForms.loan_property_address === "") {
@@ -623,11 +626,12 @@ export const secondFormCheck = (title, specificForms) => {
 export const constructObjEditLead = (item) => {
     const { name, mobile, product, bank, alldata } = item;
 
-    let { id, email, dob, gender, currentlocation, pincode, damount, pan_card, aadhar_card, baa, pancard_no, aadharcard_no, company, employ_type, lifestyle, qualification, state, remark, rc_copy, old_insc_copy, puc_copy, six_salaru_s, bank_state, insurance, car_brand, car_value, reg_no, turnover, vehicle_type, motor_type, expiry_date, ownership, claim_type, required_cover, existingcard, loan_property_city, rcbook, model, nooldcard, family_floater, investment_amount, marital_status, profession, type_loan, lifestyle2, existing_diseases, payment_mode, loan_property_address, homestate, registration_type, health_company, health_sum_assured, life_sum_assured, life_company, policy_term, pay_type, addons, diseases, car_type, dependent, type_insurance, companylocation, policycopy, floater_name, floater_dob, floater_relation, floater_gender,
+    let { id, email, dob, gender, currentlocation, pincode, damount, pan_card, aadhar_card, baa, pancard_no, aadharcard_no, company,employment_type, employ_type, lifestyle, qualification, state, remark, rc_copy, old_insc_copy, puc_copy, six_salaru_s, bank_state, insurance, car_brand, car_value, reg_no, turnover, vehicle_type, motor_type, expiry_date, ownership, claim_type, required_cover, existingcard, loan_property_city, rcbook, model, nooldcard, family_floater, investment_amount, marital_status, profession, type_loan, lifestyle2, existing_diseases, payment_mode, loan_property_address, homestate, registration_type, health_company, health_sum_assured, life_sum_assured, life_company, policy_term, pay_type, addons, diseases, car_type, dependent, type_insurance, companylocation, policycopy, floater_name, floater_dob, floater_relation, floater_gender,
         existing_diseases1, diseases1,
         floater_name2, floater_dob2, floater_relation2, floater_gender2, existing_diseases2, diseases2,
         floater_name3, floater_dob3, floater_relation3, floater_gender3, existing_diseases3, diseases3,
         floater_name4, floater_dob4, floater_relation4, floater_gender4, existing_diseases4, diseases4,
+        loan_type,lpstate
     } = alldata;
 
     let salarySlip = null, salarySlip1 = null, salarySlip2 = null, salarySlip3 = null, salarySlip4 = null, salarySlip5 = null;
@@ -728,9 +732,17 @@ export const constructObjEditLead = (item) => {
         .replace(/ /g, '_')
         .toLowerCase();
 
-    console.log('formname', formname)
+    //console.log('formname', formname)
 
     const count = Number(id);
+    
+    let empType = '';
+
+    if(Helper.nullStringCheck(employ_type) === false){
+        empType = employ_type;
+    }else if(Helper.nullStringCheck(employment_type) === false){
+        empType = employment_type;
+    }
 
     const convertedjsonObj = {
         first: {
@@ -741,7 +753,7 @@ export const constructObjEditLead = (item) => {
             mobile: Helper.nullStringCheckWithReturn(mobile),
             gender: Helper.nullStringCheckWithReturn(gender),
             dob: Helper.nullStringCheckWithReturn(dob),
-            employ: Helper.nullStringCheckWithReturn(employ_type),
+            employ: Helper.nullStringCheckWithReturn(empType),
             ofc_add: '',
             qualification: Helper.nullStringCheckWithReturn(qualification),
             gst_no: '',
@@ -800,6 +812,8 @@ export const constructObjEditLead = (item) => {
             homestate: Helper.nullStringCheckWithReturn(homestate),
             loan_property_address: Helper.nullStringCheckWithReturn(loan_property_address),
             floaterItemList: floaterItemList,
+            type_loan:Helper.nullStringCheckWithReturn(loan_type),
+            homestate:Helper.nullStringCheckWithReturn(lpstate),
         },
         third: {
             panCard: Helper.nullCheck(pan_card) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/pancard/${count}${pan_card}` : null,
@@ -824,6 +838,24 @@ export const constructObjEditLead = (item) => {
         },
         og: item
     };
-    //console.log(convertedjsonObj.first)
+    //console.log(alldata);
+    //console.log(convertedjsonObj.second)
     return convertedjsonObj;
+}
+
+/**
+ * 
+ * @param {*} item 
+ */
+export const constructObjEditSamadhan = (item) =>{
+    const { name, mobile, alldata } = item;
+    let { complaint_type,policy_type,id,email} = alldata;
+   return {
+      name: Helper.nullStringCheckWithReturn(name),
+      mobile: Helper.nullStringCheckWithReturn(mobile),
+      email: Helper.nullStringCheckWithReturn(email),
+      complaint_type: Helper.nullStringCheckWithReturn(complaint_type),
+      policy_type: Helper.nullStringCheckWithReturn(policy_type),
+      formid:id
+    }
 }
