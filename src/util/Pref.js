@@ -2694,21 +2694,16 @@ export const HealthCompany = [{ value: "Acko General Insurance Limited" },
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
 
+//token
+export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bmxqUE1BWWZoY3NoamtlQi91RFFpMDlydkNseFJ3ZVltY3BoQUE0VVgrS0tzR1E9PQ==`;
+
 //production url
-export const MainUrl = `https://erb.ai/`;
+//export const MainUrl = `https://erb.ai/`;
+//export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
 
 //test url
-//export const MainUrl = `https://uat.erb.ai/`;
-
-//production
-export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
-
-//test location
-//export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-
-//disabled
-//export const FOLDERPATH = `${ApiDirUrl}erbfinorbit`;
-
+export const MainUrl = `https://uat.erb.ai/`;
+export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 
 //prod
 export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
@@ -2787,8 +2782,15 @@ export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
 
 export const PRODUCTION_CODE_PUSH_IOS = 'PavWWJS5tedBdJlTQim3Y6G3_3uJ7yZvFeAk3';
 export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
+
+/////////////////////////////////////
+//  SMS API
+/////////////////////////////////////
+export const SMSURL = `https://api.msg91.com/api/`;
 //OTP SMS
-export const SMS_OTP = `https://api.msg91.com/api/v5/otp`
+export const SMS_OTP = `${SMSURL}v5/otp`;
+//Send SMS
+export const SMS_SEND = `${SMSURL}sendhttp.php`;
 
 
 /**

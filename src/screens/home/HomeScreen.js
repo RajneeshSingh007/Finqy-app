@@ -175,7 +175,7 @@ export default class HomeScreen extends React.PureComponent {
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
-        if (value === undefined || value === null) {
+        if (Helper.nullStringCheck(value) === true) {
           const body = JSON.stringify({
             username: `ERBFinPro`,
             product: `FinPro App`,

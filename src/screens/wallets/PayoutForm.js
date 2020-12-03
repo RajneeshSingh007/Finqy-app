@@ -98,6 +98,7 @@ export default class PayoutForm extends React.PureComponent {
                                         marginStart: 8,
                                         marginEnd: 8
                                     }}
+                                    enableHeight={false}
                                 />
                                 <View styleName='vertical v-start h-start sm-gutter'>
                                     <Title

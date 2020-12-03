@@ -50,7 +50,7 @@ export default class Payout extends React.PureComponent {
     )
     //console.log('body',body)
     Helper.networkHelperTokenPost(Pref.PayoutUrl, body, Pref.methodPost, this.state.token, result => {
-      console.log('result', result)
+      //console.log('result', result)
       const { response_header, product } = result;
       const { res_type } = response_header;
       if (res_type === 'success') {

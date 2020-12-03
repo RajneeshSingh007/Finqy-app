@@ -51,7 +51,7 @@ export default class LoginScreen extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
 
       Pref.getVal(Pref.saveToken, (value) => {
-        if (value === undefined || value === null) {
+        if (Helper.nullStringCheck(value) === true) {
           const body = JSON.stringify({
             username: `ERBFinPro`,
             product: `FinPro App`,
@@ -61,6 +61,7 @@ export default class LoginScreen extends React.PureComponent {
             body,
             Pref.methodPost,
             (result) => {
+              //console.log('result', result)
               const { data, response_header } = result;
               const { res_type } = response_header;
               if (res_type === `success`) {
@@ -104,7 +105,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('Invalid password', 0);
     }
-    //console.log('token', this.state.token);
+    console.log('token', this.state.token);
     if (errorData) {
       this.setState({ loading: true });
       const jsonData = JSON.stringify({

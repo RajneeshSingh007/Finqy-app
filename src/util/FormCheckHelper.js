@@ -281,31 +281,19 @@ export const secondFormCheck = (title, specificForms) => {
             ) {
                 result = false;
                 Helper.showToastMessage("Please, Select Insurance Type", 0);
-            } else {
-                if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
-                    result = false;
-                    Helper.showToastMessage("Invalid aadhar card number", 0);
-                } else if (
-                    specificForms.pancardNo !== "" &&
-                    !Helper.checkPanCard(specificForms.pancardNo)
-                ) {
-                    result = false;
-                    Helper.showToastMessage("Invalid pan card number", 0);
-                }
-                // else {
-                //   let parseJs = JSON.parse(JSON.stringify(specificForms));
-                //   for (var key in parseJs) {
-                //     if (key !== "floaterItemList") {
-                //       const value = parseJs[key];
-                //       if (value !== undefined) {
-                //         if (Array.isArray(value) === false) {
-                //           formData.append(key, parseJs[key]);
-                //         }
-                //       }
-                //     }
-                //   }
-                // }
-            }
+            } 
+            // else {
+            //     if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+            //         result = false;
+            //         Helper.showToastMessage("Invalid aadhar card number", 0);
+            //     } else if (
+            //         specificForms.pancardNo !== "" &&
+            //         !Helper.checkPanCard(specificForms.pancardNo)
+            //     ) {
+            //         result = false;
+            //         Helper.showToastMessage("Invalid pan card number", 0);
+            //     }
+            // }
         } else if (title === "Vector Plus") {
             //required_cover
             if (
@@ -605,10 +593,11 @@ export const secondFormCheck = (title, specificForms) => {
         } else if (title === 'Insure Check' && specificForms.turnover === "") {
             result = false;
             Helper.showToastMessage("Annual Turnover Empty", 0);
-        } else if (specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+        } else if (
+            specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
             result = false;
             Helper.showToastMessage("Invalid aadhar card number", 0);
-        } else if (
+        } else if ( 
             specificForms.pancardNo !== "" &&
             !Helper.checkPanCard(specificForms.pancardNo)
         ) {
@@ -744,6 +733,12 @@ export const constructObjEditLead = (item) => {
         empType = employment_type;
     }
 
+    const aadharcardnos = Helper.nullStringCheckWithReturn(aadharcard_no);
+
+    if(aadharcardnos === '0'){
+        aadharcardnos = "";
+    }
+
     const convertedjsonObj = {
         first: {
             name: Helper.nullStringCheckWithReturn(name),
@@ -768,7 +763,7 @@ export const constructObjEditLead = (item) => {
             company: Helper.nullStringCheckWithReturn(company),
             amount: Helper.nullStringCheckWithReturn(damount),
             companylocation: Helper.nullStringCheckWithReturn(companylocation),
-            aadharcardNo: Helper.nullStringCheckWithReturn(aadharcard_no),
+            aadharcardNo:aadharcardnos,
             pancardNo: Helper.nullStringCheckWithReturn(pancard_no),
             turnover: Helper.nullStringCheckWithReturn(turnover),
             nooldcard: Helper.nullStringCheckWithReturn(nooldcard),

@@ -5,7 +5,7 @@ import {sizeWidth, sizeHeight} from '../../util/Size';
 import {Table, Row} from 'react-native-table-component';
 
 const CommonTable = (props) => {
-  const {widthArr, tableHead, dataList = [], headerTextStyle ={}, headerStyle={}, textStyle={},rowStyle={}} = props;  
+  const {widthArr, tableHead, dataList = [], headerTextStyle ={}, headerStyle={}, textStyle={},rowStyle={}, enableHeight = true} = props;  
   return (
     <ScrollView
       horizontal
@@ -15,10 +15,12 @@ const CommonTable = (props) => {
         style={[
           {
             marginHorizontal: sizeWidth(2),
-            height: sizeHeight(56),
             backgroundColor: 'white',
             flex:1
           },
+          enableHeight && {
+            height: sizeHeight(56),
+          }
         ]}>
         {/* <Table>
           <Row
