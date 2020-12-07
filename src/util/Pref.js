@@ -2698,22 +2698,25 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bmxqUE1BWWZoY3NoamtlQi91RFFpMDlydkNseFJ3ZVltY3BoQUE0VVgrS0tzR1E9PQ==`;
 
 //production url
-//export const MainUrl = `https://erb.ai/`;
-//export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
+export const MainUrl = `https://erb.ai/`;
+export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
 
 //test url
-export const MainUrl = `https://uat.erb.ai/`;
-export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+//export const MainUrl = `https://uat.erb.ai/`;
+//export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 
 //prod
 export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
 
 //test
-//export const PayoutPolicy = `https://uat.erb.ai/Finprond/Payout%20Policy.pdf`;
+//export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
 
-export const FinOrbitFormUrl = `${ApiDirUrl}finorbit/`;
+//prod
+export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
+
+//export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 
 export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
 export const NewDashBoardUrl = `${ApiDirUrl}tool_dashboard_api.php`;

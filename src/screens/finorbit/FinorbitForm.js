@@ -574,7 +574,7 @@ export default class FinorbitForm extends React.PureComponent {
           formData.append("formid", id);
         }
 
-        const formUrls = `${Pref.FinOrbitFormUrl}${uniq}.php`;
+        const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
         console.log('formData', formData);
         console.log('formUrls', formUrls);

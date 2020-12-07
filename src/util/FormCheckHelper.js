@@ -733,7 +733,7 @@ export const constructObjEditLead = (item) => {
         empType = employment_type;
     }
 
-    const aadharcardnos = Helper.nullStringCheckWithReturn(aadharcard_no);
+    let aadharcardnos = Helper.nullStringCheckWithReturn(aadharcard_no);
 
     if(aadharcardnos === '0'){
         aadharcardnos = "";

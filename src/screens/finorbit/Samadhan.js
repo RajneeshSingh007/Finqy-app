@@ -170,7 +170,7 @@ export default class Samadhan extends React.Component {
     if (checkData && this.state.isTermSelected) {
       this.setState({ loading: true });
       Helper.networkHelperTokenContentType(
-        `${Pref.FinOrbitFormUrl}insurance_samadhan.php`,
+        `${Pref.FinorbitFormUrl}insurance_samadhan.php`,
         JSON.stringify(body),
         Pref.methodPost,
         this.state.token,
