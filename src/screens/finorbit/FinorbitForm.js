@@ -689,7 +689,7 @@ export default class FinorbitForm extends React.PureComponent {
                         this.state.title !== "Mutual Fund" &&
                         this.state.title !== "Motor Insurance" &&
                         this.state.title !== 'Life Cum Invt. Plan' &&
-                        this.state.title !== 'Insure Check'
+                        this.state.title !== 'Insure Check' 
                       }
                       editItemRestore={editFirst}
                       title={this.state.title}

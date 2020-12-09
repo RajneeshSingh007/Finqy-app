@@ -71,7 +71,7 @@ export const firstFormCheck = (title, commons) => {
         title !== `Mutual Fund` &&
         title !== `Home Loan` &&
         //title !== `Loan Against Property` &&
-        //title !== `Personal Loan` &&
+        title !== `Personal Loan` &&
         //title !== `Business Loan` &&
         //title !== `Auto Loan` &&
         title !== `Life Cum Invt. Plan` &&
@@ -97,13 +97,13 @@ export const firstFormCheck = (title, commons) => {
     ) {
         Helper.showToastMessage("Please, Select Qualification", 0);
     } else if (
-        //title !== `Personal Loan` &&
+        title !== `Personal Loan` &&
         title !== "Fixed Deposit" &&
         title !== "Business Loan" &&
         title !== `Motor Insurance` &&
         title !== `Mutual Fund` &&
         title !== `Vector Plus` &&
-        //title !== `Home Loan` &&
+        title !== `Home Loan` &&
         //title !== `Loan Against Property` &&
         //title !== `Auto Loan` &&
         title !== `Life Cum Invt. Plan` &&
@@ -171,24 +171,52 @@ export const secondFormCheck = (title, specificForms) => {
     ) {
         result = false;
         Helper.showToastMessage("Select Existing Card/Loan", 0);
-    } else if ((
-        //title === "Home Loan" || 
-        title === "Business Loan" || title === "Personal Loan") && specificForms.company === '') {
+    } else if (
+        //(title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === "Personal Loan") 
+        && specificForms.company === '') {
         result = false;
         Helper.showToastMessage("Company name empty", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover === '') {
+    } else if (
+        //(title == "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === "Personal Loan") 
+        && specificForms.turnover === '') {
         result = false;
         Helper.showToastMessage("Annual Turnover empty", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.turnover.length < 2) {
+    } else if (
+        //(title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === "Personal Loan") 
+        && specificForms.turnover.length < 2) {
         result = false;
         Helper.showToastMessage("Invalid turnover", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan" || title === 'Loan Against Property') && specificForms.amount === '') {
+    } else if (
+        (
+        //title === "Home Loan" || 
+        title === "Business Loan" || title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         ) 
+        && specificForms.amount === '') {
         result = false;
         Helper.showToastMessage("Desired Amount empty", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan" || title === 'Loan Against Property') && specificForms.amount.length < 2) {
+    } else if (        (
+        //title === "Home Loan" || 
+        title === "Business Loan" || title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         ) 
+        && specificForms.amount.length < 2) {
         result = false;
         Helper.showToastMessage("Invalid desired amount", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.pancardNo === "") {
+    } else if (        
+        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.pancardNo === "") {
         result = false;
         Helper.showToastMessage("Pancard number empty", 0);
     } else if (
@@ -197,25 +225,54 @@ export const secondFormCheck = (title, specificForms) => {
     ) {
         result = false;
         Helper.showToastMessage("Invalid pan card number", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.aadharcardNo === "") {
+    } else if (        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.aadharcardNo === "") {
         result = false;
         Helper.showToastMessage("Aadhar card number empty", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+    } else if (        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
         result = false;
         Helper.showToastMessage("Invalid aadhar card number", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.type_loan === "") {
+    } else if (        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.type_loan === "") {
         result = false;
         Helper.showToastMessage("Select Type of Loan", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.existingcard === "") {
+    } else if (        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.existingcard === "") {
         result = false;
         Helper.showToastMessage("Select Existing Card/Loan", 0);
-    } else if ((title === "Home Loan" || title === "Business Loan" || title === "Personal Loan") && specificForms.companylocation === "") {
+    } else if (        //(
+        //title === "Home Loan" || 
+        title === "Business Loan" 
+        //|| title === 'Loan Against Property'
+        //|| title === "Personal Loan"
+         //) 
+        && specificForms.companylocation === "") {
         result = false;
         Helper.showToastMessage("Please, Select Company Location", 0);
     } else if (
-        //(
-        title === 'Home Loan'
-        //|| title === 'Loan Against Property'
+        //( title === 'Home Loan'|| 
+        title === 'Loan Against Property'
         //) 
         &&
         specificForms.lppincode === "") {
@@ -223,25 +280,27 @@ export const secondFormCheck = (title, specificForms) => {
         Helper.showToastMessage("Please, Enter Loan Property Pincode", 0);
         //Helper.showToastMessage("Loan property pincode empty", 0);
     } else if (
-       // (
-            title === 'Home Loan'
-        //|| title === 'Loan Against Property'
-    //) 
-    && specificForms.lppincode !== '' &&
+        //( title === 'Home Loan'|| 
+        title === 'Loan Against Property'
+        //) 
+        && specificForms.lppincode !== '' &&
         specificForms.lppincode.length < 6) {
         result = false;
         Helper.showToastMessage("Please, Correct Loan Property Pincode", 0);
         //Helper.showToastMessage("Loan property pincode empty", 0);
     } else if (
-        // (
-        title === 'Home Loan'
-        //|| title === 'Loan Against Property'
+//( title === 'Home Loan'|| 
+        title === 'Loan Against Property'
         //) 
         &&
         specificForms.lppincode !== '' && (specificForms.loan_property_city === '' || specificForms.homestate === '')) {
         result = false;
         Helper.showToastMessage('Failed to find city & state, Please, check loan property pincode', 0);
-    } else if ((title === "Home Loan" || title === 'Loan Against Property') && specificForms.loan_property_address === "") {
+    } else if (
+       //( title === 'Home Loan'|| 
+        title === 'Loan Against Property'
+        //) 
+        && specificForms.loan_property_address === "") {
         result = false;
         Helper.showToastMessage("Property Address empty", 0);
     } else if (title === "Life Cum Invt. Plan" && specificForms.investment_amount === "") {
@@ -609,7 +668,7 @@ export const secondFormCheck = (title, specificForms) => {
 }
 
 /**
- * 
+ * edit lead
  * @param {*} item 
  */
 export const constructObjEditLead = (item) => {
@@ -839,7 +898,7 @@ export const constructObjEditLead = (item) => {
 }
 
 /**
- * 
+ * edit samadhan
  * @param {*} item 
  */
 export const constructObjEditSamadhan = (item) =>{

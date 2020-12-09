@@ -673,7 +673,9 @@ export default class CommonForm extends React.PureComponent {
                     ]}>
                     {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' || title === 'Auto Loan' || 
                     //title === 'Home Loan' || 
-                    title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? `*` : ''}` : this.state.dob}
+                    title === 'Loan Against Property' || title === 'Business Loan' 
+                    //|| title === 'Personal Loan' 
+                    ? `*` : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -923,7 +925,11 @@ export default class CommonForm extends React.PureComponent {
             <View style={StyleSheet.flatten([styles.radiodownbox, {
               height: title === `Health Insurance` ? 90 : 56
             }])}>
-              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? '*' : ''}`}</Title>
+              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' || title === 'Auto Loan' || 
+              //title === 'Home Loan' || 
+              title === 'Loan Against Property' 
+              //|| title === 'Personal Loan' 
+              ? '*' : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>

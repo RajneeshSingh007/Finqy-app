@@ -745,7 +745,9 @@ export default class SpecificForm extends React.PureComponent {
                 value={this.state.company}
                 placeholder={`Company Name ${title === 'Auto Loan' ||
                   //title === 'Home Loan' || 
-                  title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}
+                  title === 'Business Loan' 
+                  //|| title === 'Personal Loan'
+                   ? '*' : ''}`}
                 returnKeyType={'next'}
                 changecolor
                 containerstyle={styles.animatedInputCont}
@@ -801,7 +803,11 @@ export default class SpecificForm extends React.PureComponent {
                   //title === `Auto Loan`
                   //? 'Annual Turnover/CTC *'
                   //: 
-                  `Annual Turnover/CTC ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
+                  `Annual Turnover/CTC ${title === 'Auto Loan' 
+                  //|| title === 'Home Loan' 
+                  || title === 'Business Loan' 
+                  //|| title === 'Personal Loan'
+                   ? ' *' : ''}`
                 }
                 returnKeyType={'next'}
                 changecolor
@@ -903,7 +909,11 @@ export default class SpecificForm extends React.PureComponent {
                     title === `Business Loan` ||
                     title === 'Auto Loan' ||
                     title === `Personal Loan`
-                    ? `Desired Amount${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' || title === 'Loan Against Property' ? ' *' : ''}`
+                    ? `Desired Amount${title === 'Auto Loan' 
+                    //|| title === 'Home Loan' 
+                    || title === 'Business Loan' 
+                    //|| title === 'Personal Loan' 
+                    || title === 'Loan Against Property' ? ' *' : ''}`
                     : 'Investment Amount *'
               }
               returnKeyType={'next'}
@@ -1093,7 +1103,11 @@ export default class SpecificForm extends React.PureComponent {
         {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
-              placeholder={`PAN Card Number${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}
+              placeholder={`PAN Card Number${title === 'Auto Loan' 
+              //|| title === 'Home Loan' 
+              || title === 'Business Loan' 
+              //|| title === 'Personal Loan' 
+              ? ' *' : ''}`}
               onChangeText={value => this.setState({ pancardNo: value })}
               value={this.state.pancardNo}
               changecolor
@@ -1102,7 +1116,11 @@ export default class SpecificForm extends React.PureComponent {
               returnKeyType={'next'}
             />
             <AnimatedInputBox
-              placeholder={`Aadhar Card Number ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}
+              placeholder={`Aadhar Card Number ${title === 'Auto Loan' 
+              //|| title === 'Home Loan' 
+              || title === 'Business Loan' 
+              //|| title === 'Personal Loan' 
+              ? ' *' : ''}`}
               maxLength={12}
               keyboardType={'number-pad'}
               onChangeText={value => {
@@ -2431,7 +2449,11 @@ export default class SpecificForm extends React.PureComponent {
           title === `Business Loan` ? (
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Type of Loan ${title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`}</Title>
+                <Title style={styles.bbstyle}>{`Type of Loan ${
+                  //title === 'Home Loan' || 
+                title === 'Business Loan' 
+                //|| title === 'Personal Loan' 
+                ? ' *' : ''}`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ type_loan: value })}
@@ -2483,7 +2505,11 @@ export default class SpecificForm extends React.PureComponent {
             <View>
               <View style={styles.radiocont}>
                 <View style={styles.radiodownbox}>
-                  <Title style={styles.bbstyle}>{`Existing Card/Loan ${title === 'Credit Card' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''
+                  <Title style={styles.bbstyle}>{`Existing Card/Loan ${title === 'Credit Card'
+                  //|| title === 'Home Loan' 
+                  || title === 'Business Loan' 
+                  //|| title === 'Personal Loan' 
+                  ? '*' : ''
                     }`}</Title>
 
                   <RadioButton.Group
@@ -2561,7 +2587,11 @@ export default class SpecificForm extends React.PureComponent {
                   <View style={styles.dropdownbox}>
                     <Title style={styles.boxsubtitle}>
                       {this.state.companylocation === ''
-                        ? `Select Company Location ${title === 'Auto Loan' || title === 'Home Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ' *' : ''}`
+                        ? `Select Company Location ${title === 'Auto Loan' 
+                        //|| title === 'Home Loan' 
+                        || title === 'Business Loan' 
+                        //|| title === 'Personal Loan' 
+                        ? ' *' : ''}`
                         : this.state.companylocation}
                     </Title>
                     <Icon
@@ -2651,7 +2681,11 @@ export default class SpecificForm extends React.PureComponent {
             maxLength={6}
             keyboardType={'number-pad'}
             value={this.state.lppincode}
-            placeholder={`Current Property Pincode ${title === 'Home Loan' ? ' *' : ''}`}
+            placeholder={`Current Property Pincode ${
+              //title === 'Home Loan' ? ' *' : ''
+              ''
+            }
+            `}
             returnKeyType={'next'}
             changecolor
             containerstyle={styles.animatedInputCont}
@@ -2682,7 +2716,9 @@ export default class SpecificForm extends React.PureComponent {
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ loan_property_address: value })}
             value={this.state.loan_property_address}
-            placeholder={`Property Address${title === 'Home Loan' || title === 'Loan Against Property' ? ' *' : ''}`}
+            placeholder={`Property Address${
+              //title === 'Home Loan' || 
+            title === 'Loan Against Property' ? ' *' : ''}`}
             //editable={false}
             //disabled={true}
             multiline
