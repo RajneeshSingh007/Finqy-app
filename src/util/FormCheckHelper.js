@@ -8,7 +8,6 @@ import Lodash from 'lodash';
  * @param {*} commons 
  */
 export const firstFormCheck = (title, commons) => {
-    console.log('title', title)
     let result = false;
     if (commons.name === "") {
         Helper.showToastMessage("Full Name empty", 0);
@@ -18,23 +17,25 @@ export const firstFormCheck = (title, commons) => {
         Helper.showToastMessage("Invalid mobile number", 0);
     } else if (commons.mobile.match(/^[0-9]*$/g) === null) {
         Helper.showToastMessage("Invalid mobile number", 0);
-    } else if (
-        //title !== "Term Insurance" &&
-        //title !== "Health Insurance" &&
-        //title !== "Fixed Deposit" &&
-        //title !== `Life Cum Invt. Plan` &&
-        //title !== `Motor Insurance` &&
-        //title !== `Mutual Fund` &&
-        title !== `Vector Plus` &&
-        title !== `Home Loan` &&
-        //title !== `Loan Against Property` &&
-        //title !== `Personal Loan` &&
-        //title !== `Business Loan` &&
-        //title !== `Auto Loan` &&
-        commons.email === ""
-    ) {
-        Helper.showToastMessage("Email empty", 0);
-    } else if (
+    } 
+    // else if (
+    //     //title !== "Term Insurance" &&
+    //     //title !== "Health Insurance" &&
+    //     //title !== "Fixed Deposit" &&
+    //     //title !== `Life Cum Invt. Plan` &&
+    //     //title !== `Motor Insurance` &&
+    //     //title !== `Mutual Fund` &&
+    //     title !== `Vector Plus` &&
+    //     title !== `Home Loan` &&
+    //     //title !== `Loan Against Property` &&
+    //     //title !== `Personal Loan` &&
+    //     //title !== `Business Loan` &&
+    //     //title !== `Auto Loan` &&
+    //     commons.email === ""
+    // ) {
+    //     Helper.showToastMessage("Email empty", 0);
+    // } 
+    else if (
         commons.email !== "" &&
         Helper.emailCheck(commons.email) === false
         //!commons.email.includes("@")
@@ -66,55 +67,58 @@ export const firstFormCheck = (title, commons) => {
     ) {
         //Helper.showToastMessage("Please, Select Current Location", 0);
         Helper.showToastMessage('Failed to find city & state, Please, check pincode', 0);
-    } else if (
-        title !== "Fixed Deposit" &&
-        title !== `Mutual Fund` &&
-        title !== `Home Loan` &&
-        //title !== `Loan Against Property` &&
-        title !== `Personal Loan` &&
-        //title !== `Business Loan` &&
-        //title !== `Auto Loan` &&
-        title !== `Life Cum Invt. Plan` &&
-        title !== 'Motor Insurance' &&
-        (commons.dob === "" || commons.dob === `Date of Birth *` || commons.dob === `Date of Birth`)
-    ) {
-        Helper.showToastMessage("Date of Birth empty", 0);
-    } else if (
+    } 
+    // else if (
+    //     title !== "Fixed Deposit" &&
+    //     title !== `Mutual Fund` &&
+    //     title !== `Home Loan` &&
+    //     //title !== `Loan Against Property` &&
+    //     title !== `Personal Loan` &&
+    //     //title !== `Business Loan` &&
+    //     //title !== `Auto Loan` &&
+    //     title !== `Life Cum Invt. Plan` &&
+    //     title !== 'Motor Insurance' &&
+    //     (commons.dob === "" || commons.dob === `Date of Birth *` || commons.dob === `Date of Birth`)
+    // ) {
+    //     Helper.showToastMessage("Date of Birth empty", 0);
+    // } 
+    else if (
         //title !== `Personal Loan` &&
         //title !== `Loan Against Property` &&
         //title !== `Home Loan` &&
         //title !== `Business Loan` &&
         //title !== `Auto Loan` &&
         title !== `Motor Insurance` &&
-        title !== `Insure Check` &&
+        //title !== `Insure Check` &&
         commons.gender === ""
     ) {
         Helper.showToastMessage("Please, Select Gender", 0);
-    } else if (
-        (title === "Term Insurance" ||
-            title === "Health Insurance") &&
-        commons.qualification === ""
-    ) {
-        Helper.showToastMessage("Please, Select Qualification", 0);
-    } else if (
-        title !== `Personal Loan` &&
-        title !== "Fixed Deposit" &&
-        title !== "Business Loan" &&
-        title !== `Motor Insurance` &&
-        title !== `Mutual Fund` &&
-        title !== `Vector Plus` &&
-        title !== `Home Loan` &&
-        //title !== `Loan Against Property` &&
-        //title !== `Auto Loan` &&
-        title !== `Life Cum Invt. Plan` &&
-        title !== `Insure Check` &&
-        commons.employ === ""
-    ) {
-        Helper.showToastMessage("Please, Select Employment Type", 0);
-    } else {
+    } 
+    // else if (
+    //     (title === "Term Insurance" ||
+    //         title === "Health Insurance") &&
+    //     commons.qualification === ""
+    // ) {
+    //     Helper.showToastMessage("Please, Select Qualification", 0);
+    // } else if (
+    //     title !== `Personal Loan` &&
+    //     title !== "Fixed Deposit" &&
+    //     title !== "Business Loan" &&
+    //     title !== `Motor Insurance` &&
+    //     title !== `Mutual Fund` &&
+    //     title !== `Vector Plus` &&
+    //     title !== `Home Loan` &&
+    //     //title !== `Loan Against Property` &&
+    //     //title !== `Auto Loan` &&
+    //     title !== `Life Cum Invt. Plan` &&
+    //     title !== `Insure Check` &&
+    //     commons.employ === ""
+    // ) {
+    //     Helper.showToastMessage("Please, Select Employment Type", 0);
+    // }
+    else {
         result = true;
     }
-    console.log('result', result);
     return result;
 }
 
@@ -126,6 +130,18 @@ export const firstFormCheck = (title, commons) => {
  */
 export const secondFormCheck = (title, specificForms) => {
     let result = true;
+    if (
+        specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+        result = false;
+        Helper.showToastMessage("Invalid aadhar card number", 0);
+    } else if ( 
+        specificForms.pancardNo !== "" &&
+        !Helper.checkPanCard(specificForms.pancardNo)
+    ) {
+        result = false;
+        Helper.showToastMessage("Invalid pan card number", 0);
+    }
+    return result;
     if (
         title !== `Personal Loan` &&
         title !== `Loan Against Property` &&
@@ -913,3 +929,246 @@ export const constructObjEditSamadhan = (item) =>{
       formid:id
     }
 }
+
+/**
+ * files check 3rd form
+ * @param {} title 
+ * @param {*} allfileslist 
+ */
+export const thirdFormFileCheck = (title, allfileslist) =>{
+    let result = true;
+    return result;
+
+    let existence = "";
+      //console.log('allfileslist', allfileslist)
+      if (Helper.nullCheck(allfileslist) === false && allfileslist.length > 0) {
+        // const loops = Lodash.map(allfileslist, (ele) => {
+        //   let parseJs = JSON.parse(JSON.stringify(ele));
+        //   for (var key in parseJs) {
+        //     const value = parseJs[key];
+        //     if (value !== undefined) {
+        //       if (Array.isArray(value) === false) {
+        //         formData.append(key, parseJs[key]);
+        //       }
+        //     }
+        //   }
+        // });
+        if (title === 'Motor Insurance') {
+          const rcCopy = Lodash.find(allfileslist, io => {
+            if ('rcbookcopy' in io) {
+              io.key = 'rcbookcopy';
+              return io;
+            } else {
+              return undefined;
+            }
+          });
+          if (rcCopy !== undefined) {
+            const { key } = rcCopy;
+            const { name } = rcCopy[key];
+            if (String(key) === `rcbookcopy` && name !== undefined && String(name).length === 0) {
+              existence = key;
+            }
+          } else {
+            existence = "rcbookcopy";
+          }
+
+          const oldInCopy = Lodash.find(allfileslist, io => {
+            if ('policycopy' in io) {
+              io.key = 'policycopy';
+              return io;
+            } else {
+              return undefined;
+            }
+          });
+          if (existence === "") {
+            if (oldInCopy !== undefined) {
+              const { key } = oldInCopy;
+              const { name } = oldInCopy[key];
+              if (String(key) === `policycopy` && name !== undefined && String(name).length === 0) {
+                existence = key;
+              }
+            } else {
+              existence = "policycopy";
+            }
+          }
+        }
+        // else if (title === 'Business Loan') {
+        //   //|| title === 'Personal Loan'
+        //   //title === 'Auto Loan' || 
+        //   //pan card
+        //   const pancard = Lodash.find(allfileslist, io => {
+        //     if ('pancard' in io) {
+        //       io.key = 'pancard';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (pancard !== undefined) {
+        //     const { key } = pancard;
+        //     const { name } = pancard[key];
+        //     if (String(key) === `pancard` && name !== undefined && String(name).length === 0) {
+        //       existence = key;
+        //     }
+        //   } else {
+        //     existence = "pancard";
+        //   }
+
+        //   //aadhar card
+        //   const aadharcard = Lodash.find(allfileslist, io => {
+        //     if ('aadharcard' in io) {
+        //       io.key = 'aadharcard';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (existence === "") {
+        //     if (aadharcard !== undefined) {
+        //       const { key } = aadharcard;
+        //       const { name } = aadharcard[key];
+        //       if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
+        //         existence = key;
+        //       }
+        //     } else {
+        //       existence = "aadharcard";
+        //     }
+        //   }
+
+        //   //salary slip 
+        //   const salaryslip = Lodash.find(allfileslist, io => {
+        //     if ('salaryslip' in io) {
+        //       io.key = 'salaryslip';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (existence === "") {
+
+        //     if (salaryslip !== undefined) {
+        //       const { key } = salaryslip;
+        //       const { name } = salaryslip[key];
+        //       if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
+        //         existence = key;
+        //       }
+        //     } else {
+        //       existence = "salaryslip";
+        //     }
+        //   }
+
+        //   //salary slip 1 
+        //   const salaryslip1 = Lodash.find(allfileslist, io => {
+        //     if ('salaryslip1' in io) {
+        //       io.key = 'salaryslip1';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (existence === "") {
+
+        //     if (salaryslip1 !== undefined) {
+        //       const { key } = salaryslip1;
+        //       const { name } = salaryslip1[key];
+        //       if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
+        //         existence = key;
+        //       }
+        //     } else {
+        //       existence = "salaryslip1";
+        //     }
+        //   }
+
+
+        //   //salary slip 2
+        //   const salaryslip2 = Lodash.find(allfileslist, io => {
+        //     if ('salaryslip2' in io) {
+        //       io.key = 'salaryslip2';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (existence === "") {
+
+        //     if (salaryslip2 !== undefined) {
+        //       const { key } = salaryslip2;
+        //       const { name } = salaryslip2[key];
+        //       if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
+        //         existence = key;
+        //       }
+        //     } else {
+        //       existence = "salaryslip2";
+        //     }
+        //   }
+        //   //3month bank statement
+        //   const bankstate = Lodash.find(allfileslist, io => {
+        //     if ('bankstate' in io) {
+        //       io.key = 'bankstate';
+        //       return io;
+        //     } else {
+        //       return undefined;
+        //     }
+        //   });
+        //   if (existence === "") {
+
+        //     if (bankstate !== undefined) {
+        //       const { key } = bankstate;
+        //       const { name } = bankstate[key];
+        //       if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
+        //         existence = key;
+        //       }
+        //     } else {
+        //       existence = "bankstate";
+        //     }
+        //   }
+        // }
+
+      } else {
+        if (title == 'Motor Insurance') {
+          existence = "rcbookcopy";
+        }
+        // else if (title == 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
+        //   existence = "pancard";
+        // }
+      }
+      //console.log('existence', existence)
+      if (this.state.currentPosition === 2) {
+        if (title === `Motor Insurance`) {
+          if (existence === 'rcbookcopy') {
+            result = false;
+            Helper.showToastMessage('Please, Select RC Book', 0);
+          } else if (existence === 'policycopy') {
+            result = false;
+            Helper.showToastMessage('Please, Select Policy', 0);
+          }
+        }
+        // else if (title === `Auto Loan` || title === 'Business Loan' || title === 'Personal Loan') {
+        //   if (existence === 'pancard') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Pancard', 0);
+        //   } else if (existence === 'aadharcard') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Aadhar Card', 0);
+        //   } else if (existence === 'salaryslip') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Salary Slip 1', 0);
+        //   } else if (existence === 'salaryslip1') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Salary Slip 2', 0);
+        //   } else if (existence === 'salaryslip2') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Salary Slip 3', 0);
+        //   } else if (existence === 'bankstate') {
+        //     result = false;
+        //     Helper.showToastMessage('Please, Select Bank Statement', 0);
+        //   }
+        // }
+      }
+    return result;
+}
+
+/**
+ * star return
+ */
+export const returnAsterik = () => "*";

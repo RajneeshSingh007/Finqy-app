@@ -248,7 +248,8 @@ export default class FileUploadForm extends React.PureComponent {
           <View>
             {/* <View style={styles.line1} /> */}
             <CommonFileUpload
-              title={'RC Book *'}
+              // title={'RC Book *'}
+              title={'RC Book'}
               type={2}
               pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) => {
@@ -275,7 +276,8 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             <CommonFileUpload
-              title={'Policy *'}
+              // title={'Policy *'}
+              title={'Policy'}
               type={2}
               pickedTitle={this.findFileName(`policycopy`)}
               pickedCallback={(selected, res) => {

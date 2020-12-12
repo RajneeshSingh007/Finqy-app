@@ -44,8 +44,27 @@ export default class ApptForm extends React.PureComponent {
   }
 
   restoreData(obj) {
-    //console.log('obj', obj);
-    if (obj !== undefined) {
+    if (Helper.nullCheck(obj) === false) {
+      const currentdate = moment().toDate();
+      const dateObj = moment().toObject();
+  
+      currentdate.setDate(Number(dateObj.date + 1));
+  
+      const maxDate = moment().toDate();
+      maxDate.setDate(Number(currentdate.getDate()));
+      maxDate.setMonth(Number(currentdate.getMonth() + 1));
+  
+      if(Helper.nullStringCheck(obj.baa) === false){
+        // const split = obj.baa.split(' ');
+        // const timeSp = split[1].split()
+        // currentdate.setFullYear(Number(split[2]),Number(split[1]-1),Number(split[0]))
+        // obj.currentDate = currentdate;
+      }else{
+        obj.currentDate = currentdate;
+        obj.showdatesx = currentdate;
+      }
+      obj.maxDates = maxDate;
+      obj.showCalendar=false;
       this.setState(obj);
     }
   }

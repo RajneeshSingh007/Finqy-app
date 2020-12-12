@@ -85,6 +85,7 @@ export default class AnimatedInputBox extends React.PureComponent {
       placefont = 14,
       boldinputText = false,
       enableWords = false,
+      showStarVisible = false,
       ...prop
     } = this.props;
     const contentExists = String(value).trim().length > 0 ? true : false;
@@ -125,7 +126,7 @@ export default class AnimatedInputBox extends React.PureComponent {
                     fontFamily: Pref.getFontName(4),
                   },
                   placeholderStyle,
-                ])}>{`${placeholder}`}</Caption>
+                ])}>{`${placeholder}${showStarVisible ? '*' : ''}`}</Caption>
             </Animated.View>
           ) : null}
           <View

@@ -18,10 +18,13 @@ export default class PayoutForm extends React.PureComponent {
         //this.backClick = this.backClick.bind(this);
         this.state = {
             dataList: [],
+            exDataList:[],
             loading: true,
             selectedText: '',
             tableHead: [],
+            exTableHead:[],
             widthArr: [],
+            exWidthArr:[],
             tc: '',
             length: -1,
             pleaseNote: null
@@ -37,19 +40,23 @@ export default class PayoutForm extends React.PureComponent {
         const tc = navigation.getParam('tc', '');
         const head = navigation.getParam('head', []);
         const pleaseNote = navigation.getParam('pn', null);
+        const exData = navigation.getParam('ex', null);
+        const width = navigation.getParam('width', []);
+        //console.log('exData', exData)
 
         this.focusListener = navigation.addListener('didFocus', () => {
-            let widthArr = [];
-            if (head && head.length > 0) {
-                if (head.length === 5) {
-                    widthArr = [60, 80, 300, 300, 120];
-                } else if (head.length === 3) {
-                    widthArr = [60, 500, 120];
-                } else if (head.length === 4) {
-                    widthArr = [60, 100, 100, 120];
-                }
+            let widthArr = [], exWidthArr = [];
+            if (Helper.nullCheck(width) === false && width.length > 0) {
+                widthArr = width;
+                // if (head.length === 5) {
+                //     widthArr = [60, 80, 300, 300, 120];
+                // } else if (head.length === 3) {
+                //     widthArr = [60, 500, 120];
+                // } else if (head.length === 4) {
+                //     widthArr = [60, 300, 120, 120];
+                // }
             }
-            let dataList = [];
+            let dataList = [], exDataList=[];
             if (length && length > 0) {
                 for (let index = 1; index <= length; index++) {
                     const element = data[index];
@@ -57,7 +64,18 @@ export default class PayoutForm extends React.PureComponent {
                 }
             }
 
-            this.setState({ loading: false, tc: tc, length: length, title: title, tableHead: head, widthArr: widthArr, dataList: dataList, pleaseNote: pleaseNote });
+            if(Helper.nullCheck(exData) === false){
+                if (Helper.nullCheck(exData.width) === false && exData.width.length > 0) {
+                    exWidthArr = exData.width;
+                }   
+                if (Helper.nullCheck(exData.length) === false && length > 0) {
+                    if(Helper.nullCheck(exData.data) === false){
+                        exDataList = exData.data;
+                    }
+                }    
+            }
+
+            this.setState({ loading: false, tc: tc, length: length, title: title, tableHead: head, widthArr: widthArr, dataList: dataList, pleaseNote: pleaseNote,exWidthArr:exWidthArr,exDataList:exDataList,exTableHead:Helper.nullCheck(exData) === false && Helper.nullCheck(exData.head) === false ? exData.head : [] });
 
         });
     }
@@ -125,6 +143,21 @@ export default class PayoutForm extends React.PureComponent {
                                     }}
                                     enableHeight={false}
                                 />
+                                <View style={{marginTop:4}}></View>
+                                {this.state.exDataList.length > 0 ? <CommonTable
+                                    dataList={this.state.exDataList}
+                                    widthArr={this.state.exWidthArr}
+                                    tableHead={this.state.exTableHead}
+                                    headerTextStyle={{
+                                        textAlign: 'left',
+                                    }}
+                                    textStyle={{
+                                        textAlign: 'left',
+                                        marginStart: 8,
+                                        marginEnd: 8
+                                    }}
+                                    enableHeight={false}
+                                /> : null}
                                 {Helper.nullStringCheck(this.state.pleaseNote) === false ? <View styleName='vertical v-start h-start sm-gutter'>
                                     <Title
                                         style={StyleSheet.flatten([

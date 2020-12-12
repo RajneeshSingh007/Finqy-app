@@ -24,7 +24,7 @@ import Loader from "../../util/Loader";
 import LeftHeaders from "../common/CommonLeftHeader";
 import CScreen from "../component/CScreen";
 import StepIndicator from "../component/StepIndicator";
-import { firstFormCheck, secondFormCheck } from "../../util/FormCheckHelper";
+import { firstFormCheck, secondFormCheck, thirdFormFileCheck } from "../../util/FormCheckHelper";
 
 export default class FinorbitForm extends React.PureComponent {
   constructor(props) {
@@ -208,235 +208,9 @@ export default class FinorbitForm extends React.PureComponent {
     let allfileslist = [];
     if (fileListForms) {
       allfileslist = fileListForms.fileList;
-      let existence = "";
-      //console.log('allfileslist', allfileslist)
-      if (allfileslist !== undefined && allfileslist.length > 0) {
-        // const loops = Lodash.map(allfileslist, (ele) => {
-        //   let parseJs = JSON.parse(JSON.stringify(ele));
-        //   for (var key in parseJs) {
-        //     const value = parseJs[key];
-        //     if (value !== undefined) {
-        //       if (Array.isArray(value) === false) {
-        //         formData.append(key, parseJs[key]);
-        //       }
-        //     }
-        //   }
-        // });
-        if (title === 'Motor Insurance') {
-          const rcCopy = Lodash.find(allfileslist, io => {
-            if ('rcbookcopy' in io) {
-              io.key = 'rcbookcopy';
-              return io;
-            } else {
-              return undefined;
-            }
-          });
-          if (rcCopy !== undefined) {
-            const { key } = rcCopy;
-            const { name } = rcCopy[key];
-            if (String(key) === `rcbookcopy` && name !== undefined && String(name).length === 0) {
-              existence = key;
-            }
-          } else {
-            existence = "rcbookcopy";
-          }
-
-          const oldInCopy = Lodash.find(allfileslist, io => {
-            if ('policycopy' in io) {
-              io.key = 'policycopy';
-              return io;
-            } else {
-              return undefined;
-            }
-          });
-          if (existence === "") {
-            if (oldInCopy !== undefined) {
-              const { key } = oldInCopy;
-              const { name } = oldInCopy[key];
-              if (String(key) === `policycopy` && name !== undefined && String(name).length === 0) {
-                existence = key;
-              }
-            } else {
-              existence = "policycopy";
-            }
-          }
-        }
-        // else if (title === 'Business Loan') {
-        //   //|| title === 'Personal Loan'
-        //   //title === 'Auto Loan' || 
-        //   //pan card
-        //   const pancard = Lodash.find(allfileslist, io => {
-        //     if ('pancard' in io) {
-        //       io.key = 'pancard';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (pancard !== undefined) {
-        //     const { key } = pancard;
-        //     const { name } = pancard[key];
-        //     if (String(key) === `pancard` && name !== undefined && String(name).length === 0) {
-        //       existence = key;
-        //     }
-        //   } else {
-        //     existence = "pancard";
-        //   }
-
-        //   //aadhar card
-        //   const aadharcard = Lodash.find(allfileslist, io => {
-        //     if ('aadharcard' in io) {
-        //       io.key = 'aadharcard';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (existence === "") {
-        //     if (aadharcard !== undefined) {
-        //       const { key } = aadharcard;
-        //       const { name } = aadharcard[key];
-        //       if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
-        //         existence = key;
-        //       }
-        //     } else {
-        //       existence = "aadharcard";
-        //     }
-        //   }
-
-        //   //salary slip 
-        //   const salaryslip = Lodash.find(allfileslist, io => {
-        //     if ('salaryslip' in io) {
-        //       io.key = 'salaryslip';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (existence === "") {
-
-        //     if (salaryslip !== undefined) {
-        //       const { key } = salaryslip;
-        //       const { name } = salaryslip[key];
-        //       if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
-        //         existence = key;
-        //       }
-        //     } else {
-        //       existence = "salaryslip";
-        //     }
-        //   }
-
-        //   //salary slip 1 
-        //   const salaryslip1 = Lodash.find(allfileslist, io => {
-        //     if ('salaryslip1' in io) {
-        //       io.key = 'salaryslip1';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (existence === "") {
-
-        //     if (salaryslip1 !== undefined) {
-        //       const { key } = salaryslip1;
-        //       const { name } = salaryslip1[key];
-        //       if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
-        //         existence = key;
-        //       }
-        //     } else {
-        //       existence = "salaryslip1";
-        //     }
-        //   }
-
-
-        //   //salary slip 2
-        //   const salaryslip2 = Lodash.find(allfileslist, io => {
-        //     if ('salaryslip2' in io) {
-        //       io.key = 'salaryslip2';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (existence === "") {
-
-        //     if (salaryslip2 !== undefined) {
-        //       const { key } = salaryslip2;
-        //       const { name } = salaryslip2[key];
-        //       if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
-        //         existence = key;
-        //       }
-        //     } else {
-        //       existence = "salaryslip2";
-        //     }
-        //   }
-        //   //3month bank statement
-        //   const bankstate = Lodash.find(allfileslist, io => {
-        //     if ('bankstate' in io) {
-        //       io.key = 'bankstate';
-        //       return io;
-        //     } else {
-        //       return undefined;
-        //     }
-        //   });
-        //   if (existence === "") {
-
-        //     if (bankstate !== undefined) {
-        //       const { key } = bankstate;
-        //       const { name } = bankstate[key];
-        //       if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
-        //         existence = key;
-        //       }
-        //     } else {
-        //       existence = "bankstate";
-        //     }
-        //   }
-        // }
-
-      } else {
-        if (title == 'Motor Insurance') {
-          existence = "rcbookcopy";
-        }
-        // else if (title == 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
-        //   existence = "pancard";
-        // }
-      }
-      //console.log('existence', existence)
-      if (this.state.currentPosition === 2) {
-        if (title === `Motor Insurance`) {
-          if (existence === 'rcbookcopy') {
-            checkData = false;
-            Helper.showToastMessage('Please, Select RC Book', 0);
-          } else if (existence === 'policycopy') {
-            checkData = false;
-            Helper.showToastMessage('Please, Select Policy', 0);
-          }
-        }
-        // else if (title === `Auto Loan` || title === 'Business Loan' || title === 'Personal Loan') {
-        //   if (existence === 'pancard') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Pancard', 0);
-        //   } else if (existence === 'aadharcard') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Aadhar Card', 0);
-        //   } else if (existence === 'salaryslip') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Salary Slip 1', 0);
-        //   } else if (existence === 'salaryslip1') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Salary Slip 2', 0);
-        //   } else if (existence === 'salaryslip2') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Salary Slip 3', 0);
-        //   } else if (existence === 'bankstate') {
-        //     checkData = false;
-        //     Helper.showToastMessage('Please, Select Bank Statement', 0);
-        //   }
-        // }
-      }
+      checkData = thirdFormFileCheck(title, allfileslist);
     }
 
-    //console.log('headerchangex', this.headerchange)
     if (checkData) {
       const limit = title === 'Insure Check' ? 1 : 3;
       if (currentPosition < limit) {
@@ -446,7 +220,6 @@ export default class FinorbitForm extends React.PureComponent {
               currentPosition: prevState.currentPosition + 1,
               bottontext: prevState.currentPosition + 1 > 0 ? "Submit" : "Next",
               scrollReset: true,
-              //headerchange: headerchange
             };
           }, () => {
             if (this.state.currentPosition === 0) {
@@ -461,7 +234,6 @@ export default class FinorbitForm extends React.PureComponent {
               currentPosition: prevState.currentPosition + 1,
               bottontext: prevState.currentPosition + 1 > 2 ? "Submit" : "Next",
               scrollReset: true,
-              //headerchange: headerchange
             };
           }, () => {
             if (this.state.currentPosition === 0) {

@@ -333,7 +333,8 @@ export default class RegisterScreen extends React.PureComponent {
 
                 <NewDropDown
                   list={this.state.mode}
-                  placeholder={'Are You An Individual Or A Company? *'}
+                  placeholder={'Are You An Individual Or A Company?'}
+                  starVisible={true}
                   selectedItem={(value) => this.setState({
                     showmode: false,
                     modetext: value,
@@ -432,7 +433,8 @@ export default class RegisterScreen extends React.PureComponent {
                 ) : this.state.modetext === 'Individual' ? (
                   <NewDropDown
                     list={professionList}
-                    placeholder={'Select Profession *'}
+                    placeholder={'Select Profession'}
+                    starVisible
                     selectedItem={(value) => this.setState({
                       profession: value,
                     })}

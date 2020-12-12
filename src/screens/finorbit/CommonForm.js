@@ -21,6 +21,7 @@ import moment from 'moment';
 import Lodash from 'lodash';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import NewDropDown from '../component/NewDropDown';
+import {returnAsterik} from '../../util/FormCheckHelper';
 
 let qualificationList = [{
   value: 'Undergraduate'
@@ -39,25 +40,21 @@ let qualificationList = [{
 export default class CommonForm extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.showDobCalendar = this.showDobCalendar.bind(this);
     this.onChange = this.onChange.bind(this);
     this.backClick = this.backClick.bind(this);
     this.saveData = this.saveData.bind(this);
     const date = new Date();
-    //date.setFullYear(2000,0,1);
-    const maxDates = new Date();
-    //maxDates.setFullYear(2010, 0, 1);
     this.cursorSelection = { start: 0, end: 0 };
     const filter = Lodash.orderBy(Pref.cityList, ['value'], ['asc']);
     this.state = {
-      //genderList: [{ value: 'Male' }, { value: 'Female' }, { value: 'Other' }],
-      //employList: [{ value: 'Self Employed' }, { value: 'Salaried' }],
       cityList: filter,
       showCityList: false,
       showGenderList: false,
       showCalendar: false,
       showEmployList: false,
       currentDate: date,
-      maxDate: maxDates,
+      maxDate: date,
       name: '',
       pincode: '',
       currentlocation: '',
@@ -83,37 +80,11 @@ export default class CommonForm extends React.PureComponent {
     if(Helper.nullCheck(editItemRestore) === false){
       this.restoreData(editItemRestore);
     }
-
-    // if (saveData !== undefined && saveData !== null) {
-    //   this.saveData(
-    //     saveData.name,
-    //     saveData.pincode,
-    //     saveData.currentlocation,
-    //     saveData.email,
-    //     saveData.mobile,
-    //     saveData.gender,
-    //     saveData.dob,
-    //     saveData.employ,
-    //     saveData.address,
-    //     saveData.qualification,
-    //     saveData.nrelation || '',
-    //     saveData.lastName || '',
-    //     saveData.nomineename || '',
-    //     saveData.gst_no || '',
-    //     saveData.ofc_add || '',
-    //   );
-    // }
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
 
   componentWillReceiveProps(prop) {
     const { title } = prop;
-    //console.log('title', prop)
-    // if (title === 'Fixed Deposit' || title === `Mutual Fund`) {
-    //   this.setState({ dob: 'Date of Birth' });
-    // } else if (title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check') {
-    //   this.setState({ dob: 'Date of Birth *' });
-    // } else 
     if (title === 'Vector Plus' || title === 'Religare Group Plan') {
       const maxDates = new Date();
       const getyear = maxDates.getFullYear() - 18;
@@ -129,7 +100,21 @@ export default class CommonForm extends React.PureComponent {
   }
 
   restoreData(obj) {
-    if (obj !== undefined) {
+    if (Helper.nullCheck(obj) === false) {
+      let date = new Date();
+      let maxDate = new Date();
+      if(Helper.nullStringCheck(obj.dob) === false){
+        const split = obj.dob.split('-');
+        date.setFullYear(Number(split[2]),Number(split[1]-1),Number(split[0]))
+        obj.currentDate = date;
+      }else{
+        obj.currentDate = date;
+      }
+      obj.maxDate = maxDate;
+      obj.showCityList=false;
+      obj.showGenderList=false;
+      obj.showCalendar=false;
+      obj.showEmployList=false;
       this.setState(obj);
     }
   }
@@ -236,6 +221,12 @@ export default class CommonForm extends React.PureComponent {
     }
   };
 
+  showDobCalendar = () =>{
+    this.setState({
+      showCalendar: true,
+    })
+  }
+
   render() {
     const {
       showemploy,
@@ -253,17 +244,6 @@ export default class CommonForm extends React.PureComponent {
         : false;
     return (
       <View>
-        {/* <View
-          style={{
-            marginTop: sizeHeight(2),
-            marginBottom: sizeHeight(1),
-          }}
-          styleName="horizontal">
-          <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Title style={styles.title}> {heading}</Title>
-          </View>
-        </View>
-        <View style={styles.line} /> */}
         <AnimatedInputBox
           onChangeText={(value) => this.setState({ name: value })}
           value={this.state.name}
@@ -271,8 +251,8 @@ export default class CommonForm extends React.PureComponent {
             title === 'Profile'
               ? 'Name'
               : newform === true
-                ? 'First Name *'
-                : 'Full Name *'
+                ? `First Name ${returnAsterik()}`
+                : `Full Name ${returnAsterik()}`
           }
           editable={title === 'Profile' ? false : editable}
           disabled={title === 'Profile' ? true : disabled}
@@ -280,63 +260,20 @@ export default class CommonForm extends React.PureComponent {
           changecolor
           containerstyle={styles.animatedInputCont}
         />
-
-        {/* <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={
-            title === 'Profile'
-              ? 'Name'
-              : newform === true
-              ? 'First Name *'
-              : 'Full Name *'
-          }
-          placeholder={
-            newform === true ? `Enter first name` : 'Enter full name'
-          }
-          placeholderTextColor={'#DEDEDE'}
-          onChangeText={(value) => this.setState({name: value})}
-          value={this.state.name}
-          theme={theme}
-          editable={editable}
-          disabled={title === 'Profile' ? true : disabled}
-          returnKeyType={'next'}
-        /> */}
         {newform === true ? (
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ lastName: value })}
             value={this.state.lastName}
-            placeholder={'Last Name *'}
+            placeholder={`Last Name ${returnAsterik()}`}
             returnKeyType={'next'}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[
-          //     styles.inputStyle,
-          //     // { marginVertical: sizeHeight(1) },
-          //   ]}
-          //   label={'Last Name *'}
-          //   placeholder={'Enter last name'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //   onChangeText={(value) => this.setState({lastName: value})}
-          //   value={this.state.lastName}
-          //   theme={theme}
-          //   returnKeyType={'next'}
-          // />
-          null}
+        ) : null}
 
         <AnimatedInputBox
           placeholder={
-            title === `Profile` ? `Mobile Number` : 'Mobile Number *'
+            title === `Profile` ? `Mobile Number` : `Mobile Number ${returnAsterik()}`
           }
           changecolor
           containerstyle={styles.animatedInputCont}
@@ -352,48 +289,26 @@ export default class CommonForm extends React.PureComponent {
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
-        {/* <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={title === `Profile` ? `Mobile Number` : 'Mobile Number *'}
-          placeholder={'Enter mobile number'}
-          placeholderTextColor={'#DEDEDE'}
-          maxLength={10}
-          keyboardType={'number-pad'}
-          onChangeText={(value) => {
-            if (value.match(/^[0-9]*$/g) !== null) {
-              this.setState({mobile: value});
-            }
-          }}
-          value={this.state.mobile}
-          editable={editable}
-          disabled={title === 'Profile' ? true : disabled}
-          returnKeyType={'next'}
-          theme={theme}
-        /> */}
+
         <AnimatedInputBox
           placeholder={
-            //title === 
-            //title === 'Fixed Deposit' ||
-              // title === 'Health Insurance' ||
-              //title === `Life Cum Invt. Plan` ||
-              //title === `Motor Insurance` ||
-              //title === `Mutual Fund` ||
-              title === `Profile`
-              || title === 'Home Loan' 
-              //|| title === 'Loan Against Property' 
-              //|| title === 'Personal Loan' 
-              //|| title === 'Business Loan' 
-              //|| title === 'Term Insurance' 
-              //|| title == 'Fixed Deposit' 
-              //|| title === 'Motor Insurance'
-              ? 'Email'
-              : 'Email *'
+            `Email`
+            // //title === 
+            // //title === 'Fixed Deposit' ||
+            //   // title === 'Health Insurance' ||
+            //   //title === `Life Cum Invt. Plan` ||
+            //   //title === `Motor Insurance` ||
+            //   //title === `Mutual Fund` ||
+            //   title === `Profile`
+            //   || title === 'Home Loan' 
+            //   //|| title === 'Loan Against Property' 
+            //   //|| title === 'Personal Loan' 
+            //   //|| title === 'Business Loan' 
+            //   //|| title === 'Term Insurance' 
+            //   //|| title == 'Fixed Deposit' 
+            //   //|| title === 'Motor Insurance'
+            //   ? 'Email'
+            //   : `Email ${returnAsterik()}`
           }
           changecolor
           containerstyle={styles.animatedInputCont}
@@ -403,85 +318,25 @@ export default class CommonForm extends React.PureComponent {
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
-        {/* <TextInput
-          mode="flat"
-          underlineColor="transparent"
-          underlineColorAndroid="transparent"
-          style={[
-            styles.inputStyle,
-            // { marginVertical: sizeHeight(1) },
-          ]}
-          label={
-            title === `Home Loan`
-              ? 'Email *'
-              : title === 'Fixed Deposit' ||
-                title === 'Health Insurance' ||
-                title === `Life Cum Invt. Plan` ||
-                title === `Motor Insurance` ||
-                title === `Mutual Fund` ||
-                title === `Profile`
-              ? 'Email'
-              : 'Email *'
-          }
-          placeholder={'Enter email'}
-          placeholderTextColor={'#DEDEDE'}
-          onChangeText={(value) => this.setState({email: value})}
-          value={this.state.email}
-          editable={editable}
-          disabled={title === 'Profile' ? true : disabled}
-          returnKeyType={'next'}
-        /> */}
-
         {newform === true ? (
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ nomineename: value })}
             value={this.state.nomineename}
-            placeholder={'Nominee Name *'}
+            placeholder={`Nominee Name ${returnAsterik()}`}
             returnKeyType={'next'}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[
-          //     styles.inputStyle,
-          //     // { marginVertical: sizeHeight(1) },
-          //   ]}
-          //   label={'Nominee Name *'}
-          //   placeholder={'Enter nominee name'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //   onChangeText={(value) => this.setState({nomineename: value})}
-          //   value={this.state.nomineename}
-          //   theme={theme}
-          //   returnKeyType={'next'}
-          // />
-          null}
+        ) : null}
 
         {title === 'Profile' ? (
           <AnimatedInputBox
             placeholder={'Office Address'}
             returnKeyType={'next'}
             changecolor
-            containerstyle={StyleSheet.flatten([
-              styles.animatedInputCont,
-              {
-                //height: this.state.ofc_add === '' ? 56 : layheight,
-              },
-            ])}
+            containerstyle={styles.animatedInputCont}
             multiline
             maxLength={100}
-            // onContentSizeChange={(event) => {
-            //   layheight =
-            //     this.state.ofc_add === ''
-            //       ? 56
-            //       : event.nativeEvent.contentSize.height;
-            // }}
-            //selection={this.cursorSelection}
-            // onSubmitEditing ={(e) =>{
-            //   this.cursorSelection ={start:0, end:0}
-            // }}
             onChangeText={(value) => {
               this.setState({ ofc_add: value })
             }}
@@ -489,35 +344,7 @@ export default class CommonForm extends React.PureComponent {
             editable={editable}
             disabled={disabled}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[
-          //     styles.inputStyle,
-          //     {
-          //       height: this.state.ofc_add === '' ? 56 : layheight,
-          //     },
-          //   ]}
-          //   label={'Office Address'}
-          //   placeholder={'Enter address'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //               multiline
-          //   onContentSizeChange={(event) => {
-          //     layheight =
-          //       this.state.ofc_add === ''
-          //         ? 56
-          //         : event.nativeEvent.contentSize.height;
-          //   }}
-          //   onChangeText={(value) => this.setState({ofc_add: value})}
-          //   value={this.state.ofc_add}
-          //   editable={editable}
-          //   disabled={disabled}
-          //   returnKeyType={'next'}
-          //               theme={theme}
-
-          // />
-          null}
+        ) : null}
 
         {title === 'Profile' ? (
           <AnimatedInputBox
@@ -531,68 +358,23 @@ export default class CommonForm extends React.PureComponent {
             changecolor
             containerstyle={styles.animatedInputCont}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[styles.inputStyle]}
-          //   label={'GST Number'}
-          //   placeholder={'Enter gst number'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //   onChangeText={(value) => this.setState({gst_no: value})}
-          //   value={this.state.gst_no}
-          //   theme={theme}
-          //   editable={editable}
-          //   disabled={disabled}
-          //   returnKeyType={'next'}
-          //   maxLength={15}
-          // />
-          null}
+        ) : null}
 
         {title !== 'Profile' && title !== 'Insure Check' && newform === false ? (
           <AnimatedInputBox
-            // onChangeText={(value) => {
-            //   if (String(value).match(/^[0-9]*$/g) !== null) {
-            //     this.setState({ pincode: value });
-            //   }
-            // }}
             onChangeText={this.fetchcityCurrentstate}
             maxLength={6}
             keyboardType={'number-pad'}
             value={this.state.pincode}
             //placeholder={'Current Residence Pincode'}
-            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? '*' : ''}`}
+            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? returnAsterik() : ''}`}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
-        ) : // <TextInput
-          //   mode="flat"
-          //   underlineColor="transparent"
-          //   underlineColorAndroid="transparent"
-          //   style={[
-          //     styles.inputStyle,
-          //     // { marginVertical: sizeHeight(1) },
-          //   ]}
-          //   label={'Current Residence Pincode'}
-          //   placeholder={'Enter residence pincode'}
-          //   placeholderTextColor={'#DEDEDE'}
-          //   onChangeText={(value) => {
-          //     if (value.match(/^[0-9]*$/g) !== null) {
-          //       this.setState({pincode: value});
-          //     }
-          //   }}
-          //   maxLength={6}
-          //   keyboardType={'number-pad'}
-          //   value={this.state.pincode}
-          //   theme={theme}
-          //   editable={editable}
-          //   disabled={disabled}
-          //   returnKeyType={'next'}
-          // />
-          null}
+        ) : null}
 
         {title !== 'Profile' ? <>
           <AnimatedInputBox
@@ -618,48 +400,11 @@ export default class CommonForm extends React.PureComponent {
           />
         </> : null}
 
-
-        {/* {title === `Term Insurance` ? (
-          <AnimatedInputBox
-            onChangeText={(value) => this.setState({ qualification: value })}
-            value={this.state.qualification}
-            placeholder={'Qualification *'}
-            editable={editable}
-            disabled={disabled}
-            returnKeyType={'next'}
-            changecolor
-            containerstyle={styles.animatedInputCont}
-          />
-        ) :  <TextInput
-            mode="flat"
-            underlineColor="transparent"
-            underlineColorAndroid="transparent"
-            style={[
-              styles.inputStyle,
-              // { marginVertical: sizeHeight(1) },
-            ]}
-            label={`Qualification *`}
-            placeholder={'Enter qualification'}
-            placeholderTextColor={'#DEDEDE'}
-            onChangeText={(value) => this.setState({qualification: value})}
-            value={this.state.qualification}
-            theme={theme}
-            editable={editable}
-            disabled={disabled}
-            returnKeyType={'next'}
-          />
-          null} */}
-
-
         {title !== 'Profile' && title !== 'Motor Insurance' ? (
           <View>
             <View style={styles.radiocont}>
               <TouchableWithoutFeedback
-                onPress={() =>
-                  this.setState({
-                    showCalendar: true,
-                  })
-                }>
+                onPress={this.showDobCalendar}>
                 <View style={styles.dropdownbox}>
                   <Title
                     style={[
@@ -675,7 +420,9 @@ export default class CommonForm extends React.PureComponent {
                     //title === 'Home Loan' || 
                     title === 'Loan Against Property' || title === 'Business Loan' 
                     //|| title === 'Personal Loan' 
-                    ? `*` : ''}` : this.state.dob}
+                    ? ''
+                    //returnAsterik()
+                     : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -692,7 +439,7 @@ export default class CommonForm extends React.PureComponent {
                 <View style={styles.radiocont}>
                   <View style={styles.radiodownbox}>
                     <Title
-                      style={styles.bbstyle}>{`Select Contact Type *`}</Title>
+                      style={styles.bbstyle}>{`Select Contact Type ${returnAsterik()}`}</Title>
 
                     <RadioButton.Group
                       onValueChange={(value) =>
@@ -730,7 +477,7 @@ export default class CommonForm extends React.PureComponent {
                 <View style={styles.radiocont}>
                   <View style={styles.radiodownbox}>
                     <Title
-                      style={styles.bbstyle}>{`Select Email Type *`}</Title>
+                      style={styles.bbstyle}>{`Select Email Type ${returnAsterik()}`}</Title>
                     <RadioButton.Group
                       onValueChange={(value) =>
                         this.setState({ emailTypeCd: value })
@@ -768,7 +515,7 @@ export default class CommonForm extends React.PureComponent {
 
             {title !== 'Insure Check' && title !== 'Motor Insurance' ? <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? '*' : ''}`}</Title>
+                <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? returnAsterik() : ''}`}</Title>
                 <RadioButton.Group
                   onValueChange={(value) => this.setState({ gender: value })}
                   value={this.state.gender}>
@@ -814,7 +561,8 @@ export default class CommonForm extends React.PureComponent {
         {title === 'Health Insurance' || title === 'Term Insurance' ?
           <NewDropDown
             list={qualificationList}
-            placeholder={'Qualification *'}
+            placeholder={`Qualification`}
+            starVisible={false}
             value={this.state.qualification}
             selectedItem={value => this.setState({ qualification: value })}
             style={{
@@ -833,92 +581,6 @@ export default class CommonForm extends React.PureComponent {
             }}
           />
           : null}
-          {/* // <View style={styles.radiocont}>
-          //   <View style={StyleSheet.flatten([styles.radiodownbox, {
-          //     height: 124
-          //   }])}>
-          //     <Title style={styles.bbstyle}>{`Qualification *`}</Title>
-          //     <RadioButton.Group
-          //       onValueChange={(value) => this.setState({ qualification: value })}
-          //       value={this.state.qualification}>
-          //       <View styleName="horizontal" style={{ marginBottom: 8, flexWrap: title === 'Health Insurance' || title == 'Term Insurance' ? 'wrap' : 'nowrap' }}>
-          //         <View
-          //           styleName="horizontal"
-          //           style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //           <RadioButton
-          //             value="Undergraduate"
-          //             style={{ alignSelf: 'center' }}
-          //           />
-          //           <Title
-          //             styleName="v-center h-center"
-          //             style={styles.textopen}>{`Undergraduate`}</Title>
-          //         </View>
-          //         <View
-          //           styleName="horizontal"
-          //           style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //           <RadioButton
-          //             value="Graduate"
-          //             style={{ alignSelf: 'center' }}
-          //           />
-          //           <Title
-          //             styleName="v-center h-center"
-          //             style={styles.textopen}>{`Graduate`}</Title>
-          //         </View>
-          //         {title === 'Health Insurance' || title === 'Term Insurance' ? <>
-          //           <View
-          //             styleName="horizontal"
-          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //             <RadioButton
-          //               value="Postgraduate"
-          //               style={{ alignSelf: 'center' }}
-          //             />
-          //             <Title
-          //               styleName="v-center h-center"
-          //               style={styles.textopen}>{`Post-Graduate`}</Title>
-          //           </View>
-
-          //           <View
-          //             styleName="horizontal"
-          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //             <RadioButton
-          //               value="Professional"
-          //               style={{ alignSelf: 'center' }}
-          //             />
-          //             <Title
-          //               styleName="v-center h-center"
-          //               style={styles.textopen}>{`Professional`}</Title>
-          //           </View>
-
-          //           <View
-          //             styleName="horizontal"
-          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //             <RadioButton
-          //               value="Diploma"
-          //               style={{ alignSelf: 'center' }}
-          //             />
-          //             <Title
-          //               styleName="v-center h-center"
-          //               style={styles.textopen}>{`Diploma`}</Title>
-          //           </View>
-
-          //           <View
-          //             styleName="horizontal"
-          //             style={{ alignSelf: 'center', alignItems: 'center' }}>
-          //             <RadioButton
-          //               value="Other"
-          //               style={{ alignSelf: 'center' }}
-          //             />
-          //             <Title
-          //               styleName="v-center h-center"
-          //               style={styles.textopen}>{`Other`}</Title>
-          //           </View>
-
-          //         </> : null}
-          //       </View>
-          //     </RadioButton.Group>
-          //   </View>
-          // </View> */}
-
 
         {showemploy ? (
           <View style={styles.radiocont}>
@@ -929,7 +591,9 @@ export default class CommonForm extends React.PureComponent {
               //title === 'Home Loan' || 
               title === 'Loan Against Property' 
               //|| title === 'Personal Loan' 
-              ? '*' : ''}`}</Title>
+              ? '' 
+              //returnAsterik() 
+              : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>
@@ -989,8 +653,9 @@ export default class CommonForm extends React.PureComponent {
         ) : null}
 
         {newform === true ? (
+          //${returnAsterik()}
           <View style={StyleSheet.flatten([styles.radiocont, { marginTop: 8 }])}>
-            <Title style={styles.bbstyle}>{`Nominee Relation *`}</Title>
+            <Title style={styles.bbstyle}>{`Nominee Relation `}</Title>
             <RadioButton.Group
               onValueChange={(value) => this.setState({ nrelation: value })}
               value={this.state.nrelation}>
@@ -1067,126 +732,7 @@ export default class CommonForm extends React.PureComponent {
             </RadioButton.Group>
           </View>
         ) : null}
-        {/* 
-                <View
-                    style={{
-                        
-                        marginHorizontal: sizeWidth(3),
-                    }}
-                >
-                    <TouchableWithoutFeedback
-                        onPress={() =>
-                            this.setState({
-                                showGenderList: !this.state.showGenderList,
-                                showCityList:false,
-                                showEmployList:false
-                            })
-                        }
-                    >
-                        <View
-                            style={styles.dropdownbox}
-                        >
-                            <Title
-                                style={styles.boxsubtitle}
-                            >
-
-                                {this.state.gender === ""
-                                    ? `Select Gender`
-                                    : this.state.gender}
-                            </Title>
-                            <Icon
-                                name={"chevron-down"}
-                                size={24}
-                                color={"#555555"}
-                                style={styles.downIcon}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
-                    {this.state.showGenderList ? <DropDown itemCallback={value => this.setState({ showGenderList: false, gender: value })} list={this.state.genderList} /> : null}
-                </View> */}
-
-        {/* {title !== `Profile` && newform === false ? (
-          <View style={styles.radiocont}>
-            <TouchableWithoutFeedback
-              onPress={() =>
-                this.setState({
-                  showCityList: !this.state.showCityList,
-                  showGenderList: false,
-                  showEmployList: false,
-                })
-              }>
-              <View style={styles.dropdownbox}>
-                <Title
-                  style={[
-                    styles.boxsubtitle,
-                    {
-                      color:
-                        this.state.currentlocation === ``
-                          ? `#6d6a57`
-                          : `#555555`,
-                    },
-                  ]}>
-                  {this.state.currentlocation === ''
-                    ? `Select Current Location ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' ? '*' : ''}`
-                    : this.state.currentlocation}
-                </Title>
-                <Icon
-                  name={'chevron-down'}
-                  size={24}
-                  color={'#6d6a57'}
-                  style={styles.downIcon}
-                />
-              </View>
-            </TouchableWithoutFeedback>
-            {this.state.showCityList ? (
-              <DropDown
-                itemCallback={(value) =>
-                  this.setState({ showCityList: false, currentlocation: value })
-                }
-                list={this.state.cityList}
-                isCityList
-                enableSearch
-              />
-            ) : null}
-          </View>
-        ) : null} */}
-        {/* {showemploy ?
-                    <View
-                        style={{
-                            
-                            marginHorizontal: sizeWidth(3),
-                        }}
-                    >
-                        <TouchableWithoutFeedback
-                            onPress={() => this.setState({
-                                showEmployList: !this.state.showEmployList, showGenderList: false,
-                                showCityList: false
-                            })}
-                        >
-                            <View
-                                style={styles.dropdownbox}
-                            >
-                                <Title
-                                    style={styles.boxsubtitle}
-                                >
-
-                                    {this.state.employ === ""
-                                        ? `Select Employment Type`
-                                        : this.state.employ}
-                                </Title>
-                                <Icon
-                                    name={"chevron-down"}
-                                    size={24}
-                                    color={"#555555"}
-                                    style={styles.downIcon}
-                                />
-                            </View>
-                        </TouchableWithoutFeedback>
-                        {this.state.showEmployList ? <DropDown itemCallback={value => this.setState({ showEmployList: false, employ: value })} list={this.state.employList} /> : null}
-
-                    </View> : null} */}
-
-
+        
         {this.state.showCalendar ? (
           <DateTimePicker
             value={this.state.currentDate}

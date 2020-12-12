@@ -331,7 +331,8 @@ export default class Samadhan extends React.Component {
 
               <NewDropDown
                 list={policyList}
-                placeholder={'Policy Type *'}
+                placeholder={'Policy Type'}
+                starVisible
                 selectedItem={value => {
                   let clist = [];
                   if (value === `Health Insurance`) {
@@ -385,7 +386,8 @@ export default class Samadhan extends React.Component {
 
               <NewDropDown
                 list={this.state.compTypeList}
-                placeholder={'Complain Type *'}
+                placeholder={'Complain Type'}
+                starVisible
                 value={this.state.complaint_type}
                 selectedItem={value => this.setState({ complaint_type: value })}
                 style={{

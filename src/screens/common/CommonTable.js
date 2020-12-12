@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, ScrollView, View, FlatList} from 'react-native';
-import {Colors} from 'react-native-paper';
 import {sizeWidth, sizeHeight} from '../../util/Size';
 import {Table, Row} from 'react-native-table-component';
 
