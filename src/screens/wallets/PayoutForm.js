@@ -9,6 +9,7 @@ import {
 } from 'react-native-paper';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
+import * as Helper from '../../util/Helper';
 
 
 export default class PayoutForm extends React.PureComponent {
@@ -23,6 +24,7 @@ export default class PayoutForm extends React.PureComponent {
             widthArr: [],
             tc: '',
             length: -1,
+            pleaseNote: null
         };
     }
 
@@ -34,6 +36,7 @@ export default class PayoutForm extends React.PureComponent {
         const length = navigation.getParam('length', -1);
         const tc = navigation.getParam('tc', '');
         const head = navigation.getParam('head', []);
+        const pleaseNote = navigation.getParam('pn', null);
 
         this.focusListener = navigation.addListener('didFocus', () => {
             let widthArr = [];
@@ -54,7 +57,7 @@ export default class PayoutForm extends React.PureComponent {
                 }
             }
 
-            this.setState({ loading: false, tc: tc, length: length, title: title, tableHead: head, widthArr: widthArr, dataList: dataList });
+            this.setState({ loading: false, tc: tc, length: length, title: title, tableHead: head, widthArr: widthArr, dataList: dataList, pleaseNote: pleaseNote });
 
         });
     }
@@ -72,13 +75,35 @@ export default class PayoutForm extends React.PureComponent {
 
     render() {
         const { title, tc } = this.state;
+        const split = title && title !== "" ? (title.includes(" ") ? title.split(" ") : [title]) : [""];
         return (
             <CScreen
                 body={
                     <>
                         <LeftHeaders
-                            title={title}
+                            title={'My Payout Structure'}
                             showBack
+                            bottomtext={
+                                <>
+                                    {`${split[0]} ${split.length === 4 ? split[1] : split.length === 3 ? split[1] :''}`}
+                                    {split.length === 2 ? (
+                                        <Title style={styles.passText}>{`${split[1]}`}</Title>
+                                    ) : split.length === 3 ? (
+                                        <Title
+                                            style={styles.passText}
+                                        >{` ${split[2]}`}</Title>
+                                    ) : split.length === 4 ? (
+                                        <Title
+                                            style={styles.passText}
+                                        >{` ${split[2]} ${split[3]}`}</Title>
+                                    ) : null}
+                                </>
+                            }
+                            bottomtextStyle={{
+                                color: "#555555",
+                                fontSize: 20,
+                            }}
+
                         />
                         {this.state.loading ? (
                             <View style={styles.loader}>
@@ -100,6 +125,42 @@ export default class PayoutForm extends React.PureComponent {
                                     }}
                                     enableHeight={false}
                                 />
+                                {Helper.nullStringCheck(this.state.pleaseNote) === false ? <View styleName='vertical v-start h-start sm-gutter'>
+                                    <Title
+                                        style={StyleSheet.flatten([
+                                            styles.passText,
+                                            {
+                                                marginTop: 16,
+                                                paddingVertical: 0,
+                                                fontSize: 15,
+                                                textAlign: 'left',
+                                                alignSelf: 'flex-start',
+                                                justifyContent: 'center',
+                                                textAlign: 'center',
+                                                marginHorizontal: 16,
+                                                marginBottom: 8,
+                                            },
+                                        ])}>
+                                        {`Please Note`}
+                                    </Title>
+                                    <Title
+                                        style={StyleSheet.flatten([
+                                            styles.passText,
+                                            {
+                                                color: '#686868',
+                                                paddingVertical: 0,
+                                                marginHorizontal: 16,
+                                                fontSize: 13,
+                                                textAlign: 'left',
+                                                marginBottom: 0,
+                                                lineHeight: 28,
+                                                fontWeight: '600',
+                                                fontFamily: Pref.getFontName(1)
+                                            },
+                                        ])}>
+                                        {this.state.pleaseNote}
+                                    </Title>
+                                </View> : null}
                                 <View styleName='vertical v-start h-start sm-gutter'>
                                     <Title
                                         style={StyleSheet.flatten([

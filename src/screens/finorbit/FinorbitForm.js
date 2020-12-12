@@ -576,8 +576,8 @@ export default class FinorbitForm extends React.PureComponent {
 
         const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-        console.log('formData', formData);
-        console.log('formUrls', formUrls);
+        //console.log('formData', formData);
+        //console.log('formUrls', formUrls);
 
         Helper.networkHelperTokenContentType(
           formUrls,
@@ -585,7 +585,7 @@ export default class FinorbitForm extends React.PureComponent {
           Pref.methodPost,
           this.state.token,
           (result) => {
-            console.log('result', result)
+            //console.log('result', result)
             const { response_header } = result;
             const { res_type, res } = response_header;
             this.setState({ progressLoader: false });

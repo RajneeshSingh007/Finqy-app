@@ -17,56 +17,8 @@ import CScreen from "../component/CScreen";
 import Lodash from "lodash";
 import IconChooser from "../common/IconChooser";
 import Purechart from "react-native-pure-chart";
-import DrawerTop from "../component/DrawerTop";
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
-
-let sampleData = [
-  { x: "Jan - 20", y: 10, color: "#87c1fc" },
-  { x: "Feb - 20", y: 40, color: "#ffe251" },
-  { x: "March - 20", y: 60, color: "#fe8c8c" },
-  { x: "April - 20", y: 75, color: "#77e450" },
-  // {
-  //   seriesName: "series1",
-  //   data: [
-  //     { x: "Jan - 20", y: 10 },
-  //     { x: "Feb - 20", y: 40 },
-  //     { x: "March - 20", y: 60 },
-  //     { x: "April - 20", y: 75 },
-  //   ],
-  //   color: "#87c1fc",
-  // },
-  // {
-  //   seriesName: "series2",
-  //   data: [
-  //     { x: "Jan - 20", y: 20 },
-  //     { x: "Feb - 20", y: 40 },
-  //     { x: "March - 20", y: 60 },
-  //     { x: "April - 20", y: 70 },
-  //   ],
-  //   color: "#ffe251",
-  // },
-  // {
-  //   seriesName: "series3",
-  //   data: [
-  //     { x: "Jan - 20", y: 30 },
-  //     { x: "Feb - 20", y: 40 },
-  //     { x: "March - 20", y: 34 },
-  //     { x: "April - 20", y: 120 },
-  //   ],
-  //   color: "#fe8c8c",
-  // },
-  // {
-  //   seriesName: "series4",
-  //   data: [
-  //     { x: "Jan - 20", y: 17 },
-  //     { x: "Feb - 20", y: 20 },
-  //     { x: "March - 20", y: 40 },
-  //     { x: "April - 20", y: 200 },
-  //   ],
-  //   color: "#77e450",
-  // },
-];
 
 const productList = [
   "All Products",

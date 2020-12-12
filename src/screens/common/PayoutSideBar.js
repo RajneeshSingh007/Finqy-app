@@ -34,13 +34,14 @@ export default class PayoutSideBar extends React.PureComponent {
     if (Helper.nullCheck(ogData[parsetitle]) === false) {
       const { available } = ogData[parsetitle];
       if (available) {
-        const { data, length, tc, head } = ogData[parsetitle];
+        const { data, length, tc, head,pn } = ogData[parsetitle];
         NavigationActions.navigate('PayoutForm', {
           title: title,
           data: data,
           length: length,
           tc: tc,
-          head: head
+          head: head,
+          pn: pn
         });
       } else {
         Helper.showToastMessage('No data found', 0);
