@@ -476,7 +476,7 @@ export default class SpecificForm extends React.PureComponent {
           <View style={styles.line} /> */}
           <AnimatedInputBox
             placeholder={'Full Name'}
-            showStarVisible={false}
+            showStarVisible={true}
             onChangeText={(value) =>
               this.onFloatitemChange(value, item, 0, index)
             }
@@ -488,7 +488,7 @@ export default class SpecificForm extends React.PureComponent {
           <NewDropDown
             list={relationList}
             placeholder={'Relation'}
-            starVisible={false}
+            starVisible={true}
             value={item.relation}
             selectedItem={(value) => this.onFloatitemChange(value, item, 3, index)}
             style={{
@@ -519,7 +519,7 @@ export default class SpecificForm extends React.PureComponent {
             <View style={styles.radiodownbox}>
             {/* {`Select Gender *`} */}
               <Title style={styles.bbstyle}>
-                {`Select Gender`}
+                {`Select Gender *`}
                 </Title>
 
               <RadioButton.Group
@@ -568,7 +568,7 @@ export default class SpecificForm extends React.PureComponent {
                     },
                   ]}>
                     {/* Date of Birth * */}
-                  {item.dob === '' ? `Date of Birth` : item.dob}
+                  {item.dob === '' ? `Date of Birth *` : item.dob}
                 </Title>
                 <Icon
                   name={'calendar'}
@@ -583,7 +583,7 @@ export default class SpecificForm extends React.PureComponent {
             <View style={styles.radiodownbox}>
               <Title style={styles.bbstyle}>
                 {/* {`Any Pre Existing Diseases *`} */}
-                {`Any Pre Existing Diseases`}
+                {`Any Pre Existing Diseases *`}
               </Title>
 
               <RadioButton.Group
@@ -613,7 +613,7 @@ export default class SpecificForm extends React.PureComponent {
             </View>
           </View>
           {item.existing_diseases === 'Yes' ? <AnimatedInputBox
-            placeholder={'Specify Diseases'}
+            placeholder={'Specify Diseases *'}
             showStarVisible={false}
             onChangeText={(value) =>
               this.onFloatitemChange(value, item, 5, index)
@@ -933,7 +933,7 @@ export default class SpecificForm extends React.PureComponent {
           <NewDropDown
             list={healthRequiredCover}
             placeholder={'Required Cover (Amount in Lacs)'}
-            starVisible={false}
+            starVisible={true}
             value={this.state.required_cover}
             selectedItem={value => this.setState({ required_cover: value })}
             style={{
@@ -1930,7 +1930,7 @@ export default class SpecificForm extends React.PureComponent {
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
               {/* {`Type of Insurance *`} */}
-                <Title style={styles.bbstyle}>{`Type of Insurance`}</Title>
+                <Title style={styles.bbstyle}>{`Type of Insurance * `}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({ claim_type: value })}
@@ -2159,7 +2159,7 @@ export default class SpecificForm extends React.PureComponent {
             <View>
               <NewDropDown
                 list={healthFList}
-                placeholder={'Members'}
+                placeholder={'Members *'}
                 starVisible={false}
                 value={this.state.family_floater}
                 selectedItem={value => {

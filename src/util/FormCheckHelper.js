@@ -83,6 +83,12 @@ export const firstFormCheck = (title, commons) => {
     //     Helper.showToastMessage("Date of Birth empty", 0);
     // } 
     else if (
+        title === 'Health Insurance' &&
+        (commons.dob === "" || commons.dob === `Date of Birth *` || commons.dob === `Date of Birth`)
+    ) {
+        Helper.showToastMessage("Date of Birth empty", 0);
+    } 
+    else if (
         //title !== `Personal Loan` &&
         //title !== `Loan Against Property` &&
         //title !== `Home Loan` &&
@@ -131,15 +137,76 @@ export const firstFormCheck = (title, commons) => {
 export const secondFormCheck = (title, specificForms) => {
     let result = true;
     if (
-        specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+        title === `Health Insurance` &&
+        specificForms.required_cover === ""
+    ) {
         result = false;
-        Helper.showToastMessage("Invalid aadhar card number", 0);
-    } else if ( 
+        Helper.showToastMessage("Please, Select Required Cover", 0);
+    }else if ( 
         specificForms.pancardNo !== "" &&
         !Helper.checkPanCard(specificForms.pancardNo)
     ) {
         result = false;
         Helper.showToastMessage("Invalid pan card number", 0);
+    }else if (
+        specificForms.aadharcardNo !== undefined && specificForms.aadharcardNo !== "" && specificForms.aadharcardNo.length < 12) {
+        result = false;
+        Helper.showToastMessage("Invalid aadhar card number", 0);
+    }else if (
+        title === `Health Insurance` &&
+        specificForms.claim_type === ""
+    ) {
+        result = false;
+        Helper.showToastMessage("Please, Select Type Of Insurance", 0);
+    } else if (
+        title === `Health Insurance` &&
+        specificForms.claim_type === "Family Floater"
+    ) {
+        if (specificForms.family_floater === "") {
+            result = false;
+            Helper.showToastMessage("Please, Select Family Floater", 0);
+        } else {
+            if (
+                specificForms !== null &&
+                specificForms.floaterItemList !== undefined &&
+                specificForms.floaterItemList !== null
+            ) {
+                const floaterItemList = JSON.parse(
+                    JSON.stringify(specificForms.floaterItemList)
+                );
+                if (floaterItemList.length > 0) {
+                    let checker = false;
+                    for (
+                        let index = 0;
+                        index < floaterItemList.length;
+                        index++
+                    ) {
+                        const element = floaterItemList[index];
+                        const { name, gender, dob, relation, diseases, existing_diseases } = element;
+                        if (
+                            name === "" ||
+                            gender === "" ||
+                            dob === "" ||
+                            relation === "" ||
+                            existing_diseases === ""
+                        ) {
+                            checker = true;
+                        } else if (
+                            existing_diseases === "Yes" && diseases === ''
+                        ) {
+                            checker = true;
+                        }
+                    }
+                    if (checker === true) {
+                        result = false;
+                        Helper.showToastMessage(
+                            "Please, Fill all member details",
+                            0
+                        );
+                    }
+                }
+            }
+        }
     }
     return result;
     if (

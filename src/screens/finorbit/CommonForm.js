@@ -416,13 +416,14 @@ export default class CommonForm extends React.PureComponent {
                             : `#555555`,
                       },
                     ]}>
-                    {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' || title === 'Auto Loan' || 
+                    {/* {this.state.dob === '' ? `Date of Birth ${title === 'Credit Card' || title === `Term Insurance` || title === 'Health Insurance' || title === 'Insure Check' || title === 'Auto Loan' || 
                     //title === 'Home Loan' || 
                     title === 'Loan Against Property' || title === 'Business Loan' 
                     //|| title === 'Personal Loan' 
                     ? ''
                     //returnAsterik()
-                     : ''}` : this.state.dob}
+                     : ''}` : this.state.dob} */}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' ? ' *' : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
