@@ -32,16 +32,39 @@ class CommonFileUpload extends React.PureComponent {
   filePicker = async () => {
     const { type = 0, mode = false,fileType = -1 } = this.props;
     if (mode === false) {
+      let fileTypes = [];
+      if(type === 0){
+        fileTypes = [DocumentPicker.types.images];
+      }else if(type === 1){
+        fileTypes = [DocumentPicker.types.pdf];
+      }else{
+        fileTypes = [DocumentPicker.types.images, DocumentPicker.types.pdf]; 
+      }
       try {
         const res = await DocumentPicker.pick({
-          type: [
-            type === 0
-              ? DocumentPicker.types.images
-              : type === 1
-                ? DocumentPicker.types.pdf
-                : DocumentPicker.types.allFiles,
-          ],
+          // type: [
+          //   type === 0
+          //     ? DocumentPicker.types.images
+          //     : type === 1
+          //       ? DocumentPicker.types.pdf
+          //       : DocumentPicker.types.allFiles,
+          // ],
+          type:fileTypes
         });
+        if(res.name !== '' && res.type === 'application/pdf'  && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.pdf`;
+        }else if(res.name !== '' && res.type === 'image/jpeg'  && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.jpeg`;
+        }else if(res.name !== '' && res.type === 'image/jpg' && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.jpg`;
+        }else if(res.name !== '' && res.type === 'image/png'  && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.png`;
+        }
+        //console.log(res);
         if (res.name !== '') {
           if (
             res.name.includes('pdf') ||
@@ -64,7 +87,7 @@ class CommonFileUpload extends React.PureComponent {
         if (res.size <= 10485760) {
           this.props.pickedCallback(res.name !== '' ? false : true, res);
         } else {
-          Helper.showToastMessage('Please, select 10MB files')
+          Helper.showToastMessage('Please, select files less than 10MB ')
         }
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
@@ -111,7 +134,7 @@ class CommonFileUpload extends React.PureComponent {
                       color: '#bbbbbb',
                     },
                   ])}>
-                  {pickedName === '' ? fileType != -1 ? `PDF` : ` PDF/Image` : ''}
+                  {pickedName === '' ? fileType != -1 ? `PDF` :  ` PDF/Image` : ''}
                 </Title>
               </Title>
               {pickedName !== '' ? (

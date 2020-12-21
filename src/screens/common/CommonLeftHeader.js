@@ -11,7 +11,7 @@ import {
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import { sizeHeight, sizeWidth } from '../../util/Size';
-import { Image, View, Title } from '@shoutem/ui';
+import { Image, View, Title, Subtitle } from '@shoutem/ui';
 import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
@@ -89,10 +89,10 @@ const LeftHeaders = (props) => {
             }}
             onPress={dismisssProfile}
           >
-            <View style={{ flex: 0.1 }} />
+            <View style={{ flex: 0.15 }} />
             <View style={{ flex: 0.1 }}>
               <View style={{ flex: 1, flexDirection: "row" }}>
-                <View style={{ flex: 0.2 }} />
+                <View style={{ flex: 0.1 }} />
                 <View
                   styleName="vertical md-gutter"
                   style={styles.filtercont}
@@ -102,12 +102,11 @@ const LeftHeaders = (props) => {
                     style={StyleSheet.flatten([
                       styles.passText,
                       {
-                        lineHeight: 24,
-                        fontSize: 18,
+                        fontSize: 16,
                       },
                     ])}
                   >
-                    {Lodash.truncate(userData !== null && userData.rname != null && userData.rname != ''  ? userData.rname : type !== "connector" && type !== "Referral" ? userData.username : '', {
+                    {Lodash.truncate(userData !== null && Helper.nullStringCheck(userData.rname) === false  ? userData.rname : type !== "connector" && type !== "Referral" ? userData.username : '', {
                       length: 24,
                       separator: "...",
                     })}
@@ -117,10 +116,9 @@ const LeftHeaders = (props) => {
                       styles.passText,
                       {
                         color: Pref.RED,
-                        fontSize: 16,
-                        lineHeight: 20,
+                        fontSize: 15,
                         paddingVertical: 0,
-                        marginBottom: 8,
+                        marginBottom: 2,
                         marginTop: 4,
                       },
                     ])}
@@ -132,6 +130,20 @@ const LeftHeaders = (props) => {
                         : `Team`
                       } Partner`}
                   </Title>
+
+                  <Subtitle
+                    style={StyleSheet.flatten([
+                      styles.passText,
+                      {
+                        color: '#666666',
+                        fontSize: 13,
+                        paddingVertical: 0,
+                        marginBottom: 8,
+                      },
+                    ])}
+                  >
+                    {userData != null ? type === "connector" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "referral" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "team" && Helper.nullStringCheck(userData.rcontact) === false ? userData.mobile : ''  : ''}
+                  </Subtitle>
 
                   <View style={styles.line}></View>
 
@@ -158,7 +170,7 @@ const LeftHeaders = (props) => {
                 <View style={{ flex: 0.2 }} />
               </View>
             </View>
-            <View style={{ flex: 0.8 }} />
+            <View style={{ flex: 0.75 }} />
           </View>
         </TouchableWithoutFeedback>
       </Portal> : null}
@@ -272,7 +284,7 @@ const LeftHeaders = (props) => {
 
 const styles = StyleSheet.create({
   filtercont: {
-    flex: 0.6,
+    flex: 0.7,
     //position: 'absolute',
     //zIndex: 99,
     borderColor: "#dbdacd",

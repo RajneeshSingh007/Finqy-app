@@ -1,13 +1,42 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import { StyleSheet, TouchableWithoutFeedback, Linking } from 'react-native';
 import { Image, Subtitle, View } from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 import { Avatar } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import * as Pref from '../../util/Pref';
+import codePush from "react-native-code-push";
+
+async function getAppVersion() {
+  const [{ appVersion }, update] = await Promise.all([
+  codePush.getConfiguration(),
+  codePush.getUpdateMetadata()
+  ]);
+
+  if (!update) {
+      return `v${appVersion}`;
+  }
+
+  const label = update.label.substring(1);
+  return `v${appVersion} rev.${label}`;
+};
+
+export { getAppVersion };
+
 
 const Footer = (prop) => {
   const { flex = 0.13, iconClick = () => { } } = prop;
+
+  const [version, setVersion] = useState();
+
+  useEffect(() => {
+    getAppVersion().then(r => {
+      setVersion(r);
+    });
+    return () => {
+    };
+  }, []);
+
   return (
     <View
       styleName="md-gutter"
@@ -17,7 +46,7 @@ const Footer = (prop) => {
       }}>
       <View
         style={{
-          paddingVertical: 16,
+          paddingVertical: 12,
         }}>
         <TouchableWithoutFeedback>
           <Subtitle style={styles.centerText}>{`© 2020 erevbay`}</Subtitle>
@@ -39,7 +68,7 @@ const Footer = (prop) => {
           alignItems: 'center',
           alignContent: 'center',
           justifyContent: 'center',
-          paddingVertical: 16,
+          paddingVertical: 2,
         }}>
         <Subtitle style={styles.rightText}>{`Powered By`}</Subtitle>
         <Avatar.Image
@@ -53,6 +82,14 @@ const Footer = (prop) => {
           }}
         />
       </View>
+      <Subtitle style={StyleSheet.flatten([
+        styles.centerText,
+        {
+          marginEnd:0,
+          paddingVertical:0,
+          fontSize:13
+        }
+      ])}>{`${version}`}</Subtitle>
     </View>
   );
 };
@@ -85,7 +122,7 @@ const styles = StyleSheet.create({
   centerText: {
     color: '#bfb9b4',
     fontSize: 16,
-    marginEnd: 8,
+    marginEnd: 0,
     letterSpacing: 0.5,
     justifyContent: 'center',
     paddingVertical: 8,
@@ -104,9 +141,9 @@ const styles = StyleSheet.create({
   },
   line: {
     backgroundColor: '#eeedde',
-    height: 1.8,
+    height: 1.4,
     marginStart: 12,
     marginEnd: 12,
-    marginVertical: 8,
+    marginVertical: 6,
   },
 });

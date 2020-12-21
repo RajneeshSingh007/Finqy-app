@@ -298,6 +298,28 @@ export default class Sidebar extends React.Component {
         //   icontype: 3,
         //   options: {},
         // },
+        {
+          name: `Raise a Ticket`,
+          expand: false,
+          heading: true,
+          iconname: require('../res/images/menuicon10.png'),
+          icontype: 2,
+          sub: [
+            {
+              name: `Raise a query`,
+              expand: false,
+              click: 'RaiseQueryForm',
+              options: {},
+            },
+            {
+              name: `Track my query`,
+              expand: false,
+              click: 'TrackQuery',
+              options: {},
+            },
+          ],
+          click: '',
+        },
       ],
     };
   }
@@ -511,6 +533,28 @@ export default class Sidebar extends React.Component {
           //   icontype: 3,
           //   options: {},
           // },
+          {
+            name: `Raise a Ticket`,
+            expand: false,
+            heading: true,
+            iconname: require('../res/images/menuicon10.png'),
+            icontype: 2,
+            sub: [
+              {
+                name: `Raise a query`,
+                expand: false,
+                click: 'RaiseQueryForm',
+                options: {},
+              },
+              {
+                name: `Track my query`,
+                expand: false,
+                click: 'TrackQuery',
+                options: {},
+              },
+            ],
+            click: '',
+          },
         ];
         this.setState({ menuList: filter });
       } else if (v === 'team') {
@@ -628,6 +672,28 @@ export default class Sidebar extends React.Component {
           //   icontype: 3,
           //   options: {},
           // },
+          {
+            name: `Raise a Ticket`,
+            expand: false,
+            heading: true,
+            iconname: require('../res/images/menuicon10.png'),
+            icontype: 2,
+            sub: [
+              {
+                name: `Raise a query`,
+                expand: false,
+                click: 'RaiseQueryForm',
+                options: {},
+              },
+              {
+                name: `Track my query`,
+                expand: false,
+                click: 'TrackQuery',
+                options: {},
+              },
+            ],
+            click: '',
+          },
         ];
         this.setState({ menuList: filter });
       }

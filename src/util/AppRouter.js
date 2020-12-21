@@ -42,6 +42,10 @@ import ChangePass from './../screens/profile/ChangePass';
 import Agreement from './../screens/profile/Agreement';
 import Term from './../screens/profile/Term';
 
+//TicketSystem
+import RaiseQueryForm from './../screens/ticketsystem/RaiseQueryForm';
+import TrackQuery from './../screens/ticketsystem/TrackQuery';
+
 //LeadList
 import LeadList from './../screens/leads/LeadList';
 import LinkSharingOption from './../screens/leads/LinkSharingOption';
@@ -259,7 +263,9 @@ const OtherNav = createDrawerNavigator(
     Term: { screen: Term },
     WebComp: { screen: WebComp },
     Payout: { screen: payoutNav },
-    PayoutPolicy:{screen:PayoutPolicy}
+    PayoutPolicy:{screen:PayoutPolicy},
+    RaiseQueryForm:{screen:RaiseQueryForm},
+    TrackQuery:{screen:TrackQuery}
   },
   {
     initialRouteName: 'Home',

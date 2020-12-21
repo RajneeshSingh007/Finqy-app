@@ -57,7 +57,8 @@ export default class FinorbitForm extends React.PureComponent {
       editSecond: null,
       editThird: null,
       editFour: null,
-      editLeadData: null
+      editLeadData: null,
+      disableClick: 0
     };
   }
 
@@ -142,7 +143,7 @@ export default class FinorbitForm extends React.PureComponent {
    * submit form
    */
   formSubmit = () => {
-    const { title, currentPosition, editMode, editLeadData } = this.state;
+    const { title, currentPosition, editMode, editLeadData,disableClick } = this.state;
     let commons = null;
     //console.log("title", title);
     if (currentPosition === 0) {
@@ -250,146 +251,147 @@ export default class FinorbitForm extends React.PureComponent {
         }
 
       } else {
-        this.setState({ progressLoader: true });
-        const { refercode } = this.state.userData;
-        formData.append("ref", refercode);
+        if(disableClick === 0){
+          this.setState({ progressLoader: true,disableClick:1});
+          const { refercode } = this.state.userData;
+          formData.append("ref", refercode);
+  
+                  //console.log('formData', formData);
+        //console.log('formUrls', formUrls);
 
-        //construct form data
-
-        //1st form 
-        if (commonForms) {
-          let parseJs = JSON.parse(JSON.stringify(commonForms));
-          if (parseJs.currentlocation === "Select Current Location *") {
-            parseJs.currentlocation === "";
-          }
-          for (var key in parseJs) {
-            const value = parseJs[key];
-            if (Helper.arrayObjCheck(value, true)) {
-              formData.append(key, parseJs[key]);
+          //construct form data
+  
+          //1st form 
+          if (commonForms) {
+            let parseJs = JSON.parse(JSON.stringify(commonForms));
+            if (parseJs.currentlocation === "Select Current Location *") {
+              parseJs.currentlocation === "";
             }
-          }
-        }
-
-        //2nd form
-        if (specificForms) {
-          delete specificForms.pincode;
-          let parseJs = JSON.parse(JSON.stringify(specificForms));
-          if (Helper.nullCheck(parseJs.floaterItemList) === false && parseJs.floaterItemList.length > 0) {
-            let keypos = 1;
-            const floaterItemList = JSON.parse(
-              JSON.stringify(specificForms.floaterItemList)
-            );
-            const loops = Lodash.map(floaterItemList, (ele) => {
-              let parseJs = JSON.parse(JSON.stringify(ele));
-              for (var key in parseJs) {
-                const value = parseJs[key];
-                if (Helper.nullCheck(value) === false) {
-                  if (key.includes('existing_diseases')) {
-                    formData.append(`existing_diseases${keypos}`, value);
-                  } else if (key.includes('diseases')) {
-                    formData.append(`diseases${keypos}`, value);
-                  } else {
-                    formData.append(
-                      keypos === 1
-                        ? `floater_${key}`
-                        : `floater_${key}${keypos}`,
-                      value
-                    );
-                  }
-                }
-              }
-              keypos += 1;
-            });
-          }
-          for (var key in parseJs) {
-            const value = parseJs[key];
-            if (Helper.arrayObjCheck(value, true)) {
-              formData.append(key, parseJs[key]);
-            }
-          }
-        }
-
-        //3rd form
-        if (allfileslist !== undefined && allfileslist.length > 0) {
-          const loops = Lodash.map(allfileslist, (ele) => {
-            let parseJs = JSON.parse(JSON.stringify(ele));
             for (var key in parseJs) {
               const value = parseJs[key];
-              if (Helper.arrayObjCheck(value, false)) {
+              if (Helper.arrayObjCheck(value, true)) {
                 formData.append(key, parseJs[key]);
               }
             }
-          });
-        }
-
-        //forth
-        if (dateForm && this.state.currentPosition === 3) {
-          // if (dateForm.baa === "") {
-          //checkData = false;
-          //Helper.showToastMessage("Please, Select Appointment Date", 0);
-          //} else {
-          let parseJs = JSON.parse(JSON.stringify(dateForm));
-          for (var key in parseJs) {
-            const value = parseJs[key];
-            if (Helper.arrayObjCheck(value, true)) {
-              formData.append(key, parseJs[key]);
-            }
           }
-          //}
-        }
-
-        if (editMode === false) {
-          formData.append("formid", "");
-        } else {
-          const { og } = editLeadData;
-          const { id } = og.alldata;
-          formData.append("formid", id);
-        }
-
-        const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
-
-        //console.log('formData', formData);
-        //console.log('formUrls', formUrls);
-
-        Helper.networkHelperTokenContentType(
-          formUrls,
-          formData,
-          Pref.methodPost,
-          this.state.token,
-          (result) => {
-            //console.log('result', result)
-            const { response_header } = result;
-            const { res_type, res } = response_header;
-            this.setState({ progressLoader: false });
-            if (res_type === "success") {
-              Helper.showToastMessage(editMode === false ? "Form submitted successfully" : "Form updated successfully", 1);
-              if (title === `Health Insurance` && editMode === false) {
-                const { id } = res;
-                const cov = Number(specificForms.required_cover);
-                NavigationActions.navigate("GetQuotes", {
-                  formId: id,
-                  sumin: cov,
-                });
-              } else {
-                NavigationActions.navigate("Finish", {
-                  top: editMode === false ? "Add New Lead" : "Edit Lead",
-                  red: "Success",
-                  grey: editMode === false ? "Details uploaded" : "Details updated",
-                  blue: editMode === false ? "Add another lead?" : "Back to Lead Record",
-                  back: editMode === false ? "FinorbitScreen" : "LeadList",
-                });
+  
+          //2nd form
+          if (specificForms) {
+            delete specificForms.pincode;
+            let parseJs = JSON.parse(JSON.stringify(specificForms));
+            if (Helper.nullCheck(parseJs.floaterItemList) === false && parseJs.floaterItemList.length > 0) {
+              let keypos = 1;
+              const floaterItemList = JSON.parse(
+                JSON.stringify(specificForms.floaterItemList)
+              );
+              const loops = Lodash.map(floaterItemList, (ele) => {
+                let parseJs = JSON.parse(JSON.stringify(ele));
+                for (var key in parseJs) {
+                  const value = parseJs[key];
+                  if (Helper.nullCheck(value) === false) {
+                    if (key.includes('existing_diseases')) {
+                      formData.append(`existing_diseases${keypos}`, value);
+                    } else if (key.includes('diseases')) {
+                      formData.append(`diseases${keypos}`, value);
+                    } else {
+                      formData.append(
+                        keypos === 1
+                          ? `floater_${key}`
+                          : `floater_${key}${keypos}`,
+                        value
+                      );
+                    }
+                  }
+                }
+                keypos += 1;
+              });
+            }
+            for (var key in parseJs) {
+              const value = parseJs[key];
+              if (Helper.arrayObjCheck(value, true)) {
+                formData.append(key, parseJs[key]);
               }
-            } else {
-              Helper.showToastMessage("Failed to submit form", 0);
             }
-          },
-          (e) => {
-            console.log(e);
-            this.setState({ progressLoader: false });
-            Helper.showToastMessage("Something went wrong", 0);
           }
-        );
-
+  
+          //3rd form
+          if (allfileslist !== undefined && allfileslist.length > 0) {
+            const loops = Lodash.map(allfileslist, (ele) => {
+              let parseJs = JSON.parse(JSON.stringify(ele));
+              for (var key in parseJs) {
+                const value = parseJs[key];
+                if (Helper.arrayObjCheck(value, false)) {
+                  formData.append(key, parseJs[key]);
+                }
+              }
+            });
+          }
+  
+          //forth
+          if (dateForm && this.state.currentPosition === 3) {
+            // if (dateForm.baa === "") {
+            //checkData = false;
+            //Helper.showToastMessage("Please, Select Appointment Date", 0);
+            //} else {
+            let parseJs = JSON.parse(JSON.stringify(dateForm));
+            for (var key in parseJs) {
+              const value = parseJs[key];
+              if (Helper.arrayObjCheck(value, true)) {
+                formData.append(key, parseJs[key]);
+              }
+            }
+            //}
+          }
+  
+          if (editMode === false) {
+            formData.append("formid", "");
+          } else {
+            const { og } = editLeadData;
+            const { id } = og.alldata;
+            formData.append("formid", id);
+          }
+  
+          const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
+  
+          Helper.networkHelperTokenContentType(
+            formUrls,
+            formData,
+            Pref.methodPost,
+            this.state.token,
+            (result) => {
+              //console.log('result', result)
+              const { response_header } = result;
+              const { res_type, res } = response_header;
+              this.setState({ progressLoader: false });
+              if (res_type === "success") {
+                Helper.showToastMessage(editMode === false ? "Form submitted successfully" : "Form updated successfully", 1);
+                if (title === `Health Insurance` && editMode === false) {
+                  const { id } = res;
+                  const cov = Number(specificForms.required_cover);
+                  NavigationActions.navigate("GetQuotes", {
+                    formId: id,
+                    sumin: cov,
+                  });
+                } else {
+                  NavigationActions.navigate("Finish", {
+                    top: editMode === false ? "Add New Lead" : "Edit Lead",
+                    red: "Success",
+                    grey: editMode === false ? "Details uploaded" : "Details updated",
+                    blue: editMode === false ? "Add another lead?" : "Back to Lead Record",
+                    back: editMode === false ? "FinorbitScreen" : "LeadList",
+                  });
+                }
+              } else {
+                Helper.showToastMessage("Failed to submit form", 0);
+              }
+            },
+            (e) => {
+              //console.log(e);
+              this.setState({ progressLoader: false });
+              Helper.showToastMessage("Something went wrong", 0);
+            }
+          );  
+        }
       }
     }
   }
@@ -402,7 +404,7 @@ export default class FinorbitForm extends React.PureComponent {
         scrollreset={this.state.scrollReset}
         absolute={
           <>
-            <Loader isShow={this.state.progressLoader} />
+            <Loader isShow={this.state.progressLoader} bottomText={'Please do not press back button'} />
           </>
         }
         body={
