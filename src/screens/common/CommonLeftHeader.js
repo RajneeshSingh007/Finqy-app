@@ -35,6 +35,7 @@ const LeftHeaders = (props) => {
   const [showProfile, setShowProfile] = useState(false);
   const [userData, setuserData] = useState(null);
   const [type, settype] = useState(null);
+  const [leaderData, setleaderData] = useState(null);
 
   useEffect(() => {
     Pref.getVal(Pref.userData, (value) => {
@@ -43,6 +44,7 @@ const LeftHeaders = (props) => {
         let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
         setPic(profilePic);
         setuserData(value);
+        setleaderData(Helper.nullCheck(value.leader) === false ? value.leader[0] : null)
       }
     });
 
@@ -127,8 +129,8 @@ const LeftHeaders = (props) => {
                       ? `Connector`
                       : type === `referral`
                         ? "Referral"
-                        : `Team`
-                      } Partner`}
+                        : `${leaderData != null ? Helper.nullCheck(leaderData.rname) === false ? leaderData.rname : '' : ''}(Leader)`
+                      }`}
                   </Title>
 
                   <Subtitle
@@ -142,7 +144,7 @@ const LeftHeaders = (props) => {
                       },
                     ])}
                   >
-                    {userData != null ? type === "connector" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "referral" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "team" && Helper.nullStringCheck(userData.rcontact) === false ? userData.mobile : ''  : ''}
+                    {userData != null ? type === "connector" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "referral" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "team" && Helper.nullStringCheck(userData.mobile) === false ? `${userData.mobile}` : ''  : ''}
                   </Subtitle>
 
                   <View style={styles.line}></View>
