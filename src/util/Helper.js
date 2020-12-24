@@ -1,10 +1,7 @@
 import { Dimensions, PermissionsAndroid, Platform } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import NavigationAction from './../util/NavigationActions';
-import Moment from 'moment';
 import { showMessage, hideMessage } from 'react-native-flash-message';
-import * as Pref from './Pref';
-import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import Lodash from 'lodash';
 
@@ -401,7 +398,9 @@ export const showToastMessage = (message, type = 0) => {
           : type === 2
             ? 'info'
             : 'default',
-    duration: 10000
+    duration: 10000,
+    animated:true,
+    floating:true,
   });
 };
 
@@ -762,4 +761,43 @@ export const inWords = (value) => {
   return Lodash.startCase(str);
 }
 
+
+/**
+ * networkHelper
+ * @param url
+ * @param jsonData
+ * @param method
+ * @param isTokenPresent
+ * @param token
+ * @param callback
+ * @param errorCallback
+ */
+export const networkHelperHelpDeskTicket = (
+  url,
+  jsonData,
+  method,
+  token,
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
+) => {
+  const options = {
+    method: method,
+    headers: {
+      Authorization: 'Basic ' + token,
+      Accept: 'application/json',
+      'Content-Type': `application/json`,
+    },
+    body: jsonData,
+  };
+  fetch(url, options)
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseJson) => {
+      callback(responseJson);
+    })
+    .catch((error) => {
+      errorCallback(error);
+    });
+};
 

@@ -122,6 +122,7 @@ class CommonFileUpload extends React.PureComponent {
                   {
                     bottom: pickedName !== '' ? 2 : 0,
                     color: pickedName !== '' ? Pref.RED : '#555555',
+                    marginStart:4
                   },
                 ])}>
                 {pickedName === ''

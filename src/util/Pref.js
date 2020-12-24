@@ -2789,6 +2789,12 @@ export const SMS_OTP = `${SMSURL}v5/otp`;
 //Send SMS
 export const SMS_SEND = `${SMSURL}sendhttp.php`;
 
+//////////////////////////////////
+// UVDESK API
+/////////////////////////////////
+export const UVDESK_API = "SFFNVBU7LHDTLG7G7ZLARKYSFNTRR75POPSTG6SUZVWQWJDTBORBGCNCQHAF6GDA";
+export const MAIN_SUPPORT_URL = `https://support.erb.ai/`;
+export const UVDESK_TICKET_URL = `${MAIN_SUPPORT_URL}public/api/v1/ticket`;
 
 /**
  * Set Val

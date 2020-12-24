@@ -119,7 +119,6 @@ export default class RaiseQueryForm extends React.Component {
     this.backClick = this.backClick.bind(this);
     this.state = this.returnState();
     Pref.getVal(Pref.userData, value => this.setState({ userData: value }));
-    Pref.getVal(Pref.saveToken, value => this.setState({ token: value }));
   }
 
   componentDidMount() {
@@ -140,7 +139,7 @@ export default class RaiseQueryForm extends React.Component {
       itissue: '',
       nonitissue: '',
       nonitesubissue: "",
-      attachment:''
+      attachments:[]
     };
   }
 
@@ -151,31 +150,97 @@ export default class RaiseQueryForm extends React.Component {
   submitt = () => {
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
-    delete body.userData;
-    delete body.token;
+    const {userData} = body;
 
+    console.log('body', body.ticketissue);
+
+    if(body.ticketissue === ''){
+      checkData = false;
+      Helper.showToastMessage('Please, Select ticket type',0);
+      return false;
+    }else if(body.ticketissue === 'IT/Software/App Issue' && body.itissue === ''){
+      checkData = false;
+      Helper.showToastMessage('Please, Select IT Issue',0);
+    }else if(body.ticketissue === 'Non-It Issue' && body.nonitissue === ''){
+      checkData = false;
+      Helper.showToastMessage('Please, Select NON-IT Issue',0);
+    }else if(body.ticketissue === 'Non-It Issue' && body.nonitissue !== '' && body.nonitesubissue === ''){
+      checkData = false;
+      Helper.showToastMessage('Please, Select Sub Issue',0);
+    }else if(body.remark === ''){
+      checkData = false;
+      Helper.showToastMessage('Remark empty',0);
+    }
+  
 
     if (checkData) {
+      
+      //const formData = new FormData();
+
+      if(Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true){
+        userData.rcontact = userData.mobile;
+      }
+  
+      let subject = '';
+      let type = '';
+      if(body.ticketissue === 'IT/Software/App Issue'){
+        subject = `${body.itissue}`
+        type = 'IT ISSUE';
+      }else if(body.ticketissue === 'Non-It Issue'){
+        subject = `${body.nonitissue} | ${body.nonitesubissue}`
+        type = 'NON-IT ISSUE'
+      }
+      if(body.attachments.length === 0){
+        delete body.attachments;
+      }
+      body.subject = subject;
+      body.type = type;
+      body.name = userData.rname;
+      body.mobile = userData.rcontact;
+      body.from = userData.email;
+      body.actAsType = 'customer';
+      body.message = body.remark;
+
+
+      // formData.append("type", type);
+      // formData.append("message", body.remark);
+      // formData.append("actAsType", "customer");
+      // formData.append("name", userData.rname);
+      // formData.append("subject", subject);
+      // formData.append("from", userData.email);
+      // formData.append("mobile", userData.rcontact);
+      // formData.append("itissue", body.itissue);
+      // formData.append("nonitissue", body.nonitissue);
+      // formData.append("nonsubissue", body.nonitesubissue);
+      
+      // if(body.attachments != null){
+      //   body.attachments = array()
+      //   formData.append("files", body.attachments);
+      //   formData.append("attachments", [body.attachments]);
+      // }
+
+      delete body.userData;
+      delete body.loading;
+
       this.setState({ loading: true });
-      // Helper.networkHelperTokenPost(
-      //   Pref.AddTeam,
-      //   JSON.stringify(body),
-      //   Pref.methodPost,
-      //   this.state.token,
-      //   result => {
-      //     const { response_header } = result;
-      //     const { res_type, message } = response_header;
-      //     this.setState({ loading: false });
-      //     if (res_type === `error`) {
-      //       Helper.showToastMessage(message, 0);
-      //     } else {
-      //       Helper.showToastMessage(`Added successfully`, 1);
-      //     }
-      //   },
-      //   (e) => {
-      //     this.setState({ loading: false });
-      //   },
-      // );
+      Helper.networkHelperHelpDeskTicket(
+        Pref.UVDESK_TICKET_URL,
+        JSON.stringify(body),
+        Pref.methodPost,
+        Pref.UVDESK_API,
+        result => {
+          const {message} = JSON.parse(JSON.stringify(result));
+          this.setState(this.returnState());
+          if (message.includes('Success')) {
+            Helper.showToastMessage("Success ! Ticket has been created successfully.", 1);
+          } else {
+            Helper.showToastMessage(`Failed to create ticket`, 0);
+          }
+        },
+        (e) => {
+          this.setState({ loading: false });
+        },
+      );
     }
   };
 
@@ -244,6 +309,16 @@ export default class RaiseQueryForm extends React.Component {
                 textStyle={styles.dropdowntextstyle}
               /> : null}
 
+              <CustomForm
+                value={this.state.remark}
+                onChange={v => this.setState({ remark: v })}
+                label={`Remark *`}
+                placeholder={`Enter remark`}
+                keyboardType={'text'}
+                multiline
+                maxLength={128}
+              />
+
               <CommonFileUpload
                 title={''}
                 type={2}
@@ -251,27 +326,19 @@ export default class RaiseQueryForm extends React.Component {
                   if (!selected) {
                     const { name } = res;
                     if (
-                      // name.includes('pdf') ||
+                      name.includes('pdf') ||
                       name.includes('png') ||
                       name.includes('jpeg') ||
                       name.includes('jpg')
                     ) {
-                      this.setState({attachment:res});
+                      const fileList = [];
+                      fileList.push(res);
+                      this.setState({attachments:fileList});
                     } else {
                       Helper.showToastMessage('Please, select Pdf or Image', 0);
                     }
                   }
                 }}
-              />
-
-              <CustomForm
-                value={this.state.remark}
-                onChange={v => this.setState({ remark: v })}
-                label={`Remark`}
-                placeholder={`Enter remark`}
-                keyboardType={'text'}
-                multiline
-                maxLength={128}
               />
 
               <View styleName="horizontal space-between md-gutter v-center h-center">

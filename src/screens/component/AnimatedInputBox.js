@@ -36,7 +36,7 @@ export default class AnimatedInputBox extends React.PureComponent {
   animate = () => {
     Animated.timing(this._animatedIsFocused, {
       toValue: !this.state.isFocused || this.props.value !== '' ? 1 : 0,
-      duration: 400,
+      duration: 250,
     }).start();
   };
 
@@ -44,7 +44,7 @@ export default class AnimatedInputBox extends React.PureComponent {
     if (this.state.isFocused === false) {
       Animated.timing(this._animatedIsFocused, {
         toValue: this.props.value !== '' ? 1 : 0,
-        duration: 400,
+        duration: 250,
       }).start();
     }
   }
@@ -162,9 +162,10 @@ export default class AnimatedInputBox extends React.PureComponent {
                   fontWeight: boldinputText ? '700' : '400',
                   color: '#555555',
                   fontSize: 16,
-                  marginStart: -4,
+                  //marginStart: -10,
                   fontFamily: Pref.getFontName(4),
                   //height:this.state.height
+                  textAlignVertical:'center'
                 },
               ])}
               onFocus={this.handleFocus}
