@@ -8,6 +8,8 @@ import FlashMessage from "react-native-flash-message";
 import CodePush from "react-native-code-push";
 import Loader from './src/util/Loader';
 import Crashes from 'appcenter-crashes';
+import analytics  from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 let currentScreenx = ''
 
@@ -22,11 +24,13 @@ class App extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.syncImmediate();
+        //this.syncImmediate();
         Crashes.setEnabled(true)
-            .then(res => {
-                console.log('res', res)
-            }).catch(e => console.log(e))
+        .then(res => {
+            console.log('res', res)
+        }).catch(e => console.log(e))
+        analytics().setAnalyticsCollectionEnabled(true);
+        crashlytics().setCrashlyticsCollectionEnabled(true);
         //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     }
 

@@ -15,6 +15,7 @@ import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CScreen from '../component/CScreen';
+import analytics from '@react-native-firebase/analytics';
 
 export default class Blogs extends React.PureComponent {
   constructor(props) {
@@ -50,6 +51,11 @@ export default class Blogs extends React.PureComponent {
         });
       });
     });
+    analytics().logEvent("FinNews", {
+      id:123456
+    }).then(e =>{
+      console.log(e)
+    }).catch(e => console.log(e))
   }
 
   back = () => {
@@ -97,7 +103,7 @@ export default class Blogs extends React.PureComponent {
           this.setState({ loading: false });
         }
       },
-      () => {
+      (e) => {
         this.setState({ loading: false });
       },
     );

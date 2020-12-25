@@ -15,6 +15,9 @@ export const USERTYPE = 'type';
 //network
 export const methodPost = 'POST';
 export const methodGet = 'GET';
+export const methodPut = 'PUT';
+export const methodPatch = 'PATCH';
+export const methodDELETE = 'DELETE';
 
 //erb Brand Color
 export const RED = '#ea343c';
@@ -2748,9 +2751,9 @@ export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
 export const TermOfUse = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 
-
 //insurance
 export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
+
 
 
 ///////////////////////////////////////////////////////////
@@ -2768,15 +2771,16 @@ export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
 ///////////////////////////////////////////////////////////////
 
+
+
 export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
-
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
-
 export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
-//code push
+/////////////////////////////////////
+//  Code Push Key
+/////////////////////////////////////
 export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
 export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
-
 export const PRODUCTION_CODE_PUSH_IOS = 'PavWWJS5tedBdJlTQim3Y6G3_3uJ7yZvFeAk3';
 export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
 
@@ -2793,8 +2797,16 @@ export const SMS_SEND = `${SMSURL}sendhttp.php`;
 // UVDESK API
 /////////////////////////////////
 export const UVDESK_API = "SFFNVBU7LHDTLG7G7ZLARKYSFNTRR75POPSTG6SUZVWQWJDTBORBGCNCQHAF6GDA";
-export const MAIN_SUPPORT_URL = `https://support.erb.ai/`;
-export const UVDESK_TICKET_URL = `${MAIN_SUPPORT_URL}public/api/v1/ticket`;
+export const MAIN_SUPPORT_URL = `https://support.erb.ai/public/api/v1/`;
+export const UVDESK_TICKET_URL = `${MAIN_SUPPORT_URL}ticket`;
+export const UVDESK_ASSIGN_AGENT = `${MAIN_SUPPORT_URL}ticket/`;
+//////////////////////////////
+// Ticket API
+//////////////////////////////
+export const AGENTS_URL = `${ApiDirUrl}ticketapi/get_agents.php`;
+export const TICKETS_LIST_URL = `${ApiDirUrl}ticketapi/get_user_tickets.php`;
+
+
 
 /**
  * Set Val

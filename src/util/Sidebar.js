@@ -45,6 +45,7 @@ import * as Pref from './Pref';
 import * as Helper from './Helper';
 import IconChooser from '../screens/common/IconChooser';
 import DrawerTop from '../screens/component/DrawerTop';
+import analytics from '@react-native-firebase/analytics';
 
 const COLOR = '#f9f8f1';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, BackHandler } from 'react-native';
-import { Title, View,Image } from '@shoutem/ui';
+import { Title, View, Image } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import { Button, Colors } from 'react-native-paper';
@@ -11,6 +11,7 @@ import Loader from '../../util/Loader';
 import CScreen from '../component/CScreen';
 import NewDropDown from '../component/NewDropDown';
 import CommonFileUpload from '../common/CommonFileUpload';
+import lodash from 'lodash';
 
 let ticketIssueList = [
   {
@@ -117,128 +118,203 @@ export default class RaiseQueryForm extends React.Component {
     super(props);
     this.submitt = this.submitt.bind(this);
     this.backClick = this.backClick.bind(this);
-    this.state = this.returnState();
-    Pref.getVal(Pref.userData, value => this.setState({ userData: value }));
+    this.state = this.returnState(true, true);
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    this.setState(this.returnState());
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, (userData) => {
+        this.fetchData(userData);
+      });
+    });
+  }
+
+  fetchData = (userData) => {
+    Helper.networkHelperGet(
+      Pref.AGENTS_URL,
+      (result) => {
+        //console.log('result', result)
+        const { agent, status } = JSON.parse(result);
+        //console.log('agent', agent);
+        if (status === `success`) {
+          this.setState({
+            agentList: agent,
+            loading: false,
+            userData: userData
+          });
+        } else {
+          this.setState({ loading: false, userData: userData });
+        }
+      },
+      (e) => {
+        this.setState({ loading: false, userData: userData });
+      },
+    );
   }
 
   backClick = () => {
-    this.setState(this.returnState());
+    this.setState(this.returnState(false, true));
     return false;
   };
 
-  returnState = () =>{
+  returnState = (loading, resetAgentList) => {
     return {
-      loading: false,
+      agentList: resetAgentList ? [] : this.state.agentList,
+      loading: loading,
       remark: '',
       ticketissue: '',
       itissue: '',
       nonitissue: '',
       nonitesubissue: "",
-      attachments:[]
+      attachments: []
     };
   }
 
   componentWillUnMount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    if (this.focusListener !== undefined) this.focusListener.remove();
+    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
   submitt = () => {
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
-    const {userData} = body;
+    const { userData } = body;
 
-    console.log('body', body.ticketissue);
-
-    if(body.ticketissue === ''){
+    if (body.ticketissue === '') {
       checkData = false;
-      Helper.showToastMessage('Please, Select ticket type',0);
+      Helper.showToastMessage('Please, Select ticket type', 0);
       return false;
-    }else if(body.ticketissue === 'IT/Software/App Issue' && body.itissue === ''){
+    } else if (body.ticketissue === 'IT/Software/App Issue' && body.itissue === '') {
       checkData = false;
-      Helper.showToastMessage('Please, Select IT Issue',0);
-    }else if(body.ticketissue === 'Non-It Issue' && body.nonitissue === ''){
+      Helper.showToastMessage('Please, Select IT Issue', 0);
+      return false;
+    } else if (body.ticketissue === 'Non-It Issue' && body.nonitissue === '') {
       checkData = false;
-      Helper.showToastMessage('Please, Select NON-IT Issue',0);
-    }else if(body.ticketissue === 'Non-It Issue' && body.nonitissue !== '' && body.nonitesubissue === ''){
+      Helper.showToastMessage('Please, Select NON-IT Issue', 0);
+      return false;
+    } else if (body.ticketissue === 'Non-It Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
       checkData = false;
-      Helper.showToastMessage('Please, Select Sub Issue',0);
-    }else if(body.remark === ''){
+      Helper.showToastMessage('Please, Select Sub Issue', 0);
+      return false;
+    } else if (body.remark === '') {
       checkData = false;
-      Helper.showToastMessage('Remark empty',0);
+      Helper.showToastMessage('Remark empty', 0);
+      return false;
     }
-  
+
+    const agentList = body.agentList;
+    //console.log('agentList', agentList)
+
+    if (agentList.length === 0) {
+      checkData = false;
+      Helper.showToastMessage(`No agents found, please try after some time`, 0);
+      return false;
+    }
 
     if (checkData) {
-      
-      //const formData = new FormData();
 
-      if(Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true){
+      if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true) {
         userData.rcontact = userData.mobile;
       }
-  
+
       let subject = '';
       let type = '';
-      if(body.ticketissue === 'IT/Software/App Issue'){
+      let agentUserID = -1;
+
+      if (body.ticketissue === 'IT/Software/App Issue') {
         subject = `${body.itissue}`
         type = 'IT ISSUE';
-      }else if(body.ticketissue === 'Non-It Issue'){
+        const findTeam = lodash.find(agentList, io => io.supportTeamId === "1");
+        //console.log('findTeamT', findTeam);
+        if (findTeam != undefined) {
+          agentUserID = findTeam.user_id;
+        }
+      } else if (body.ticketissue === 'Non-It Issue') {
         subject = `${body.nonitissue} | ${body.nonitesubissue}`
         type = 'NON-IT ISSUE'
+        const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation.toLowerCase() === body.nonitissue.toLowerCase());
+        //console.log('findTeamNT', findTeam);
+        if (findTeam != undefined) {
+          agentUserID = findTeam.user_id;
+        }
       }
-      if(body.attachments.length === 0){
-        delete body.attachments;
+
+      //console.log('agentUserID', agentUserID)
+
+      if (agentUserID === -1) {
+        Helper.showToastMessage(`No agents found, please try after some time`, 0);
+        return false;
       }
-      body.subject = subject;
-      body.type = type;
-      body.name = userData.rname;
-      body.mobile = userData.rcontact;
-      body.from = userData.email;
-      body.actAsType = 'customer';
-      body.message = body.remark;
 
+      const formData = new FormData();
+      formData.append('subject', subject);
+      formData.append('type', type);
+      formData.append('name', userData.rname);
+      formData.append('mobile', userData.rcontact);
+      formData.append('from', userData.email);
+      formData.append('actAsType', 'customer');
+      formData.append('message', body.remark);
 
-      // formData.append("type", type);
-      // formData.append("message", body.remark);
-      // formData.append("actAsType", "customer");
-      // formData.append("name", userData.rname);
-      // formData.append("subject", subject);
-      // formData.append("from", userData.email);
-      // formData.append("mobile", userData.rcontact);
-      // formData.append("itissue", body.itissue);
-      // formData.append("nonitissue", body.nonitissue);
-      // formData.append("nonsubissue", body.nonitesubissue);
-      
-      // if(body.attachments != null){
-      //   body.attachments = array()
-      //   formData.append("files", body.attachments);
-      //   formData.append("attachments", [body.attachments]);
-      // }
+      // body.subject = subject;
+      // body.type = type;
+      // body.name = userData.rname;
+      // body.mobile = userData.rcontact;
+      // body.from = userData.email;
+      // body.actAsType = 'customer';
+      // body.message = body.remark;
 
+      if(body.attachments.length > 0){
+        formData.append('attachments[0]', body.attachments[0]);
+        //body.attachments[0] = body.attachments[0];
+      }
       delete body.userData;
       delete body.loading;
+
+      //console.log('body', formData)
 
       this.setState({ loading: true });
       Helper.networkHelperHelpDeskTicket(
         Pref.UVDESK_TICKET_URL,
-        JSON.stringify(body),
+        formData,
         Pref.methodPost,
         Pref.UVDESK_API,
         result => {
-          const {message} = JSON.parse(JSON.stringify(result));
-          this.setState(this.returnState());
+          //console.log('result', result)
+          const { message } = JSON.parse(JSON.stringify(result));
           if (message.includes('Success')) {
-            Helper.showToastMessage("Success ! Ticket has been created successfully.", 1);
+            const ticketID = result.ticketId;
+            const agentBody = { id: agentUserID };
+            //console.log('agentBody', agentBody);
+            Helper.networkHelperHelpDeskTicket(
+              `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
+              JSON.stringify(agentBody),
+              Pref.methodPut,
+              Pref.UVDESK_API,
+              result => {
+                //console.log('result1', result);
+                const { success } = JSON.parse(JSON.stringify(result));
+                this.setState(this.returnState(false, false));
+                if (success.includes('Success')) {
+                  Helper.showToastMessage("Success ! Ticket has been created successfully.", 1);
+                } else {
+                  Helper.showToastMessage(`Failed to create ticket`, 0);
+                }
+              },
+              (e) => {
+                this.setState({ loading: false });
+                Helper.showToastMessage(`Something went wrong`, 0);
+              },
+            );
           } else {
             Helper.showToastMessage(`Failed to create ticket`, 0);
           }
         },
         (e) => {
           this.setState({ loading: false });
+          Helper.showToastMessage(`Something went wrong`, 0);
         },
       );
     }
@@ -271,7 +347,7 @@ export default class RaiseQueryForm extends React.Component {
                 placeholder={`Select Ticket Type`}
                 starVisible
                 value={this.state.ticketissue}
-                selectedItem={value => this.setState({ ticketissue: value, itissue: '', nonitissue: '', nonitesubissue:''})}
+                selectedItem={value => this.setState({ ticketissue: value, itissue: '', nonitissue: '', nonitesubissue: '' })}
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               />
@@ -279,7 +355,7 @@ export default class RaiseQueryForm extends React.Component {
               {this.state.ticketissue === 'IT/Software/App Issue' ? (
                 <NewDropDown
                   list={itIssueList}
-                  placeholder={`Select IT Issue`}
+                  placeholder={`Select Issue`}
                   starVisible
                   value={this.state.itissue}
                   selectedItem={value => this.setState({ itissue: value })}
@@ -291,7 +367,7 @@ export default class RaiseQueryForm extends React.Component {
               {this.state.ticketissue === 'Non-It Issue' ?
                 <NewDropDown
                   list={nonitIssueList}
-                  placeholder={`Select Non-IT Issue`}
+                  placeholder={`Select Product`}
                   starVisible
                   value={this.state.nonitissue}
                   selectedItem={value => this.setState({ nonitissue: value })}
@@ -301,7 +377,7 @@ export default class RaiseQueryForm extends React.Component {
 
               {this.state.nonitissue !== '' ? <NewDropDown
                 list={nonitesubIssueList}
-                placeholder={`Select Non-IT Issue`}
+                placeholder={`Select Issue`}
                 starVisible
                 value={this.state.nonitesubissue}
                 selectedItem={value => this.setState({ nonitesubissue: value })}
@@ -333,7 +409,7 @@ export default class RaiseQueryForm extends React.Component {
                     ) {
                       const fileList = [];
                       fileList.push(res);
-                      this.setState({attachments:fileList});
+                      this.setState({ attachments: fileList });
                     } else {
                       Helper.showToastMessage('Please, select Pdf or Image', 0);
                     }
@@ -342,7 +418,7 @@ export default class RaiseQueryForm extends React.Component {
               />
 
               <View styleName="horizontal space-between md-gutter v-center h-center">
-                
+
                 <Button
                   mode={'flat'}
                   uppercase={false}
@@ -354,7 +430,7 @@ export default class RaiseQueryForm extends React.Component {
                 </Button>
 
               </View>
-            
+
             </View>
 
             <Image
@@ -362,7 +438,7 @@ export default class RaiseQueryForm extends React.Component {
               styleName="medium-portrait"
               style={{
                 resizeMode: 'contain',
-                alignSelf:'center'
+                alignSelf: 'center'
               }}
             />
 

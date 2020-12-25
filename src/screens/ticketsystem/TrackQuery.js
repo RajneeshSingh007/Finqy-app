@@ -1,215 +1,318 @@
-
 import React from 'react';
-import { StyleSheet, BackHandler, TouchableWithoutFeedback } from 'react-native';
-import { Title, View, Image } from '@shoutem/ui';
+import {
+  StyleSheet,
+  BackHandler,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {
+  Title,
+  View,
+} from '@shoutem/ui';
+import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import { Portal } from 'react-native-paper';
+import {
+  ActivityIndicator,
+} from 'react-native-paper';
+import { sizeHeight } from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
-import CScreen from '../component/CScreen';
+import ListError from '../common/ListError';
+import CommonTable from '../common/CommonTable';
 import IconChooser from '../common/IconChooser';
-import PayoutSideBar from '../common/PayoutSideBar';
-import * as Helper from '../../util/Helper';
-import {
-  Button,
-  ActivityIndicator,
-  Searchbar,
-} from 'react-native-paper';
+import CScreen from './../component/CScreen';
+import moment from 'moment';
 
 export default class TrackQuery extends React.PureComponent {
   constructor(props) {
     super(props);
-    //this.backClick = this.backClick.bind(this);
+    const date = new Date();
+    this.backclick = this.backclick.bind(this);
     this.state = {
       dataList: [],
       loading: true,
-      selectedText: '',
-      userData: null,
+      showCalendar: false,
+      currentDate: date,
+      dates: '',
       token: '',
-      ogData: null
+      userData: '',
+      tableHead: [
+        'Sr. No.',
+        'Date',
+        'Ticket Number',
+        'Ticket Issue',
+        'Status',
+        'Remark',
+      ],
+      widthArr: [60,80, 120, 120, 60, 100],
+      cloneList: [],
+      modalvis: false,
+      pdfurl: '',
+      pdfTitle: '',
+      quotemodalVis: false,
+      quotemailData: '',
+      quotemail: '',
+      type: '',
+      itemSize: 5,
+      disableNext: false,
+      disableBack: false,
+      searchQuery: '',
+      enableSearch: false,
+      orderBy: 'asc',
+      fileName: ''
     };
   }
 
   componentDidMount() {
-    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    BackHandler.addEventListener('hardwareBackPress', this.backclick);
     const { navigation } = this.props;
+    this.willfocusListener = navigation.addListener('willFocus', () => {
+      this.setState({ loading: true, dataList: [] });
+    });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, (value) => this.setState({ token: value }, () => {
-        Pref.getVal(Pref.userData, udata => {
-          this.setState({ userData: udata });
-          this.fetchData(udata, this.state.token);
-        })
-      }));
+      Pref.getVal(Pref.userData, (userData) => {
+        this.fetchData(userData);
+      });
     });
   }
 
-  fetchData = (udata) => {
-    const { id } = udata;
-    const body = JSON.stringify(
-      { refercode: id }
-    )
-    //console.log('body',body)
-    Helper.networkHelperTokenPost(Pref.PayoutUrl, body, Pref.methodPost, this.state.token, result => {
-      //console.log('result', result)
-      const { response_header, product } = result;
-      const { res_type } = response_header;
-      if (res_type === 'success') {
-        const mapobje = Lodash.map(product, io => {
-          return { name: io }
-        })
-        //console.log('mapobje', mapobje, result);
-        this.setState({ loading: false, dataList: mapobje, ogData: result });
-      } else {
-        this.setState({ loading: false, dataList: [] });
-      }
-    }, error => {
-      //console.log('error', error)
-      this.setState({ loading: false, dataList: [] });
-    })
-  }
+  backclick = () => {
+    const { modalvis } = this.state;
+    if (modalvis) {
+      this.setState({ modalvis: false, pdfurl: '' });
+      return true;
+    }
+    return false;
+  };
 
   componentWillUnMount() {
-    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    BackHandler.removeEventListener('hardwareBackPress', this.backclick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  // backClick = () => {
-  //   NavigationActions.goBack();
-  //   return true;
-  // };
-
-  renderFinProItems = (iconName, title) => {
-    const { selectedText } = this.state;
-    return (
-      <View style={styles.mainconx}>
-        <View style={styles.dummy} />
-        <TouchableWithoutFeedback
-          onPress={() => {
-            // if (title === 'Credit Card') {
-            //   const parseItem = {
-            //     name: 'Credit Card',
-            //     url: '',
-            //   };
-            //   NavigationActions.navigate('FinorbitForm', parseItem);
-            // } else {
-            this.setState({ selectedText: title })
-            //}
-          }}>
-          <View
-            styleName="v-center h-center horizontal"
-            style={styles.itemcont}>
-            <View style={styles.mainconx}>
-              <View style={{ flex: 0.05 }} />
-              <View style={{ flex: 0.25 }}>
-                <View
-                  style={StyleSheet.flatten([
-                    styles.circle,
-                    {
-                      backgroundColor:
-                        selectedText === title ? '#0270e3' : Pref.RED,
-                    },
-                  ])}>
-                  <Image
-                    source={iconName}
-                    style={StyleSheet.flatten([styles.icon, {
-                      width: 20,
-                      height: 20,
-                      resizeMode: 'contain'
-                    }])}
-                  />
-                  {/* <IconChooser
-                    name={iconName}
-                    size={17}
-                    color={'white'}
-                    style={styles.icon}
-                  /> */}
-                </View>
-              </View>
-              <View style={{ flex: 0.5, flexDirection: 'row' }}>
-                <Title
-                  style={StyleSheet.flatten([
-                    styles.itemtext1,
-                    {
-                      marginStart: 8,
-                      color: selectedText === title ? '#0270e3' : '#97948c',
-                    },
-                  ])}>
-                  {title}
-                </Title>
-              </View>
-              <View
-                style={{
-                  flex: 0.2,
-                  alignItems: 'flex-start',
-                  justifyContent: 'flex-start',
-                }}>
-                <IconChooser
-                  name="chevron-right"
-                  size={20}
-                  color={selectedText === title ? '#0270e3' : '#97948c'}
-                //style={styles.icon}
-                />
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-        <View style={styles.dummy} />
-      </View>
+  fetchData = (userData) => {
+    if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true) {
+      userData.rcontact = userData.mobile;
+    }
+    const { rcontact } = userData;
+    const body = JSON.stringify({
+      mobile: rcontact,
+    });
+    //console.log('body', body)
+    Helper.networkHelperTokenPost(
+      Pref.TICKETS_LIST_URL,
+      body,
+      Pref.methodPost,
+      '',
+      (result) => {
+        const { tickets, status } = result;
+        //console.log('result', status)
+        if (status === `success`) {
+          if (tickets.length > 0) {
+            const sorting = tickets.sort((a, b) => {
+              const sp = a.updated_at.split('-');
+              const spz = b.updated_at.split('-');
+              return (
+                Number(sp[2]) - Number(spz[2]) ||
+                Number(sp[1]) - Number(spz[1]) ||
+                Number(sp[0]) - Number(spz[0])
+              );
+            });
+            const sort = sorting;
+            const { itemSize } = this.state;
+            this.setState({
+              cloneList: sort,
+              dataList: this.returnData(sort, 0, sort.length).slice(
+                0,
+                itemSize,
+              ),
+              loading: false,
+              itemSize: sort.length >= 5 ? 5 : sort.length,
+            });
+          } else {
+            this.setState({
+              loading: false,
+            });
+          }
+        } else {
+          this.setState({ loading: false });
+        }
+      },
+      (e) => {
+        this.setState({ loading: false });
+      },
     );
   };
 
-  getFilterList = () => {
-    const { selectedText, dataList } = this.state;
-    const clone = JSON.parse(JSON.stringify(dataList));
-    let filter = Lodash.filter(clone, (io) => {
-      if (selectedText.includes('Insurance')) {
-        return io.name.includes(selectedText) || io.name.includes('Policy') || io.name.includes('Sabse') || io.name.includes('Insure Check') || io.name.includes('Vector')
-      } else {
-        return io.name.includes(selectedText);
+  /**
+   *
+   * @param {*} data
+   */
+  returnData = (sort, start = 0, end) => {
+    const dataList = [];
+    if (sort.length > 0) {
+      if (start >= 0) {
+        for (let i = start; i < end; i++) {
+          const item = sort[i];
+          if (item !== undefined && item !== null) {
+            const rowData = [];
+            rowData.push(`${Number(i + 1)}`);
+            const format = moment(item.updated_at).format('DD-MM-YYYY');
+            rowData.push(format);
+            rowData.push(item.ticket_id);
+            rowData.push(Lodash.capitalize(item.TCode));
+            const statusText = (value, color) => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <View>
+                  <Title style={StyleSheet.flatten([styles.itemtext, {
+                    color: color || Pref.RED
+                  }])}>
+                    {Lodash.capitalize(value)}
+                  </Title>
+                </View>
+              </View>
+            );
+            rowData.push(statusText(item.SCode, item.SColor));
+            const msg = item.message;
+            let finalMsg = '';
+            if(msg.includes(',')){
+              const sp = msg.split(',');
+              finalMsg = sp[0];
+            }else{
+              finalMsg = msg;
+            }
+            rowData.push(Lodash.capitalize(finalMsg));
+            dataList.push(rowData);
+          }
+        }
       }
-    });
-    if (selectedText.includes('Investment')) {
-      filter = Lodash.filter(
-        clone,
-        (io) =>
-          !io.name.includes('Loan') &&
-          !io.name.includes('Insurance') &&
-          !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse') && !io.name.includes('Insure Check')
-      );
     }
-    return filter;
+    return dataList;
   };
 
+  /**
+   *
+   * @param {*} mode true ? next : back
+   */
+  pagination = (mode) => {
+    const { itemSize, cloneList } = this.state;
+    let clone = JSON.parse(JSON.stringify(cloneList));
+    let plus = itemSize;
+    let slicedArray = [];
+    if (mode) {
+      plus += 5;
+      if (itemSize < clone.length) {
+        if (plus > clone.length) {
+          const rem = clone.length - itemSize;
+          plus = itemSize + rem;
+        }
+        slicedArray = this.returnData(clone, itemSize, plus);
+        this.setState({ dataList: slicedArray, itemSize: plus });
+      }
+    } else {
+      if (itemSize <= 5) {
+        plus = 0;
+      } else {
+        plus -= 5;
+      }
+      if (plus >= 0 && plus < clone.length) {
+        slicedArray = this.returnData(clone, plus, itemSize);
+        if (slicedArray.length > 0) {
+          this.setState({ dataList: slicedArray, itemSize: plus });
+        }
+      }
+    }
+  };
+
+
+  revertBack = () => {
+    const { enableSearch } = this.state;
+    const { cloneList } = this.state;
+    if (enableSearch === true && cloneList.length > 0) {
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const data = this.returnData(clone, 0, 5);
+      this.setState({ dataList: data });
+    }
+    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
+  }
+
   render() {
-    const { selectedText, ogData } = this.state;
+    const { enableSearch } = this.state;
     return (
       <CScreen
-        absolute={
-          <>
-            {selectedText !== '' ? (
-              <Portal>
-                <PayoutSideBar
-                  list={this.getFilterList()}
-                  backClicked={() => this.setState({ selectedText: '' })}
-                  ogData={ogData}
-                />
-              </Portal>
-            ) : null}
-          </>
-        }
         body={
           <>
             <LeftHeaders
-              title={'Track My Query'}
               showBack
-            // bottomtext={' '}
-            // bottomtextStyle={{
-            //   color: '#555555',
-            //   fontSize: 20,
-            // }}
+              title={'Track My Query'}
+              bottomBody={
+                <>
+                  {/* <View styleName="md-gutter">
+                    <Searchbar
+                      placeholder="Search"
+                      onChangeText={this.onChangeSearch}
+                      value={searchQuery}
+                    />
+                  </View> */}
+                </>
+              }
             />
 
+            <View styleName="horizontal md-gutter space-between">
+              <View styleName="horizontal">
+                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                  <Title style={styles.itemtopText}>{`Back`}</Title>
+                </TouchableWithoutFeedback>
+                <View
+                  style={{
+                    height: 16,
+                    marginHorizontal: 12,
+                    backgroundColor: '#0270e3',
+                    width: 1.5,
+                  }}
+                />
+                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
+                  <Title style={styles.itemtopText}>{`Next`}</Title>
+                </TouchableWithoutFeedback>
+              </View>
+              <TouchableWithoutFeedback 
+              //onPress={this.revertBack}
+              >
+                <View styleName="horizontal v-center h-center">
+                  {/* <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} /> */}
+                </View>
+              </TouchableWithoutFeedback>
+
+            </View>
+
+            {this.state.loading ? (
+              <View style={styles.loader}>
+                <ActivityIndicator />
+              </View>
+            ) : this.state.dataList.length > 0 ? (
+              <CommonTable
+                dataList={this.state.dataList}
+                widthArr={this.state.widthArr}
+                tableHead={this.state.tableHead}
+              />
+            ) : (
+                  <View style={styles.emptycont}>
+                    <ListError subtitle={'No Tickets Found...'} />
+                  </View>
+                )}
+
+            {this.state.dataList.length > 0 ? (
+              <>
+                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
+                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+              </>
+            ) : null}
 
           </>
         }
@@ -219,43 +322,16 @@ export default class TrackQuery extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-  sideItem: {
-    color: '#6e6852',
-    fontWeight: '400',
-    fontSize: 14,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    letterSpacing: 0.5,
-  },
-  dummy: { flex: 0.2 },
-  mainconx: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  itemcont: {
-    backgroundColor: '#f9f8f1',
-    borderColor: '#bbbbba',
-    borderWidth: 1,
-    borderRadius: 56,
-    marginVertical: 10,
-    paddingVertical: 12,
-    flex: 0.6,
-  },
-  divider: {
-    backgroundColor: '#dedede',
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 8,
-  },
-  itemContainer: {
-    marginVertical: 10,
-    borderColor: '#bcbaa1',
-    borderWidth: 0.8,
-    borderRadius: 16,
-    marginHorizontal: 16,
+  button: {
+    color: 'white',
+    paddingVertical: sizeHeight(0.5),
+    marginTop: 24,
+    marginHorizontal: 24,
+    backgroundColor: '#e21226',
+    textAlign: 'center',
+    elevation: 0,
+    borderRadius: 0,
+    letterSpacing: 1,
   },
   emptycont: {
     flex: 0.7,
@@ -272,84 +348,26 @@ const styles = StyleSheet.create({
     marginVertical: 48,
     paddingVertical: 48,
   },
-  subtitle: {
-    fontSize: 14,
-    fontFamily: 'Rubik',
-    letterSpacing: 1,
-    color: '#292929',
-    alignSelf: 'center',
-    fontWeight: '400',
-  },
-  title: {
-    fontSize: 18,
-    fontFamily: 'Rubik',
-    letterSpacing: 1,
-    color: '#292929',
-    alignSelf: 'flex-start',
-    fontWeight: '700',
-  },
-  passText: {
-    fontSize: 20,
-    letterSpacing: 0.5,
-    color: Pref.RED,
-    fontWeight: '700',
-    lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    paddingVertical: 16,
-    marginBottom: 12,
-  },
-  gap: {
-    marginHorizontal: 8,
-  },
-  image: {
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: 8,
-    width: '90%',
-    height: 156,
-    resizeMode: 'contain',
-  },
-  footerCon: {
-    paddingBottom: 12,
-    paddingHorizontal: 12,
-    paddingTop: 4,
-  },
-  icon: {
-    alignSelf: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
-  },
   itemtext: {
     letterSpacing: 0.5,
     fontWeight: '700',
     lineHeight: 20,
-    // alignSelf: 'center',
-    // justifyContent: 'center',
-    // textAlign: 'center',
-    color: '#686868',
-    fontSize: 16,
-    marginStart: 16,
-    marginEnd: 16,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#0270e3',
+    fontSize: 14,
+    paddingVertical: 16,
+    marginTop: 4,
   },
-  itemtext1: {
+  itemtopText: {
     letterSpacing: 0.5,
     fontWeight: '700',
     lineHeight: 20,
     alignSelf: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    color: '#97948c',
+    color: '#0270e3',
     fontSize: 16,
   },
-  circle: {
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: 4,
-    borderRadius: 36 / 2,
-  },
 });
-
