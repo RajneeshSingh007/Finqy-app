@@ -221,6 +221,10 @@ export default class RaiseQueryForm extends React.Component {
         userData.rcontact = userData.mobile;
       }
 
+      if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rname) === true) {
+        userData.rname = userData.username;
+      }
+
       let subject = '';
       let type = '';
       let agentUserID = -1;
@@ -288,6 +292,20 @@ export default class RaiseQueryForm extends React.Component {
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
             const agentBody = { id: agentUserID };
+            Helper.networkHelperTokenPost(
+              Pref.SEND_MAIL_URL,
+              JSON.stringify({
+                "tnumber":ticketID,
+                "name":userData.rname,
+                "email":userData.email
+            }),
+              Pref.methodPost,
+              '',
+              (result) => {
+              },
+              (e) => {
+              },
+            );
             //console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,

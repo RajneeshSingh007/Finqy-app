@@ -2805,6 +2805,7 @@ export const UVDESK_ASSIGN_AGENT = `${MAIN_SUPPORT_URL}ticket/`;
 //////////////////////////////
 export const AGENTS_URL = `${ApiDirUrl}ticketapi/get_agents.php`;
 export const TICKETS_LIST_URL = `${ApiDirUrl}ticketapi/get_user_tickets.php`;
+export const SEND_MAIL_URL = `${ApiDirUrl}ticketapi/send_mail.php`;
 
 
 
