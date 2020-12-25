@@ -43,7 +43,7 @@ export default class TrackQuery extends React.PureComponent {
         'Status',
         'Remark',
       ],
-      widthArr: [60,80, 120, 120, 60, 100],
+      widthArr: [60,80, 120, 120, 60, 140],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -182,10 +182,9 @@ export default class TrackQuery extends React.PureComponent {
             const msg = item.message;
             let finalMsg = '';
             if(msg.includes(',')){
-              const sp = msg.split(',');
-              finalMsg = sp[0];
+              finalMsg = msg.replace(/,/g,'\n');
             }else{
-              finalMsg = msg;
+              finalMsg = '';
             }
             rowData.push(Lodash.capitalize(finalMsg));
             dataList.push(rowData);

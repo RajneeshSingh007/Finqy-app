@@ -118,11 +118,11 @@ export default class RaiseQueryForm extends React.Component {
     super(props);
     this.submitt = this.submitt.bind(this);
     this.backClick = this.backClick.bind(this);
-    this.state = this.returnState(true, true);
+    this.state = this.returnState(false, true);
   }
 
   componentDidMount() {
-    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
@@ -132,6 +132,7 @@ export default class RaiseQueryForm extends React.Component {
   }
 
   fetchData = (userData) => {
+    this.setState({ loading: true, userData: userData });
     Helper.networkHelperGet(
       Pref.AGENTS_URL,
       (result) => {
@@ -173,7 +174,7 @@ export default class RaiseQueryForm extends React.Component {
   }
 
   componentWillUnMount() {
-    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
