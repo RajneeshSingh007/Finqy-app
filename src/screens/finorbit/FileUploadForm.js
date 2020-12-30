@@ -11,6 +11,7 @@ import * as Pref from '../../util/Pref';
 import { sizeWidth } from '../../util/Size';
 import moment from 'moment';
 import CommonFileUpload from '../common/CommonFileUpload';
+import Lodash from 'lodash';
 
 export default class FileUploadForm extends React.PureComponent {
   constructor(props) {
@@ -40,22 +41,42 @@ export default class FileUploadForm extends React.PureComponent {
     const { fileList } = this.state;
     if (fileList.length > 0) {
       let returnName = null;
-      for (let index = 0; index < fileList.length; index++) {
-        const io = fileList[index];
-        for (var key in io) {
-          //console.log(key);
+      Lodash.map(fileList, io =>{
+        Object.entries(io).forEach(([key, value]) =>{
           if (input === key) {
-            const { name } = io[key];
+            const { name } = value;
             if (name !== undefined && name !== '') {
               returnName = name;
-              break;
+              //break;
             }
           }
-        }
-        if (returnName !== null) {
-          break;
-        }
-      }
+        })
+      })
+      // for (let index = 0; index < fileList.length; index++) {
+      //   const io = fileList[index];
+      //   Object.entries(io).forEach(([key, value]) =>{
+      //     if (input === key) {
+      //       const { name } = io[key];
+      //       if (name !== undefined && name !== '') {
+      //         returnName = name;
+      //         //break;
+      //       }
+      //     }
+      //   })
+        // for (var key in io) {
+        //   //console.log(key);
+        //   if (input === key) {
+        //     const { name } = io[key];
+        //     if (name !== undefined && name !== '') {
+        //       returnName = name;
+        //       //break;
+        //     }
+        //   }
+        // }
+        //if (returnName !== null) {
+         // break;
+        //}
+      //}
       return returnName;
     } else {
       return null;

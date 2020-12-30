@@ -105,7 +105,7 @@ export default class LoginScreen extends React.PureComponent {
       errorData = false;
       Helper.showToastMessage('Invalid password', 0);
     }
-    console.log('token', this.state.token);
+    //console.log('token', this.state.token);
     if (errorData) {
       this.setState({ loading: true });
       const jsonData = JSON.stringify({

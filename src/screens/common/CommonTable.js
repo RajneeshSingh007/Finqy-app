@@ -1,10 +1,21 @@
 import React from 'react';
+import {TouchableWithoutFeedback} from 'react-native';
 import {StyleSheet, ScrollView, View, FlatList} from 'react-native';
 import {sizeWidth, sizeHeight} from '../../util/Size';
 import {Table, Row} from 'react-native-table-component';
 
-const CommonTable = (props) => {
-  const {widthArr, tableHead, dataList = [], headerTextStyle ={}, headerStyle={}, textStyle={},rowStyle={}, enableHeight = true} = props;  
+const CommonTable = props => {
+  const {
+    widthArr,
+    tableHead,
+    dataList = [],
+    headerTextStyle = {},
+    headerStyle = {},
+    textStyle = {},
+    rowStyle = {},
+    enableHeight = true,
+    rowClicked = (item) => {},
+  } = props;
   return (
     <ScrollView
       horizontal
@@ -15,11 +26,11 @@ const CommonTable = (props) => {
           {
             marginHorizontal: sizeWidth(2),
             backgroundColor: 'white',
-            flex:1
+            flex: 1,
           },
           enableHeight && {
             height: sizeHeight(56),
-          }
+          },
         ]}>
         {/* <Table>
           <Row
@@ -30,22 +41,36 @@ const CommonTable = (props) => {
           />
         </Table> */}
         <FlatList
-          ListHeaderComponent={() => <Row
-            data={tableHead}
-            widthArr={widthArr}
-            style={StyleSheet.flatten([styles.header, headerStyle])}
-            textStyle={StyleSheet.flatten([styles.headerText, headerTextStyle])}
-          />}
+          ListHeaderComponent={() => (
+            <Row
+              data={tableHead}
+              widthArr={widthArr}
+              style={StyleSheet.flatten([styles.header, headerStyle])}
+              textStyle={StyleSheet.flatten([
+                styles.headerText,
+                headerTextStyle,
+              ])}
+            />
+          )}
           data={dataList}
           keyExtractor={(item, index) => `${index}`}
           renderItem={({item, index}) => (
-            <Row
-              key={index}
-              data={item}
-              widthArr={widthArr}
-              style={[styles.row, index % 2 && {backgroundColor: '#ffffff'},rowStyle]}
-              textStyle={StyleSheet.flatten([styles.text,textStyle])}
-            />
+            <TouchableWithoutFeedback
+              onPress={() => {
+                rowClicked(item);
+              }}>
+              <Row
+                key={index}
+                data={item}
+                widthArr={widthArr}
+                style={[
+                  styles.row,
+                  index % 2 && {backgroundColor: '#ffffff'},
+                  rowStyle,
+                ]}
+                textStyle={StyleSheet.flatten([styles.text, textStyle])}
+              />
+            </TouchableWithoutFeedback>
           )}
         />
 
@@ -73,8 +98,8 @@ const styles = StyleSheet.create({
   container: {flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff'},
   header: {
     height: 56,
-    marginStart:8,
-    marginEnd:8
+    marginStart: 8,
+    marginEnd: 8,
     // backgroundColor: Colors.blueGrey900,
     // borderColor: '#dedede',
     // borderWidth: 0.5,

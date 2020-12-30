@@ -3,36 +3,16 @@ import {
   StatusBar,
   StyleSheet,
   ScrollView,
-  BackHandler,
-  FlatList,
   TouchableWithoutFeedback,
-  Linking,
   Alert,
-  Platform,
 } from 'react-native';
 import {
-  TouchableOpacity,
   Image,
-  Screen,
-  Subtitle,
   Title,
   View,
-  Heading,
-  NavigationBar,
-  Text,
-  Caption,
-  GridView,
 } from '@shoutem/ui';
 import {
-  Button,
-  Card,
   Colors,
-  Snackbar,
-  TextInput,
-  DataTable,
-  Modal,
-  Portal,
-  Avatar,
   Divider,
 } from 'react-native-paper';
 import NavigationActions from './NavigationActions';
@@ -40,12 +20,8 @@ import { SafeAreaView } from 'react-navigation';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
-import CommonScreen from '../screens/common/CommonScreen';
 import * as Pref from './Pref';
-import * as Helper from './Helper';
-import IconChooser from '../screens/common/IconChooser';
 import DrawerTop from '../screens/component/DrawerTop';
-import analytics from '@react-native-firebase/analytics';
 
 const COLOR = '#f9f8f1';
 
@@ -283,6 +259,19 @@ export default class Sidebar extends React.Component {
               options: {},
             },
             // {
+            //   name: `Raise A Query`,
+            //   expand: false,
+            //   click: 'RaiseQueryForm',
+            //   options: {},
+            // },
+            // {
+            //   name: `Track My Query`,
+            //   expand: false,
+            //   click: 'TrackQuery',
+            //   options: {},
+            // },
+
+            // {
             //   name: `Raise QRC`,
             //   expand: false,
             //   click: 'Qrc',
@@ -299,28 +288,6 @@ export default class Sidebar extends React.Component {
         //   icontype: 3,
         //   options: {},
         // },
-        {
-          name: `Raise a Ticket`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon10.png'),
-          icontype: 2,
-          sub: [
-            {
-              name: `Raise a query`,
-              expand: false,
-              click: 'RaiseQueryForm',
-              options: {},
-            },
-            {
-              name: `Track my query`,
-              expand: false,
-              click: 'TrackQuery',
-              options: {},
-            },
-          ],
-          click: '',
-        },
       ],
     };
   }
@@ -518,6 +485,19 @@ export default class Sidebar extends React.Component {
                 options: {},
               },
               // {
+              //   name: `Raise A Query`,
+              //   expand: false,
+              //   click: 'RaiseQueryForm',
+              //   options: {},
+              // },
+              // {
+              //   name: `Track My Query`,
+              //   expand: false,
+              //   click: 'TrackQuery',
+              //   options: {},
+              // },
+  
+              // {
               //   name: `Raise QRC`,
               //   expand: false,
               //   click: 'Qrc',
@@ -534,28 +514,6 @@ export default class Sidebar extends React.Component {
           //   icontype: 3,
           //   options: {},
           // },
-          {
-            name: `Raise a Ticket`,
-            expand: false,
-            heading: true,
-            iconname: require('../res/images/menuicon10.png'),
-            icontype: 2,
-            sub: [
-              {
-                name: `Raise a query`,
-                expand: false,
-                click: 'RaiseQueryForm',
-                options: {},
-              },
-              {
-                name: `Track my query`,
-                expand: false,
-                click: 'TrackQuery',
-                options: {},
-              },
-            ],
-            click: '',
-          },
         ];
         this.setState({ menuList: filter });
       } else if (v === 'team') {
@@ -656,6 +614,18 @@ export default class Sidebar extends React.Component {
                 click: 'Manager',
                 options: {},
               },
+              {
+                name: `Raise A Query`,
+                expand: false,
+                click: 'RaiseQueryForm',
+                options: {},
+              },
+              {
+                name: `Track My Query`,
+                expand: false,
+                click: 'TrackQuery',
+                options: {},
+              },  
               // {
               //   name: `Raise QRC`,
               //   expand: false,
@@ -673,35 +643,13 @@ export default class Sidebar extends React.Component {
           //   icontype: 3,
           //   options: {},
           // },
-          {
-            name: `Raise a Ticket`,
-            expand: false,
-            heading: true,
-            iconname: require('../res/images/menuicon10.png'),
-            icontype: 2,
-            sub: [
-              {
-                name: `Raise a query`,
-                expand: false,
-                click: 'RaiseQueryForm',
-                options: {},
-              },
-              {
-                name: `Track my query`,
-                expand: false,
-                click: 'TrackQuery',
-                options: {},
-              },
-            ],
-            click: '',
-          },
         ];
         this.setState({ menuList: filter });
       }
     });
   }
 
-  menuheaderClick = (item, index) => {
+  menuheaderClick = (item) => {
     const menuList = this.state.menuList;
     const fill = Lodash.map(menuList, (ele) => {
       const oldexp = item.expand;
@@ -791,7 +739,7 @@ export default class Sidebar extends React.Component {
   };
 
   render() {
-    const { menuList, userData } = this.state;
+    const { menuList } = this.state;
     return (
       <SafeAreaView style={styles.mainContainer} forceInset={{ top: 'never' }}>
         <View style={styles.mainContainer}>
@@ -900,7 +848,7 @@ export default class Sidebar extends React.Component {
                               </View>
                             </TouchableWithoutFeedback>
                             {s.expand
-                              ? s.sub.map((s, i) => {
+                              ? s.sub.map((s) => {
                                 return (
                                   <View
                                     style={{

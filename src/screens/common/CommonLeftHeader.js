@@ -42,6 +42,7 @@ const LeftHeaders = (props) => {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
         let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
+        //console.log('profilePic', profilePic);
         setPic(profilePic);
         setuserData(value);
         setleaderData(Helper.nullCheck(value.leader) === false ? value.leader[0] : null)
@@ -235,7 +236,7 @@ const LeftHeaders = (props) => {
                 {/* {title === 'Hi,' ? ( */}
                 <View>
                   <Avatar.Image
-                    source={pic === null ? require('../../res/images/account.png') : pic}
+                    source={Helper.nullStringCheck(pic) === true ? require('../../res/images/account.png') : pic}
                     size={48}
                     style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                   />

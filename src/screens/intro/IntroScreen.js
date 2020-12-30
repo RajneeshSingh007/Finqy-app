@@ -57,6 +57,7 @@ export default class IntroScreen extends React.PureComponent {
     //const { navigation } = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
       this.syncImmediate();
+      Pref.setVal(Pref.saveToken, Helper.removeQuotes(Pref.API_TOKEN));
       const body = JSON.stringify({
         username: `ERBFinPro`,
         product: `FinPro App`,

@@ -12,13 +12,14 @@ import CScreen from '../component/CScreen';
 import NewDropDown from '../component/NewDropDown';
 import CommonFileUpload from '../common/CommonFileUpload';
 import lodash from 'lodash';
+import NavigationActions from '../../util/NavigationActions';
 
 let ticketIssueList = [
   {
     value: 'IT/Software/App Issue',
   },
   {
-    value: 'Non-It Issue',
+    value: 'NON-IT Issue',
   },
 ];
 
@@ -169,7 +170,8 @@ export default class RaiseQueryForm extends React.Component {
       itissue: '',
       nonitissue: '',
       nonitesubissue: "",
-      attachments: []
+      attachments: [],
+      description:''
     };
   }
 
@@ -192,13 +194,17 @@ export default class RaiseQueryForm extends React.Component {
       checkData = false;
       Helper.showToastMessage('Please, Select IT Issue', 0);
       return false;
-    } else if (body.ticketissue === 'Non-It Issue' && body.nonitissue === '') {
+    } else if (body.ticketissue === 'NON-IT Issue' && body.nonitissue === '') {
       checkData = false;
       Helper.showToastMessage('Please, Select NON-IT Issue', 0);
       return false;
-    } else if (body.ticketissue === 'Non-It Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
+    } else if (body.ticketissue === 'NON-IT Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
       checkData = false;
       Helper.showToastMessage('Please, Select Sub Issue', 0);
+      return false;
+    } else if (body.description === '') {
+      checkData = false;
+      Helper.showToastMessage('Description empty', 0);
       return false;
     } else if (body.remark === '') {
       checkData = false;
@@ -211,7 +217,7 @@ export default class RaiseQueryForm extends React.Component {
 
     if (agentList.length === 0) {
       checkData = false;
-      Helper.showToastMessage(`No agents found, please try after some time`, 0);
+      Helper.showToastMessage(`No team found, please try after some time`, 0);
       return false;
     }
 
@@ -237,20 +243,37 @@ export default class RaiseQueryForm extends React.Component {
         if (findTeam != undefined) {
           agentUserID = findTeam.user_id;
         }
-      } else if (body.ticketissue === 'Non-It Issue') {
+      } else if (body.ticketissue === 'NON-IT Issue') {
         subject = `${body.nonitissue} | ${body.nonitesubissue}`
         type = 'NON-IT ISSUE'
-        const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation.toLowerCase() === body.nonitissue.toLowerCase());
-        //console.log('findTeamNT', findTeam);
-        if (findTeam != undefined) {
-          agentUserID = findTeam.user_id;
+        //console.log('body.nonitesubissue', body.nonitesubissue);   
+        if(body.nonitesubissue === 'TDS' || body.nonitesubissue === 'Payout' || body.nonitesubissue == 'Invoice'){
+          const findTeam = lodash.find(agentList, io => io.supportTeamId === "3");
+          //console.log('findTeamNT', findTeam);
+          if (findTeam != undefined) {
+            agentUserID = findTeam.user_id;
+          }
+        }else{
+          if(body.nonitissue.includes('Insurance')){
+            const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation === 'Insurance');
+            //console.log('findTeamNT', findTeam);
+            if (findTeam != undefined) {
+              agentUserID = findTeam.user_id;
+            }
+          }else{
+            const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation.toLowerCase() === body.nonitissue.toLowerCase());
+            //console.log('findTeamNT', findTeam);
+            if (findTeam != undefined) {
+              agentUserID = findTeam.user_id;
+            }
+          }
         }
       }
 
       //console.log('agentUserID', agentUserID)
 
       if (agentUserID === -1) {
-        Helper.showToastMessage(`No agents found, please try after some time`, 0);
+        Helper.showToastMessage(`No team found, please try after some time`, 0);
         return false;
       }
 
@@ -262,6 +285,8 @@ export default class RaiseQueryForm extends React.Component {
       formData.append('from', userData.email);
       formData.append('actAsType', 'customer');
       formData.append('message', body.remark);
+      formData.append('source', "app");
+      formData.append('description', body.description);
 
       // body.subject = subject;
       // body.type = type;
@@ -292,20 +317,20 @@ export default class RaiseQueryForm extends React.Component {
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
             const agentBody = { id: agentUserID };
-            Helper.networkHelperTokenPost(
-              Pref.SEND_MAIL_URL,
-              JSON.stringify({
-                "tnumber":ticketID,
-                "name":userData.rname,
-                "email":userData.email
-            }),
-              Pref.methodPost,
-              '',
-              (result) => {
-              },
-              (e) => {
-              },
-            );
+            // Helper.networkHelperTokenPost(
+            //   Pref.SEND_MAIL_URL,
+            //   JSON.stringify({
+            //     "tnumber":ticketID,
+            //     "name":userData.rname,
+            //     "email":userData.email
+            // }),
+            //   Pref.methodPost,
+            //   '',
+            //   (result) => {
+            //   },
+            //   (e) => {
+            //   },
+            // );
             //console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
@@ -315,9 +340,10 @@ export default class RaiseQueryForm extends React.Component {
               result => {
                 //console.log('result1', result);
                 const { success } = JSON.parse(JSON.stringify(result));
-                this.setState(this.returnState(false, false));
+                this.setState({ loading: false });
                 if (success.includes('Success')) {
                   Helper.showToastMessage("Success ! Ticket has been created successfully.", 1);
+                  NavigationActions.navigate('TrackQuery');
                 } else {
                   Helper.showToastMessage(`Failed to create ticket`, 0);
                 }
@@ -383,7 +409,7 @@ export default class RaiseQueryForm extends React.Component {
                 />
               ) : null}
 
-              {this.state.ticketissue === 'Non-It Issue' ?
+              {this.state.ticketissue === 'NON-IT Issue' ?
                 <NewDropDown
                   list={nonitIssueList}
                   placeholder={`Select Product`}
@@ -405,13 +431,23 @@ export default class RaiseQueryForm extends React.Component {
               /> : null}
 
               <CustomForm
+                value={this.state.description}
+                onChange={v => this.setState({ description: v })}
+                label={`Short Description *`}
+                placeholder={`Enter description`}
+                keyboardType={'text'}
+                multiline
+                maxLength={50}
+              />
+
+              <CustomForm
                 value={this.state.remark}
                 onChange={v => this.setState({ remark: v })}
                 label={`Remark *`}
                 placeholder={`Enter remark`}
                 keyboardType={'text'}
                 multiline
-                maxLength={128}
+                maxLength={200}
               />
 
               <CommonFileUpload

@@ -23,6 +23,9 @@ const IntroHeader = (prop) => {
             <Image
               source={require('../../res/images/squarelogo.png')}
               styleName="medium"
+              style={{
+                resizeMode:'contain'
+              }}
             />
           </View>
           <View style={styles.rightcon}>

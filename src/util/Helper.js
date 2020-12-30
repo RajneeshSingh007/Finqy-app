@@ -801,3 +801,40 @@ export const networkHelperHelpDeskTicket = (
     });
 };
 
+/**
+ * networkHelper
+ * @param url
+ * @param jsonData
+ * @param method
+ * @param isTokenPresent
+ * @param token
+ * @param callback
+ * @param errorCallback
+ */
+export const networkHelperHelpDeskTicketGet = (
+  url,
+  jsonData,
+  method,
+  token,
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
+) => {
+  const options = {
+    method: method,
+    headers: {
+      Authorization: 'Basic ' + token,
+      Accept: 'application/json',
+    },
+  };
+  fetch(url, options)
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseJson) => {
+      callback(responseJson);
+    })
+    .catch((error) => {
+      errorCallback(error);
+    });
+};
+

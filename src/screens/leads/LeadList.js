@@ -33,7 +33,7 @@ import Download from './../component/Download';
 import NavigationActions from '../../util/NavigationActions';
 import { constructObjEditLead,constructObjEditSamadhan } from '../../util/FormCheckHelper';
 
-let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Moble No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
+let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 export default class LeadList extends React.PureComponent {
@@ -60,7 +60,7 @@ export default class LeadList extends React.PureComponent {
         'Lead No',
         'Source',
         'Customer Name',
-        'Moble No',
+        'Mobile No',
         'Product',
         'Company',
         'Status',
@@ -151,13 +151,25 @@ export default class LeadList extends React.PureComponent {
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
-              const sp = a.date.split('-');
-              const spz = b.date.split('-');
-              return (
-                Number(sp[2]) - Number(spz[2]) ||
-                Number(sp[1]) - Number(spz[1]) ||
-                Number(sp[0]) - Number(spz[0])
-              );
+              if(a.date.includes(' ') && b.date.includes(' ')){
+                const splita = a.date.split(' ');
+                const splitb = b.date.split(' ');
+                const sp = splita[0].date.split('-');
+                const spz = splitb[0].split('-');
+                return (
+                  Number(sp[2]) - Number(spz[2]) ||
+                  Number(sp[1]) - Number(spz[1]) ||
+                  Number(sp[0]) - Number(spz[0])
+                );
+              }else{
+                const sp = a.date.split('-');
+                const spz = b.date.split('-');
+                return (
+                  Number(sp[2]) - Number(spz[2]) ||
+                  Number(sp[1]) - Number(spz[1]) ||
+                  Number(sp[0]) - Number(spz[0])
+                );
+              }
             });
             const sort = sorting.reverse();
             const { itemSize } = this.state;

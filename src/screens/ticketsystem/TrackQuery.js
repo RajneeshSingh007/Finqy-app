@@ -3,17 +3,19 @@ import {
   StyleSheet,
   BackHandler,
   TouchableWithoutFeedback,
+  Text,
 } from 'react-native';
-import {
-  Title,
-  View,
-} from '@shoutem/ui';
+import {Title, View, Html, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {
   ActivityIndicator,
+  Button,
+  Portal,
+  RadioButton,
+  Avatar,
 } from 'react-native-paper';
-import { sizeHeight } from '../../util/Size';
+import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -21,20 +23,33 @@ import CommonTable from '../common/CommonTable';
 import IconChooser from '../common/IconChooser';
 import CScreen from './../component/CScreen';
 import moment from 'moment';
+import NavigationActions from '../../util/NavigationActions';
+import Modal from '../../util/Modal';
+import NewDropDown from '../component/NewDropDown';
+import CustomForm from '../finorbit/CustomForm';
+import Loader from '../../util/Loader';
+import Timeline from 'react-native-timeline-flatlist';
 
 export default class TrackQuery extends React.PureComponent {
   constructor(props) {
     super(props);
     const date = new Date();
     this.backclick = this.backclick.bind(this);
+    this.submitTicketEdit = this.submitTicketEdit.bind(this);
+    this.detailThread = this.detailThread.bind(this);
+    this.renderDetail = this.renderDetail.bind(this);
+    this.filterClicked = this.filterClicked.bind(this);
+    this.filterButtonClicked  = this.filterButtonClicked.bind(this);
+    this.resetFilter = this.resetFilter.bind(this);
     this.state = {
+      loader: false,
       dataList: [],
       loading: true,
       showCalendar: false,
       currentDate: date,
       dates: '',
       token: '',
-      userData: '',
+      userData: null,
       tableHead: [
         'Sr. No.',
         'Date',
@@ -42,8 +57,9 @@ export default class TrackQuery extends React.PureComponent {
         'Ticket Issue',
         'Status',
         'Remark',
+        '',
       ],
-      widthArr: [60,80, 120, 120, 60, 140],
+      widthArr: [60, 80, 120, 120, 60, 200, 60],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -58,27 +74,42 @@ export default class TrackQuery extends React.PureComponent {
       searchQuery: '',
       enableSearch: false,
       orderBy: 'asc',
-      fileName: ''
+      fileName: '',
+      remark: '',
+      status: '',
+      showModal: false,
+      editItem: null,
+      threadList: [],
+      detailShow: false,
+      threadLoader: false,
+      filterModal: false,
+      statusFilter:'',
+      priorityFilter:'',
+      ticketTypeFilter:'',
+      originalList:[]
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.fetchData(userData);
-      });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, userData => {
+      this.fetchData(userData);
     });
+    //});
   }
 
   backclick = () => {
-    const { modalvis } = this.state;
+    const {modalvis, detailShow} = this.state;
     if (modalvis) {
-      this.setState({ modalvis: false, pdfurl: '' });
+      this.setState({modalvis: false, pdfurl: ''});
+      return true;
+    } else if (detailShow) {
+      this.setState({detailShow: false, threadList: [], threadLoader: false});
       return true;
     }
     return false;
@@ -90,23 +121,25 @@ export default class TrackQuery extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = (userData) => {
-    if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true) {
+  fetchData = userData => {
+    if (
+      Helper.nullCheck(userData) === false &&
+      Helper.nullCheck(userData.rcontact) === true
+    ) {
       userData.rcontact = userData.mobile;
     }
-    const { rcontact } = userData;
+    const {rcontact} = userData;
     const body = JSON.stringify({
       mobile: rcontact,
     });
-    //console.log('body', body)
     Helper.networkHelperTokenPost(
       Pref.TICKETS_LIST_URL,
       body,
       Pref.methodPost,
       '',
-      (result) => {
-        const { tickets, status } = result;
-        //console.log('result', status)
+      result => {
+        const {tickets, status} = result;
+        //console.log('result', result)
         if (status === `success`) {
           if (tickets.length > 0) {
             const sorting = tickets.sort((a, b) => {
@@ -118,9 +151,10 @@ export default class TrackQuery extends React.PureComponent {
                 Number(sp[0]) - Number(spz[0])
               );
             });
-            const sort = sorting;
-            const { itemSize } = this.state;
+            const sort = sorting.filter(io => io.SCode.toLowerCase() === 'open');
+            const {itemSize} = this.state;
             this.setState({
+              originalList:tickets,
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
                 0,
@@ -128,20 +162,42 @@ export default class TrackQuery extends React.PureComponent {
               ),
               loading: false,
               itemSize: sort.length >= 5 ? 5 : sort.length,
+              userData: userData,
             });
           } else {
             this.setState({
               loading: false,
+              userData: userData,
             });
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false, userData: userData});
         }
       },
-      (e) => {
-        this.setState({ loading: false });
+      e => {
+        this.setState({loading: false, userData: userData});
       },
     );
+  };
+
+  editQuery = item => {
+    const {SCode, message} = item;
+    console.log('item', item);
+    let remark = '';
+    if (Helper.nullStringCheck(message) === false) {
+      if (message.includes(',')) {
+        const spl = message.split(',');
+        remark = spl[0];
+      } else {
+        remark = message;
+      }
+    }
+    this.setState({
+      showModal: true,
+      editItem: item,
+      status: Lodash.capitalize(SCode),
+      remark: '',
+    });
   };
 
   /**
@@ -170,9 +226,13 @@ export default class TrackQuery extends React.PureComponent {
                   justifyContent: 'center',
                 }}>
                 <View>
-                  <Title style={StyleSheet.flatten([styles.itemtext, {
-                    color: color || Pref.RED
-                  }])}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.itemtext,
+                      {
+                        color: color || Pref.RED,
+                      },
+                    ])}>
                     {Lodash.capitalize(value)}
                   </Title>
                 </View>
@@ -181,12 +241,50 @@ export default class TrackQuery extends React.PureComponent {
             rowData.push(statusText(item.SCode, item.SColor));
             const msg = item.message;
             let finalMsg = '';
-            if(msg.includes(',')){
-              finalMsg = msg.replace(/,/g,'\n');
-            }else{
+            if (msg.includes(',')) {
+              const explodeMsg = msg.split(',');
+              if (explodeMsg.length > 2) {
+                finalMsg = explodeMsg[explodeMsg.length - 1];
+              } else {
+                finalMsg = '';
+              }
+            } else {
               finalMsg = '';
             }
+            const regex = /(<([^>]+)>)/gi;
+            finalMsg = finalMsg.replace(regex, '');
             rowData.push(Lodash.capitalize(finalMsg));
+            const editView = value => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback onPress={() => this.editQuery(value)}>
+                  <View>
+                    <IconChooser name={`edit-2`} size={20} color={`#9f9880`} />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            );
+            if (
+              Helper.nullCheck(item.editenable) === false &&
+              item.editenable === 0
+            ) {
+              rowData.push(editView(item));
+            } else {
+              rowData.push('');
+            }
+            rowData.push(item.ticket_id);
+            if(item.message.includes(",")){
+              const split = item.message.split(',');
+              rowData.push(item.message[0].replace(regex, ''));
+            }else{
+              rowData.push(item.message.replace(regex, ''));
+            }
+            rowData.push(item.updated_at);
             dataList.push(rowData);
           }
         }
@@ -195,12 +293,76 @@ export default class TrackQuery extends React.PureComponent {
     return dataList;
   };
 
+  detailThread = editItem => {
+    //console.log('editItem', editItem);
+    const ticketId = 14;
+    //Number(editItem[editItem.length - 3]);
+    if (ticketId) {
+      this.setState({threadLoader: true, detailShow: true});
+      const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticketId}`;
+      //console.log('url', url);
+      const startObj = {
+        time: editItem[editItem.length-1],
+        description: editItem[editItem.length - 2],
+        userType: 'customer',
+        threadType: 'created',
+        title: 'You',
+        imageUrl: require('../../res/images/account.png'),
+      };
+      //console.log('startObj', startObj)
+      Helper.networkHelperHelpDeskTicketGet(
+        url,
+        null,
+        Pref.methodGet,
+        Pref.UVDESK_API,
+        result => {
+          //console.log('result1', result);
+          const {success, thread} = result;
+          let threadList = [];
+          const regex = /(<([^>]+)>)/gi;
+          if (thread.length > 0) {
+            thread.forEach(element => {
+              const {
+                formatedCreatedAt,
+                userType,
+                reply,
+                threadType,
+                fullname,
+              } = element;
+              threadList.push({
+                time: formatedCreatedAt,
+                description: reply.replace(regex, ''),
+                userType: userType,
+                threadType: threadType,
+                title: userType != 'customer' ? 'Agent' : 'You',
+                imageUrl:
+                  userType != 'customer'
+                    ? require('../../res/images/timelineagent.png')
+                    : require('../../res/images/account.png'),
+              });
+            });
+          }
+          threadList.push(startObj);
+          this.setState({
+            threadList: threadList,
+            detailShow: true,
+            threadLoader: false,
+          });
+        },
+        e => {
+          this.setState({threadList: [], threadLoader: false});
+        },
+      );
+    } else {
+    }
+  };
+
   /**
    *
    * @param {*} mode true ? next : back
    */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
+  pagination = mode => {
+    const {itemSize, cloneList} = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -212,7 +374,7 @@ export default class TrackQuery extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({ dataList: slicedArray, itemSize: plus });
+        this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
       if (itemSize <= 5) {
@@ -223,28 +385,539 @@ export default class TrackQuery extends React.PureComponent {
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
         if (slicedArray.length > 0) {
-          this.setState({ dataList: slicedArray, itemSize: plus });
+          this.setState({dataList: slicedArray, itemSize: plus});
         }
       }
     }
   };
 
-
   revertBack = () => {
-    const { enableSearch } = this.state;
-    const { cloneList } = this.state;
+    const {enableSearch} = this.state;
+    const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, 5);
-      this.setState({ dataList: data });
+      this.setState({dataList: data});
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 5});
+  };
+
+  submitTicketEdit = () => {
+    const {remark, status, userData, editItem} = this.state;
+    if (Helper.nullCheck(editItem) === true) {
+      alert('Failed to find ticket');
+      return false;
+    } else if (Helper.nullStringCheck(remark) === true) {
+      alert('Remark empty');
+      return false;
+    }
+    this.setState({loader: true, showModal: false});
+    const {email} = userData;
+    const {ticket_id} = editItem;
+    const ticketID = Number(ticket_id);
+    const threadBody = JSON.stringify({
+      message: remark,
+      actAsType: 'customer',
+      actAsEmail: email,
+      threadType: 'reply',
+      source: 'app',
+      status: String(status)
+        .trim()
+        .toLowerCase(),
+      createdBy: 'customer',
+    });
+    //console.log('threadBody',userData,  threadBody);
+
+    Helper.networkHelperHelpDeskTicket(
+      `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/thread`,
+      threadBody,
+      Pref.methodPost,
+      Pref.UVDESK_API,
+      result => {
+        this.setState({loader: false});
+        if (result.success.includes('success')) {
+          this.fetchData(this.state.userData);
+          Helper.showToastMessage('Ticket updated successfully', 1);
+        } else {
+          Helper.showToastMessage(`Failed to update ticket`, 0);
+        }
+      },
+      e => {
+        this.setState({loader: false});
+        Helper.showToastMessage(`Something went wrong`, 0);
+      },
+    );
+  };
+
+  renderDetail = (rowData, sectionID, rowID) => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          borderColor: '#bcbaa1',
+          borderWidth: 0.8,
+          borderRadius: 10,
+          marginVertical: 10,
+          paddingVertical: 8,
+          paddingHorizontal: 6,
+          flexDirection: 'row',
+        }}>
+        <Avatar.Image
+          size={36}
+          source={rowData.imageUrl}
+          style={{
+            backgroundColor: 'transparent',
+            marginEnd: 8,
+          }}
+        />
+        <View
+          style={{
+            flexDirection: 'column',
+          }}>
+          <View style={{flex: 1}}>
+            <Title
+              style={{
+                color: '#555',
+                fontSize: 16,
+                flex: 1,
+                flexWrap: 'wrap',
+                fontFamily: Pref.getFontName(4),
+              }}>
+              {rowData.title}
+            </Title>
+          </View>
+          {/* <Avatar.image
+        source={{uri: rowData.imageUrl}}
+        style={styles.image}
+      /> */}
+          <View style={{flex: 1}}>
+            <Subtitle
+              style={{
+                color: '#9a937a',
+                fontSize: 15,
+                fontFamily: Pref.getFontName(2),
+                flex: 1,
+                flexWrap: 'wrap',
+              }}>
+              {rowData.description}
+            </Subtitle>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  filterClicked = () =>{
+    this.setState({filterModal:true})
+  }
+
+  resetFilter = () =>{
+    const {originalList} = this.state;
+    const sorting = originalList.sort((a, b) => {
+      const sp = a.updated_at.split('-');
+      const spz = b.updated_at.split('-');
+      return (
+        Number(sp[2]) - Number(spz[2]) ||
+        Number(sp[1]) - Number(spz[1]) ||
+        Number(sp[0]) - Number(spz[0])
+      );
+    });
+    const filterData = Lodash.filter(sorting, io => io.SCode.toLowerCase() === 'open')
+    //console.log(filterData.length);
+    this.setState({
+      dataList: this.returnData(filterData, 0, filterData.length).slice(
+        0,
+        5,
+      ),
+      loading: false,
+      filterModal:false,
+      itemSize: filterData.length >= 5 ? 5 : filterData.length,
+      priorityFilter:'', statusFilter:'', ticketTypeFilter:''
+    });
+  }
+
+  filterButtonClicked = () =>{
+    this.setState({loading:true})
+    const {priorityFilter, statusFilter, ticketTypeFilter, originalList} = this.state;
+    const sorting = originalList.sort((a, b) => {
+      const sp = a.updated_at.split('-');
+      const spz = b.updated_at.split('-');
+      return (
+        Number(sp[2]) - Number(spz[2]) ||
+        Number(sp[1]) - Number(spz[1]) ||
+        Number(sp[0]) - Number(spz[0])
+      );
+    });
+    const filterData = Lodash.filter(sorting, io =>{
+      const {TCode, Pcode, SCode} = io;
+      if(ticketTypeFilter != '' && statusFilter != '' && priorityFilter != ''){
+        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
+      }else if(ticketTypeFilter != '' && statusFilter != ''){
+        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
+      }else if(ticketTypeFilter != '' && priorityFilter != ''){
+        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase();
+      }else if(ticketTypeFilter != ''){
+        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase()
+      }else if(statusFilter != ''){
+        return statusFilter.toLowerCase() === SCode.toLowerCase()
+      }else if(priorityFilter != ''){
+        return priorityFilter.toLowerCase() === Pcode.toLowerCase()
+      }else{
+        return io;
+      }
+    })
+    //console.log(filterData.length);
+    this.setState({
+      dataList: this.returnData(filterData, 0, filterData.length).slice(
+        0,
+        5,
+      ),
+      loading: false,
+      filterModal:false,
+      itemSize: filterData.length >= 5 ? 5 : filterData.length,
+    });  
   }
 
   render() {
-    const { enableSearch } = this.state;
+    const {detailShow} = this.state;
     return (
       <CScreen
+        absolute={
+          <>
+            {detailShow === true ? (
+              <Portal>
+                <View style={{flex: 1, backgroundColor: 'white'}}>
+                  <LeftHeaders
+                    showBack
+                    title={'Ticket Detail'}
+                    backClicked={() =>
+                      this.setState({
+                        detailShow: false,
+                        threadList: [],
+                        threadLoader: false,
+                      })
+                    }
+                  />
+                  {this.state.threadLoader ? (
+                    <View style={styles.loader}>
+                      <ActivityIndicator />
+                    </View>
+                  ) : this.state.threadList.length > 0 ? (
+                    <Timeline
+                      style={{
+                        flex: 0.87,
+                        marginHorizontal: 8,
+                        marginTop: 8,
+                      }}
+                      data={this.state.threadList}
+                      circleSize={16}
+                      circleColor="#6d6a57"
+                      lineColor="#ecebec"
+                      timeContainerStyle={{minWidth: 24}}
+                      timeStyle={{
+                        textAlign: 'center',
+                        //backgroundColor: '#0270e3',
+                        color: 'white',
+                        //padding: 6,
+                        //borderRadius: 16,
+                        overflow: 'hidden',
+                        color: '#0270e3',
+                        fontSize: 15,
+                      }}
+                      renderDetail={this.renderDetail}
+                      columnFormat="two-column"
+                      separator={false}
+                    />
+                  ) : (
+                    <View style={styles.emptycont}>
+                      <ListError subtitle={'No details Found...'} />
+                    </View>
+                  )}
+                </View>
+              </Portal>
+            ) : null}
+            <Loader isShow={this.state.loader} />
+            <Modal
+              visible={this.state.showModal}
+              setModalVisible={() =>
+                this.setState({
+                  showModal: false,
+                })
+              }
+              ratioHeight={0.8}
+              backgroundColor={`white`}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                  }}>
+                  {`Edit Ticket`}
+                </Subtitle>
+              }
+              topRightElement={null}
+              children={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'white',
+                  }}>
+                  <View style={styles.radiocont}>
+                    <View style={styles.radiodownbox}>
+                      <Title style={styles.bbstyle}>{`Select Status`}</Title>
+
+                      <RadioButton.Group
+                        onValueChange={value => {
+                          if (value === 'Closed') {
+                            this.setState({status: value});
+                          } else {
+                            alert('Ticket is already open');
+                          }
+                        }}
+                        value={this.state.status}>
+                        <View styleName="horizontal" style={{marginBottom: 8}}>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="Open"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Open`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="Closed"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Close`}</Title>
+                          </View>
+                        </View>
+                      </RadioButton.Group>
+                    </View>
+                  </View>
+
+                  <CustomForm
+                    label={`Remark *`}
+                    placeholder={`Remark`}
+                    value={this.state.remark}
+                    onChange={v => this.setState({remark: v})}
+                    keyboardType={'text'}
+                    style={{marginHorizontal: 12}}
+                  />
+
+                  <Button
+                    mode={'flat'}
+                    uppercase={false}
+                    dark={true}
+                    loading={false}
+                    style={styles.loginButtonStyle}
+                    onPress={this.submitTicketEdit}>
+                    <Title style={styles.btntext}>{`Submit`}</Title>
+                  </Button>
+                </View>
+              }
+            />
+
+            <Modal
+              visible={this.state.filterModal}
+              setModalVisible={() =>
+                this.setState({
+                  filterModal: false,
+                })
+              }
+              ratioHeight={0.65}
+              backgroundColor={`white`}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                  }}>
+                  {`Filter Tickets`}
+                </Subtitle>
+              }
+              topRightElement={ <TouchableWithoutFeedback onPress={this.resetFilter}>
+                <Subtitle
+                style={{
+                  color: '#292929',
+                  fontSize: 14,
+                  fontWeight: '700',
+                  letterSpacing: 0.5,
+                }}>
+                {`Clear Filter`}
+              </Subtitle>
+              </TouchableWithoutFeedback>}
+              children={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'white',
+                  }}>
+                  <View style={StyleSheet.flatten([styles.radiocont,{
+                        marginVertical: 4,
+                  }])}>
+                    <View style={styles.radiodownbox}>
+                      <Title style={styles.bbstyle}>{`Ticket Issue`}</Title>
+
+                      <RadioButton.Group
+                        onValueChange={value => {
+                          this.setState({ticketTypeFilter: value});
+                        }}
+                        value={this.state.ticketTypeFilter}>
+                        <View styleName="horizontal" style={{marginBottom: 8}}>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="IT Issue"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`IT Issue`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="Non-It Issue"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`NON-IT Issue`}</Title>
+                          </View>
+                        </View>
+                      </RadioButton.Group>
+                    </View>
+                  </View>
+
+                  <View style={StyleSheet.flatten([styles.radiocont,{
+                        marginVertical: 4,
+                  }])}>
+                    <View style={styles.radiodownbox}>
+                      <Title style={styles.bbstyle}>{`Status`}</Title>
+
+                      <RadioButton.Group
+                        onValueChange={value => {
+                          this.setState({statusFilter: value});
+                        }}
+                        value={this.state.statusFilter}>
+                        <View styleName="horizontal" style={{marginBottom: 8}}>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="open"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Open`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="closed"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Closed`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="wip"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`WIP`}</Title>
+                          </View>
+                        </View>
+                      </RadioButton.Group>
+                    </View>
+                  </View>
+
+                  <View style={StyleSheet.flatten([styles.radiocont,{
+                        marginVertical: 4,
+                  }])}>
+                    <View style={styles.radiodownbox}>
+                      <Title style={styles.bbstyle}>{`Priority`}</Title>
+
+                      <RadioButton.Group
+                        onValueChange={value => {
+                          this.setState({priorityFilter: value});
+                        }}
+                        value={this.state.priorityFilter}>
+                        <View styleName="horizontal" style={{marginBottom: 8}}>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="low"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Low`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="medium"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`Medium`}</Title>
+                          </View>
+                          <View
+                            styleName="horizontal"
+                            style={{alignSelf: 'center', alignItems: 'center'}}>
+                            <RadioButton
+                              value="high"
+                              style={{alignSelf: 'center'}}
+                            />
+                            <Title
+                              styleName="v-center h-center"
+                              style={styles.textopen}>{`High`}</Title>
+                          </View>
+                        </View>
+                      </RadioButton.Group>
+                    </View>
+                  </View>
+
+                  <Button
+                    mode={'flat'}
+                    uppercase={false}
+                    dark={true}
+                    loading={false}
+                    style={styles.loginButtonStyle}
+                    onPress={this.filterButtonClicked}>
+                    <Title style={styles.btntext}>{`Submit`}</Title>
+                  </Button>
+                </View>
+              }
+            />
+          </>
+        }
         body={
           <>
             <LeftHeaders
@@ -265,7 +938,8 @@ export default class TrackQuery extends React.PureComponent {
 
             <View styleName="horizontal md-gutter space-between">
               <View styleName="horizontal">
-                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.pagination(false)}>
                   <Title style={styles.itemtopText}>{`Back`}</Title>
                 </TouchableWithoutFeedback>
                 <View
@@ -280,14 +954,13 @@ export default class TrackQuery extends React.PureComponent {
                   <Title style={styles.itemtopText}>{`Next`}</Title>
                 </TouchableWithoutFeedback>
               </View>
-              <TouchableWithoutFeedback 
-              //onPress={this.revertBack}
+              <TouchableWithoutFeedback
+              onPress={this.filterClicked}
               >
                 <View styleName="horizontal v-center h-center">
-                  {/* <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} /> */}
+                  <IconChooser name={'filter'} size={24} color={'#555555'} iconType={4} />
                 </View>
               </TouchableWithoutFeedback>
-
             </View>
 
             {this.state.loading ? (
@@ -299,20 +972,21 @@ export default class TrackQuery extends React.PureComponent {
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
+                rowClicked={this.detailThread}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No Tickets Found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No Tickets Found...'} />
+              </View>
+            )}
 
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
-                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
               </>
             ) : null}
-
           </>
         }
       />
@@ -321,16 +995,11 @@ export default class TrackQuery extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-  button: {
+  btntext: {
     color: 'white',
-    paddingVertical: sizeHeight(0.5),
-    marginTop: 24,
-    marginHorizontal: 24,
-    backgroundColor: '#e21226',
-    textAlign: 'center',
-    elevation: 0,
-    borderRadius: 0,
-    letterSpacing: 1,
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
   },
   emptycont: {
     flex: 0.7,
@@ -368,5 +1037,52 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0270e3',
     fontSize: 16,
+  },
+  bbstyle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 4,
+  },
+  radiodownbox: {
+    flexDirection: 'column',
+    height: 56,
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    marginBottom: 16,
+  },
+  radiocont: {
+    marginStart: 24,
+    marginEnd: 24,
+    borderBottomWidth: 1.3,
+    borderBottomColor: '#f2f1e6',
+    alignContent: 'center',
+    marginVertical: 16,
+  },
+  textopen: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#555555',
+    lineHeight: 20,
+    alignSelf: 'center',
+    marginStart: 4,
+    letterSpacing: 0.5,
+  },
+  loginButtonStyle: {
+    alignContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    color: 'white',
+    backgroundColor: Pref.RED,
+    textAlign: 'center',
+    elevation: 0,
+    borderRadius: 0,
+    letterSpacing: 0.5,
+    borderRadius: 24,
+    width: '42%',
+    paddingVertical: 4,
+    fontWeight: '700',
+    marginTop: 16,
   },
 });

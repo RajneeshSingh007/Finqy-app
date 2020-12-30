@@ -29,6 +29,20 @@ class CommonFileUpload extends React.PureComponent {
     this.setState({ mode: mode, title: title });
   }
 
+  // componentDidUpdate(prevProp, nextState){
+  //   console.log(prevProp);
+  //   if(prevProp.pickedName === '' && prevProp.pickedTitle != ''){
+  //     this.setState({pickedName:prevProp.pickedTitle})
+  //   }
+  // }
+
+  componentWillReceiveProps(prop){
+    if(prop.pickedTitle && prop.pickedTitle != ''){
+      this.setState({pickedName:prop.pickedTitle, title:prop.title})
+    }
+    //console.log(prop);
+  }
+
   filePicker = async () => {
     const { type = 0, mode = false,fileType = -1 } = this.props;
     if (mode === false) {
@@ -113,8 +127,8 @@ class CommonFileUpload extends React.PureComponent {
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <TouchableWithoutFeedback onPress={this.filePicker}>
           <View style={StyleSheet.flatten([styles.insideContainer, {
-            flex: enableDownloads ? 0.9 : 1
-          }])}>
+            flex: enableDownloads ? 0.9 : 1,
+          },enableDownloads ? {height:56} : {}])}>
             <View>
               <Title
                 style={StyleSheet.flatten([
@@ -141,9 +155,9 @@ class CommonFileUpload extends React.PureComponent {
               {pickedName !== '' ? (
                 <Title style={styles.subtitle}>{pickedName}</Title>
               ) : null}
-              {pickedTitle !== '' ? (
+              {/* {(pickedName === null || pickedName === '') ? pickedTitle !== '' ? (
                 <Title style={styles.subtitle}>{pickedTitle}</Title>
-              ) : null}
+              ) : null : null}  */}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -183,6 +197,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     alignItems: 'center',
     color: '#767676',
+    marginStart:4
   },
   title: {
     fontSize: 15,
@@ -198,8 +213,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f2f1e6',
     marginStart: 10,
     marginEnd: 10,
-    paddingVertical: 10,
-    height: 56,
+    paddingVertical: 8,
+    //height: 56,
     marginVertical: 4
   },
   inincontainer: {
