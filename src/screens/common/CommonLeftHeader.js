@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   TouchableWithoutFeedback,
-  Platform, Alert
+  Platform,
+  Alert,
+  StatusBar,
 } from 'react-native';
 import * as Pref from '../../util/Pref';
-import {
-  Avatar,
-  Portal,
-} from 'react-native-paper';
+import {Avatar, Portal} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { sizeHeight, sizeWidth } from '../../util/Size';
-import { Image, View, Title, Subtitle } from '@shoutem/ui';
+import {sizeHeight, sizeWidth} from '../../util/Size';
+import {Image, View, Title, Subtitle} from '@shoutem/ui';
 import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
+import changeNavigationBarColor from 'react-native-navigation-bar-color';
 
-const LeftHeaders = (props) => {
+const LeftHeaders = props => {
   const {
     title,
     bottomBody,
@@ -26,7 +26,7 @@ const LeftHeaders = (props) => {
     },
     bottomtext = '',
     bottomtextStyle,
-    profile = () => { },
+    profile = () => {},
     //name = '',
     //type = '',
   } = props;
@@ -38,23 +38,39 @@ const LeftHeaders = (props) => {
   const [leaderData, setleaderData] = useState(null);
 
   useEffect(() => {
-    Pref.getVal(Pref.userData, (value) => {
+    changeNavigationBarColor('white', true, true);
+    StatusBar.setBackgroundColor('white', false);
+    StatusBar.setBarStyle('dark-content');
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    Pref.getVal(Pref.userData, value => {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
-        let profilePic = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? null : { uri: decodeURIComponent(pp) };
+        let profilePic =
+          pp === undefined ||
+          pp === null ||
+          pp === '' ||
+          (!pp.includes('.jpg') &&
+            !pp.includes('.jpeg') &&
+            !pp.includes('.png'))
+            ? null
+            : {uri: decodeURIComponent(pp)};
         //console.log('profilePic', profilePic);
         setPic(profilePic);
         setuserData(value);
-        setleaderData(Helper.nullCheck(value.leader) === false ? value.leader[0] : null)
+        setleaderData(
+          Helper.nullCheck(value.leader) === false ? value.leader[0] : null,
+        );
       }
     });
 
-    Pref.getVal(Pref.USERTYPE, type =>{
+    Pref.getVal(Pref.USERTYPE, type => {
       settype(type);
-    })
+    });
 
-    return () => {
-    };
+    return () => {};
   }, []);
 
   const dismisssProfile = () => setShowProfile(false);
@@ -62,121 +78,143 @@ const LeftHeaders = (props) => {
   const visProfile = () => setShowProfile(true);
 
   const logout = () => {
-    Alert.alert("Logout", "Are you sure want to Logout?", [
+    Alert.alert('Logout', 'Are you sure want to Logout?', [
       {
-        text: "Cancel",
+        text: 'Cancel',
       },
       {
-        text: "Ok",
+        text: 'Ok',
         onPress: () => {
           Pref.setVal(Pref.saveToken, null);
           Pref.setVal(Pref.userData, null);
           Pref.setVal(Pref.userID, null);
-          Pref.setVal(Pref.USERTYPE, "");
+          Pref.setVal(Pref.USERTYPE, '');
           Pref.setVal(Pref.loggedStatus, false);
-          NavigationActions.navigate("IntroScreen");
+          NavigationActions.navigate('IntroScreen');
         },
       },
     ]);
-  }
+  };
 
   return (
     <>
-      {showProfile === true ? <Portal>
-        <TouchableWithoutFeedback onPress={dismisssProfile}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              backgroundColor: "rgba(0,0,0,0)",
-            }}
-            onPress={dismisssProfile}
-          >
-            <View style={{ flex: 0.15 }} />
-            <View style={{ flex: 0.1 }}>
-              <View style={{ flex: 1, flexDirection: "row" }}>
-                <View style={{ flex: 0.1 }} />
-                <View
-                  styleName="vertical md-gutter"
-                  style={styles.filtercont}
-                >
-                  {/* <View style={styles.tri}></View> */}
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        fontSize: 16,
-                      },
-                    ])}
-                  >
-                    {Lodash.truncate(userData !== null && Helper.nullStringCheck(userData.rname) === false  ? userData.rname : type !== "connector" && type !== "Referral" ? userData.username : '', {
-                      length: 24,
-                      separator: "...",
-                    })}
-                  </Title>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        color: Pref.RED,
-                        fontSize: 15,
-                        paddingVertical: 0,
-                        marginBottom: 2,
-                        marginTop: 4,
-                      },
-                    ])}
-                  >
-                    {`${type === "connector"
-                      ? `Connector`
-                      : type === `referral`
-                        ? "Referral"
-                        : `${leaderData != null ? Helper.nullCheck(leaderData.rname) === false ? leaderData.rname : '' : ''}(Leader)`
-                      }`}
-                  </Title>
-
-                  <Subtitle
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        color: '#666666',
-                        fontSize: 13,
-                        paddingVertical: 0,
-                        marginBottom: 8,
-                      },
-                    ])}
-                  >
-                    {userData != null ? type === "connector" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "referral" && Helper.nullStringCheck(userData.rcontact) === false ? userData.rcontact : type === "team" && Helper.nullStringCheck(userData.mobile) === false ? `${userData.mobile}` : ''  : ''}
-                  </Subtitle>
-
-                  <View style={styles.line}></View>
-
-                  <TouchableWithoutFeedback onPress={logout}>
+      {showProfile === true ? (
+        <Portal>
+          <TouchableWithoutFeedback onPress={dismisssProfile}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                backgroundColor: 'rgba(0,0,0,0)',
+              }}
+              onPress={dismisssProfile}>
+              <View style={{flex: 0.15}} />
+              <View style={{flex: 0.1}}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                  <View style={{flex: 0.1}} />
+                  <View
+                    styleName="vertical md-gutter"
+                    style={styles.filtercont}>
+                    {/* <View style={styles.tri}></View> */}
                     <Title
                       style={StyleSheet.flatten([
                         styles.passText,
                         {
-                          marginTop: 8,
-                          color: "#0270e3",
-                          fontSize: 14,
-                          lineHeight: 20,
-                          paddingVertical: 0,
-                          textDecorationColor: "#0270e3",
-                          textDecorationStyle: "solid",
-                          textDecorationLine: "underline",
+                          fontSize: 16,
                         },
-                      ])}
-                    >
-                      {`Logout`}
+                      ])}>
+                      {Lodash.truncate(
+                        userData !== null &&
+                          Helper.nullStringCheck(userData.rname) === false
+                          ? userData.rname
+                          : type !== 'connector' && type !== 'Referral'
+                          ? userData.username
+                          : '',
+                        {
+                          length: 24,
+                          separator: '...',
+                        },
+                      )}
                     </Title>
-                  </TouchableWithoutFeedback>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.passText,
+                        {
+                          color: Pref.RED,
+                          fontSize: 15,
+                          paddingVertical: 0,
+                          marginBottom: 2,
+                          marginTop: 4,
+                        },
+                      ])}>
+                      {`${
+                        type === 'connector'
+                          ? `Connector`
+                          : type === `referral`
+                          ? 'Referral'
+                          : `${
+                              leaderData != null
+                                ? Helper.nullCheck(leaderData.rname) === false
+                                  ? leaderData.rname
+                                  : ''
+                                : ''
+                            }(Leader)`
+                      }`}
+                    </Title>
+
+                    <Subtitle
+                      style={StyleSheet.flatten([
+                        styles.passText,
+                        {
+                          color: '#666666',
+                          fontSize: 13,
+                          paddingVertical: 0,
+                          marginBottom: 8,
+                        },
+                      ])}>
+                      {userData != null
+                        ? type === 'connector' &&
+                          Helper.nullStringCheck(userData.rcontact) === false
+                          ? userData.rcontact
+                          : type === 'referral' &&
+                            Helper.nullStringCheck(userData.rcontact) === false
+                          ? userData.rcontact
+                          : type === 'team' &&
+                            Helper.nullStringCheck(userData.mobile) === false
+                          ? `${userData.mobile}`
+                          : ''
+                        : ''}
+                    </Subtitle>
+
+                    <View style={styles.line}></View>
+
+                    <TouchableWithoutFeedback onPress={logout}>
+                      <Title
+                        style={StyleSheet.flatten([
+                          styles.passText,
+                          {
+                            marginTop: 8,
+                            color: '#0270e3',
+                            fontSize: 14,
+                            lineHeight: 20,
+                            paddingVertical: 0,
+                            textDecorationColor: '#0270e3',
+                            textDecorationStyle: 'solid',
+                            textDecorationLine: 'underline',
+                          },
+                        ])}>
+                        {`Logout`}
+                      </Title>
+                    </TouchableWithoutFeedback>
+                  </View>
+                  <View style={{flex: 0.2}} />
                 </View>
-                <View style={{ flex: 0.2 }} />
               </View>
+              <View style={{flex: 0.75}} />
             </View>
-            <View style={{ flex: 0.75 }} />
-          </View>
-        </TouchableWithoutFeedback>
-      </Portal> : null}
+          </TouchableWithoutFeedback>
+        </Portal>
+      ) : null}
 
       <View
         style={{
@@ -197,48 +235,60 @@ const LeftHeaders = (props) => {
                 </View>
               </TouchableWithoutFeedback>
             </View>
-            <View style={{ flex: 0.6 }}>
+            <View style={{flex: 0.6}}>
               {showBack === true ? (
-                title === 'Finpro' ? <Image
-                    source={require('../../res/images/squarelogo.png')}
-                    styleName="medium"
-                    style={{
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                      resizeMode: 'contain'
-                    }}
-                  /> :
-                <Title style={styles.centertext}>{Lodash.truncate(title)}</Title>
-              ) : (
+                title === 'Finpro' ? (
                   <Image
                     source={require('../../res/images/squarelogo.png')}
                     styleName="medium"
                     style={{
                       alignSelf: 'center',
                       justifyContent: 'center',
-                      resizeMode: 'contain'
+                      resizeMode: 'contain',
                     }}
                   />
-                )}
+                ) : (
+                  <Title style={styles.centertext}>
+                    {Lodash.truncate(title)}
+                  </Title>
+                )
+              ) : (
+                <Image
+                  source={require('../../res/images/squarelogo.png')}
+                  styleName="medium"
+                  style={{
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    resizeMode: 'contain',
+                  }}
+                />
+              )}
             </View>
             <View style={styles.rightcon}>
               <TouchableWithoutFeedback
                 onPress={visProfile}
-              // onPress={() => {
-              //   //console.log('title', title);
-              //   //if (title === 'Hi,') {
-              //   profile();
-              //   //} else {
-              //   //NavigationActions.openDrawer();
-              //   //}
-              // }}
+                // onPress={() => {
+                //   //console.log('title', title);
+                //   //if (title === 'Hi,') {
+                //   profile();
+                //   //} else {
+                //   //NavigationActions.openDrawer();
+                //   //}
+                // }}
               >
                 {/* {title === 'Hi,' ? ( */}
                 <View>
                   <Avatar.Image
-                    source={Helper.nullStringCheck(pic) === true ? require('../../res/images/account.png') : pic}
+                    source={
+                      Helper.nullStringCheck(pic) === true
+                        ? require('../../res/images/account.png')
+                        : pic
+                    }
                     size={48}
-                    style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+                    style={{
+                      backgroundColor: 'transparent',
+                      borderColor: 'transparent',
+                    }}
                   />
                 </View>
                 {/* //   <Title
@@ -275,7 +325,8 @@ const LeftHeaders = (props) => {
         </View>
         <View style={styles.line} />
         {bottomtext !== '' ? (
-          <Title style={StyleSheet.flatten([styles.belowtext, bottomtextStyle])}>
+          <Title
+            style={StyleSheet.flatten([styles.belowtext, bottomtextStyle])}>
             {bottomtext}
           </Title>
         ) : null}
@@ -285,15 +336,25 @@ const LeftHeaders = (props) => {
   );
 };
 
+// class LeftHeaders extends React.PureComponent{
+
+//   constructor(props){
+//     super(props);
+// changeNavigationBarColor('white', true, true);
+// StatusBar.setBackgroundColor('white', false);
+// StatusBar.setBarStyle('dark-content')
+//   }
+// }
+
 const styles = StyleSheet.create({
   filtercont: {
     flex: 0.7,
     //position: 'absolute',
     //zIndex: 99,
-    borderColor: "#dbdacd",
+    borderColor: '#dbdacd',
     borderWidth: 0.8,
     backgroundColor: Pref.WHITE,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     borderRadius: 8,
     //top: 24,
     ...Platform.select({
@@ -301,7 +362,7 @@ const styles = StyleSheet.create({
         elevation: 4,
       },
       ios: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {
           width: 0,
           height: 2,
@@ -314,12 +375,12 @@ const styles = StyleSheet.create({
   passText: {
     fontSize: 20,
     letterSpacing: 0.5,
-    color: "#555555",
-    fontWeight: "700",
+    color: '#555555',
+    fontWeight: '700',
     lineHeight: 20,
-    alignSelf: "center",
-    justifyContent: "center",
-    textAlign: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   cont: {
     flexDirection: 'row',
@@ -401,7 +462,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     flexDirection: 'row',
     alignItems: 'center',
-    marginStart: 8
+    marginStart: 8,
   },
   rightcon: {
     flex: 0.2,

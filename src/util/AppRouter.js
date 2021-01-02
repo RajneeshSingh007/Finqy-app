@@ -235,16 +235,18 @@ const payoutNav = createStackNavigator({
 })
 
 
-const RaiseQueryFormNav = createStackNavigator(
+const TicketNav = createSwitchNavigator(
   {
     RaiseQueryForm: { screen: RaiseQueryForm },
+    TrackQuery:{screen:TrackQuery}
   },
   {
     headerMode: 'none',
-    initialRouteName: 'RaiseQueryForm',
+    resetOnBlur:true,
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
 );
+
 
 const OtherNav = createDrawerNavigator(
   {
@@ -276,8 +278,10 @@ const OtherNav = createDrawerNavigator(
     WebComp: { screen: WebComp },
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
-    RaiseQueryForm:{screen:RaiseQueryFormNav},
-    TrackQuery:{screen:TrackQuery}
+    //RaiseQueryForm:{screen:RaiseQueryFormNav},
+    //RaiseQueryForm: { screen: RaiseQueryForm },
+    //TrackQuery:{screen:TrackQuery}
+    TicketNav:{screen:TicketNav}
   },
   {
     initialRouteName: 'Home',

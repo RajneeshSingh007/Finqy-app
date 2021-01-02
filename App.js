@@ -24,14 +24,11 @@ class App extends React.PureComponent {
     }
 
     componentDidMount() {
+        //BackHandler.addEventListener('hardwareBackPress', this.backClick);
         //this.syncImmediate();
-        Crashes.setEnabled(true)
-        .then(res => {
-            console.log('res', res)
-        }).catch(e => console.log(e))
+        Crashes.setEnabled(true);
         analytics().setAnalyticsCollectionEnabled(true);
         crashlytics().setCrashlyticsCollectionEnabled(true);
-        //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     }
 
     backClick = () => {

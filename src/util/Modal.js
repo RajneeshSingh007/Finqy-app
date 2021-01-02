@@ -75,6 +75,9 @@ class ModalComponent extends React.PureComponent {
       setModalVisible,
       backgroundColor,
       topCenterElement,
+      leftFlex = 0.2,
+      rightFlex = 0.2,
+      centerFlex = 0.6
     } = this.props;
     const {opacity, visible, height} = this.state;
 
@@ -130,7 +133,7 @@ class ModalComponent extends React.PureComponent {
             <View style={styles.header}>
               <View
                 style={{
-                  flex: 0.2,
+                  flex: leftFlex,
                   //alignItems: 'center',
                   //alignContent: 'center',
                 }}>
@@ -138,7 +141,7 @@ class ModalComponent extends React.PureComponent {
               </View>
               <View
                 style={{
-                  flex: 0.6,
+                  flex: centerFlex,
                   alignItems: 'center',
                   alignContent: 'center',
                 }}>
@@ -146,7 +149,7 @@ class ModalComponent extends React.PureComponent {
               </View>
               <View
                 style={{
-                  flex: 0.2,
+                  flex: rightFlex,
                   alignItems: 'center',
                   alignContent: 'center',
                 }}>

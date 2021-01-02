@@ -19,7 +19,7 @@ let ticketIssueList = [
     value: 'IT/Software/App Issue',
   },
   {
-    value: 'NON-IT Issue',
+    value: 'Non-IT Issue',
   },
 ];
 
@@ -114,6 +114,18 @@ let nonitesubIssueList = [
   },
 ];
 
+let priorityList = [
+  {
+    value: 'Low',
+  },
+  {
+    value: 'Medium',
+  },
+  {
+    value: 'High',
+  },
+];
+
 export default class RaiseQueryForm extends React.Component {
   constructor(props) {
     super(props);
@@ -125,39 +137,84 @@ export default class RaiseQueryForm extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
+    const data = navigation.getParam('data', null);
+    const editMode = navigation.getParam('editmode', false);
+    //console.log(data, editMode);
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        this.fetchData(userData);
+        this.fetchData(userData,data, editMode);
       });
     });
   }
 
-  fetchData = (userData) => {
-    this.setState({ loading: true, userData: userData });
+  fetchData = (userData, data, editMode) => {
+    this.setState({ loading: true, userData: userData,editItem:data, editMode:editMode });
     Helper.networkHelperGet(
       Pref.AGENTS_URL,
       (result) => {
-        //console.log('result', result)
         const { agent, status } = JSON.parse(result);
-        //console.log('agent', agent);
         if (status === `success`) {
+          let remark= '';
+          let ticketissue= '';
+          let itissue= '';
+          let nonitissue= '';
+          let nonitesubissue= "";
+          let description='';
+          let priority = '';
+          if(editMode === true && Helper.nullCheck(data) === false){
+            description = data.description;
+            if(data.TDesc === 'IT/Software/App Issue'){
+              ticketissue = 'IT/Software/App Issue';
+            }else{
+              ticketissue = 'Non-IT Issue';
+            }
+            if(data.message.includes(',')){
+              const split = data.message.split(',');
+              const regex = /(<([^>]+)>)/gi;
+              remark = split[0].replace(regex, '');
+            }else{
+              remark = data.message;
+            }
+            if(data.subject.includes('|')){
+              const sp = data.subject.split('|');
+              nonitissue = sp[0].trim();
+              nonitesubissue = sp[1].trim();
+            }else{
+              itissue = data.subject;
+            }
+
+            priority = lodash.capitalize(data.Pcode);
+          }
+          //console.log('priority', priority);
           this.setState({
             agentList: agent,
             loading: false,
-            userData: userData
+            userData: userData,
+            remark:remark,
+            ticketissue:ticketissue,
+            description:description,
+            nonitissue:nonitissue,
+            nonitesubissue:nonitesubissue,
+            itissue:itissue,
+            priority:priority
           });
         } else {
-          this.setState({ loading: false, userData: userData });
+          this.setState({ loading: false, userData: userData,editItem:data, editMode:editMode  });
         }
       },
       (e) => {
-        this.setState({ loading: false, userData: userData });
+        this.setState({ loading: false, userData: userData,editItem:data, editMode:editMode  });
       },
     );
   }
 
   backClick = () => {
     this.setState(this.returnState(false, true));
+    if(this.state.editMode === true){
+      NavigationActions.navigate('TrackQuery');
+      return false;
+    }
+    NavigationActions.goBack();
     return false;
   };
 
@@ -171,7 +228,8 @@ export default class RaiseQueryForm extends React.Component {
       nonitissue: '',
       nonitesubissue: "",
       attachments: [],
-      description:''
+      description:'',
+      priority:''
     };
   }
 
@@ -184,7 +242,7 @@ export default class RaiseQueryForm extends React.Component {
   submitt = () => {
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
-    const { userData } = body;
+    const { userData,editItem,editMode } = body;
 
     if (body.ticketissue === '') {
       checkData = false;
@@ -194,11 +252,11 @@ export default class RaiseQueryForm extends React.Component {
       checkData = false;
       Helper.showToastMessage('Please, Select IT Issue', 0);
       return false;
-    } else if (body.ticketissue === 'NON-IT Issue' && body.nonitissue === '') {
+    } else if (body.ticketissue === 'Non-IT Issue' && body.nonitissue === '') {
       checkData = false;
-      Helper.showToastMessage('Please, Select NON-IT Issue', 0);
+      Helper.showToastMessage('Please, Select Non-IT Issue', 0);
       return false;
-    } else if (body.ticketissue === 'NON-IT Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
+    } else if (body.ticketissue === 'Non-IT Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
       checkData = false;
       Helper.showToastMessage('Please, Select Sub Issue', 0);
       return false;
@@ -243,7 +301,7 @@ export default class RaiseQueryForm extends React.Component {
         if (findTeam != undefined) {
           agentUserID = findTeam.user_id;
         }
-      } else if (body.ticketissue === 'NON-IT Issue') {
+      } else if (body.ticketissue === 'Non-IT Issue') {
         subject = `${body.nonitissue} | ${body.nonitesubissue}`
         type = 'NON-IT ISSUE'
         //console.log('body.nonitesubissue', body.nonitesubissue);   
@@ -287,6 +345,19 @@ export default class RaiseQueryForm extends React.Component {
       formData.append('message', body.remark);
       formData.append('source', "app");
       formData.append('description', body.description);
+      if(body.priority === ''){
+        formData.append('prioritycode', 'low');
+      }else {
+        formData.append('prioritycode', body.priority.toLowerCase()); 
+      }
+
+      if(editMode === true){
+        const {ticket_id} = editItem;
+        formData.append('ticketID', Number(ticket_id));
+      }else{
+        formData.append('ticketID', '');
+      }
+
 
       // body.subject = subject;
       // body.type = type;
@@ -312,25 +383,11 @@ export default class RaiseQueryForm extends React.Component {
         Pref.methodPost,
         Pref.UVDESK_API,
         result => {
-          //console.log('result', result)
+          console.log('result', result)
           const { message } = JSON.parse(JSON.stringify(result));
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
             const agentBody = { id: agentUserID };
-            // Helper.networkHelperTokenPost(
-            //   Pref.SEND_MAIL_URL,
-            //   JSON.stringify({
-            //     "tnumber":ticketID,
-            //     "name":userData.rname,
-            //     "email":userData.email
-            // }),
-            //   Pref.methodPost,
-            //   '',
-            //   (result) => {
-            //   },
-            //   (e) => {
-            //   },
-            // );
             //console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
@@ -338,14 +395,14 @@ export default class RaiseQueryForm extends React.Component {
               Pref.methodPut,
               Pref.UVDESK_API,
               result => {
-                //console.log('result1', result);
+                console.log('result1', result);
                 const { success } = JSON.parse(JSON.stringify(result));
                 this.setState({ loading: false });
                 if (success.includes('Success')) {
-                  Helper.showToastMessage("Success ! Ticket has been created successfully.", 1);
+                  Helper.showToastMessage(editMode ? "Success ! Ticket updated successfully" : "Success ! Ticket has been created successfully.", 1);
                   NavigationActions.navigate('TrackQuery');
                 } else {
-                  Helper.showToastMessage(`Failed to create ticket`, 0);
+                  Helper.showToastMessage(editMode ? `Failed to update ticket` : `Failed to create ticket`, 0);
                 }
               },
               (e) => {
@@ -354,6 +411,7 @@ export default class RaiseQueryForm extends React.Component {
               },
             );
           } else {
+            this.setState({ loading: false });
             Helper.showToastMessage(`Failed to create ticket`, 0);
           }
         },
@@ -366,6 +424,7 @@ export default class RaiseQueryForm extends React.Component {
   };
 
   render() {
+    const {editMode} = this.state;
     return (
       <CScreen
         absolute={<Loader isShow={this.state.loading} />}
@@ -375,8 +434,8 @@ export default class RaiseQueryForm extends React.Component {
               title={`Raise A Ticket`}
               bottomtext={
                 <>
-                  {`Raise A `}
-                  {<Title style={styles.passText}>{`Query`}</Title>}
+                  {editMode ? 'Edit ' : `Raise A `}
+                  {<Title style={styles.passText}>{editMode ?  `Ticket` : `Query`}</Title>}
                 </>
               }
               bottomtextStyle={{
@@ -384,6 +443,13 @@ export default class RaiseQueryForm extends React.Component {
                 fontSize: 20,
               }}
               showBack
+              backClicked={() =>{
+                if(this.state.editMode === true){
+                  NavigationActions.navigate('TrackQuery');
+                }else{
+                  NavigationActions.goBack();
+                }
+              }}
             />
 
             <View styleName="md-gutter">
@@ -409,7 +475,7 @@ export default class RaiseQueryForm extends React.Component {
                 />
               ) : null}
 
-              {this.state.ticketissue === 'NON-IT Issue' ?
+              {this.state.ticketissue === 'Non-IT Issue' ?
                 <NewDropDown
                   list={nonitIssueList}
                   placeholder={`Select Product`}
@@ -429,6 +495,15 @@ export default class RaiseQueryForm extends React.Component {
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               /> : null}
+
+              <NewDropDown
+                list={priorityList}
+                placeholder={`Select Priority`}
+                value={this.state.priority}
+                selectedItem={value => this.setState({ priority: value })}
+                style={styles.dropdowncontainers}
+                textStyle={styles.dropdowntextstyle}
+              />
 
               <CustomForm
                 value={this.state.description}

@@ -14,6 +14,7 @@ import {
   Portal,
   RadioButton,
   Avatar,
+  FAB
 } from 'react-native-paper';
 import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
@@ -86,7 +87,10 @@ export default class TrackQuery extends React.PureComponent {
       statusFilter:'',
       priorityFilter:'',
       ticketTypeFilter:'',
-      originalList:[]
+      originalList:[],
+      priorityList:[],
+      statusList:[],
+      profilePic:null
     };
   }
 
@@ -94,24 +98,27 @@ export default class TrackQuery extends React.PureComponent {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
     const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true, dataList: []});
+      this.setState({loading: true, dataList: [],modalvis:false, detailShow:false});
     });
     //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, userData => {
-      this.fetchData(userData);
-    });
+      Pref.getVal(Pref.userData, userData => {
+        this.fetchData(userData);
+      });
     //});
   }
 
   backclick = () => {
     const {modalvis, detailShow} = this.state;
-    if (modalvis) {
+    
+    if (modalvis === true) {
       this.setState({modalvis: false, pdfurl: ''});
       return true;
-    } else if (detailShow) {
+    } else if (detailShow  === true) {
       this.setState({detailShow: false, threadList: [], threadLoader: false});
       return true;
     }
+    NavigationActions.goBack();
+    //console.log('back',modalvis, detailShow);
     return false;
   };
 
@@ -128,7 +135,17 @@ export default class TrackQuery extends React.PureComponent {
     ) {
       userData.rcontact = userData.mobile;
     }
-    const {rcontact} = userData;
+    const {rcontact,user_prof} = userData;
+    let profilePic =
+      user_prof === undefined ||
+      user_prof === null ||
+      user_prof === '' ||
+      (!user_prof.includes('.jpg') &&
+        !user_prof.includes('.jpeg') &&
+        !user_prof.includes('.png'))
+        ? null
+        : {uri: decodeURIComponent(user_prof)};
+
     const body = JSON.stringify({
       mobile: rcontact,
     });
@@ -163,41 +180,44 @@ export default class TrackQuery extends React.PureComponent {
               loading: false,
               itemSize: sort.length >= 5 ? 5 : sort.length,
               userData: userData,
+              profilePic:profilePic
             });
           } else {
             this.setState({
               loading: false,
               userData: userData,
+              profilePic:profilePic
             });
           }
         } else {
-          this.setState({loading: false, userData: userData});
+          this.setState({loading: false, userData: userData,profilePic:profilePic});
         }
       },
       e => {
-        this.setState({loading: false, userData: userData});
+        this.setState({loading: false, userData: userData,profilePic:profilePic});
       },
     );
   };
 
   editQuery = item => {
-    const {SCode, message} = item;
-    console.log('item', item);
-    let remark = '';
-    if (Helper.nullStringCheck(message) === false) {
-      if (message.includes(',')) {
-        const spl = message.split(',');
-        remark = spl[0];
-      } else {
-        remark = message;
-      }
-    }
-    this.setState({
-      showModal: true,
-      editItem: item,
-      status: Lodash.capitalize(SCode),
-      remark: '',
-    });
+    NavigationActions.navigate('RaiseQueryForm', {data:item, editmode:true})
+    // const {SCode, message} = item;
+    // console.log('item', item);
+    // let remark = '';
+    // if (Helper.nullStringCheck(message) === false) {
+    //   if (message.includes(',')) {
+    //     const spl = message.split(',');
+    //     remark = spl[0];
+    //   } else {
+    //     remark = message;
+    //   }
+    // }
+    // this.setState({
+    //   showModal: true,
+    //   editItem: item,
+    //   status: Lodash.capitalize(SCode),
+    //   remark: '',
+    // });
   };
 
   /**
@@ -285,6 +305,8 @@ export default class TrackQuery extends React.PureComponent {
               rowData.push(item.message.replace(regex, ''));
             }
             rowData.push(item.updated_at);
+            rowData.push(item.SColor);
+            rowData.push(item.PColor);
             dataList.push(rowData);
           }
         }
@@ -294,20 +316,24 @@ export default class TrackQuery extends React.PureComponent {
   };
 
   detailThread = editItem => {
-    //console.log('editItem', editItem);
-    const ticketId = 14;
-    //Number(editItem[editItem.length - 3]);
+    //console.log('editItem', editItem); 
+    const {profilePic,originalList} = this.state;
+    const ticketId = Number(editItem[editItem.length - 5]);
     if (ticketId) {
-      this.setState({threadLoader: true, detailShow: true});
+      const findItem = Lodash.find(originalList, io => io.ticket_id === `${ticketId}`);
+      console.log('findItem', findItem);
+      this.setState({threadLoader: true, detailShow: true, editItem:findItem});
       const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticketId}`;
       //console.log('url', url);
       const startObj = {
-        time: editItem[editItem.length-1],
-        description: editItem[editItem.length - 2],
+        circleColor: editItem[editItem.length-2],
+        lineColor:editItem[editItem.length-1],
+        time: editItem[editItem.length-3],
+        description: editItem[editItem.length - 4],
         userType: 'customer',
         threadType: 'created',
         title: 'You',
-        imageUrl: require('../../res/images/account.png'),
+        imageUrl: profilePic == null ? require('../../res/images/account.png') : profilePic,
       };
       //console.log('startObj', startObj)
       Helper.networkHelperHelpDeskTicketGet(
@@ -319,8 +345,15 @@ export default class TrackQuery extends React.PureComponent {
           //console.log('result1', result);
           const {success, thread} = result;
           let threadList = [];
+          let priorityList = [];
+          let statusList = [];
           const regex = /(<([^>]+)>)/gi;
           if (thread.length > 0) {
+            const {ticket_status,ticket_priority, priority,status} = result;
+            priorityList = priority;
+            statusList = status;
+            const colorCodeStatus = Lodash.find(status, io => io.id === ticket_status).colorCode;
+            const colorCodePriority = Lodash.find(priority, io => io.id === ticket_priority).colorCode;
             thread.forEach(element => {
               const {
                 formatedCreatedAt,
@@ -330,6 +363,8 @@ export default class TrackQuery extends React.PureComponent {
                 fullname,
               } = element;
               threadList.push({
+                circleColor: colorCodeStatus,
+                lineColor:colorCodePriority,
                 time: formatedCreatedAt,
                 description: reply.replace(regex, ''),
                 userType: userType,
@@ -338,7 +373,7 @@ export default class TrackQuery extends React.PureComponent {
                 imageUrl:
                   userType != 'customer'
                     ? require('../../res/images/timelineagent.png')
-                    : require('../../res/images/account.png'),
+                    : profilePic == null ? require('../../res/images/account.png') : profilePic,
               });
             });
           }
@@ -347,6 +382,8 @@ export default class TrackQuery extends React.PureComponent {
             threadList: threadList,
             detailShow: true,
             threadLoader: false,
+            priorityList:priorityList,
+            statusList:statusList
           });
         },
         e => {
@@ -474,35 +511,24 @@ export default class TrackQuery extends React.PureComponent {
         <View
           style={{
             flexDirection: 'column',
+            flexShrink: 1
           }}>
-          <View style={{flex: 1}}>
             <Title
               style={{
                 color: '#555',
-                fontSize: 16,
-                flex: 1,
-                flexWrap: 'wrap',
-                fontFamily: Pref.getFontName(4),
+                fontSize: 15,
+                fontFamily: Pref.getFontName(5),
               }}>
               {rowData.title}
             </Title>
-          </View>
-          {/* <Avatar.image
-        source={{uri: rowData.imageUrl}}
-        style={styles.image}
-      /> */}
-          <View style={{flex: 1}}>
             <Subtitle
               style={{
-                color: '#9a937a',
-                fontSize: 15,
+                color: '#292929',
+                fontSize: 14,
                 fontFamily: Pref.getFontName(2),
-                flex: 1,
-                flexWrap: 'wrap',
               }}>
               {rowData.description}
             </Subtitle>
-          </View>
         </View>
       </View>
     );
@@ -524,7 +550,6 @@ export default class TrackQuery extends React.PureComponent {
       );
     });
     const filterData = Lodash.filter(sorting, io => io.SCode.toLowerCase() === 'open')
-    //console.log(filterData.length);
     this.setState({
       dataList: this.returnData(filterData, 0, filterData.length).slice(
         0,
@@ -540,43 +565,49 @@ export default class TrackQuery extends React.PureComponent {
   filterButtonClicked = () =>{
     this.setState({loading:true})
     const {priorityFilter, statusFilter, ticketTypeFilter, originalList} = this.state;
-    const sorting = originalList.sort((a, b) => {
-      const sp = a.updated_at.split('-');
-      const spz = b.updated_at.split('-');
-      return (
-        Number(sp[2]) - Number(spz[2]) ||
-        Number(sp[1]) - Number(spz[1]) ||
-        Number(sp[0]) - Number(spz[0])
-      );
-    });
-    const filterData = Lodash.filter(sorting, io =>{
-      const {TCode, Pcode, SCode} = io;
-      if(ticketTypeFilter != '' && statusFilter != '' && priorityFilter != ''){
-        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
-      }else if(ticketTypeFilter != '' && statusFilter != ''){
-        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
-      }else if(ticketTypeFilter != '' && priorityFilter != ''){
-        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase();
-      }else if(ticketTypeFilter != ''){
-        return ticketTypeFilter.toLowerCase() === TCode.toLowerCase()
-      }else if(statusFilter != ''){
-        return statusFilter.toLowerCase() === SCode.toLowerCase()
-      }else if(priorityFilter != ''){
-        return priorityFilter.toLowerCase() === Pcode.toLowerCase()
-      }else{
-        return io;
-      }
-    })
-    //console.log(filterData.length);
-    this.setState({
-      dataList: this.returnData(filterData, 0, filterData.length).slice(
-        0,
-        5,
-      ),
-      loading: false,
-      filterModal:false,
-      itemSize: filterData.length >= 5 ? 5 : filterData.length,
-    });  
+    if(statusFilter === '' && ticketTypeFilter === '' && priorityFilter === ''){
+      const sorting = originalList.sort((a, b) => {
+        const sp = a.updated_at.split('-');
+        const spz = b.updated_at.split('-');
+        return (
+          Number(sp[2]) - Number(spz[2]) ||
+          Number(sp[1]) - Number(spz[1]) ||
+          Number(sp[0]) - Number(spz[0])
+        );
+      });
+      const filterData = Lodash.filter(sorting, io =>{
+        const {TCode, Pcode, SCode} = io;
+        if(ticketTypeFilter != '' && statusFilter != '' && priorityFilter != ''){
+          return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
+        }else if(ticketTypeFilter != '' && statusFilter != ''){
+          return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && statusFilter.toLowerCase() === SCode.toLowerCase();
+        }else if(ticketTypeFilter != '' && priorityFilter != ''){
+          return ticketTypeFilter.toLowerCase() === TCode.toLowerCase() && priorityFilter.toLowerCase() === Pcode.toLowerCase();
+        }else if(ticketTypeFilter != ''){
+          return ticketTypeFilter.toLowerCase() === TCode.toLowerCase()
+        }else if(statusFilter != ''){
+          return statusFilter.toLowerCase() === SCode.toLowerCase()
+        }else if(priorityFilter != ''){
+          return priorityFilter.toLowerCase() === Pcode.toLowerCase()
+        }else{
+          return io;
+        }
+      })
+      this.setState({
+        dataList: this.returnData(filterData, 0, filterData.length).slice(
+          0,
+          5,
+        ),
+        loading: false,
+        filterModal:false,
+        itemSize: filterData.length >= 5 ? 5 : filterData.length,
+      });
+    }else{
+      this.setState({
+        loading: false,
+        filterModal:false,
+      });
+    }  
   }
 
   render() {
@@ -604,6 +635,7 @@ export default class TrackQuery extends React.PureComponent {
                       <ActivityIndicator />
                     </View>
                   ) : this.state.threadList.length > 0 ? (
+                    <>
                     <Timeline
                       style={{
                         flex: 0.87,
@@ -617,18 +649,23 @@ export default class TrackQuery extends React.PureComponent {
                       timeContainerStyle={{minWidth: 24}}
                       timeStyle={{
                         textAlign: 'center',
-                        //backgroundColor: '#0270e3',
-                        color: 'white',
-                        //padding: 6,
-                        //borderRadius: 16,
+                        backgroundColor: '#555',
+                        padding: 7,
+                        borderRadius: 16,
                         overflow: 'hidden',
-                        color: '#0270e3',
-                        fontSize: 15,
+                        color: 'white',
+                        fontSize: 14,
                       }}
                       renderDetail={this.renderDetail}
                       columnFormat="two-column"
                       separator={false}
                     />
+                      <FAB
+                        style={styles.fab}
+                        icon={'pencil'}
+                        onPress={() => this.editQuery(this.state.editItem)}
+                      />
+                    </>
                   ) : (
                     <View style={styles.emptycont}>
                       <ListError subtitle={'No details Found...'} />
@@ -737,6 +774,9 @@ export default class TrackQuery extends React.PureComponent {
               }
               ratioHeight={0.65}
               backgroundColor={`white`}
+              centerFlex={0.2}
+              rightFlex={0.3}
+              centerFlex={0.5}
               topCenterElement={
                 <Subtitle
                   style={{
@@ -751,7 +791,7 @@ export default class TrackQuery extends React.PureComponent {
               topRightElement={ <TouchableWithoutFeedback onPress={this.resetFilter}>
                 <Subtitle
                 style={{
-                  color: '#292929',
+                  color: '#0270e3',
                   fontSize: 14,
                   fontWeight: '700',
                   letterSpacing: 0.5,
@@ -1084,5 +1124,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     fontWeight: '700',
     marginTop: 16,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor:Pref.RED
   },
 });

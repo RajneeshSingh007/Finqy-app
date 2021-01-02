@@ -258,36 +258,21 @@ export default class Sidebar extends React.Component {
               click: 'Manager',
               options: {},
             },
-            // {
-            //   name: `Raise A Query`,
-            //   expand: false,
-            //   click: 'RaiseQueryForm',
-            //   options: {},
-            // },
-            // {
-            //   name: `Track My Query`,
-            //   expand: false,
-            //   click: 'TrackQuery',
-            //   options: {},
-            // },
-
-            // {
-            //   name: `Raise QRC`,
-            //   expand: false,
-            //   click: 'Qrc',
-            //   options: {},
-            // },
+            {
+              name: `Raise A Query`,
+              expand: false,
+              click: 'RaiseQueryForm',
+              options: {},
+            },
+            {
+              name: `Track My Query`,
+              expand: false,
+              click: 'TrackQuery',
+              options: {},
+            },
           ],
           click: '',
-        },
-        // {
-        //   name: `Logout`,
-        //   expand: false,
-        //   click: 'Login',
-        //   iconname: 'power-off',
-        //   icontype: 3,
-        //   options: {},
-        // },
+        }
       ],
     };
   }
@@ -484,36 +469,21 @@ export default class Sidebar extends React.Component {
                 click: 'Manager',
                 options: {},
               },
-              // {
-              //   name: `Raise A Query`,
-              //   expand: false,
-              //   click: 'RaiseQueryForm',
-              //   options: {},
-              // },
-              // {
-              //   name: `Track My Query`,
-              //   expand: false,
-              //   click: 'TrackQuery',
-              //   options: {},
-              // },
-  
-              // {
-              //   name: `Raise QRC`,
-              //   expand: false,
-              //   click: 'Qrc',
-              //   options: {},
-              // },
+              {
+                name: `Raise A Query`,
+                expand: false,
+                click: 'RaiseQueryForm',
+                options: {},
+              },
+              {
+                name: `Track My Query`,
+                expand: false,
+                click: 'TrackQuery',
+                options: {},
+              },
             ],
             click: '',
-          },
-          // {
-          //   name: `Logout`,
-          //   expand: false,
-          //   click: 'Login',
-          //   iconname: 'power-off',
-          //   icontype: 3,
-          //   options: {},
-          // },
+          }
         ];
         this.setState({ menuList: filter });
       } else if (v === 'team') {
@@ -626,23 +596,9 @@ export default class Sidebar extends React.Component {
                 click: 'TrackQuery',
                 options: {},
               },  
-              // {
-              //   name: `Raise QRC`,
-              //   expand: false,
-              //   click: 'Qrc',
-              //   options: {},
-              // },
             ],
             click: '',
-          },
-          // {
-          //   name: `Logout`,
-          //   expand: false,
-          //   click: 'Login',
-          //   iconname: 'power-off',
-          //   icontype: 3,
-          //   options: {},
-          // },
+          }
         ];
         this.setState({ menuList: filter });
       }
