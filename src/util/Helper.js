@@ -95,6 +95,37 @@ export const requestPermissions = async () => {
   }
 };
 
+
+/**
+ * Ask permission on android for dialer
+ * @returns {Promise<void>}
+ */
+export const requestPermissionsDialer = async () => {
+  try {
+    if (Platform.OS === 'android') {
+      const value = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
+      ]).then((result) => {
+        if (
+          result['android.permission.CALL_PHONE'] === 'granted'
+          &&
+          result['android.permission.READ_CONTACTS'] === 'granted'
+          &&
+          result['android.permission.WRITE_CONTACTS'] === 'granted'
+        ) {
+          //granted
+        }
+      });
+      return value;
+    }else{
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
 /**
  * networkHelper
  * @param url
@@ -838,3 +869,21 @@ export const networkHelperHelpDeskTicketGet = (
     });
 };
 
+/**
+ * unique user identifier
+ */
+export const getUID = () => {
+  var chars = '0123456789abcdef'.split('');
+  var uuid = [],
+    rnd = Math.random,
+    r;
+  uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+  uuid[14] = '4';
+  for (var i = 0; i < 36; i++) {
+    if (!uuid[i]) {
+      r = 0 | (rnd() * 16);
+      uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r & 0xf];
+    }
+  }
+  return uuid.join('');
+};

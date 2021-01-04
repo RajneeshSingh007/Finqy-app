@@ -1,20 +1,8 @@
 import React from 'react';
-import {
-  StyleSheet,
-  BackHandler,
-} from 'react-native';
-import {
-  Image,
-  Title,
-  View,
-  Caption,
-  Html,
-} from '@shoutem/ui';
+import {StyleSheet} from 'react-native';
+import {Image, Title, View, Caption, Html} from '@shoutem/ui';
 import * as Pref from '../../util/Pref';
-import {
-  ActivityIndicator,
-} from 'react-native-paper';
-import NavigationActions from '../../util/NavigationActions';
+import {ActivityIndicator} from 'react-native-paper';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import moment from 'moment';
@@ -62,7 +50,7 @@ export default class BlogDetails extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-          let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
+    let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
 
     // const url =
     //   item.category === `newspaper`
@@ -77,7 +65,7 @@ export default class BlogDetails extends React.PureComponent {
     d.setHours(time[0], time[1], time[2]);
     const date = moment(d).format('DD-MM-YYYY hh:mm A');
     return (
-      <View styleName="vertical" style={{flex: 1, marginTop:8}}>
+      <View styleName="vertical" style={{flex: 1, marginTop: 8}}>
         <Title
           styleName="v-center h-center"
           style={StyleSheet.flatten([
@@ -85,7 +73,7 @@ export default class BlogDetails extends React.PureComponent {
             {
               color: '#686868',
               paddingVertical: 0,
-              marginHorizontal:16,
+              marginHorizontal: 16,
             },
           ])}>{`${item.title}`}</Title>
 

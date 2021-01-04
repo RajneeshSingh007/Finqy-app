@@ -57,7 +57,7 @@ const LeftHeaders = props => {
             !pp.includes('.png'))
             ? null
             : {uri: decodeURIComponent(pp)};
-        //console.log('profilePic', profilePic);
+           // console.log('profilePic', profilePic)
         setPic(profilePic);
         setuserData(value);
         setleaderData(
@@ -179,7 +179,7 @@ const LeftHeaders = props => {
                           : type === 'referral' &&
                             Helper.nullStringCheck(userData.rcontact) === false
                           ? userData.rcontact
-                          : type === 'team' &&
+                          : (type === 'team' || type === 'dialer') &&
                             Helper.nullStringCheck(userData.mobile) === false
                           ? `${userData.mobile}`
                           : ''

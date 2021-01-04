@@ -77,6 +77,12 @@ import TCondition from './../screens/auth/TCondition';
 import WebComp from '../screens/component/WebComp';
 import FinishScreen from '../screens/common/FinishScreen';
 
+/// Dialer Screens
+import DialerHome from '../screens/dialer/home/DialerHome';
+import DialerCalling from '../screens/dialer/calling/DialerCalling';
+import DialerRecords from '../screens/dialer/leads/DialerRecords';
+
+
 import {
   Dimensions, Animated,
   Easing
@@ -247,7 +253,6 @@ const TicketNav = createSwitchNavigator(
   },
 );
 
-
 const OtherNav = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
@@ -278,10 +283,10 @@ const OtherNav = createDrawerNavigator(
     WebComp: { screen: WebComp },
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
-    //RaiseQueryForm:{screen:RaiseQueryFormNav},
-    //RaiseQueryForm: { screen: RaiseQueryForm },
-    //TrackQuery:{screen:TrackQuery}
-    TicketNav:{screen:TicketNav}
+    TicketNav:{screen:TicketNav},
+    DialerHome:{screen:DialerHome},
+    DialerCalling:{screen:DialerCalling},
+    DialerRecords:{screen:DialerRecords},
   },
   {
     initialRouteName: 'Home',

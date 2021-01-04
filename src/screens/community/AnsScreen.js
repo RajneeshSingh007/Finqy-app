@@ -1,24 +1,18 @@
 import React from "react";
-import { StatusBar, StyleSheet, ScrollView, BackHandler, FlatList, TouchableWithoutFeedback, Linking, TextInput } from "react-native";
-import { TouchableOpacity, Image, Screen, Subtitle, Title, View, Heading, NavigationBar, Text, Caption, GridView } from "@shoutem/ui";
+import { StyleSheet, BackHandler, FlatList } from "react-native";
+import { Subtitle, Title, View } from "@shoutem/ui";
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import { Button, Card, Colors, Snackbar, DataTable, Modal, Portal, Avatar, DefaultTheme, FAB } from "react-native-paper";
+import { Card, Avatar, FAB } from "react-native-paper";
 import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
+import { sizeHeight, sizeWidth } from '../../util/Size';
 import PlaceholderLoader from '../../util/PlaceholderLoader';
-import Icon from 'react-native-vector-icons/Feather';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Lodash from 'lodash';
-import MenuProvider from '../../util/MenuProvider.js';
 import CommonScreen from '../common/CommonScreen';
-import CardRow from '../common/CommonCard';
 import LeftHeaders from '../common/CommonLeftHeader';
 import AskQues from '../../util/AskQues';
 import ListError from '../common/ListError';
 import Loader from '../../util/Loader';
-import moment from 'moment';
 
 
 export default class AnsScreen extends React.PureComponent {
@@ -28,14 +22,14 @@ export default class AnsScreen extends React.PureComponent {
         this.backClick = this.backClick.bind(this);
         this.renderItems = this.renderItems.bind(this);
         this.state = {
-            progressLoader:false,
+            progressLoader: false,
             loading: false,
             userData: {},
             pic: '',
             showQuesView: false,
             dataList: [],
             item: null,
-            uid:''
+            uid: ''
         }
         Pref.getVal(Pref.userID, value => {
             const rm = Helper.removeQuotes(value);
@@ -56,10 +50,10 @@ export default class AnsScreen extends React.PureComponent {
             this.setState({ dataList: reply, item: item })
         }
         this.willfocusListener = navigation.addListener("willFocus", () => {
-         this.setState({ loading: true, });
+            this.setState({ loading: true, });
         });
         this.focusListener = navigation.addListener("didFocus", () => {
-         this.setState({ loading: false });
+            this.setState({ loading: false });
             Pref.getVal(Pref.userData, value => {
                 const parse = JSON.parse(value);
                 const pp = parse.profile_pic;
@@ -91,7 +85,7 @@ export default class AnsScreen extends React.PureComponent {
         if (ques === '') {
             alert('Answer empty')
         } else {
-            const { uid, userData, pic,item } = this.state;
+            const { uid, userData, item } = this.state;
             this.setState({ progressLoader: true })
             const date = new Date();
             const body = {
@@ -101,7 +95,7 @@ export default class AnsScreen extends React.PureComponent {
                 qid: item.id,
             };
             Helper.networkHelper(Pref.AnsCQuesUrl, JSON.stringify(body), Pref.methodPost, result => {
-                const { response_header, response } = result;
+                const { response_header } = result;
                 this.setState({ progressLoader: false, showQuesView: false, });
                 if (response_header.res_type === 'success') {
                     const merg = this.state.dataList;
@@ -110,7 +104,7 @@ export default class AnsScreen extends React.PureComponent {
                     merg.unshift({
                         username: userData.first_name,
                         ans: ques,
-                        pic: url, 
+                        pic: url,
                         time: date,
                     })
                     this.setState({ dataList: merg });
@@ -119,14 +113,14 @@ export default class AnsScreen extends React.PureComponent {
                 } else {
                     Helper.showToastMessage('Failed to post', 0);
                 }
-            }, error => {
+            }, () => {
                 this.setState({ progressLoader: false, showQuesView: false, });
             })
-        }    
+        }
     }
 
 
-    renderItems(item, index) {
+    renderItems(item) {
         return (<Card elevation={0} style={{ marginVertical: sizeHeight(0.8), borderRadius: 0, }}
             onPress={() => NavigationActions.navigate('AnsScreen', { item: item })}
         >
@@ -212,7 +206,7 @@ export default class AnsScreen extends React.PureComponent {
                             showBack
                         />
 
-                        {this.state.item !== null ? this.renderItems(this.state.item, 0) : null}
+                        {this.state.item !== null ? this.renderItems(this.state.item) : null}
 
                         <Card elevation={0} style={{ marginTop: 10, marginBottom: 10, borderRadius: 0, backgroundColor: Pref.EXTRA_COLOR, height: 56 }}>
                             <Card.Content>
@@ -237,13 +231,13 @@ export default class AnsScreen extends React.PureComponent {
                                         style={{ marginTop: sizeWidth(2), marginBottom: sizeHeight(2), }}
                                         data={this.state.dataList}
                                         nestedScrollEnabled
-                                        renderItem={({ item, index }) => this.renderItems(item, index)}
+                                        renderItem={({ item, index }) => this.renderItems(item)}
                                         keyExtractor={(item, index) => index.toString()}
                                         showsVerticalScrollIndicator={true}
                                         showsHorizontalScrollIndicator={false}
                                         extraData={this.state}
                                     />
-                                    : 
+                                    :
                                     <View style={{ flex: 1, }}>
                                         <ListError subtitle={'No answer found...\nBe the first to answer and help to grow this community'} url={''} />
                                     </View>

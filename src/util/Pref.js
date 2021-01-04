@@ -2708,8 +2708,7 @@ export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bm
 
 //test url
 export const MainUrl = `https://uat.erb.ai/`;
-//export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-export const ApiDirUrl = `${MainUrl}corporate_tool/Apisuat/`;
+export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 
@@ -2814,8 +2813,12 @@ export const SEND_MAIL_URL = `${ApiDirUrl}ticketapi/send_mail.php`;
 ////////////////////////////
 // Dialer API
 ///////////////////////////
-export const DialerDirUrl = `${MainUrl}corporate_tool/Apisuat/dialerapi/`;
+export const DialerDirUrl = `${ApiDirUrl}dialerapi/`;
 export const DIALER_LOGIN = `${DialerDirUrl}post_login.php`
+export const DIALER_LEAD_RECORD = `${DialerDirUrl}tool_get_leads.php`
+export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
+export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
+export const DIALER_USER_DASHBOARD = `${DialerDirUrl}dashboard.php`;
 
 
 /**

@@ -152,9 +152,9 @@ export default class LeadList extends React.PureComponent {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
               if(a.date.includes(' ') && b.date.includes(' ')){
-                const splita = a.date.split(' ');
-                const splitb = b.date.split(' ');
-                const sp = splita[0].date.split('-');
+                const splita = a.date.split(/\s/g);
+                const splitb = b.date.split(/\s/g);
+                const sp = splita[0].split('-');
                 const spz = splitb[0].split('-');
                 return (
                   Number(sp[2]) - Number(spz[2]) ||
@@ -642,7 +642,7 @@ export default class LeadList extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'My Lead Record'}
+              title={'My Lead Records'}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -823,7 +823,7 @@ export default class LeadList extends React.PureComponent {
               />
             ) : (
                   <View style={styles.emptycont}>
-                    <ListError subtitle={'No Lead Record Found...'} />
+                    <ListError subtitle={'No Lead Records Found...'} />
                   </View>
                 )}
             {this.state.dataList.length > 0 ? (

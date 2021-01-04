@@ -80,7 +80,7 @@ export default class CommonForm extends React.PureComponent {
     if(Helper.nullCheck(editItemRestore) === false){
       this.restoreData(editItemRestore);
     }
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
 
   componentWillReceiveProps(prop) {
@@ -96,7 +96,7 @@ export default class CommonForm extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
   restoreData(obj) {

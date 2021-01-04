@@ -115,8 +115,15 @@ class CommonFileUpload extends React.PureComponent {
 
   download = () => {
     const { downloadUrl = '', fileName = '', ext = '', mime = 'application/pdf' } = this.props;
-    if (downloadUrl != '' && fileName != '' && ext != '') {
-      Helper.downloadFileWithFileName(downloadUrl, fileName, `${fileName}.${ext}`, mime, true, false);
+    if (Helper.nullStringCheck(downloadUrl) === false) {
+      const parseurl = String(downloadUrl);
+      let fullName = parseurl.slice(parseurl.lastIndexOf('/')+1, parseurl.length);
+      let finalName  = fullName.slice(0, fullName.lastIndexOf('.'));
+      //console.log('fullName', fullName);
+      //console.log('finalName', finalName);
+      Helper.downloadFileWithFileName(downloadUrl, finalName, fullName, mime, true, false);
+    }else{
+      Helper.showToastMessage('File not available', 0);
     }
   }
 
