@@ -3,4 +3,6 @@
     <string moduleConfig="true" name="CodePushDeploymentKey">FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
+    <string name="draw_other_app_permission_denied">Please, Grant Draw Over Other App Permission</string>
+    <color name="accentcolor">#ea343c</color>
 </resources>

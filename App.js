@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StatusBar, View,BackHandler} from 'react-native';
+import {StatusBar, View, BackHandler, Alert, Linking,Platform} from 'react-native';
 import {AppContainer} from './src/util/AppRouter';
 import NavigationActions from './src/util/NavigationActions';
 import {inject, observer} from 'mobx-react';
@@ -10,6 +10,13 @@ import Loader from './src/util/Loader';
 import Crashes from 'appcenter-crashes';
 import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
+import {
+  notifications,
+  NotificationMessage,
+  Android,
+} from 'react-native-firebase-push-notifications';
+import * as Helper from './src/util/Helper';
+import * as Pref from './src/util/Pref';
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -21,10 +28,52 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.checkVersionForUpdate();
+    
     //this.syncImmediate();
+
     Crashes.setEnabled(true);
     analytics().setAnalyticsCollectionEnabled(true);
     crashlytics().setCrashlyticsCollectionEnabled(true);
+
+    this.onNotificationListener();
+  }
+
+  onNotificationListener = () => {
+    this.removeOnNotification = notifications.onNotification(
+      notification => {
+      },
+    );
+  }
+
+  /**
+   * check app version for update dialog
+   */
+  checkVersionForUpdate = () =>{
+    Helper.getNetworkHelper(Pref.UPDATE_DIALOG, Pref.methodGet, result =>{
+      CodePush.getConfiguration().then(({appVersion}) =>{
+        if(result !== appVersion){
+          Alert.alert('New version available', 'Please, update app to new version to continue', [
+            {
+              text:'UPDATE',
+              onPress:() =>{
+                if(Platform.OS === 'android'){
+                  Linking.openURL(`${Pref.APP_PLAY_STORE_LINK}`)
+                }
+              }
+            }
+          ]);
+        }
+      })  
+    }, error =>{
+    })
+  }
+
+
+  componentWillUnmount() {
+    if (this.removeOnNotification) {
+      this.removeOnNotification();
+    }
   }
 
   codePushStatusDidChange(syncStatus) {

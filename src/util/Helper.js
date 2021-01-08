@@ -350,6 +350,7 @@ export const networkHelperTokenPost = (
       callback(responseJson);
     })
     .catch((error) => {
+      console.log('error', error);
       errorCallback(error);
     });
 };
@@ -429,7 +430,7 @@ export const showToastMessage = (message, type = 0) => {
           : type === 2
             ? 'info'
             : 'default',
-    duration: 10000,
+    duration: 50000,
     animated:true,
     floating:true,
   });

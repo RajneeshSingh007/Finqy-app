@@ -23,11 +23,16 @@ import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../../common/IconChooser';
 import CScreen from './../../component/CScreen';
 import NavigationActions from '../../../util/NavigationActions';
+import Download from '../../component/Download';
 import moment from 'moment';
 
-export default class DialerRecords extends React.PureComponent {
+let HEADER = `Sr. No.,Name,Mobile No,Email,Uniquecode\n`;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
+
+export default class AllMembers extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.rowClicked = this.rowClicked.bind(this);
     this.state = {
       dataList: [],
       loading: false,
@@ -37,18 +42,20 @@ export default class DialerRecords extends React.PureComponent {
         'Sr. No.',
         'Name',
         'Number',
-        'Call Date',
-        'Call Duration',
-        'Status',
-        'Remarks',
-        ''
+        'Email',
+        'Refercode',
       ],
-      widthArr: [60, 120, 110, 110, 70, 120, 140,60],
+      widthArr: [60, 140,120,150,100],
       cloneList: [],
       type: '',
-      itemSize: 50,
+      itemSize: 10,
+      disableNext: false,
+      disableBack: false,
+      searchQuery: '',
+      enableSearch: false,
       orderBy: 'asc',
-      fileName: ''
+      fileName: '',
+      reportenabled:false,
     };
   }
 
@@ -59,13 +66,14 @@ export default class DialerRecords extends React.PureComponent {
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        const active = navigation.getParam("active", 1);
-        this.setState({ userData: userData });
+        const reportenabled = navigation.getParam('reportenabled', false);
+        //console.log('reportenabled', reportenabled)
+        this.setState({ userData: userData,reportenabled:reportenabled});
         Pref.getVal(Pref.USERTYPE, (v) => {
           this.setState({ type: v }, () => {
             Pref.getVal(Pref.saveToken, (value) => {
               this.setState({ token: value }, () => {
-                this.fetchData(active);
+                this.fetchData();
               });
             });
           });
@@ -79,45 +87,34 @@ export default class DialerRecords extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = (active) => {
+  fetchData = () => {
     this.setState({ loading: true });
-    const { team_id,id } = this.state.userData;
+    const { team_id } = this.state.userData;
     const body = JSON.stringify({
       teamid: team_id,
-      userid: id,
-      active: active,
+      userid: "",
+      flag: 0,
     });
     //console.log('body', body)
     Helper.networkHelperTokenPost(
-      Pref.DIALER_LEAD_RECORD,
+      Pref.DIALER_GET_MEMBERS,
       body,
       Pref.methodPost,
       this.state.token,
       (result) => {
+        //console.log('result',result);
         const { data, status } = result;
         if (status) {
           if (data.length > 0) {
-            const sorting = data.sort((a, b) => {
-              const splita = a.updated_at.split(/\s/g);
-              const splitb = b.updated_at.split(/\s/g);
-              const sp = splita[0].split('-');
-              const spz = splitb[0].split('-');
-              return (
-                Number(sp[2]) - Number(spz[2]) ||
-                Number(sp[1]) - Number(spz[1]) ||
-                Number(sp[0]) - Number(spz[0])
-              );
-            });
-            const sort = sorting.reverse();
             const { itemSize } = this.state;
             this.setState({
-              cloneList: sort,
-              dataList: this.returnData(sort, 0, sort.length).slice(
+              cloneList: data,
+              dataList: this.returnData(data, 0, data.length).slice(
                 0,
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 50 ? 50 : sort.length,
+              itemSize: data.length >= 10 ? 10 : data.length,
             });
           } else {
             this.setState({
@@ -134,10 +131,6 @@ export default class DialerRecords extends React.PureComponent {
     );
   };
 
-  editLead = (item) =>{
-    //NavigationActions.navigate('')
-  }
-
   /**
    *
    * @param {*} data
@@ -151,70 +144,17 @@ export default class DialerRecords extends React.PureComponent {
           if (Helper.nullCheck(item) === false) {
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
-            rowData.push(item.name);
+            rowData.push(item.username);
             rowData.push(item.mobile);
-            rowData.push(item.call_date.slice(0, String(item.call_date).lastIndexOf(':')));
-            if(item.call_duration === null){
-              rowData.push(``);
-            }else{
-              rowData.push(`${item.call_duration}s`);
-            }
-            rowData.push(Number(item.tracking_type) === 0 ? `Contactable\n${item.tracking_type_detail}` : `Non-Contactable\n${item.tracking_type_detail}`);
-            rowData.push(item.remarks);
-            const editView = (value) => (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <TouchableWithoutFeedback
-                  onPress={() => this.editLead(value)}>
-                  <View>
-                    <IconChooser
-                      name={`edit-2`}
-                      size={20}
-                      color={`#9f9880`}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-              </View>
-            );
-            if(Helper.nullCheck(item.editenable) === false && item.editenable === 0){
-              rowData.push(editView(item));
-            }else{
-              rowData.push('');
-            }
+            rowData.push(item.email);
+            rowData.push(item.refercode);
+            rowData.push(item.id);
             dataList.push(rowData);
           }
         }
       }
     }
     return dataList;
-  };
-
-  clickedexport = () => {
-    const { cloneList,userData } = this.state;
-    if (cloneList.length > 0) {
-      const data = this.returnData(cloneList, 0, cloneList.length);
-      const { refercode } = userData;
-      const name = `${refercode}_MyLeadRecord`;
-      const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
-        if (result) {
-          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
-            RNFetchBlob.android.addCompleteDownload({
-              title: name,
-              description: 'Lead record exported successfully',
-              mime: 'text/comma-separated-values',
-              path: finalFilePath,
-              showNotification: true,
-            }),
-            Helper.showToastMessage('Download Complete', 1);
-        }
-      });
-    }
   };
 
   /**
@@ -227,7 +167,7 @@ export default class DialerRecords extends React.PureComponent {
     let plus = itemSize;
     let slicedArray = [];
     if (mode) {
-      plus += 50;
+      plus += 10;
       if (itemSize < clone.length) {
         if (plus > clone.length) {
           const rem = clone.length - itemSize;
@@ -237,10 +177,10 @@ export default class DialerRecords extends React.PureComponent {
         this.setState({ dataList: slicedArray, itemSize: plus });
       }
     } else {
-      if (itemSize <= 50) {
+      if (itemSize <= 10) {
         plus = 0;
       } else {
-        plus -= 50;
+        plus -= 10;
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
@@ -258,8 +198,8 @@ export default class DialerRecords extends React.PureComponent {
       const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
       const result = Lodash.filter(clone, (it) => {
-        const { name, mobile, product } = it;
-        return name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery);
+        const { username, mobile, refercode,email } = it;
+        return username && username.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || refercode && refercode.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery);
       });
       const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
@@ -272,21 +212,29 @@ export default class DialerRecords extends React.PureComponent {
     const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 50);
+      const data = this.returnData(clone, 0, 10);
       this.setState({ dataList: data });
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 50 });
+    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 10 });
+  }
+
+
+  rowClicked = (item) =>{
+    const {reportenabled} = this.state;
+    if(reportenabled === true){
+      NavigationActions.navigate('MemberReport', {data:item});
+    }
   }
 
   render() {
-    const { searchQuery, enableSearch } = this.state;
+    const { searchQuery, enableSearch,reportenabled } = this.state;
     return (
       <CScreen
         body={
           <>
             <LeftHeaders
               showBack
-              title={'My Lead Records'}
+              title={reportenabled ? 'Performance Review' : 'My Team Members'}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -346,21 +294,21 @@ export default class DialerRecords extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
-              enableHeight={false}
+                enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
+                rowClicked={this.rowClicked}
               />
             ) : (
                   <View style={styles.emptycont}>
-                    <ListError subtitle={'No Lead Records Found...'} />
+                    <ListError subtitle={'No team members Found...'} />
                   </View>
                 )}
             {this.state.dataList.length > 0 ? (
               <>
                 <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
                   }/${Number(this.state.cloneList.length)} entries`}</Title>
-                {/* <Download rightIconClick={this.clickedexport} /> */}
               </>
             ) : null}
           </>

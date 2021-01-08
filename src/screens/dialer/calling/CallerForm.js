@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import {StyleSheet, PermissionsAndroid, Platform} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
@@ -61,7 +57,6 @@ export default class CallerForm extends React.PureComponent {
       clickedBtn: 0,
       callLogs: [],
       callDur: 0,
-      permissionGranted: false,
     };
   }
 
@@ -71,7 +66,8 @@ export default class CallerForm extends React.PureComponent {
       this.restoreData(editItemRestore);
     }
     const {customerItem} = this.props;
-    const {mobile = ''} = customerItem;
+    const {mobile = '', name = ''} = customerItem;
+    this.setState({name: name, mobile: mobile});
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
         title: 'Permission Required',
@@ -112,7 +108,6 @@ export default class CallerForm extends React.PureComponent {
               this.setState({
                 callLogs: c,
                 callDur: callDur,
-                permissionGranted: true,
               });
             });
           }
@@ -128,7 +123,7 @@ export default class CallerForm extends React.PureComponent {
   }
 
   contactDialogClicked = value => {
-    console.log(value);
+    //console.log(value);
     this.setState({trackingDetail: value, showContactDialog: false});
   };
 
@@ -137,12 +132,23 @@ export default class CallerForm extends React.PureComponent {
   };
 
   formSubmit = () => {
-    const {customerItem, token} = this.props;
-    if (customerItem === null || token == null) {
+    const {customerItem, token, userData} = this.props;
+    if ((customerItem === null || token == null, userData == null)) {
       alert('Something went wrong');
       return false;
     }
-    const {name = '', mobile = '', id, team_id, user_id} = customerItem;
+    let id = '',
+      team_id = '',
+      user_id = '';
+    if (Helper.nullCheck(customerItem.user_id) === true) {
+      user_id = userData.id;
+      team_id = '';
+      id = '';
+    } else {
+      id = customerItem.id;
+      team_id = customerItem.team_id;
+      user_id = customerItem.user_id;
+    }
     const {
       product,
       remarks,
@@ -151,21 +157,31 @@ export default class CallerForm extends React.PureComponent {
       trackingDetail,
       callLogs,
       callDur,
-      permissionGranted,
+      name,
+      mobile,
     } = this.state;
-    if (permissionGranted === false) {
-      alert('Please, Allow Call Logs Permission');
-      return false;
-    }
 
     let checkData = true;
-    if (name === '' || mobile === '') {
+    if (name === '') {
       checkData = false;
-      alert('Failed to find customer!');
+      alert('Name empty');
+    } else if (mobile === '') {
+      checkData = false;
+      alert('Mobile empty');
+    } else if (
+      mobile.length < 10 ||
+      mobile === '9876543210' ||
+      mobile === '0000000000' ||
+      mobile === '1234567890'
+    ) {
+      errorData = false;
+      Helper.showToastMessage('Invalid mobile number', 0);
     } else if (trackingType === '') {
       checkData = false;
-      alert('Please, Select Response');
-    } else if (trackingType == 'Contactable' && trackingDetail === 'Interested' && product === '') {
+      alert('Please, Select Status');
+    }
+    //trackingType == 'Contactable' && trackingDetail === 'Interested' &&
+    else if (product === '') {
       checkData = false;
       alert('Please, Select Product');
     }
@@ -206,6 +222,8 @@ export default class CallerForm extends React.PureComponent {
       body.userID = user_id;
       body.callLogs = callLogs;
       body.callDur = callDur;
+      body.name = name;
+      body.mobile = mobile;
 
       let formName = product
         .trim()
@@ -220,9 +238,14 @@ export default class CallerForm extends React.PureComponent {
       formData.append('mobile', mobile);
       formData.append('remark', remarks);
 
-      console.log('formData', formData, formUrls);
+      if (Helper.nullCheck(userData.refercode) === false) {
+        const {refercode} = userData;
+        formData.append('ref', refercode);
+      }
 
-      //console.log(body, token);
+      //console.log('formData', formData, formUrls);
+
+      console.log(body, token);
 
       Helper.networkHelperTokenPost(
         Pref.DIALER_LEAD_UPDATE,
@@ -246,7 +269,7 @@ export default class CallerForm extends React.PureComponent {
                   if (res_type === 'success') {
                     this.props.startLoader(false, 0);
                     NavigationActions.navigate('Finish', {
-                      top: 'Form Detail',
+                      top: 'Customer Details',
                       red: 'Success',
                       grey: 'Lead uploaded successfully',
                       blue: 'Go back',
@@ -258,7 +281,7 @@ export default class CallerForm extends React.PureComponent {
                   }
                 },
                 e => {
-                  console.log(e);
+                  //console.log(e);
                   this.props.startLoader(false, -1);
                   this.props.formResult(false, 'Something went wrong!');
                 },
@@ -272,7 +295,7 @@ export default class CallerForm extends React.PureComponent {
             this.props.formResult(status, message);
           }
         },
-        () => {
+        e => {
           //console.log(e);
           this.props.startLoader(false, -1);
           this.props.formResult(false, 'Something went wrong!');
@@ -282,27 +305,36 @@ export default class CallerForm extends React.PureComponent {
   };
 
   render() {
-    const {remarks} = this.state;
+    const {remarks, name, mobile} = this.state;
     const {customerItem, productList} = this.props;
-    const {name = '', mobile = ''} = customerItem;
     return (
       <>
         <View styleName="md-gutter">
           <AnimatedInputBox
+            onChangeText={value => this.setState({name: value})}
+            showStarVisible
             value={name}
             placeholder={'Name'}
             returnKeyType={'next'}
-            editable={false}
-            disabled={true}
+            // editable={false}
+            // disabled={true}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
           <AnimatedInputBox
+            onChangeText={value => {
+              if (String(value).match(/^[0-9]*$/g) !== null) {
+                this.setState({mobile: value});
+              }
+            }}
+            showStarVisible
             value={mobile}
             placeholder={'Mobile'}
             returnKeyType={'next'}
-            editable={false}
-            disabled={true}
+            // editable={false}
+            // disabled={true}
+            maxLength={10}
+            keyboardType={'number-pad'}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
@@ -328,7 +360,7 @@ export default class CallerForm extends React.PureComponent {
           <NewDropDown
             list={productList}
             placeholder={`Select Product`}
-            starVisible={this.state.trackingType == 'Contactable' && this.state.trackingDetail === 'Interested'}
+            starVisible
             value={this.state.product}
             selectedItem={value => this.setState({product: value})}
             style={styles.dropdowncontainers}

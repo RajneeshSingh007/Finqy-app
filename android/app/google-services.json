@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "287073404422-71aka5d1kiflme3to8r9tm650oh87nqk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erb.finpro",
+            "certificate_hash": "05e61ed718d96ea8f9d78155b92762c26903b07a"
+          }
+        },
+        {
+          "client_id": "287073404422-ti1menj6gq2c2si60u620svmrvuua8fk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erb.finpro",
+            "certificate_hash": "9980b5aec3cc1dd2bdef49e403d5e43e0fbf285e"
+          }
+        },
+        {
+          "client_id": "287073404422-ua0dmdgpii9v9306s4fb3ubd39ebecs7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.erb.finpro",
+            "certificate_hash": "352b99a1a8342821b7056ece72252787e98b09ce"
+          }
+        },
+        {
           "client_id": "287073404422-repl6f250mhiin0bdnnv4h83d8v5shpa.apps.googleusercontent.com",
           "client_type": 3
         }

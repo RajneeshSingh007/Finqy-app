@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_gravity="bottom|center"
+    android:gravity="bottom|center"
+    android:layout_marginBottom="16dp"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:background="@drawable/circular_drawable"
+        android:layout_gravity="bottom|center"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/removeIcon"
+            android:layout_gravity="center"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:tint="@color/white"
+            android:src="@drawable/ic_baseline_close_24"/>
+    </FrameLayout>
+</LinearLayout>

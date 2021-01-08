@@ -227,7 +227,7 @@ export default class FinorbitForm extends React.PureComponent {
       checkData = thirdFormFileCheck(title, allfileslist);
     }
 
-    console.log('checkData', checkData);
+    //console.log('checkData', checkData);
     if (checkData) {
       const limit = title === 'Insure Check' ? 1 : 3;
       if (currentPosition < limit) {

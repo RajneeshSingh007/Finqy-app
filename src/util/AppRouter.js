@@ -78,9 +78,10 @@ import WebComp from '../screens/component/WebComp';
 import FinishScreen from '../screens/common/FinishScreen';
 
 /// Dialer Screens
-import DialerHome from '../screens/dialer/home/DialerHome';
 import DialerCalling from '../screens/dialer/calling/DialerCalling';
 import DialerRecords from '../screens/dialer/leads/DialerRecords';
+import AllMembers from '../screens/dialer/leader/AllMembers';
+import MemberReport from '../screens/dialer/leader/MemberReport';
 
 
 import {
@@ -284,9 +285,10 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     TicketNav:{screen:TicketNav},
-    DialerHome:{screen:DialerHome},
     DialerCalling:{screen:DialerCalling},
     DialerRecords:{screen:DialerRecords},
+    AllMembers:{screen:AllMembers},
+    MemberReport:{screen:MemberReport}  
   },
   {
     initialRouteName: 'Home',

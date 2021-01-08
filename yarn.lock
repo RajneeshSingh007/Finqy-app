@@ -1240,6 +1240,16 @@
   dependencies:
     stacktrace-js "^2.0.0"
 
+"@react-native-firebase/firestore@^10.4.0":
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-10.4.0.tgz#83d7bb13404d4266f2cad6bf5a0ad889805bd608"
+  integrity sha512-y9F2mJVfbLUDxGZ/HdmY95wDuHNJb7aGcFSb8HuJaXNWXrF28ebeI1AhAM4FICWGunrzYIDl7UXYyeONl+aitg==
+
+"@react-native-firebase/messaging@^10.4.0":
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-10.4.0.tgz#d9153bf73f097a67043ac122a70667147125be70"
+  integrity sha512-iHCymfU6m3Z70RJJTwpM92wx5sQJAsVZF0NAOV4Zugt6OoDegau2VtZ0PxlwkJSfj43drCj0uYyWVuvoyxCUZw==
+
 "@react-navigation/core@^3.7.5":
   version "3.7.9"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.7.9.tgz#3f7ba0fcb6c8d74a77a057382af198d84c7c4e3b"
@@ -6091,7 +6101,7 @@ lodash@4.17.15:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
-lodash@^4.17.10, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4, lodash@^4.3.0, lodash@~4.17.4:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4, lodash@^4.3.0, lodash@~4.17.4:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
@@ -7941,6 +7951,13 @@ react-native-document-picker@^4.1.1:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-4.2.0.tgz#2d6f560fd902c5f9034c287941a9505f037b6eeb"
   integrity sha512-bZlQ3ooOO+2G0J0vSvcWWv1OojMwhEhiF5M7gCKp3LT/VPikZnmzIGgCkhcu8HexxWLuaGToSAQAUL2VcSo5oQ==
+
+react-native-firebase-push-notifications@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/react-native-firebase-push-notifications/-/react-native-firebase-push-notifications-0.0.12.tgz#a4b8637a51416ee3d60390e0e28ca947d9007640"
+  integrity sha512-Q4eEZtmflSKpGzcGQUn/AMxRzsQA0NV4zTdu8XEv+uHc42mHBIKuBlWpX4u0mxIC6q53D9tEFtVMDSIdzYOoLA==
+  dependencies:
+    lodash "^4.17.11"
 
 react-native-flash-message@^0.1.18:
   version "0.1.18"

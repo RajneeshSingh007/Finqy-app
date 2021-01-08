@@ -136,39 +136,13 @@ export default class FileUploadForm extends React.PureComponent {
     } = this.props;
     return (
       <View>
-        {/* <View
-          style={{
-            marginTop: sizeHeight(2),
-            marginBottom: sizeHeight(1),
-          }}
-          styleName="horizontal">
-          <View styleName="vertical" style={{marginStart: sizeWidth(2)}}>
-            <Subtitle style={styles.title}> {heading}</Subtitle>
-          </View>
-        </View>
-        <View style={styles.line} /> */}
-
         {title !== 'Motor Insurance' ? <>
           <CommonFileUpload
             title={this.mandatoryName('Pan Card', title)}
             type={2}
             pickedTitle={this.findFileName(`pancard`)}
             pickedCallback={(selected, res) => {
-              if (!selected) {
-                const { name } = res;
-                if (
-                  name.includes('pdf') ||
-                  name.includes('png') ||
-                  name.includes('jpeg') ||
-                  name.includes('jpg')
-                ) {
-                  //console.log(`res`, res);
-                  this.state.fileList.push({ pancard: res });
-                  //this.state.fileList.push({ pan_image: res});
-                } else {
-                  Helper.showToastMessage('Please, select Pdf or Image', 0);
-                }
-              }
+              this.state.fileList.push({ pancard: res });
             }}
             enableDownloads={panCard != null && this.checkurl(0, panCard)}
             downloadUrl={this.checkurl(1, panCard)}
@@ -184,22 +158,10 @@ export default class FileUploadForm extends React.PureComponent {
             type={2}
             pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
             pickedCallback={(selected, res) => {
-              if (!selected) {
-                const { name } = res;
-                if (
-                  name.includes('pdf') ||
-                  name.includes('png') ||
-                  name.includes('jpeg') ||
-                  name.includes('jpg')
-                ) {
-                  if (title === 'Demat') {
-                    this.state.fileList.push({ addressproof: res });
-                  } else {
-                    this.state.fileList.push({ aadharcard: res });
-                  }
-                } else {
-                  Helper.showToastMessage('Please, select Pdf or Image', 0);
-                }
+              if (title === 'Demat') {
+                this.state.fileList.push({ addressproof: res });
+              } else {
+                this.state.fileList.push({ aadharcard: res });
               }
             }}
             enableDownloads={aadharCard != null && this.checkurl(0, aadharCard)}
@@ -217,19 +179,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`cancel_chq`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ cancel_chq: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ cancel_chq: res });
               }}
               enableDownloads={this.checkurl(0, cancelChq)}
               downloadUrl={this.checkurl(1, cancelChq)}
@@ -242,19 +192,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`gst_cert`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ gst_cert: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ gst_cert: res });
               }}
               enableDownloads={this.checkurl(0, gstImage)}
               downloadUrl={this.checkurl(1, gstImage)}
@@ -274,19 +212,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ rcbookcopy: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ rcbookcopy: res });
               }}
               enableDownloads={rcCopy != null && this.checkurl(0, rcCopy)}
               downloadUrl={this.checkurl(1, rcCopy)}
@@ -302,19 +228,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`policycopy`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ policycopy: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ policycopy: res });
               }}
               enableDownloads={policycopy != null && this.checkurl(0, policycopy)}
               downloadUrl={this.checkurl(1, policycopy)}
@@ -327,19 +241,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`oldinsurancecopy`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ oldinsurancecopy: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ oldinsurancecopy: res });
               }}
               enableDownloads={oldInsCopy != null && this.checkurl(0, oldInsCopy)}
               downloadUrl={this.checkurl(1, oldInsCopy)}
@@ -353,19 +255,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`puccopy`)}
               pickedCallback={(selected, res) => {
-                if (!selected) {
-                  const { name } = res;
-                  if (
-                    name.includes('pdf') ||
-                    name.includes('png') ||
-                    name.includes('jpeg') ||
-                    name.includes('jpg')
-                  ) {
-                    this.state.fileList.push({ puccopy: res });
-                  } else {
-                    Helper.showToastMessage('Please, select Pdf or Image', 0);
-                  }
-                }
+                this.state.fileList.push({ puccopy: res });
               }}
               enableDownloads={puccopy != null && this.checkurl(0, puccopy)}
               downloadUrl={this.checkurl(1, puccopy)}
@@ -419,19 +309,7 @@ export default class FileUploadForm extends React.PureComponent {
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip`)}
                 pickedCallback={(selected, res) => {
-                  if (!selected) {
-                    const { name } = res;
-                    if (
-                      name.includes('pdf') ||
-                      name.includes('png') ||
-                      name.includes('jpeg') ||
-                      name.includes('jpg')
-                    ) {
-                      this.state.fileList.push({ salaryslip: res });
-                    } else {
-                      Helper.showToastMessage('Please, select Pdf or Image', 0);
-                    }
-                  }
+                  this.state.fileList.push({ salaryslip: res });
                 }}
                 enableDownloads={salarySlip != null && this.checkurl(0, salarySlip)}
                 downloadUrl={this.checkurl(1, salarySlip)}
@@ -446,20 +324,7 @@ export default class FileUploadForm extends React.PureComponent {
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip1`)}
                 pickedCallback={(selected, res) => {
-                  if (!selected) {
-                    const { name } = res;
-                    if (
-                      name.includes('pdf') ||
-                      name.includes('png') ||
-                      name.includes('jpeg') ||
-                      name.includes('jpg')
-                    ) {
-                      this.state.fileList.push({ salaryslip1: res });
-                    } else {
-                      Helper.showToastMessage('Please, select Pdf or Image', 0);
-                    }
-
-                  }
+                  this.state.fileList.push({ salaryslip1: res });
                 }}
                 enableDownloads={salarySlip1 != null && this.checkurl(0, salarySlip1)}
                 downloadUrl={this.checkurl(1, salarySlip1)}
@@ -502,19 +367,7 @@ export default class FileUploadForm extends React.PureComponent {
                     type={2}
                     pickedTitle={this.findFileName(`salaryslip3`)}
                     pickedCallback={(selected, res) => {
-                      if (!selected) {
-                        const { name } = res;
-                        if (
-                          name.includes('pdf') ||
-                          name.includes('png') ||
-                          name.includes('jpeg') ||
-                          name.includes('jpg')
-                        ) {
-                          this.state.fileList.push({ salaryslip3: res });
-                        } else {
-                          Helper.showToastMessage('Please, select Pdf or Image', 0);
-                        }
-                      }
+                      this.state.fileList.push({ salaryslip3: res });
                     }}
                     enableDownloads={salarySlip3 != null && this.checkurl(0, salarySlip3)}
                     downloadUrl={this.checkurl(1, salarySlip3)}
@@ -527,20 +380,7 @@ export default class FileUploadForm extends React.PureComponent {
                     type={2}
                     pickedTitle={this.findFileName(`salaryslip4`)}
                     pickedCallback={(selected, res) => {
-                      if (!selected) {
-                        const { name } = res;
-                        if (
-                          name.includes('pdf') ||
-                          name.includes('png') ||
-                          name.includes('jpeg') ||
-                          name.includes('jpg')
-                        ) {
-                          this.state.fileList.push({ salaryslip4: res });
-                        } else {
-                          Helper.showToastMessage('Please, select Pdf or Image', 0);
-                        }
-
-                      }
+                      this.state.fileList.push({ salaryslip4: res });
                     }}
                     enableDownloads={salarySlip4 != null && this.checkurl(0, salarySlip4)}
                     downloadUrl={this.checkurl(1, salarySlip4)}
@@ -553,19 +393,7 @@ export default class FileUploadForm extends React.PureComponent {
                     type={2}
                     pickedTitle={this.findFileName(`salaryslip5`)}
                     pickedCallback={(selected, res) => {
-                      if (!selected) {
-                        const { name } = res;
-                        if (
-                          name.includes('pdf') ||
-                          name.includes('png') ||
-                          name.includes('jpeg') ||
-                          name.includes('jpg')
-                        ) {
-                          this.state.fileList.push({ salaryslip5: res });
-                        } else {
-                          Helper.showToastMessage('Please, select Pdf or Image', 0);
-                        }
-                      }
+                      this.state.fileList.push({ salaryslip5: res });
                     }}
                     enableDownloads={salarySlip5 != null && this.checkurl(0, salarySlip5)}
                     downloadUrl={this.checkurl(1, salarySlip5)}
@@ -576,8 +404,6 @@ export default class FileUploadForm extends React.PureComponent {
                 </View>
               ) : null}
 
-              {/* <View style={styles.line1} /> */}
-
               <CommonFileUpload
                 title={this.mandatoryName(`${title === 'Home Loan'
                   ? '1 Year Bank Statement'
@@ -587,24 +413,11 @@ export default class FileUploadForm extends React.PureComponent {
                 //     ? '1 Year Bank Statement'
                 //     : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
                 // }
-                type={2}
+                type={1}
                 fileType={1}
                 pickedTitle={this.findFileName(`bankstate`)}
                 pickedCallback={(selected, res) => {
-                  if (!selected) {
-                    const { name } = res;
-                    if (
-                      name.includes('pdf')
-                      //||
-                      // name.includes('png') ||
-                      // name.includes('jpeg') ||
-                      // name.includes('jpg')
-                    ) {
-                      this.state.fileList.push({ bankstate: res });
-                    } else {
-                      Helper.showToastMessage('Please, select Pdf', 0);
-                    }
-                  }
+                  this.state.fileList.push({ bankstate: res });
                 }}
                 enableDownloads={bankState != null && this.checkurl(0, bankState)}
                 downloadUrl={this.checkurl(1, bankState)}

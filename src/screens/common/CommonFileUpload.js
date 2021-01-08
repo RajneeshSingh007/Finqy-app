@@ -44,7 +44,7 @@ class CommonFileUpload extends React.PureComponent {
   }
 
   filePicker = async () => {
-    const { type = 0, mode = false,fileType = -1 } = this.props;
+    const { type = 0, mode = false,fileType = -1,title = '' } = this.props;
     if (mode === false) {
       let fileTypes = [];
       if(type === 0){
@@ -77,32 +77,66 @@ class CommonFileUpload extends React.PureComponent {
         }else if(res.name !== '' && res.type === 'image/png'  && !res.name.includes('.')){
           const pname = res.name;
           res.name = `${pname}.png`;
+        }else if(res.name !== '' && res.type === 'image/jfif'  && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.jfif`;
         }
-        //console.log(res);
-        if (res.name !== '') {
-          if (
-            res.name.includes('pdf') ||
-           fileType === -1 && res.name.includes('png') ||
-           fileType === -1 && res.name.includes('jpeg') ||
-           fileType === -1 && res.name.includes('jpg')
-          ) {
-            if (res.size <= 10485760) {
-              this.setState({
-                pickedName: Lodash.truncate(res.name, {
-                  length: 40,
-                  separator: '...'
-                })
-              });
-            }
+        const fileformatCheck = res.name !== '' && (res.name.includes('pdf') ||
+        fileType === -1 && res.name.includes('png') ||
+        fileType === -1 && res.name.includes('jpeg') ||
+        fileType === -1 && res.name.includes('jpg') || 
+        fileType === -1 && res.name.includes('jfif'));
+
+        const fileSize = Helper.nullCheck(res.size) === false && res.size <= 10485760;
+
+        if(fileformatCheck){
+          if(fileSize){
+            this.props.pickedCallback(res.name !== '' ? false : true, res);
+            this.setState({
+              pickedName: Lodash.truncate(res.name, {
+                length: 40,
+                separator: '...'
+              })
+            });
+          }else{
+            Helper.showToastMessage('Please, select files less than 10MB',0);
+          }
+        }else {
+          if(title === '1 Year Bank Statement' || title === '3 Month Bank Statement'){
+            Helper.showToastMessage('Please, Select PDF file', 0); 
+          }else{
+            Helper.showToastMessage('Please, Select PNG, JPEG, JPG, JIFI or PDF files only', 0); 
           }
         }
-        //2097152 2mb
-        //10485760 10mb
-        if (res.size <= 10485760) {
-          this.props.pickedCallback(res.name !== '' ? false : true, res);
-        } else {
-          Helper.showToastMessage('Please, select files less than 10MB ')
-        }
+
+        //console.log(res);
+        // if (res.name !== '') {
+        //   if (
+        //     res.name.includes('pdf') ||
+        //    fileType === -1 && res.name.includes('png') ||
+        //    fileType === -1 && res.name.includes('jpeg') ||
+        //    fileType === -1 && res.name.includes('jpg') || 
+        //    fileType === -1 && res.name.includes('jfif')
+        //   ) {
+        //     if (res.size <= 10485760) {
+              // this.setState({
+              //   pickedName: Lodash.truncate(res.name, {
+              //     length: 40,
+              //     separator: '...'
+              //   })
+              // });
+        //     }
+        //   }else{
+            // Helper.showToastMessage('Please, Select files only PNG, JPEG, JPG, JIFI and PDF ')     
+        //   }
+        // }
+        // //2097152 2mb
+        // //10485760 10mb
+        // if (res.size <= 10485760) {
+          // this.props.pickedCallback(res.name !== '' ? false : true, res);
+        // } else {
+          // Helper.showToastMessage('Please, select files less than 10MB ')
+        // }
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
           this.props.pickedCallback(true, null);

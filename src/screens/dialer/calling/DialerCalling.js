@@ -43,11 +43,11 @@ export default class DialerCalling extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: ['Sr. No.', 'Call',  'Whatsapp','Name', 'Number',],
-      widthArr: [60, 60,80, 120, 120],
+      tableHead: ['Sr. No.', 'Call',  'Whatsapp','Data'],
+      widthArr: [60, 60,80, 150],
       cloneList: [],
       type: '',
-      itemSize: 50,
+      itemSize: 10,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -62,14 +62,14 @@ export default class DialerCalling extends React.PureComponent {
   }
 
   componentDidMount() {
-    Helper.requestPermissionsDialer();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    Helper.requestPermissionsDialer();
     AppState.addEventListener('change', this._handleAppStateChange);
     const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         this.setState({userData: userData});
         Pref.getVal(Pref.USERTYPE, v => {
@@ -82,12 +82,12 @@ export default class DialerCalling extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   componentWillUnMount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    AppState.removeEventListener('change', this._handleAppStateChange);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -101,16 +101,15 @@ export default class DialerCalling extends React.PureComponent {
       if (callTrack === 0) {
         this.setState({callTrack: 1});
       }
-      console.log("App has come to the foreground!");
     }
     this.setState({appState: nextAppState});
   };
 
   fetchData = () => {
     this.setState({loading: true});
-    const {leader_of, id} = this.state.userData;
+    const {team_id, id} = this.state.userData;
     const body = JSON.stringify({
-      teamid: leader_of,
+      teamid: team_id,
       userid: id,
       active: 0,
     });
@@ -132,7 +131,7 @@ export default class DialerCalling extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: data.length >= 50 ? 50 : data.length,
+              itemSize: data.length >= 10 ? 10 : data.length,
             });
           } else {
             this.setState({
@@ -169,8 +168,9 @@ export default class DialerCalling extends React.PureComponent {
     if (callTrack === 1) {
       return true;
     }
-    //NavigationActions.navigate('DialerHome');
-    return false;
+    this.setState({callTrack:-1});
+    NavigationActions.goBack();
+    return true;
   };
 
   startCalling = (item, isWhatsapp = false, videocall = false) => {
@@ -204,7 +204,7 @@ export default class DialerCalling extends React.PureComponent {
           SendIntentAndroid.sendPhoneCall(mobile, false);
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         Helper.requestPermissionsDialer();
         Helper.showToastMessage('Please, Grant Phone Call, Contact Permissions', 2);
       }
@@ -286,37 +286,14 @@ export default class DialerCalling extends React.PureComponent {
               </View>
             );
             rowData.push(callCustomerWhatsappView(item));
-            rowData.push(item.name);
-            rowData.push(item.mobile);
+            rowData.push(`${item.name}\n${item.mobile}`);
+            //rowData.push(item.mobile);
             dataList.push(rowData);
           }
         }
       }
     }
     return dataList;
-  };
-
-  clickedexport = () => {
-    const {cloneList, userData} = this.state;
-    if (cloneList.length > 0) {
-      const data = this.returnData(cloneList, 0, cloneList.length);
-      const {refercode} = userData;
-      const name = `${refercode}_MyLeadRecord`;
-      const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, result => {
-        if (result) {
-          RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
-            RNFetchBlob.android.addCompleteDownload({
-              title: name,
-              description: 'Lead record exported successfully',
-              mime: 'text/comma-separated-values',
-              path: finalFilePath,
-              showNotification: true,
-            }),
-            Helper.showToastMessage('Download Complete', 1);
-        }
-      });
-    }
   };
 
   /**
@@ -329,7 +306,7 @@ export default class DialerCalling extends React.PureComponent {
     let plus = itemSize;
     let slicedArray = [];
     if (mode) {
-      plus += 50;
+      plus += 10;
       if (itemSize < clone.length) {
         if (plus > clone.length) {
           const rem = clone.length - itemSize;
@@ -339,10 +316,10 @@ export default class DialerCalling extends React.PureComponent {
         this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
-      if (itemSize <= 50) {
+      if (itemSize <= 10) {
         plus = 0;
       } else {
-        plus -= 50;
+        plus -= 10;
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
@@ -393,10 +370,10 @@ export default class DialerCalling extends React.PureComponent {
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 50);
+      const data = this.returnData(clone, 0, 10);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 50});
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 10});
   };
 
   formResult = (status, message) => {
@@ -440,6 +417,7 @@ export default class DialerCalling extends React.PureComponent {
                       />
 
                       <CallerForm
+                        userData={this.state.userData}
                         productList={productList}
                         customerItem={this.state.activeCallerItem}
                         token={token}
@@ -472,7 +450,7 @@ export default class DialerCalling extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Start Calling'}
-              backClicked={this.backClick}
+              backClicked={() => NavigationActions.goBack()}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -553,7 +531,6 @@ export default class DialerCalling extends React.PureComponent {
                 <Title style={styles.itemtext}>{`Showing ${
                   this.state.itemSize
                 }/${Number(this.state.cloneList.length)} entries`}</Title>
-                {/* <Download rightIconClick={this.clickedexport} /> */}
               </>
             ) : null}
           </>

@@ -11,6 +11,7 @@ export const userData = 'userData';
 export const introDone = 'introDone';
 export const saveToken = 'token';
 export const USERTYPE = 'type';
+export const DIALER_TEAM_LEADER = 'dialer_team_leader';
 
 //network
 export const methodPost = 'POST';
@@ -2819,7 +2820,13 @@ export const DIALER_LEAD_RECORD = `${DialerDirUrl}tool_get_leads.php`
 export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
 export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
 export const DIALER_USER_DASHBOARD = `${DialerDirUrl}dashboard.php`;
+export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
 
+///update dialog show
+export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
+
+//playstore Link
+export const APP_PLAY_STORE_LINK = `https://play.google.com/store/apps/details?id=com.erb.finpro`;
 
 /**
  * Set Val

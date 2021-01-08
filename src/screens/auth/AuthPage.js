@@ -17,15 +17,7 @@ export default class AuthPage extends React.PureComponent {
                 Helper.itemClick(this.props, "Login");
             }else {
                 if (value === true){
-                    Pref.getVal(Pref.USERTYPE, type =>{
-                        //console.log('type', type)
-                        if(type != '' && type === 'dialer'){
-                            Helper.itemClick(this.props, "DialerHome");
-                        }else{
-                            Helper.itemClick(this.props, "Home");
-                        }
-                    })
-                    //Helper.itemClick(this.props, "Home");
+                    Helper.itemClick(this.props, "Home");
                 } else {
                     Helper.itemClick(this.props, "Login");
                 }

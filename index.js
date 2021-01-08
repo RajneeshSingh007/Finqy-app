@@ -63,7 +63,7 @@ const options = {
     checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
     deploymentKey: codepushKey,
 };
-
+AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));
 
 //AppRegistry.registerComponent(appName, () => Main);

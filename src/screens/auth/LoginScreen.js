@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Platform,
   StatusBar,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -17,6 +18,7 @@ import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import RNFetchBlob from 'rn-fetch-blob';
 import NewDropDown from '../component/NewDropDown';
+import { notifications, NotificationMessage, Android } from 'react-native-firebase-push-notifications'
 
 let loginTypeList = [
   {
@@ -34,6 +36,8 @@ export default class LoginScreen extends React.PureComponent {
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
     this.submitBtnClick = this.submitBtnClick.bind(this);
+    this.otherLogin = this.otherLogin.bind(this);
+    this.dialerLogin = this.dialerLogin.bind(this);
     this.passunlock = this.passunlock.bind(this);
     this.state = {
       userid: '',
@@ -45,7 +49,6 @@ export default class LoginScreen extends React.PureComponent {
       token: '',
       loginType:''
     };
-    Pref.setVal(Pref.saveToken, null);
     Pref.setVal(Pref.userData, null);
     Pref.setVal(Pref.userID, null);
     Pref.setVal(Pref.USERTYPE, '');
@@ -53,6 +56,7 @@ export default class LoginScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    Pref.setVal(Pref.saveToken, Pref.API_TOKEN);
     try {
       Helper.requestPermissions();
     } catch (e) {
@@ -60,7 +64,9 @@ export default class LoginScreen extends React.PureComponent {
     }
     const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-
+      if(Platform.OS === 'ios'){
+        this.requestPermission();
+      }
       Pref.getVal(Pref.saveToken, (value) => {
         if (Helper.nullStringCheck(value) === true) {
           const body = JSON.stringify({
@@ -88,61 +94,75 @@ export default class LoginScreen extends React.PureComponent {
           this.setState({ token: value });
         }
       });
-   
-    });
+   });
   }
+
+  requestPermission = async () => {
+    return await notifications.requestPermission()
+  }
+
+
+  getToken = async () => {
+    const token = await notifications.getToken()
+    return token
+  }
+
 
   /**
    * Other Users login
    */
-  login = () => {
-    const jsonData = JSON.stringify({
-      username: this.state.userid,
-      password: this.state.password,
-      deviceid: "ashdg",
-    });
-    Helper.networkHelperTokenPost(
-      Pref.LoginUrl,
-      jsonData,
-      Pref.methodPost,
-      this.state.token,
-      (result) => {
-        //console.log(`result`, result);
-        const { data, response_header } = result;
-        const { res_type, type } = response_header;
-        this.setState({ loading: false });
-        if (res_type === `error`) {
-          const {message} = response_header;
-          Helper.showToastMessage(`${message}`, 0);
-        } else {
-          Pref.setVal(Pref.USERTYPE, type);
-          const { id, refercode } = data[0];
-          let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
-          let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
-          this.downloadFile(certPath, () => {
-            const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
-            Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
-          })
-          this.downloadFile(agreePath, () => {
-            Helper.silentDownloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
-          });
-          Pref.setVal(Pref.userID, id);
-          Pref.setVal(Pref.userData, data[0]);
-          Pref.setVal(Pref.loggedStatus, true);
-          NavigationActions.navigate('Home');
-        }
-      },
-      (e) => {
-        this.setState({ loading: false });
-        Helper.showToastMessage('something went wrong', 0);
-      },
-    );
+  otherLogin = (token) => {
+    this.getToken().then(deviceID =>{
+      if(Helper.nullStringCheck(deviceID) === false){
+        const jsonData = JSON.stringify({
+          username: this.state.userid,
+          password: this.state.password,
+          deviceid: deviceID,
+        });
+        Helper.networkHelperTokenPost(
+          Pref.LoginUrl,
+          jsonData,
+          Pref.methodPost,
+          token,
+          (result) => {
+            //console.log(`result`, result);
+            const { data, response_header } = result;
+            const { res_type, type } = response_header;
+            this.setState({ loading: false });
+            if (res_type === `error`) {
+              const {message} = response_header;
+              Helper.showToastMessage(`${message}`, 0);
+            } else {
+              Pref.setVal(Pref.USERTYPE, type);
+              const { id, refercode } = data[0];
+              let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
+              let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
+              this.downloadFile(certPath, () => {
+                const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
+                Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
+              })
+              this.downloadFile(agreePath, () => {
+                Helper.silentDownloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
+              });
+              Pref.setVal(Pref.userID, id);
+              Pref.setVal(Pref.userData, data[0]);
+              Pref.setVal(Pref.loggedStatus, true);
+              NavigationActions.navigate('Home');
+            }
+          },
+          (e) => {
+            this.setState({ loading: false });
+            Helper.showToastMessage('something went wrong', 0);
+          },
+        );
+      }
+    }).catch(e => console.log(e));
   };
 
   /**
    * dialer login
    */
-  dialerLogin = () =>{
+  dialerLogin = (token) =>{
     const jsonData = JSON.stringify({
       mobilenumber: this.state.userid,
       password: this.state.password,
@@ -151,7 +171,7 @@ export default class LoginScreen extends React.PureComponent {
       Pref.DIALER_LOGIN,
       jsonData,
       Pref.methodPost,
-      this.state.token,
+      token,
       (result) => {
         //console.log('result', result);
         const { data, message, status } = result;
@@ -168,20 +188,27 @@ export default class LoginScreen extends React.PureComponent {
         }
       },
       (e) => {
-        console.log('e', e);
+        //console.log('e', e);
         this.setState({ loading: false });
         Helper.showToastMessage('something went wrong', 0);
       },
     );
   }
 
+  /**
+   * submit button click
+   */
   submitBtnClick = () =>{
+    Pref.setVal(Pref.userData, null);
+    Pref.setVal(Pref.userID, null);
+    Pref.setVal(Pref.USERTYPE, '');
+    Pref.setVal(Pref.saveToken, Pref.API_TOKEN);
     const {loginType} = this.state;
     let errorData = true;
 
     if (this.state.userid === '') {
       errorData = false;
-      Helper.showToastMessage('mobile number/User ID empty', 0);
+      Helper.showToastMessage('Mobile number empty', 0);
     } else if (
       this.state.userid.length < 10 ||
       this.state.userid === '9876543210' ||
@@ -200,11 +227,15 @@ export default class LoginScreen extends React.PureComponent {
     //console.log('token', this.state.token);
     if (errorData) {
       this.setState({ loading: true });
-      if(loginType === 'Tele Caller'){
-        this.dialerLogin();
-      }else{
-        this.login();
+      let token = this.state.token;
+      if(Helper.nullStringCheck(token) === true){
+        token = Pref.API_TOKEN
       }
+      // if(loginType === 'Tele Caller'){
+      //   this.dialerLogin(token);
+      // }else{
+        this.otherLogin(token);
+      //}
     }
   }
 
@@ -281,14 +312,14 @@ export default class LoginScreen extends React.PureComponent {
                   changecolor
                 />
 
-              <NewDropDown
+              {/* <NewDropDown
                 list={loginTypeList}
                 placeholder={`Select Account Type`}
                 value={this.state.loginType}
                 selectedItem={value => this.setState({ loginType: value})}
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
-              />
+              /> */}
               
               </View>
               <View styleName="horizontal space-between md-gutter">
