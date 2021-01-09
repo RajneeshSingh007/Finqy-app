@@ -142,7 +142,7 @@ export default class HomeScreen extends React.PureComponent {
               if (res_type === `success`) {
                 this.setState({ token: Helper.removeQuotes(data) });
                 Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
-                const { refercode } = this.state.userData;
+                const { refercode} = this.state.userData;
                 this.fetchDashboard(Helper.removeQuotes(data), refercode, '');
               }
             },
@@ -152,11 +152,12 @@ export default class HomeScreen extends React.PureComponent {
           );
         } else {
           this.setState({ token: value });
-          const { refercode } = this.state.userData;
+          const { refercode} = this.state.userData;
           this.fetchDashboard(value, refercode, '');
         }
       });
     });
+    
   }
 
   fetchDashboard = (token, ref, filterdates = '') => {

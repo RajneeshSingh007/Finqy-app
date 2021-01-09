@@ -44,7 +44,7 @@ class CommonFileUpload extends React.PureComponent {
   }
 
   filePicker = async () => {
-    const { type = 0, mode = false,fileType = -1,title = '' } = this.props;
+    const { type = 0, mode = false,fileType = -1,title = '', } = this.props;
     if (mode === false) {
       let fileTypes = [];
       if(type === 0){
@@ -80,12 +80,16 @@ class CommonFileUpload extends React.PureComponent {
         }else if(res.name !== '' && res.type === 'image/jfif'  && !res.name.includes('.')){
           const pname = res.name;
           res.name = `${pname}.jfif`;
+        }else if(res.name !== '' && res.type === 'image/jpe'  && !res.name.includes('.')){
+          const pname = res.name;
+          res.name = `${pname}.jpe`;
         }
         const fileformatCheck = res.name !== '' && (res.name.includes('pdf') ||
         fileType === -1 && res.name.includes('png') ||
         fileType === -1 && res.name.includes('jpeg') ||
         fileType === -1 && res.name.includes('jpg') || 
-        fileType === -1 && res.name.includes('jfif'));
+        fileType === -1 && res.name.includes('jfif') || 
+        fileType === -1 && res.name.includes('jpe'));
 
         const fileSize = Helper.nullCheck(res.size) === false && res.size <= 10485760;
 
@@ -105,7 +109,7 @@ class CommonFileUpload extends React.PureComponent {
           if(title === '1 Year Bank Statement' || title === '3 Month Bank Statement'){
             Helper.showToastMessage('Please, Select PDF file', 0); 
           }else{
-            Helper.showToastMessage('Please, Select PNG, JPEG, JPG, JIFI or PDF files only', 0); 
+            Helper.showToastMessage('Please, Select PNG, JPEG, JPG, JPE, JIFI or PDF files only', 0); 
           }
         }
 
@@ -163,7 +167,7 @@ class CommonFileUpload extends React.PureComponent {
 
   render() {
     const { pickedName } = this.state;
-    const { pickedTitle = null, enableDownloads = false, fileType = -1 } = this.props;
+    const { pickedTitle = null, enableDownloads = false, fileType = -1, downloadTitles = '' } = this.props;
     return (
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <TouchableWithoutFeedback onPress={this.filePicker}>
@@ -180,9 +184,9 @@ class CommonFileUpload extends React.PureComponent {
                     marginStart:4
                   },
                 ])}>
-                {pickedName === ''
+                {downloadTitles === ''  ? pickedName === ''
                   ? `Upload ${this.state.title} File Type:`
-                  : `${this.state.title}`}
+                  : `${this.state.title}` : this.state.title === '' ? downloadTitles : this.state.title}
                 <Title
                   style={StyleSheet.flatten([
                     styles.title,
@@ -190,7 +194,7 @@ class CommonFileUpload extends React.PureComponent {
                       color: '#bbbbbb',
                     },
                   ])}>
-                  {pickedName === '' ? fileType != -1 ? `PDF` :  ` PDF/Image` : ''}
+                  {downloadTitles === '' ? pickedName === '' ? fileType != -1 ? `PDF` :  ` PDF/Image` : '' : ''}
                 </Title>
               </Title>
               {pickedName !== '' ? (

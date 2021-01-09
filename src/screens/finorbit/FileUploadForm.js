@@ -132,12 +132,16 @@ export default class FileUploadForm extends React.PureComponent {
       salarySlip4 = null,
       salarySlip5 = null,
       bankState = null,
-      policycopy = null
+      policycopy = null,
+      mode = false,
+      downloadTitles = '',
     } = this.props;
     return (
       <View>
         {title !== 'Motor Insurance' ? <>
           <CommonFileUpload
+            downloadTitles={downloadTitles}
+            mode={mode}
             title={this.mandatoryName('Pan Card', title)}
             type={2}
             pickedTitle={this.findFileName(`pancard`)}
@@ -169,6 +173,8 @@ export default class FileUploadForm extends React.PureComponent {
             fileName={'Aadharcard'}
             ext={this.getExt(0, aadharCard)}
             mime={this.getExt(1, aadharCard)}
+            mode={mode}
+            downloadTitles={downloadTitles}
           />
         </> : null}
 
@@ -186,6 +192,8 @@ export default class FileUploadForm extends React.PureComponent {
               fileName={'CancelledCheque'}
               ext={this.getExt(0, cancelChq)}
               mime={this.getExt(1, cancelChq)}
+              mode={mode}
+              downloadTitles={downloadTitles}
             />
             <CommonFileUpload
               title={'GST Certificate'}
@@ -199,6 +207,8 @@ export default class FileUploadForm extends React.PureComponent {
               fileName={'GST Certificate'}
               ext={this.getExt(0, gstImage)}
               mime={this.getExt(1, gstImage)}
+              mode={mode}
+              downloadTitles={downloadTitles}
             />
           </>
         ) : null}
@@ -219,7 +229,8 @@ export default class FileUploadForm extends React.PureComponent {
               fileName={'RC_Book'}
               ext={this.getExt(0, rcCopy)}
               mime={this.getExt(1, rcCopy)}
-
+              mode={mode}
+              downloadTitles={downloadTitles}
             />
 
             <CommonFileUpload
@@ -235,6 +246,8 @@ export default class FileUploadForm extends React.PureComponent {
               fileName={'Policy'}
               ext={this.getExt(0, policycopy)}
               mime={this.getExt(1, policycopy)}
+              mode={mode}
+              downloadTitles={downloadTitles}
             />
             <CommonFileUpload
               title={'Old Insurance Policy'}
@@ -247,7 +260,9 @@ export default class FileUploadForm extends React.PureComponent {
               downloadUrl={this.checkurl(1, oldInsCopy)}
               fileName={'Old_Insurance_Policy'}
               ext={this.getExt(0, oldInsCopy)}
+              mode={mode}
               mime={this.getExt(1, oldInsCopy)}
+              downloadTitles={downloadTitles}
             />
 
             <CommonFileUpload
@@ -262,6 +277,8 @@ export default class FileUploadForm extends React.PureComponent {
               fileName={'PUC'}
               ext={this.getExt(0, puccopy)}
               mime={this.getExt(1, puccopy)}
+              mode={mode}
+              downloadTitles={downloadTitles}
             />
           </View>
         ) : null}
@@ -276,6 +293,8 @@ export default class FileUploadForm extends React.PureComponent {
                 this.state.fileList.push({ cancelcheque: res });
               }
             }}
+            mode={mode}
+            downloadTitles={downloadTitles}
           />
         ) : null}
 
@@ -313,9 +332,11 @@ export default class FileUploadForm extends React.PureComponent {
                 }}
                 enableDownloads={salarySlip != null && this.checkurl(0, salarySlip)}
                 downloadUrl={this.checkurl(1, salarySlip)}
-                fileName={'Salary_Slip'}
+                fileName={'Salary_Slip1'}
                 ext={this.getExt(0, salarySlip)}
                 mime={this.getExt(1, salarySlip)}
+                mode={mode}
+                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 1'}
               />
 
               <CommonFileUpload
@@ -328,9 +349,11 @@ export default class FileUploadForm extends React.PureComponent {
                 }}
                 enableDownloads={salarySlip1 != null && this.checkurl(0, salarySlip1)}
                 downloadUrl={this.checkurl(1, salarySlip1)}
-                fileName={'Salary_Slip1'}
+                fileName={'Salary_Slip2'}
                 ext={this.getExt(0, salarySlip1)}
                 mime={this.getExt(1, salarySlip1)}
+                mode={mode}
+                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 2'}
               />
 
               <CommonFileUpload
@@ -339,26 +362,16 @@ export default class FileUploadForm extends React.PureComponent {
                 type={2}
                 pickedTitle={this.findFileName(`salaryslip2`)}
                 pickedCallback={(selected, res) => {
-                  if (!selected) {
-                    const { name } = res;
-                    if (
-                      name.includes('pdf') ||
-                      name.includes('png') ||
-                      name.includes('jpeg') ||
-                      name.includes('jpg')
-                    ) {
-                      this.state.fileList.push({ salaryslip2: res });
-                    } else {
-                      Helper.showToastMessage('Please, select Pdf or Image', 0);
-                    }
-                  }
+                  this.state.fileList.push({ salaryslip2: res });
                 }}
                 enableDownloads={salarySlip2 != null && this.checkurl(0, salarySlip2)}
                 downloadUrl={this.checkurl(1, salarySlip2)}
-                fileName={'Salary_Slip2'}
+                fileName={'Salary_Slip3'}
                 ext={this.getExt(0, salarySlip2)}
                 mime={this.getExt(1, salarySlip2)}
-              />
+                mode={mode}
+                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 3'}
+                />
 
               {(title === 'Loan Against Property' || title === 'Home Loan') && headerchange === true ? (
                 <View>
@@ -371,9 +384,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }}
                     enableDownloads={salarySlip3 != null && this.checkurl(0, salarySlip3)}
                     downloadUrl={this.checkurl(1, salarySlip3)}
-                    fileName={'Salary_Slip3'}
+                    fileName={'Salary_Slip4'}
                     ext={this.getExt(0, salarySlip3)}
                     mime={this.getExt(1, salarySlip3)}
+                    mode={mode}
+                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 4'}
                   />
                   <CommonFileUpload
                     title={'Salary Slip 5'}
@@ -384,9 +399,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }}
                     enableDownloads={salarySlip4 != null && this.checkurl(0, salarySlip4)}
                     downloadUrl={this.checkurl(1, salarySlip4)}
-                    fileName={'Salary_Slip4'}
+                    fileName={'Salary_Slip5'}
                     ext={this.getExt(0, salarySlip4)}
                     mime={this.getExt(1, salarySlip4)}
+                    mode={mode}
+                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 5'}
                   />
                   <CommonFileUpload
                     title={'Salary Slip 6'}
@@ -397,9 +414,11 @@ export default class FileUploadForm extends React.PureComponent {
                     }}
                     enableDownloads={salarySlip5 != null && this.checkurl(0, salarySlip5)}
                     downloadUrl={this.checkurl(1, salarySlip5)}
-                    fileName={'Salary_Slip5'}
+                    fileName={'Salary_Slip6'}
                     ext={this.getExt(0, salarySlip5)}
                     mime={this.getExt(1, salarySlip5)}
+                    mode={mode}
+                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 6'}
                   />
                 </View>
               ) : null}
@@ -424,6 +443,8 @@ export default class FileUploadForm extends React.PureComponent {
                 fileName={'Bank_state'}
                 ext={this.getExt(0, bankState)}
                 mime={this.getExt(1, bankState)}
+                mode={mode}
+                downloadTitles={downloadTitles}
               />
             </View>
           ) : null}

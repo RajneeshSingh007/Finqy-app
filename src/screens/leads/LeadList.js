@@ -1,23 +1,10 @@
 import React from 'react';
-import {
-  StyleSheet,
-  BackHandler,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import {
-  Subtitle,
-  Title,
-  View,
-  Text,
-} from '@shoutem/ui';
+import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
+import {Subtitle, Title, View, Text} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  Button,
-  ActivityIndicator,
-  Searchbar,
-} from 'react-native-paper';
-import { sizeHeight } from '../../util/Size';
+import {Button, ActivityIndicator, Searchbar} from 'react-native-paper';
+import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -31,7 +18,11 @@ import CustomForm from './../finorbit/CustomForm';
 import CScreen from './../component/CScreen';
 import Download from './../component/Download';
 import NavigationActions from '../../util/NavigationActions';
-import { constructObjEditLead,constructObjEditSamadhan } from '../../util/FormCheckHelper';
+import {
+  constructObjEditLead,
+  constructObjEditSamadhan,
+} from '../../util/FormCheckHelper';
+import FileUploadForm from '../finorbit/FileUploadForm';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
@@ -46,6 +37,7 @@ export default class LeadList extends React.PureComponent {
     this.cifClick = this.cifClick.bind(this);
     this.quotesClick = this.quotesClick.bind(this);
     this.emailSubmit = this.emailSubmit.bind(this);
+    this.headerchange = false;
     this.state = {
       dataList: [],
       loading: false,
@@ -68,9 +60,26 @@ export default class LeadList extends React.PureComponent {
         'Cif',
         'Policy',
         'Remark',
+        'Download',
         '',
       ],
-      widthArr: [60, 120, 100, 100, 160, 100, 140, 100, 140, 100, 100, 100, 100,40],
+      widthArr: [
+        60,
+        120,
+        100,
+        100,
+        160,
+        100,
+        140,
+        100,
+        140,
+        100,
+        100,
+        100,
+        140,
+        80,
+        60,
+      ],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -85,24 +94,28 @@ export default class LeadList extends React.PureComponent {
       searchQuery: '',
       enableSearch: false,
       orderBy: 'asc',
-      fileName: ''
+      fileName: '',
+      downloadFormTitle: '',
+      downloadModal: false,
+      editThird: null,
+      pageNumbers:[1,2,3,4,5]
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.setState({ userData: userData });
-        Pref.getVal(Pref.USERTYPE, (v) => {
-          this.setState({ type: v }, () => {
-            Pref.getVal(Pref.saveToken, (value) => {
-              this.setState({ token: value }, () => {
-                const { navigation } = this.props;
+      Pref.getVal(Pref.userData, userData => {
+        this.setState({userData: userData});
+        Pref.getVal(Pref.USERTYPE, v => {
+          this.setState({type: v}, () => {
+            Pref.getVal(Pref.saveToken, value => {
+              this.setState({token: value}, () => {
+                const {navigation} = this.props;
                 const ref = navigation.getParam('ref', null);
                 this.fetchData(ref);
               });
@@ -114,9 +127,9 @@ export default class LeadList extends React.PureComponent {
   }
 
   backclick = () => {
-    const { modalvis } = this.state;
+    const {modalvis} = this.state;
     if (modalvis) {
-      this.setState({ modalvis: false, pdfurl: '' });
+      this.setState({modalvis: false, pdfurl: ''});
       return true;
     }
     return false;
@@ -128,16 +141,16 @@ export default class LeadList extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = (ref) => {
+  fetchData = ref => {
     //referral
-    this.setState({ loading: true });
-    const { type } = this.state;
-    const { refercode, username } = this.state.userData;
+    this.setState({loading: true});
+    const {type} = this.state;
+    const {refercode, username} = this.state.userData;
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
       team_user: username,
       flag: type === 'referral' ? 2 : 1,
-      type:type
+      type: type,
     });
     //console.log('body', body)
     Helper.networkHelperTokenPost(
@@ -145,13 +158,13 @@ export default class LeadList extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
-        const { data, response_header } = result;
-        const { res_type } = response_header;
+      result => {
+        const {data, response_header} = result;
+        const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
-              if(a.date.includes(' ') && b.date.includes(' ')){
+              if (a.date.includes(' ') && b.date.includes(' ')) {
                 const splita = a.date.split(/\s/g);
                 const splitb = b.date.split(/\s/g);
                 const sp = splita[0].split('-');
@@ -161,7 +174,7 @@ export default class LeadList extends React.PureComponent {
                   Number(sp[1]) - Number(spz[1]) ||
                   Number(sp[0]) - Number(spz[0])
                 );
-              }else{
+              } else {
                 const sp = a.date.split('-');
                 const spz = b.date.split('-');
                 return (
@@ -172,7 +185,7 @@ export default class LeadList extends React.PureComponent {
               }
             });
             const sort = sorting.reverse();
-            const { itemSize } = this.state;
+            const {itemSize} = this.state;
             this.setState({
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
@@ -188,34 +201,83 @@ export default class LeadList extends React.PureComponent {
             });
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
       () => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
       },
     );
   };
 
-  editLead = (item) =>{
+  editLead = item => {
     const {product} = item;
     //console.log('item', item)
-    let pname = "";
-    if(product === 'Mutual Fund'){  
+    let pname = '';
+    if (product === 'Mutual Fund') {
       pname = 'Mutual Fund';
-    }else if(product === `Health Insurance`){
+    } else if (product === `Health Insurance`) {
       pname = `Health Insurance`;
-    }else if(product === `Life Cum Investment`){
+    } else if (product === `Life Cum Investment`) {
       pname = `Life Cum Invt. Plan`;
-    }else{
+    } else {
       pname = product;
     }
-    if(product === 'Insurance Samadhan'){
-      NavigationActions.navigate('Samadhan', {leadData:constructObjEditSamadhan(item), title:pname,url:'',edit:true});
-    }else{
-      NavigationActions.navigate('FinorbitForm', {leadData:constructObjEditLead(item), title:pname,url:'',edit:true});
+    if (product === 'Insurance Samadhan') {
+      NavigationActions.navigate('Samadhan', {
+        leadData: constructObjEditSamadhan(item),
+        title: pname,
+        url: '',
+        edit: true,
+      });
+    } else {
+      NavigationActions.navigate('FinorbitForm', {
+        leadData: constructObjEditLead(item),
+        title: pname,
+        url: '',
+        edit: true,
+      });
     }
-  }
+  };
+
+  downloadFile = item => {
+    const {product} = item;
+    //console.log('item', item)
+    let pname = '';
+    if (product === 'Mutual Fund') {
+      pname = 'Mutual Fund';
+    } else if (product === `Health Insurance`) {
+      pname = `Health Insurance`;
+    } else if (product === `Life Cum Investment`) {
+      pname = `Life Cum Invt. Plan`;
+    } else {
+      pname = product;
+    }
+    const getAll = constructObjEditLead(item);
+    if (
+      Helper.nullCheck(getAll.first) === false &&
+      Helper.nullStringCheck(getAll.first.employ) === false
+    ) {
+      if (
+        (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+        getAll.first &&
+        getAll.first.employ === 'Salaried'
+      ) {
+        this.headerchange = true;
+      } else if (
+        (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+        getAll.first &&
+        getAll.first.employ === 'Self Employed'
+      ) {
+        this.headerchange = false;
+      }
+    }
+    this.setState({
+      downloadFormTitle: pname,
+      downloadModal: true,
+      editThird: getAll.third,
+    });
+  };
 
   /**
    *
@@ -228,7 +290,7 @@ export default class LeadList extends React.PureComponent {
         for (let i = start; i < end; i++) {
           const item = sort[i];
           if (item !== undefined && item !== null) {
-            const { quotes, mail, sharewhatsapp, sharemail, policy } = item;
+            const {quotes, mail, sharewhatsapp, sharemail, policy} = item;
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
             rowData.push(item.date);
@@ -237,7 +299,9 @@ export default class LeadList extends React.PureComponent {
             rowData.push(item.name);
             rowData.push(item.mobile);
             rowData.push(item.product);
-            rowData.push(item.bank === 'null' || item.bank === '' ? '' : item.bank);
+            rowData.push(
+              item.bank === 'null' || item.bank === '' ? '' : item.bank,
+            );
             rowData.push(item.status);
             const quotesView = (value, mail) => (
               <View
@@ -263,7 +327,7 @@ export default class LeadList extends React.PureComponent {
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.quotesClick(mail, 'Mail')}>
-                    <View style={{ marginStart: 8 }}>
+                    <View style={{marginStart: 8}}>
                       <IconChooser
                         name={'mail'}
                         size={20}
@@ -301,7 +365,7 @@ export default class LeadList extends React.PureComponent {
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.cifClick(value, true)}>
-                    <View style={{ marginStart: 8 }}>
+                    <View style={{marginStart: 8}}>
                       <IconChooser
                         name={'mail'}
                         size={20}
@@ -314,7 +378,7 @@ export default class LeadList extends React.PureComponent {
               </View>
             );
             rowData.push(shareView(sharewhatsapp, sharemail));
-            const policyView = (value) => (
+            const policyView = value => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -337,8 +401,8 @@ export default class LeadList extends React.PureComponent {
             );
             rowData.push(policy === '' ? '' : policyView(policy));
             rowData.push(item.remark);
-            
-            const editView = (value) => (
+
+            const downloadView = value => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -347,10 +411,10 @@ export default class LeadList extends React.PureComponent {
                   justifyContent: 'center',
                 }}>
                 <TouchableWithoutFeedback
-                  onPress={() => this.editLead(value)}>
+                  onPress={() => this.downloadFile(value)}>
                   <View>
                     <IconChooser
-                      name={`edit-2`}
+                      name={`download`}
                       size={20}
                       color={`#9f9880`}
                     />
@@ -358,12 +422,39 @@ export default class LeadList extends React.PureComponent {
                 </TouchableWithoutFeedback>
               </View>
             );
-            if(Helper.nullCheck(item.editenable) === false && item.editenable === 0){
-              rowData.push(editView(item));
-            }else{
+            if (
+              Helper.nullCheck(item.downloadenable) === false &&
+              item.downloadenable === 0
+            ) {
+              rowData.push(downloadView(item));
+            } else {
               rowData.push('');
             }
-            
+
+            const editView = value => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback onPress={() => this.editLead(value)}>
+                  <View>
+                    <IconChooser name={`edit-2`} size={20} color={`#9f9880`} />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            );
+            if (
+              Helper.nullCheck(item.editenable) === false &&
+              item.editenable === 0
+            ) {
+              rowData.push(editView(item));
+            } else {
+              rowData.push('');
+            }
+
             dataList.push(rowData);
           }
         }
@@ -422,12 +513,12 @@ export default class LeadList extends React.PureComponent {
 
   /**
    * mode single, multiple
-   * @param {*} value 
-   * @param {*} mode 
+   * @param {*} value
+   * @param {*} mode
    */
   cifClick = (value, mode) => {
-    const { userData } = this.state;
-    const { rcontact, rname } = userData;
+    const {userData} = this.state;
+    const {rcontact, rname} = userData;
     const sp = value.split('@');
     const url = ``;
     const title = '';
@@ -437,19 +528,19 @@ export default class LeadList extends React.PureComponent {
       ios: {
         activityItemSources: [
           {
-            placeholderItem: { type: 'url', content: url },
+            placeholderItem: {type: 'url', content: url},
             item: {
-              default: { type: 'url', content: url },
+              default: {type: 'url', content: url},
             },
             subject: {
               default: title,
             },
-            linkMetadata: { originalUrl: url, url, title },
+            linkMetadata: {originalUrl: url, url, title},
           },
           {
-            placeholderItem: { type: 'text', content: message },
+            placeholderItem: {type: 'text', content: message},
             item: {
-              default: { type: 'text', content: message },
+              default: {type: 'text', content: message},
               message: null, // Specify no text to share via Messages app.
             },
           },
@@ -471,10 +562,10 @@ export default class LeadList extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
+      result => {
         //console.log(`result`, result);
       },
-      (e) => {
+      e => {
         //console.log('e', e);
       },
     );
@@ -498,9 +589,14 @@ export default class LeadList extends React.PureComponent {
       const split = value.split('/');
       const fileName = split[split.length - 1];
       if (value.includes('pdf')) {
-        this.setState({ modalvis: true, pdfurl: value, pdfTitle: title, fileName: fileName });
+        this.setState({
+          modalvis: true,
+          pdfurl: value,
+          pdfTitle: title,
+          fileName: fileName,
+        });
       } else {
-        Helper.downloadFileWithFileName(value, fileName, fileName, '*/*')
+        Helper.downloadFileWithFileName(value, fileName, fileName, '*/*');
         //Helper.downloadFile(value, title);
       }
     }
@@ -509,12 +605,17 @@ export default class LeadList extends React.PureComponent {
   invoiceViewClick = (value, title) => {
     const split = value.split('/');
     const fileName = split[split.length - 1];
-    this.setState({ modalvis: true, pdfurl: value, pdfTitle: title, fileName: fileName });
+    this.setState({
+      modalvis: true,
+      pdfurl: value,
+      pdfTitle: title,
+      fileName: fileName,
+    });
   };
 
   emailSubmit = () => {
-    const { quotemailData, quotemail, userData } = this.state;
-    const { rname, rcontact } = userData;
+    const {quotemailData, quotemail, userData} = this.state;
+    const {rname, rcontact} = userData;
     const sp = quotemailData.split('@');
     const body = JSON.stringify({
       email: `${quotemail}`,
@@ -530,10 +631,10 @@ export default class LeadList extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
+      result => {
         //console.log(`result`, result);
-        const { response_header } = result;
-        const { res_type } = response_header;
+        const {response_header} = result;
+        const {res_type} = response_header;
         if (res_type === 'success') {
           alert(`Email sent successfully`);
         }
@@ -545,21 +646,21 @@ export default class LeadList extends React.PureComponent {
       },
       () => {
         alert(`Failed to send mail`);
-        this.setState({ quotemodalVis: false, quotemailData: '', quotemail: '' });
+        this.setState({quotemodalVis: false, quotemailData: '', quotemail: ''});
       },
     );
   };
 
   clickedexport = () => {
-    const { cloneList,userData } = this.state;
+    const {cloneList, userData} = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
-      const { refercode, username } = userData;
+      const {refercode, username} = userData;
       const name = `${refercode}_MyLeadRecord`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
+      Helper.writeCSV(HEADER, data, finalFilePath, result => {
         if (result) {
-          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
+          RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: name,
               description: 'Lead record exported successfully',
@@ -577,8 +678,8 @@ export default class LeadList extends React.PureComponent {
    *
    * @param {*} mode true ? next : back
    */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
+  pagination = mode => {
+    const {itemSize, cloneList} = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -590,7 +691,7 @@ export default class LeadList extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({ dataList: slicedArray, itemSize: plus });
+        this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
       if (itemSize <= 5) {
@@ -601,41 +702,122 @@ export default class LeadList extends React.PureComponent {
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
         if (slicedArray.length > 0) {
-          this.setState({ dataList: slicedArray, itemSize: plus });
+          this.setState({dataList: slicedArray, itemSize: plus});
         }
       }
     }
   };
 
-  onChangeSearch = (query) => {
-    this.setState({ searchQuery: query });
-    const { cloneList, itemSize } = this.state;
+  onChangeSearch = query => {
+    this.setState({searchQuery: query});
+    const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query).trim().toLowerCase();
+      const trimquery = String(query)
+        .trim()
+        .toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, (it) => {
-        const { date, leadno, source_type, name, mobile, product, bank, status } = it;
-        return date && date.trim().toLowerCase().includes(trimquery) || leadno && leadno.trim().toLowerCase().includes(trimquery) || source_type && source_type.trim().toLowerCase().includes(trimquery) || name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery) || bank && bank.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery);
+      const result = Lodash.filter(clone, it => {
+        const {
+          date,
+          leadno,
+          source_type,
+          name,
+          mobile,
+          product,
+          bank,
+          status,
+        } = it;
+        return (
+          (date &&
+            date
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (leadno &&
+            leadno
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (source_type &&
+            source_type
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (name &&
+            name
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (mobile &&
+            mobile
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (product &&
+            product
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (bank &&
+            bank
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (status &&
+            status
+              .trim()
+              .toLowerCase()
+              .includes(trimquery))
+        );
       });
-      const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const data =
+        result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({ dataList: data, itemSize: count });
+      this.setState({dataList: data, itemSize: count});
     }
   };
 
   revertBack = () => {
-    const { enableSearch } = this.state;
-    const { cloneList } = this.state;
+    const {enableSearch} = this.state;
+    const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, 5);
-      this.setState({ dataList: data });
+      this.setState({dataList: data});
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 5});
+  };
+
+
+  pageNumberClicked = (no) =>{
+    const {cloneList} = this.state;
+    let pageNumbers = this.state.pageNumbers;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const multiply = Number(no*5-1);
+    const data = this.returnData(clone, multiply, multiply+5);
+    const checkMultiple = Math.round(Number(no % 5));
+    if(checkMultiple === 0){
+      pageNumbers = [no+1,no+2, no+3, no+4, no+5];
+    }else{
+
+    }
+    this.setState({dataList: data,itemSize:multiply,pageNumbers:pageNumbers});
+  }
+
+  pageNumberView = () =>{
+    const {pageNumbers} = this.state;
+    return                 <View styleName='horizontal sm-gutter'>
+    {pageNumbers.map(item => {
+      return <TouchableWithoutFeedback onPress={() => this.pageNumberClicked(item)}>
+        <View styleName='sm-gutter'><Title style={styles.itemtopText}>{item}</Title></View>
+      </TouchableWithoutFeedback>
+    })}
+  </View>
+
   }
 
   render() {
-    const { searchQuery, enableSearch } = this.state;
+    const {searchQuery, enableSearch, editThird} = this.state;
     return (
       <CScreen
         body={
@@ -657,9 +839,57 @@ export default class LeadList extends React.PureComponent {
             />
 
             <Modal
+              visible={this.state.downloadModal}
+              setModalVisible={() => this.setState({downloadModal: false})}
+              ratioHeight={0.6}
+              backgroundColor={`white`}
+              centerFlex={0.8}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                  }}>
+                  {`Download Attachments`}
+                </Subtitle>
+              }
+              children={
+                <CScreen
+                  showfooter={false}
+                  body={
+                    <View style={{marginStart: 8, marginEnd: 8}}>
+                      <FileUploadForm
+                        downloadTitles={'dhdh'}
+                        mode={true}
+                        title={this.state.downloadFormTitle}
+                        headerchange={this.headerchange}
+                        editItemRestore={editThird}
+                        panCard={editThird && editThird.panCard}
+                        aadharCard={editThird && editThird.aadharCard}
+                        rcCopy={editThird && editThird.rcCopy}
+                        oldInsCopy={editThird && editThird.oldInsCopy}
+                        pucCopy={editThird && editThird.pucCopy}
+                        salarySlip={editThird && editThird.salarySlip}
+                        salarySlip1={editThird && editThird.salarySlip1}
+                        salarySlip2={editThird && editThird.salarySlip2}
+                        salarySlip3={editThird && editThird.salarySlip3}
+                        salarySlip4={editThird && editThird.salarySlip4}
+                        salarySlip5={editThird && editThird.salarySlip5}
+                        bankState={editThird && editThird.bankState}
+                        policycopy={editThird && editThird.policycopy}
+                      />
+                    </View>
+                  }
+                />
+              }
+            />
+
+            <Modal
               visible={this.state.modalvis}
               setModalVisible={() =>
-                this.setState({ pdfurl: '', modalvis: false })
+                this.setState({pdfurl: '', modalvis: false})
               }
               ratioHeight={0.87}
               backgroundColor={`white`}
@@ -676,13 +906,16 @@ export default class LeadList extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() => Helper.downloadFileWithFileName(`${this.state.pdfurl}`, this.state.fileName, `${this.state.fileName}`, 'application/pdf')}>
+                  onPress={() =>
+                    Helper.downloadFileWithFileName(
+                      `${this.state.pdfurl}`,
+                      this.state.fileName,
+                      `${this.state.fileName}`,
+                      'application/pdf',
+                    )
+                  }>
                   <View>
-                    <IconChooser
-                      name="download"
-                      size={24}
-                      color={Pref.RED}
-                    />
+                    <IconChooser name="download" size={24} color={Pref.RED} />
                   </View>
                 </TouchableWithoutFeedback>
               }
@@ -708,7 +941,6 @@ export default class LeadList extends React.PureComponent {
                     fitPolicy={0}
                     enablePaging
                     scale={1}
-
                   />
                 </View>
               }
@@ -747,9 +979,9 @@ export default class LeadList extends React.PureComponent {
                     label={`Email`}
                     placeholder={`Enter email id`}
                     value={this.state.quotemail}
-                    onChange={(v) => this.setState({ quotemail: v })}
+                    onChange={v => this.setState({quotemail: v})}
                     keyboardType={'email-address'}
-                    style={{ marginHorizontal: 12 }}
+                    style={{marginHorizontal: 12}}
                   />
 
                   <Button
@@ -773,7 +1005,8 @@ export default class LeadList extends React.PureComponent {
             />
             <View styleName="horizontal md-gutter space-between">
               <View styleName="horizontal">
-                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.pagination(false)}>
                   <Title style={styles.itemtopText}>{`Back`}</Title>
                 </TouchableWithoutFeedback>
                 <View
@@ -784,32 +1017,38 @@ export default class LeadList extends React.PureComponent {
                     width: 1.5,
                   }}
                 />
+                {/* {this.pageNumberView()} */}
                 <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
                   <Title style={styles.itemtopText}>{`Next`}</Title>
                 </TouchableWithoutFeedback>
               </View>
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
-                  <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                  <IconChooser
+                    name={enableSearch ? 'x' : 'search'}
+                    size={24}
+                    color={'#555555'}
+                  />
                 </View>
               </TouchableWithoutFeedback>
-
             </View>
 
-            {enableSearch === true ? <View styleName='md-gutter'>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={this.onChangeSearch}
-                value={searchQuery}
-                style={{
-                  elevation: 0,
-                  borderColor: '#dbd9cc',
-                  borderWidth: 0.5,
-                  borderRadius: 8
-                }}
-                clearIcon={() => null}
-              />
-            </View> : null}
+            {enableSearch === true ? (
+              <View styleName="md-gutter">
+                <Searchbar
+                  placeholder="Search"
+                  onChangeText={this.onChangeSearch}
+                  value={searchQuery}
+                  style={{
+                    elevation: 0,
+                    borderColor: '#dbd9cc',
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                  }}
+                  clearIcon={() => null}
+                />
+              </View>
+            ) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
@@ -822,14 +1061,15 @@ export default class LeadList extends React.PureComponent {
                 tableHead={this.state.tableHead}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No Lead Records Found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No Lead Records Found...'} />
+              </View>
+            )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
-                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}

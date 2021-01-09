@@ -83,6 +83,26 @@ export default class FinorbitForm extends React.PureComponent {
               editThird: checknullEdit === false ? editLeadData.third : null,
               editFour: checknullEdit === false ? editLeadData.four : null,
             });
+            if(checknullEdit === false){
+              if (
+                Helper.nullCheck(editLeadData.first) === false &&
+                Helper.nullStringCheck(editLeadData.first.employ) === false
+              ) {
+                if (
+                  (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+                  editLeadData.first &&
+                  editLeadData.first.employ === 'Salaried'
+                ) {
+                  this.headerchange = true;
+                } else if (
+                  (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+                  editLeadData.first &&
+                  editLeadData.first.employ === 'Self Employed'
+                ) {
+                  this.headerchange = false;
+                }
+              }
+            }
           });
         });
       });

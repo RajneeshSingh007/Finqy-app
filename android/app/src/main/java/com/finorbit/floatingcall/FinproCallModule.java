@@ -1,27 +1,53 @@
 package com.finorbit.floatingcall;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.text.TextUtils;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.finorbit.MainActivity;
 
 public class FinproCallModule extends ReactContextBaseJavaModule {
 
-    private static final String ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
-    private static final String E_PERMISSION_DENIED = "E_PERMISSION_DENIED";
+    private static final String error = "Permission was not granted";
     public static ReactApplicationContext mReactContext;
+    public static int DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE = 1122;
+    private Promise mPromise;
 
+    private final ActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
+        @Override
+        public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(activity, requestCode, resultCode, data);
+            if (requestCode == DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (Settings.canDrawOverlays(activity.getApplicationContext())) {
+                        mPromise.resolve(true);
+                    } else {
+                        mPromise.reject(new Throwable(error));
+                    }
+                } else {
+                    mPromise.resolve(true);
+                }
+            }
+        }
+    };
 
     public FinproCallModule(ReactApplicationContext reactContext) {
         super(reactContext);
         mReactContext = reactContext;
+        mReactContext.addActivityEventListener(mActivityEventListener);
     }
 
     @Override
@@ -31,7 +57,6 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void stopService(Promise promise) {
-        String result = "Success";
         try {
             Intent intent = new Intent(FloatingWidgetService.FLOATING_WIDGET_ID);
             intent.setClass(this.getReactApplicationContext(), FloatingWidgetService.class);
@@ -40,20 +65,11 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
             promise.reject(e);
             return;
         }
-        promise.resolve(result);
+        promise.resolve(true);
     }
 
     @ReactMethod
     public void startService(Promise promise) {
-        String result = "Success";
-        Activity activity = getCurrentActivity();
-        if (activity != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(getReactApplicationContext())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getCurrentActivity().getPackageName()));
-                getCurrentActivity().startActivityForResult(intent, MainActivity.DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE);
-            }
-        }
         try {
             Intent intent = new Intent(FloatingWidgetService.FLOATING_WIDGET_ID);
             intent.setClass(this.getReactApplicationContext(), FloatingWidgetService.class);
@@ -62,12 +78,50 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
             promise.reject(e);
             return;
         }
-        promise.resolve(result);
+        promise.resolve(true);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @ReactMethod
+    public void askPermission(Promise promise) {
+        mPromise = promise;
+        if (!Settings.canDrawOverlays(mReactContext)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + mReactContext.getPackageName()));
+            mReactContext.startActivityForResult(intent, DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE, null);
+        } else {
+            promise.resolve(true);
+        }
+    }
 
     public static ReactApplicationContext getReactContext() {
         return mReactContext;
     }
 
+    @ReactMethod
+    public void requestCallsPermission(Promise promise) {
+        int readPhoneState = ContextCompat.checkSelfPermission(mReactContext, Manifest.permission.READ_PHONE_STATE);
+        int read_call_log = ContextCompat.checkSelfPermission(mReactContext, Manifest.permission.READ_CALL_LOG);
+        //int processOutgoingCalls = ContextCompat.checkSelfPermission(mReactContext, Manifest.permission.PROCESS_OUTGOING_CALLS);
+        String permissions = "";
+        if (readPhoneState != PackageManager.PERMISSION_GRANTED) {
+            permissions = Manifest.permission.READ_PHONE_STATE;
+        }
+        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
+            permissions = Manifest.permission.READ_CALL_LOG;
+        }
+//        if (processOutgoingCalls != PackageManager.PERMISSION_GRANTED) {
+//            permissions = Manifest.permission.PROCESS_OUTGOING_CALLS;
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            int answerCall = ContextCompat.checkSelfPermission(mReactContext, Manifest.permission.ANSWER_PHONE_CALLS);
+//            if (answerCall != PackageManager.PERMISSION_GRANTED) {
+//                permissions = Manifest.permission.ANSWER_PHONE_CALLS;
+//            }
+//        }
+        if (!TextUtils.isEmpty(permissions)) {
+            promise.resolve(permissions);
+            return;
+        }
+        promise.resolve("success");
+    }
 }

@@ -107,6 +107,9 @@ export const requestPermissionsDialer = async () => {
         PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
         PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
+        // 'android.permission.PROCESS_OUTGOING_CALLS',
+        // 'android.permission.ANSWER_PHONE_CALLS',
+        // 'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'
       ]).then((result) => {
         if (
           result['android.permission.CALL_PHONE'] === 'granted'
@@ -114,6 +117,12 @@ export const requestPermissionsDialer = async () => {
           result['android.permission.READ_CONTACTS'] === 'granted'
           &&
           result['android.permission.WRITE_CONTACTS'] === 'granted'
+          // &&
+          // result['android.permission.PROCESS_OUTGOING_CALLS'] === 'granted'
+          // &&
+          // result['android.permission.ANSWER_PHONE_CALLS'] === 'granted'
+          // &&
+          // result['android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'] === 'granted'
         ) {
           //granted
         }
@@ -430,7 +439,7 @@ export const showToastMessage = (message, type = 0) => {
           : type === 2
             ? 'info'
             : 'default',
-    duration: 50000,
+    duration: 7000,
     animated:true,
     floating:true,
   });

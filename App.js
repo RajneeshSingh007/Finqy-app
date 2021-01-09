@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StatusBar, View, BackHandler, Alert, Linking,Platform} from 'react-native';
+import {StatusBar, View, BackHandler, Alert, Linking,Platform, AppState} from 'react-native';
 import {AppContainer} from './src/util/AppRouter';
 import NavigationActions from './src/util/NavigationActions';
 import {inject, observer} from 'mobx-react';
@@ -17,19 +17,21 @@ import {
 } from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
+import { enableCallModule,startService, stopService } from './src/util/DialerFeature';
 
 class App extends React.PureComponent {
   constructor(props) {
     super(props);
+    this._handleAppStateChange = this._handleAppStateChange.bind(this);
     changeNavigationBarColor('white', true);
     StatusBar.setBackgroundColor('white', false);
     StatusBar.setBarStyle('dark-content');
-    this.state = {restartAllowed: true, downloading: -1};
+    this.state = {restartAllowed: true, downloading: -1,appState:AppState.currentState};
   }
 
   componentDidMount() {
     this.checkVersionForUpdate();
-    
+    AppState.addEventListener('change', this._handleAppStateChange);
     //this.syncImmediate();
 
     Crashes.setEnabled(true);
@@ -67,10 +69,25 @@ class App extends React.PureComponent {
       })  
     }, error =>{
     })
+    
+    //enableCallModule(false);
   }
+
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      stopService();
+    }else{
+      //enableCallModule(true);
+    }
+    this.setState({appState: nextAppState});
+  };
 
 
   componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }

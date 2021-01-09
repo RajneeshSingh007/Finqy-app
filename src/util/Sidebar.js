@@ -466,18 +466,18 @@ export default class Sidebar extends React.Component {
                     click: 'Manager',
                     options: {},
                   },
-                  // {
-                  //   name: `Raise A Query`,
-                  //   expand: false,
-                  //   click: 'RaiseQueryForm',
-                  //   options: {},
-                  // },
-                  // {
-                  //   name: `Track My Query`,
-                  //   expand: false,
-                  //   click: 'TrackQuery',
-                  //   options: {},
-                  // },
+                  {
+                    name: `Raise A Query`,
+                    expand: false,
+                    click: 'RaiseQueryForm',
+                    options: {},
+                  },
+                  {
+                    name: `Track My Query`,
+                    expand: false,
+                    click: 'TrackQuery',
+                    options: {},
+                  },
                 ],
                 click: '',
               },
@@ -581,18 +581,18 @@ export default class Sidebar extends React.Component {
                     click: 'Manager',
                     options: {},
                   },
-                  // {
-                  //   name: `Raise A Query`,
-                  //   expand: false,
-                  //   click: 'RaiseQueryForm',
-                  //   options: {},
-                  // },
-                  // {
-                  //   name: `Track My Query`,
-                  //   expand: false,
-                  //   click: 'TrackQuery',
-                  //   options: {},
-                  // },
+                  {
+                    name: `Raise A Query`,
+                    expand: false,
+                    click: 'RaiseQueryForm',
+                    options: {},
+                  },
+                  {
+                    name: `Track My Query`,
+                    expand: false,
+                    click: 'TrackQuery',
+                    options: {},
+                  },
                 ],
                 click: '',
               },
@@ -625,6 +625,7 @@ export default class Sidebar extends React.Component {
                   click: '',
               });              
               firstpos.map(item => filter.push(item));
+            
             }
             //team leader module
             else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
@@ -660,38 +661,7 @@ export default class Sidebar extends React.Component {
               });              
               firstpos.map(item => filter.push(item));
             }
-
-            // filter.push(
-            //   {
-            //     name: `Dialer Report`,
-            //     expand: false,
-            //     heading: true,
-            //     iconname: require('../res/images/dialercalls.png'),
-            //     icontype: 2,
-            //     sub: [
-            //       {
-            //         name: `All Lead Records`,
-            //         expand: false,
-            //         click: 'DialerRecords',
-            //         options: {active:2},
-            //       },
-            //       {
-            //         name: `My Team Members`,
-            //         expand: false,
-            //         click: 'AllMembers',
-            //         options: {reportenabled:false},
-            //       },
-            //       {
-            //         name: `Performance Review`,
-            //         expand: false,
-            //         click: 'AllMembers',
-            //         options: {reportenabled:true},
-            //       },            
-            //     ],
-            //     click: '',
-            // });
-            
-            this.setState({menuList: filter});
+           this.setState({menuList: filter});
           } 
         });
       });
