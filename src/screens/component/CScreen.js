@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   BackHandler,
+  RefreshControl,
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {SafeAreaView} from 'react-navigation';
@@ -15,7 +16,6 @@ import * as Pref from '../../util/Pref';
 import Footer from '../component/Footer';
 import IconChooser from '../common/IconChooser';
 import ScrollTop from '../common/ScrollTop';
-import PTRView from 'react-native-pull-to-refresh';
 
 export default class CScreen extends React.Component {
   constructor(props) {
@@ -28,8 +28,15 @@ export default class CScreen extends React.Component {
     this.onRefreshed = this.onRefreshed.bind(this);
     this.state = {
       scrollreset: false,
+      refreshing: false,
     };
   }
+
+  wait = timeout => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  };
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
@@ -55,7 +62,7 @@ export default class CScreen extends React.Component {
   scrollToTop = () => {
     if (this.scrollViewRef && this.scrollViewRef.current) {
       const ref = this.scrollViewRef.current;
-      //console.log('ref',ref)
+      //console.log('ref',ref.scrollTo)
       if (ref && ref.scrollTo) {
         const timer = setTimeout(() => {
           ref.scrollTo({x: 0, y: 0, animated: false});
@@ -69,9 +76,10 @@ export default class CScreen extends React.Component {
 
   onRefreshed = () => {
     const {refresh = () => {}} = this.props;
-    return new Promise(resolve => {
-      refresh();
-      resolve();
+    this.setState({refreshing: true});
+    refresh();
+    this.wait(100).then(() => {
+      this.setState({refreshing: false});
     });
   };
 
@@ -92,53 +100,52 @@ export default class CScreen extends React.Component {
           },
         ])}
         forceInset={{top: 'never'}}>
-        <View style={styles.mainContainer}>
-          <Screen
-            style={StyleSheet.flatten([
-              styles.mainContainer,
-              {
-                backgroundColor: bgColor,
-              },
-            ])}>
-            {scrollEnable === true ? (
-              // <KeyboardAvoidingView
-              //   style={{
-              //     flex: 1,
-              //     flexDirection: 'column',
-              //     justifyContent: 'center',
-              //   }}
-              //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-              //   enabled
-              //   keyboardVerticalOffset={150}>
-              <ScrollView
-                ref={this.scrollViewRef}
-                style={styles.scroller}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-                keyboardShouldPersistTaps={'handled'}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                }}
-                refreshControl={
-                  <PTRView onRefresh={this.onRefreshed} colors={Pref.RED}>
-                    {null}
-                  </PTRView>
-                }>
-                {body}
-                {showfooter === true ? (
-                  <View>
-                    <ScrollTop onPress={this.scrollToTop} />
-                    <Footer />
-                  </View>
-                ) : null}
-              </ScrollView>
-            ) : (
-              //  </KeyboardAvoidingView>
-              body
-            )}
-            {absolute}
-          </Screen>
-        </View>
+        <Screen
+          style={StyleSheet.flatten([
+            styles.mainContainer,
+            {
+              backgroundColor: bgColor,
+            },
+          ])}>
+          {scrollEnable === true ? (
+            // <KeyboardAvoidingView
+            //   style={{
+            //     flex: 1,
+            //     flexDirection: 'column',
+            //     justifyContent: 'center',
+            //   }}
+            //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+            //   enabled
+            //   keyboardVerticalOffset={150}>
+            <ScrollView
+              ref={this.scrollViewRef}
+              style={styles.scroller}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps={'handled'}
+              contentContainerStyle={{
+                flexGrow: 1,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefreshed}
+                />
+              }>
+              {body}
+              {showfooter === true ? (
+                <View>
+                  <ScrollTop onPress={this.scrollToTop} />
+                  <Footer />
+                </View>
+              ) : null}
+            </ScrollView>
+          ) : (
+            //  </KeyboardAvoidingView>
+            body
+          )}
+          {absolute}
+        </Screen>
       </SafeAreaView>
     );
   }

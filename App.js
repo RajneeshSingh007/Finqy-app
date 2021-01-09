@@ -78,7 +78,7 @@ class App extends React.PureComponent {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      stopService();
+      //stopService();
     }else{
       //enableCallModule(true);
     }

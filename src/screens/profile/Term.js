@@ -63,7 +63,7 @@ export default class Term extends React.PureComponent {
             <Pdf
               source={{
                 uri: this.state.pdfurl,
-                cache: true,
+                cache: false,
               }}
               style={{
                 flex: 1,

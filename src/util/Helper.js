@@ -942,3 +942,14 @@ export const pageRange = (page, pageCount)  =>{
       end: end
   };
 }
+
+/**
+ * 
+ * @param {*} title 
+ */
+export const extCheckReg = (title) =>{
+  if(nullStringCheck(title) === true){
+    return false;
+  }
+  return (/\.(png|jpeg|jpg|jpe|jfif|pdf|)$/i).test(title);
+}

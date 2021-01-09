@@ -165,10 +165,51 @@ class CommonFileUpload extends React.PureComponent {
     }
   }
 
+  /**
+   * 
+   */
+  downloadView = () =>{
+    const { pickedName } = this.state;
+    const { pickedTitle = null, enableDownloads = false, fileType = -1, downloadTitles = '',downloadUrl='',truDownloadEnable = -1 } = this.props;
+    return (
+      truDownloadEnable === 1 && Helper.nullStringCheck(downloadUrl) === false ?
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={StyleSheet.flatten([styles.insideContainer, {
+            flex: enableDownloads ? 0.9 : 1,
+          },enableDownloads ? {height:56} : {}])}>
+            <View>
+            <Title
+                style={StyleSheet.flatten([
+                  styles.title,
+                  {
+                    bottom: pickedName !== '' ? 2 : 0,
+                    color: pickedName !== '' ? Pref.RED : '#555555',
+                    marginStart:4
+                  },
+                ])}>
+                {this.state.title === '' ? downloadTitles : this.state.title}
+              </Title>
+            </View>
+          </View>
+        {enableDownloads === true ? <TouchableWithoutFeedback onPress={this.download}>
+          <View style={{ flex: 0.1 }}>
+            <View style={styles.circle}>
+              <IconChooser name={'download'} size={20} color={'white'} style={{
+                alignSelf: 'center'
+              }} />
+            </View>
+          </View>
+        </TouchableWithoutFeedback> : null}
+      </View>
+      : null
+    );
+  }
+
   render() {
     const { pickedName } = this.state;
-    const { pickedTitle = null, enableDownloads = false, fileType = -1, downloadTitles = '' } = this.props;
+    const { pickedTitle = null, enableDownloads = false, fileType = -1, downloadTitles = '',downloadUrl='',truDownloadEnable = -1 } = this.props;
     return (
+      truDownloadEnable === 1 ? this.downloadView() :
       <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <TouchableWithoutFeedback onPress={this.filePicker}>
           <View style={StyleSheet.flatten([styles.insideContainer, {
@@ -200,9 +241,6 @@ class CommonFileUpload extends React.PureComponent {
               {pickedName !== '' ? (
                 <Title style={styles.subtitle}>{pickedName}</Title>
               ) : null}
-              {/* {(pickedName === null || pickedName === '') ? pickedTitle !== '' ? (
-                <Title style={styles.subtitle}>{pickedTitle}</Title>
-              ) : null : null}  */}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -216,6 +254,7 @@ class CommonFileUpload extends React.PureComponent {
           </View>
         </TouchableWithoutFeedback> : null}
       </View>
+   
     );
   }
 }

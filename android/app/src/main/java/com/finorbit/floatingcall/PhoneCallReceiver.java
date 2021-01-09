@@ -23,24 +23,20 @@ public class PhoneCallReceiver extends BroadcastReceiver {
     }
 
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
-        Log.d("onIncomingCallStarted", number);
         startFloatingWidgetService(ctx);
     }
 
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
-        Log.d("onOutgoingCallStarted", number);
         startFloatingWidgetService(ctx);
     }
 
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
-        Log.d("onIncomingCallEnded", number);
         MyProperties.getInstance().NewIncomingCall = true;
         MyProperties.getInstance().PhoneNumber = number;
         startFloatingWidgetService(ctx);
     }
 
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
-        Log.d("onOutgoingCallEnded", number);
         startFloatingWidgetService(ctx);
     }
 

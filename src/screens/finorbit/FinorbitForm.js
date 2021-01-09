@@ -89,13 +89,13 @@ export default class FinorbitForm extends React.PureComponent {
                 Helper.nullStringCheck(editLeadData.first.employ) === false
               ) {
                 if (
-                  (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+                  (title === 'Home Loan' || title === 'Loan Against Property') &&
                   editLeadData.first &&
                   editLeadData.first.employ === 'Salaried'
                 ) {
                   this.headerchange = true;
                 } else if (
-                  (pname === 'Home Loan' || pname === 'Loan Against Property') &&
+                  (title === 'Home Loan' || title === 'Loan Against Property') &&
                   editLeadData.first &&
                   editLeadData.first.employ === 'Self Employed'
                 ) {

@@ -100,10 +100,10 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: '',
       downloadModal: false,
       editThird: null,
-      pageNumbers:[1,2,3,4,5],
-      activeNumber:1,
-      flag:2,
-      backScreen:null
+      pageNumbers: [1, 2, 3, 4, 5],
+      activeNumber: 1,
+      flag: 2,
+      backScreen: null,
     };
   }
 
@@ -121,14 +121,23 @@ export default class LeadList extends React.PureComponent {
             const {navigation} = this.props;
             const ref = navigation.getParam('ref', null);
             var flag = navigation.getParam('flag', 2);
-            if(v !== 'referral'){
+            if (v !== 'referral') {
               flag = 1;
             }
             const backScreen = navigation.getParam('backScreen', null);
             Pref.getVal(Pref.saveToken, value => {
-              this.setState({type:v, token: value,backScreen:backScreen, flag:flag,ref:ref}, () => {
-                this.fetchData();
-              });
+              this.setState(
+                {
+                  type: v,
+                  token: value,
+                  backScreen: backScreen,
+                  flag: flag,
+                  ref: ref,
+                },
+                () => {
+                  this.fetchData();
+                },
+              );
             });
           });
         });
@@ -142,11 +151,11 @@ export default class LeadList extends React.PureComponent {
       this.setState({modalvis: false, pdfurl: ''});
       return true;
     }
-    if(flag === 1 && Helper.nullStringCheck(backScreen) === false){
-      this.setState({backScreen:null});
+    if (flag === 1 && Helper.nullStringCheck(backScreen) === false) {
+      this.setState({backScreen: null});
       NavigationActions.navigate(backScreen);
       return true;
-    }else{
+    } else {
       NavigationActions.goBack();
       BackHandler.removeEventListener('hardwareBackPress', this.backclick);
       return true;
@@ -160,10 +169,10 @@ export default class LeadList extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = ()=> {
+  fetchData = () => {
     //referral
     this.setState({loading: true});
-    const {type,ref,flag} = this.state;
+    const {type, ref, flag} = this.state;
     const {refercode, username} = this.state.userData;
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
@@ -171,7 +180,7 @@ export default class LeadList extends React.PureComponent {
       flag: flag,
       type: type,
     });
-    console.log('body', body)
+    console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,
@@ -223,7 +232,7 @@ export default class LeadList extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      (e) => {
+      e => {
         this.setState({loading: false});
       },
     );
@@ -663,7 +672,7 @@ export default class LeadList extends React.PureComponent {
           quotemail: '',
         });
       },
-      () => {
+      e => {
         alert(`Failed to send mail`);
         this.setState({quotemodalVis: false, quotemailData: '', quotemail: ''});
       },
@@ -721,7 +730,10 @@ export default class LeadList extends React.PureComponent {
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
         if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus === 0 ? ITEM_LIMIT : plus});
+          this.setState({
+            dataList: slicedArray,
+            itemSize: plus === 0 ? ITEM_LIMIT : plus,
+          });
         }
       }
     }
@@ -804,54 +816,74 @@ export default class LeadList extends React.PureComponent {
       const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: ITEM_LIMIT});
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
   };
 
-
-  pageNumberClicked = (no) =>{
-    const {cloneList,activeNumber,itemSize} = this.state;
+  pageNumberClicked = no => {
+    const {cloneList, activeNumber, itemSize} = this.state;
     let pageNumbers = [];
     const clone = JSON.parse(JSON.stringify(cloneList));
-    var range = Helper.pageRange(itemSize-2, itemSize+3);
+    var range = Helper.pageRange(itemSize - 2, itemSize + 3);
     var start = range.start;
     var end = range.end;
     const data = this.returnData(clone, start, end);
-    for(let i=start-1; i<end; i++){
+    for (let i = start - 1; i < end; i++) {
       pageNumbers.push(start++);
     }
-    this.setState({dataList: data,itemSize:end,pageNumbers:pageNumbers,activeNumber:no});
-  }
+    this.setState({
+      dataList: data,
+      itemSize: end,
+      pageNumbers: pageNumbers,
+      activeNumber: no,
+    });
+  };
 
-  pageNumberView = () =>{
+  pageNumberView = () => {
     const {pageNumbers, activeNumber} = this.state;
     const viewStyle = {
-      alignContent:'center',
-      flexDirection:'row',
-      marginStart:4,
-      marginEnd:4,
+      alignContent: 'center',
+      flexDirection: 'row',
+      marginStart: 4,
+      marginEnd: 4,
     };
     const parentStyle = {
-      marginStart:4,
-      marginEnd:4
-    }
-    return                 <View styleName='horizontal' style={parentStyle}>
-    {Lodash.map(pageNumbers, (item, index) => {
-      return index === pageNumbers-1 ? null : <TouchableWithoutFeedback onPress={() => this.pageNumberClicked(item)}>
-        <View style={viewStyle}><Title style={StyleSheet.flatten([styles.itemtopText,{
-          color:activeNumber !== item ? '#656259' : '#0270e3',
-          fontSize:15
-        }])}>{item}</Title></View>
-      </TouchableWithoutFeedback>
-    })}
-  </View>
-
-  }
+      marginStart: 4,
+      marginEnd: 4,
+    };
+    return (
+      <View styleName="horizontal" style={parentStyle}>
+        {Lodash.map(pageNumbers, (item, index) => {
+          return index === pageNumbers - 1 ? null : (
+            <TouchableWithoutFeedback
+              onPress={() => this.pageNumberClicked(item)}>
+              <View style={viewStyle}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.itemtopText,
+                    {
+                      color: activeNumber !== item ? '#656259' : '#0270e3',
+                      fontSize: 15,
+                    },
+                  ])}>
+                  {item}
+                </Title>
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        })}
+      </View>
+    );
+  };
 
   render() {
-    const {searchQuery, enableSearch, editThird, flag,type} = this.state;
+    const {searchQuery, enableSearch, editThird, flag, type} = this.state;
     return (
       <CScreen
-        refresh={() =>{
+        refresh={() => {
           this.fetchData();
         }}
         body={
@@ -859,7 +891,15 @@ export default class LeadList extends React.PureComponent {
             <LeftHeaders
               backClicked={this.backclick}
               showBack
-              title={type === '' ? '' : type  !== 'referaal' ? 'My Lead Records' : flag === 2 ? 'My Lead Records' : 'Lead Records'}
+              title={
+                type === ''
+                  ? ''
+                  : type !== 'referaal'
+                  ? 'My Lead Records'
+                  : flag === 2
+                  ? 'My Lead Records'
+                  : 'Lead Records'
+              }
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -896,16 +936,18 @@ export default class LeadList extends React.PureComponent {
                   body={
                     <View style={{marginStart: 8, marginEnd: 8}}>
                       <FileUploadForm
+                        truDownloadEnable={1}
                         downloadTitles={'dhdh'}
                         mode={true}
                         title={this.state.downloadFormTitle}
                         headerchange={this.headerchange}
                         editItemRestore={editThird}
-                        panCard={editThird && editThird.panCard}
-                        aadharCard={editThird && editThird.aadharCard}
                         rcCopy={editThird && editThird.rcCopy}
                         oldInsCopy={editThird && editThird.oldInsCopy}
                         pucCopy={editThird && editThird.pucCopy}
+                        policycopy={editThird && editThird.policycopy}
+                        panCard={editThird && editThird.panCard}
+                        aadharCard={editThird && editThird.aadharCard}
                         salarySlip={editThird && editThird.salarySlip}
                         salarySlip1={editThird && editThird.salarySlip1}
                         salarySlip2={editThird && editThird.salarySlip2}
@@ -913,7 +955,6 @@ export default class LeadList extends React.PureComponent {
                         salarySlip4={editThird && editThird.salarySlip4}
                         salarySlip5={editThird && editThird.salarySlip5}
                         bankState={editThird && editThird.bankState}
-                        policycopy={editThird && editThird.policycopy}
                       />
                     </View>
                   }

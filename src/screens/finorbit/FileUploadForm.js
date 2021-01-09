@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  StyleSheet,
-} from 'react-native';
-import {
-  Subtitle,
-  View,
-} from '@shoutem/ui';
+import {StyleSheet} from 'react-native';
+import {Subtitle, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import { sizeWidth } from '../../util/Size';
+import {sizeWidth} from '../../util/Size';
 import moment from 'moment';
 import CommonFileUpload from '../common/CommonFileUpload';
 import Lodash from 'lodash';
@@ -37,21 +32,26 @@ export default class FileUploadForm extends React.PureComponent {
     }
   }
 
-  findFileName = (input) => {
-    const { fileList } = this.state;
+  findFileName = input => {
+    const {fileList} = this.state;
     if (fileList.length > 0) {
       let returnName = null;
-      Lodash.map(fileList, io =>{
-        Object.entries(io).forEach(([key, value]) =>{
-          if (input === key) {
-            const { name } = value;
+      // const keyfind = fileList.find(io => io !== undefined && io.hasOwnProperty(input)) ;
+      // console.log('keyfind', keyfind)
+      // if(keyfind !== undefined){
+      //   returnName = keyfind[input].name;
+      // }
+      Lodash.map(fileList, io => {
+        Object.entries(io).forEach(([key, value]) => {
+          if (value != undefined && input === key) {
+            const {name} = value;
             if (name !== undefined && name !== '') {
               returnName = name;
               //break;
             }
           }
-        })
-      })
+        });
+      });
       // for (let index = 0; index < fileList.length; index++) {
       //   const io = fileList[index];
       //   Object.entries(io).forEach(([key, value]) =>{
@@ -63,65 +63,78 @@ export default class FileUploadForm extends React.PureComponent {
       //       }
       //     }
       //   })
-        // for (var key in io) {
-        //   //console.log(key);
-        //   if (input === key) {
-        //     const { name } = io[key];
-        //     if (name !== undefined && name !== '') {
-        //       returnName = name;
-        //       //break;
-        //     }
-        //   }
-        // }
-        //if (returnName !== null) {
-         // break;
-        //}
+      // for (var key in io) {
+      //   //console.log(key);
+      //   if (input === key) {
+      //     const { name } = io[key];
+      //     if (name !== undefined && name !== '') {
+      //       returnName = name;
+      //       //break;
+      //     }
+      //   }
+      // }
+      //if (returnName !== null) {
+      // break;
+      //}
       //}
       return returnName;
     } else {
       return null;
     }
-  }
+  };
 
   onChange = (event, selectDate) => {
-    this.setState({ showCalendar: false, currentDate: selectDate });
+    this.setState({showCalendar: false, currentDate: selectDate});
   };
 
   checkurl = (type, name) => {
-    const exist = name !== undefined && name !== null && (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg') || name.includes('.pdf'));
+    const exist = Helper.extCheckReg(name);
     if (type === 0) {
-      return exist ? true : false
+      return exist ? true : false;
     } else {
-      return exist ? name : ''
+      return exist ? name : '';
     }
-  }
+  };
 
   getExt = (type, name) => {
-    if (this.checkurl(0, name) === false) {
-      return '';
-    }
-    if (type === 0) {
-      if (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg')) {
-        return '.jpg';
-      } else {
-        return '.pdf';
-      }
-    } else {
-      if (name.includes('.png') || name.includes('.jpeg') || name.includes('.jpg')) {
-        return 'images/jpg';
-      } else {
-        return 'application/pdf';
-      }
-    }
-  }
+    // if (this.checkurl(0, name) === false) {
+    //   return '';
+    // }
+    // if (type === 0) {
+    //   if (Helper.extCheckReg(name)) {
+    //     return '.jpg';
+    //   } else {
+    //     return '.pdf';
+    //   }
+    // } else {
+    //   if (
+    //     name.includes('.png') ||
+    //     name.includes('.jpeg') ||
+    //     name.includes('.jpg') ||
+    //     name.includes('.jpe') ||
+    //     name.includes('.jfif')
+    //   ) {
+    //     return 'images/jpg';
+    //   } else {
+    //     return 'application/pdf';
+    //   }
+    // }
+    return '';
+  };
 
   mandatoryName = (name, title) => {
     //return `${name} ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`;
     return `${name}`;
-  }
+  };
 
-  render() {
-    const { title, cancelChq = null, panCard = null, aadharCard = null, gstImage = null, headerchange = false,
+  showhideheading = () => {
+    const {
+      title,
+      cancelChq = null,
+      panCard = null,
+      aadharCard = null,
+      gstImage = null,
+      headerchange = false,
       rcCopy = null,
       oldInsCopy = null,
       puccopy = null,
@@ -135,57 +148,180 @@ export default class FileUploadForm extends React.PureComponent {
       policycopy = null,
       mode = false,
       downloadTitles = '',
+      truDownloadEnable = -1,
+    } = this.props;
+
+    const checkAll =
+      this.checkurl(0, salarySlip) === null &&
+      this.checkurl(0, salarySlip1) === null &&
+      this.checkurl(0, salarySlip2) === null;
+
+    const checkAlls =
+      this.checkurl(0, salarySlip) === null &&
+      this.checkurl(0, salarySlip1) === null &&
+      this.checkurl(0, salarySlip2) === null &&
+      this.checkurl(0, salarySlip3) === null &&
+      this.checkurl(0, salarySlip4) === null &&
+      this.checkurl(0, salarySlip5) === null;
+
+    console.log(
+      'checkAll',
+      checkAll,
+      checkAlls,
+      salarySlip,
+      salarySlip1,
+      salarySlip2,
+      salarySlip3,
+      salarySlip4,
+      salarySlip5,
+    );
+
+    const nofile = `No file found...`;
+    return title === 'Personal Loan'
+      ? !checkAll
+        ? `${nofile}`
+        : `3 Months Salary Slip`
+      : title === 'Credit Card'
+      ? !checkAll
+        ? `${nofile}`
+        : `3 Months Salary Slip or 1 Years ITR`
+      : (title === 'Home Loan' || title === 'Loan Against Property') &&
+        headerchange === true
+      ? checkAlls
+        ? `${nofile}`
+        : `6 Months Salary Slip`
+      : (title === 'Home Loan' || title === 'Loan Against Property') &&
+        headerchange === false
+      ? !checkAll
+        ? `${nofile}`
+        : `3 Years ITR`
+      : title === 'Loan Against Property'
+      ? !checkAlls
+        ? `${nofile}`
+        : `6 Months Salary Slip or 3 Years ITR`
+      : checkAll
+      ? `${nofile}`
+      : `3 Years ITR`;
+  };
+
+  checkAllFile = () => {
+    const {
+      cancelChq = null,
+      panCard = null,
+      aadharCard = null,
+      gstImage = null,
+      headerchange = false,
+      rcCopy = null,
+      oldInsCopy = null,
+      puccopy = null,
+      salarySlip = null,
+      salarySlip1 = null,
+      salarySlip2 = null,
+      salarySlip3 = null,
+      salarySlip4 = null,
+      salarySlip5 = null,
+      bankState = null,
+      policycopy = null,
+    } = this.props;
+    return (
+      Helper.extCheckReg(panCard) &&
+      Helper.extCheckReg(aadharCard) &&
+      Helper.extCheckReg(rcCopy) &&
+      Helper.extCheckReg(oldInsCopy) &&
+      Helper.extCheckReg(puccopy) &&
+      Helper.extCheckReg(salarySlip) &&
+      Helper.extCheckReg(salarySlip1) &&
+      Helper.extCheckReg(salarySlip2) &&
+      Helper.extCheckReg(salarySlip3) &&
+      Helper.extCheckReg(salarySlip4) &&
+      Helper.extCheckReg(salarySlip5) &&
+      Helper.extCheckReg(bankState) &&
+      Helper.extCheckReg(policycopy)
+    );
+  };
+
+  render() {
+    const {
+      title,
+      cancelChq = null,
+      panCard = null,
+      aadharCard = null,
+      gstImage = null,
+      headerchange = false,
+      rcCopy = null,
+      oldInsCopy = null,
+      puccopy = null,
+      salarySlip = null,
+      salarySlip1 = null,
+      salarySlip2 = null,
+      salarySlip3 = null,
+      salarySlip4 = null,
+      salarySlip5 = null,
+      bankState = null,
+      policycopy = null,
+      mode = false,
+      downloadTitles = '',
+      truDownloadEnable = -1,
     } = this.props;
     return (
       <View>
-        {title !== 'Motor Insurance' ? <>
-          <CommonFileUpload
-            downloadTitles={downloadTitles}
-            mode={mode}
-            title={this.mandatoryName('Pan Card', title)}
-            type={2}
-            pickedTitle={this.findFileName(`pancard`)}
-            pickedCallback={(selected, res) => {
-              this.state.fileList.push({ pancard: res });
-            }}
-            enableDownloads={panCard != null && this.checkurl(0, panCard)}
-            downloadUrl={this.checkurl(1, panCard)}
-            fileName={'Pancard'}
-            ext={this.getExt(0, panCard)}
-            mime={this.getExt(1, panCard)}
-          />
+        {title !== 'Motor Insurance' ? (
+          <>
+            <CommonFileUpload
+              truDownloadEnable={truDownloadEnable}
+              downloadTitles={downloadTitles}
+              mode={mode}
+              title={this.mandatoryName('Pan Card', title)}
+              type={2}
+              pickedTitle={this.findFileName(`pancard`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({pancard: res});
+              }}
+              enableDownloads={panCard != null && this.checkurl(0, panCard)}
+              downloadUrl={this.checkurl(1, panCard)}
+              fileName={'Pancard'}
+              ext={this.getExt(0, panCard)}
+              mime={this.getExt(1, panCard)}
+            />
 
-          <CommonFileUpload
-            //title={'Aadhar Card'}
-            title={this.mandatoryName('Aadhar Card', title)}
-            // title={`Aadhar Card ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
-            type={2}
-            pickedTitle={this.findFileName(title === 'Demat' ? `addressproof` : `aadharcard`)}
-            pickedCallback={(selected, res) => {
-              if (title === 'Demat') {
-                this.state.fileList.push({ addressproof: res });
-              } else {
-                this.state.fileList.push({ aadharcard: res });
+            <CommonFileUpload
+              truDownloadEnable={truDownloadEnable}
+              //title={'Aadhar Card'}
+              title={this.mandatoryName('Aadhar Card', title)}
+              // title={`Aadhar Card ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              type={2}
+              pickedTitle={this.findFileName(
+                title === 'Demat' ? `addressproof` : `aadharcard`,
+              )}
+              pickedCallback={(selected, res) => {
+                if (title === 'Demat') {
+                  this.state.fileList.push({addressproof: res});
+                } else {
+                  this.state.fileList.push({aadharcard: res});
+                }
+              }}
+              enableDownloads={
+                aadharCard != null && this.checkurl(0, aadharCard)
               }
-            }}
-            enableDownloads={aadharCard != null && this.checkurl(0, aadharCard)}
-            downloadUrl={this.checkurl(1, aadharCard)}
-            fileName={'Aadharcard'}
-            ext={this.getExt(0, aadharCard)}
-            mime={this.getExt(1, aadharCard)}
-            mode={mode}
-            downloadTitles={downloadTitles}
-          />
-        </> : null}
+              downloadUrl={this.checkurl(1, aadharCard)}
+              fileName={'Aadharcard'}
+              ext={this.getExt(0, aadharCard)}
+              mime={this.getExt(1, aadharCard)}
+              mode={mode}
+              downloadTitles={downloadTitles}
+            />
+          </>
+        ) : null}
 
         {title === 'Profile' ? (
           <>
             <CommonFileUpload
+              truDownloadEnable={truDownloadEnable}
               title={'Cancelled Cheque'}
               type={2}
               pickedTitle={this.findFileName(`cancel_chq`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ cancel_chq: res });
+                this.state.fileList.push({cancel_chq: res});
               }}
               enableDownloads={this.checkurl(0, cancelChq)}
               downloadUrl={this.checkurl(1, cancelChq)}
@@ -196,11 +332,12 @@ export default class FileUploadForm extends React.PureComponent {
               downloadTitles={downloadTitles}
             />
             <CommonFileUpload
+              truDownloadEnable={truDownloadEnable}
               title={'GST Certificate'}
               type={2}
               pickedTitle={this.findFileName(`gst_cert`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ gst_cert: res });
+                this.state.fileList.push({gst_cert: res});
               }}
               enableDownloads={this.checkurl(0, gstImage)}
               downloadUrl={this.checkurl(1, gstImage)}
@@ -218,11 +355,12 @@ export default class FileUploadForm extends React.PureComponent {
             {/* <View style={styles.line1} /> */}
             <CommonFileUpload
               // title={'RC Book *'}
+              truDownloadEnable={truDownloadEnable}
               title={'RC Book'}
               type={2}
               pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ rcbookcopy: res });
+                this.state.fileList.push({rcbookcopy: res});
               }}
               enableDownloads={rcCopy != null && this.checkurl(0, rcCopy)}
               downloadUrl={this.checkurl(1, rcCopy)}
@@ -239,30 +377,36 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`policycopy`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ policycopy: res });
+                this.state.fileList.push({policycopy: res});
               }}
-              enableDownloads={policycopy != null && this.checkurl(0, policycopy)}
+              enableDownloads={
+                policycopy != null && this.checkurl(0, policycopy)
+              }
               downloadUrl={this.checkurl(1, policycopy)}
               fileName={'Policy'}
               ext={this.getExt(0, policycopy)}
               mime={this.getExt(1, policycopy)}
               mode={mode}
               downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
             />
             <CommonFileUpload
               title={'Old Insurance Policy'}
               type={2}
               pickedTitle={this.findFileName(`oldinsurancecopy`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ oldinsurancecopy: res });
+                this.state.fileList.push({oldinsurancecopy: res});
               }}
-              enableDownloads={oldInsCopy != null && this.checkurl(0, oldInsCopy)}
+              enableDownloads={
+                oldInsCopy != null && this.checkurl(0, oldInsCopy)
+              }
               downloadUrl={this.checkurl(1, oldInsCopy)}
               fileName={'Old_Insurance_Policy'}
               ext={this.getExt(0, oldInsCopy)}
               mode={mode}
               mime={this.getExt(1, oldInsCopy)}
               downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
             />
 
             <CommonFileUpload
@@ -270,7 +414,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`puccopy`)}
               pickedCallback={(selected, res) => {
-                this.state.fileList.push({ puccopy: res });
+                this.state.fileList.push({puccopy: res});
               }}
               enableDownloads={puccopy != null && this.checkurl(0, puccopy)}
               downloadUrl={this.checkurl(1, puccopy)}
@@ -279,6 +423,7 @@ export default class FileUploadForm extends React.PureComponent {
               mime={this.getExt(1, puccopy)}
               mode={mode}
               downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
             />
           </View>
         ) : null}
@@ -290,164 +435,249 @@ export default class FileUploadForm extends React.PureComponent {
             pickedTitle={this.findFileName(`cancelcheque`)}
             pickedCallback={(selected, res) => {
               if (!selected) {
-                this.state.fileList.push({ cancelcheque: res });
+                this.state.fileList.push({cancelcheque: res});
               }
             }}
             mode={mode}
             downloadTitles={downloadTitles}
+            truDownloadEnable={truDownloadEnable}
           />
         ) : null}
 
         {title === 'Auto Loan' ||
-          title === 'Business Loan' ||
-          title === 'Personal Loan' ||
-          title === 'Credit Card' ||
-          title === 'Loan Against Property' ||
-          title === 'Home Loan' ? (
-            <View>
-              {/* <View style={styles.line1} /> */}
-
+        title === 'Business Loan' ||
+        title === 'Personal Loan' ||
+        title === 'Credit Card' ||
+        title === 'Loan Against Property' ||
+        title === 'Home Loan' ? (
+          <View>
+            {truDownloadEnable === 1 ? (
               <View
                 styleName="vertical"
-                style={{ marginStart: sizeWidth(2), marginVertical: 12, }}>
+                style={{marginStart: sizeWidth(2), marginVertical: 0}}>
+                {/* <Subtitle style={styles.title1}>
+                  {this.showhideheading()}
+                </Subtitle> */}
+              </View>
+            ) : (
+              <View
+                styleName="vertical"
+                style={{marginStart: sizeWidth(2), marginVertical: 12}}>
                 <Subtitle style={styles.title1}>
-
                   {title === 'Personal Loan'
                     ? `3 Months Salary Slip`
                     : title === 'Credit Card'
-                      ? `3 Months Salary Slip or 1 Years ITR`
-                      : (title === 'Home Loan' || title === 'Loan Against Property') && headerchange === true ? `6 Months Salary Slip` : (title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `3 Years ITR` : title === 'Loan Against Property'
-                        ? `6 Months Salary Slip or 3 Years ITR`
-                        : `3 Years ITR`}
+                    ? `3 Months Salary Slip or 1 Years ITR`
+                    : (title === 'Home Loan' ||
+                        title === 'Loan Against Property') &&
+                      headerchange === true
+                    ? `6 Months Salary Slip`
+                    : (title === 'Home Loan' ||
+                        title === 'Loan Against Property') &&
+                      headerchange === false
+                    ? `3 Years ITR`
+                    : title === 'Loan Against Property'
+                    ? `6 Months Salary Slip or 3 Years ITR`
+                    : `3 Years ITR`}
                 </Subtitle>
               </View>
+            )}
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 1`
+                }`,
+                title,
+              )}
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 1`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip: res});
+              }}
+              enableDownloads={
+                salarySlip != null && this.checkurl(0, salarySlip)
+              }
+              downloadUrl={this.checkurl(1, salarySlip)}
+              fileName={'Salary_Slip1'}
+              ext={this.getExt(0, salarySlip)}
+              mime={this.getExt(1, salarySlip)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 1'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
 
-              <CommonFileUpload
-                title={this.mandatoryName(`${(title === 'Home Loan' || title === 'Loan Against Property' || 'Auto Loan' || title === 'Business Loan') && headerchange === false ? `` : `Salary Slip 1`}`, title)}
-                // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 1`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
-                type={2}
-                pickedTitle={this.findFileName(`salaryslip`)}
-                pickedCallback={(selected, res) => {
-                  this.state.fileList.push({ salaryslip: res });
-                }}
-                enableDownloads={salarySlip != null && this.checkurl(0, salarySlip)}
-                downloadUrl={this.checkurl(1, salarySlip)}
-                fileName={'Salary_Slip1'}
-                ext={this.getExt(0, salarySlip)}
-                mime={this.getExt(1, salarySlip)}
-                mode={mode}
-                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 1'}
-              />
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 2`
+                }`,
+                title,
+              )}
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 2`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip1`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip1: res});
+              }}
+              enableDownloads={
+                salarySlip1 != null && this.checkurl(0, salarySlip1)
+              }
+              downloadUrl={this.checkurl(1, salarySlip1)}
+              fileName={'Salary_Slip2'}
+              ext={this.getExt(0, salarySlip1)}
+              mime={this.getExt(1, salarySlip1)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 2'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
 
-              <CommonFileUpload
-                title={this.mandatoryName(`${(title === 'Home Loan' || title === 'Loan Against Property' || 'Auto Loan' || title === 'Business Loan') && headerchange === false ? `` : `Salary Slip 2`}`, title)}
-                // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 2`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
-                type={2}
-                pickedTitle={this.findFileName(`salaryslip1`)}
-                pickedCallback={(selected, res) => {
-                  this.state.fileList.push({ salaryslip1: res });
-                }}
-                enableDownloads={salarySlip1 != null && this.checkurl(0, salarySlip1)}
-                downloadUrl={this.checkurl(1, salarySlip1)}
-                fileName={'Salary_Slip2'}
-                ext={this.getExt(0, salarySlip1)}
-                mime={this.getExt(1, salarySlip1)}
-                mode={mode}
-                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 2'}
-              />
+            <CommonFileUpload
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 3`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 3`
+                }`,
+                title,
+              )}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip2`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip2: res});
+              }}
+              enableDownloads={
+                salarySlip2 != null && this.checkurl(0, salarySlip2)
+              }
+              downloadUrl={this.checkurl(1, salarySlip2)}
+              fileName={'Salary_Slip3'}
+              ext={this.getExt(0, salarySlip2)}
+              mime={this.getExt(1, salarySlip2)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 3'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
 
-              <CommonFileUpload
-                // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 3`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
-                title={this.mandatoryName(`${(title === 'Home Loan' || title === 'Loan Against Property' || 'Auto Loan' || title === 'Business Loan') && headerchange === false ? `` : `Salary Slip 3`}`, title)}
-                type={2}
-                pickedTitle={this.findFileName(`salaryslip2`)}
-                pickedCallback={(selected, res) => {
-                  this.state.fileList.push({ salaryslip2: res });
-                }}
-                enableDownloads={salarySlip2 != null && this.checkurl(0, salarySlip2)}
-                downloadUrl={this.checkurl(1, salarySlip2)}
-                fileName={'Salary_Slip3'}
-                ext={this.getExt(0, salarySlip2)}
-                mime={this.getExt(1, salarySlip2)}
-                mode={mode}
-                downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 3'}
+            {(title === 'Loan Against Property' || title === 'Home Loan') &&
+            headerchange === true ? (
+              <View>
+                <CommonFileUpload
+                  title={'Salary Slip 4'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip3`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip3: res});
+                  }}
+                  enableDownloads={
+                    salarySlip3 != null && this.checkurl(0, salarySlip3)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip3)}
+                  fileName={'Salary_Slip4'}
+                  ext={this.getExt(0, salarySlip3)}
+                  mime={this.getExt(1, salarySlip3)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 4'
+                  }
+                  truDownloadEnable={truDownloadEnable}
                 />
+                <CommonFileUpload
+                  title={'Salary Slip 5'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip4`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip4: res});
+                  }}
+                  enableDownloads={
+                    salarySlip4 != null && this.checkurl(0, salarySlip4)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip4)}
+                  fileName={'Salary_Slip5'}
+                  ext={this.getExt(0, salarySlip4)}
+                  mime={this.getExt(1, salarySlip4)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 5'
+                  }
+                  truDownloadEnable={truDownloadEnable}
+                />
+                <CommonFileUpload
+                  title={'Salary Slip 6'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip5`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip5: res});
+                  }}
+                  enableDownloads={
+                    salarySlip5 != null && this.checkurl(0, salarySlip5)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip5)}
+                  fileName={'Salary_Slip6'}
+                  ext={this.getExt(0, salarySlip5)}
+                  mime={this.getExt(1, salarySlip5)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 6'
+                  }
+                  truDownloadEnable={truDownloadEnable}
+                />
+              </View>
+            ) : null}
 
-              {(title === 'Loan Against Property' || title === 'Home Loan') && headerchange === true ? (
-                <View>
-                  <CommonFileUpload
-                    title={'Salary Slip 4'}
-                    type={2}
-                    pickedTitle={this.findFileName(`salaryslip3`)}
-                    pickedCallback={(selected, res) => {
-                      this.state.fileList.push({ salaryslip3: res });
-                    }}
-                    enableDownloads={salarySlip3 != null && this.checkurl(0, salarySlip3)}
-                    downloadUrl={this.checkurl(1, salarySlip3)}
-                    fileName={'Salary_Slip4'}
-                    ext={this.getExt(0, salarySlip3)}
-                    mime={this.getExt(1, salarySlip3)}
-                    mode={mode}
-                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 4'}
-                  />
-                  <CommonFileUpload
-                    title={'Salary Slip 5'}
-                    type={2}
-                    pickedTitle={this.findFileName(`salaryslip4`)}
-                    pickedCallback={(selected, res) => {
-                      this.state.fileList.push({ salaryslip4: res });
-                    }}
-                    enableDownloads={salarySlip4 != null && this.checkurl(0, salarySlip4)}
-                    downloadUrl={this.checkurl(1, salarySlip4)}
-                    fileName={'Salary_Slip5'}
-                    ext={this.getExt(0, salarySlip4)}
-                    mime={this.getExt(1, salarySlip4)}
-                    mode={mode}
-                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 5'}
-                  />
-                  <CommonFileUpload
-                    title={'Salary Slip 6'}
-                    type={2}
-                    pickedTitle={this.findFileName(`salaryslip5`)}
-                    pickedCallback={(selected, res) => {
-                      this.state.fileList.push({ salaryslip5: res });
-                    }}
-                    enableDownloads={salarySlip5 != null && this.checkurl(0, salarySlip5)}
-                    downloadUrl={this.checkurl(1, salarySlip5)}
-                    fileName={'Salary_Slip6'}
-                    ext={this.getExt(0, salarySlip5)}
-                    mime={this.getExt(1, salarySlip5)}
-                    mode={mode}
-                    downloadTitles={downloadTitles === '' ? downloadTitles : 'Salary Slip 6'}
-                  />
-                </View>
-              ) : null}
-
-              <CommonFileUpload
-                title={this.mandatoryName(`${title === 'Home Loan'
-                  ? '1 Year Bank Statement'
-                  : `3 Month Bank Statement`}`, title)}
-                // title={
-                //   title === 'Home Loan'
-                //     ? '1 Year Bank Statement'
-                //     : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
-                // }
-                type={1}
-                fileType={1}
-                pickedTitle={this.findFileName(`bankstate`)}
-                pickedCallback={(selected, res) => {
-                  this.state.fileList.push({ bankstate: res });
-                }}
-                enableDownloads={bankState != null && this.checkurl(0, bankState)}
-                downloadUrl={this.checkurl(1, bankState)}
-                fileName={'Bank_state'}
-                ext={this.getExt(0, bankState)}
-                mime={this.getExt(1, bankState)}
-                mode={mode}
-                downloadTitles={downloadTitles}
-              />
-            </View>
-          ) : null}
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  title === 'Home Loan'
+                    ? '1 Year Bank Statement'
+                    : `3 Month Bank Statement`
+                }`,
+                title,
+              )}
+              // title={
+              //   title === 'Home Loan'
+              //     ? '1 Year Bank Statement'
+              //     : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
+              // }
+              type={1}
+              fileType={1}
+              pickedTitle={this.findFileName(`bankstate`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({bankstate: res});
+              }}
+              enableDownloads={bankState != null && this.checkurl(0, bankState)}
+              downloadUrl={this.checkurl(1, bankState)}
+              fileName={'Bank_state'}
+              ext={this.getExt(0, bankState)}
+              mime={this.getExt(1, bankState)}
+              mode={mode}
+              downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
+            />
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -492,6 +722,6 @@ const styles = StyleSheet.create({
     color: '#6d6a57',
     lineHeight: 20,
     marginStart: 4,
-    marginVertical: 8
+    marginVertical: 8,
   },
 });
