@@ -215,6 +215,7 @@ export default class MyWallet extends React.PureComponent {
   render() {
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders title={'Earning History'} showBack />

@@ -255,18 +255,18 @@ export default class Sidebar extends React.Component {
               click: 'Manager',
               options: {},
             },
-            {
-              name: `Raise A Query`,
-              expand: false,
-              click: 'RaiseQueryForm',
-              options: {},
-            },
-            {
-              name: `Track My Query`,
-              expand: false,
-              click: 'TrackQuery',
-              options: {},
-            },
+            // {
+            //   name: `Raise A Query`,
+            //   expand: false,
+            //   click: 'RaiseQueryForm',
+            //   options: {},
+            // },
+            // {
+            //   name: `Track My Query`,
+            //   expand: false,
+            //   click: 'TrackQuery',
+            //   options: {},
+            // },
           ],
           click: '',
         }
@@ -466,18 +466,18 @@ export default class Sidebar extends React.Component {
                     click: 'Manager',
                     options: {},
                   },
-                  {
-                    name: `Raise A Query`,
-                    expand: false,
-                    click: 'RaiseQueryForm',
-                    options: {},
-                  },
-                  {
-                    name: `Track My Query`,
-                    expand: false,
-                    click: 'TrackQuery',
-                    options: {},
-                  },
+                  // {
+                  //   name: `Raise A Query`,
+                  //   expand: false,
+                  //   click: 'RaiseQueryForm',
+                  //   options: {},
+                  // },
+                  // {
+                  //   name: `Track My Query`,
+                  //   expand: false,
+                  //   click: 'TrackQuery',
+                  //   options: {},
+                  // },
                 ],
                 click: '',
               },
@@ -581,86 +581,90 @@ export default class Sidebar extends React.Component {
                     click: 'Manager',
                     options: {},
                   },
-                  {
-                    name: `Raise A Query`,
-                    expand: false,
-                    click: 'RaiseQueryForm',
-                    options: {},
-                  },
-                  {
-                    name: `Track My Query`,
-                    expand: false,
-                    click: 'TrackQuery',
-                    options: {},
-                  },
+                  // {
+                  //   name: `Raise A Query`,
+                  //   expand: false,
+                  //   click: 'RaiseQueryForm',
+                  //   options: {},
+                  // },
+                  // {
+                  //   name: `Track My Query`,
+                  //   expand: false,
+                  //   click: 'TrackQuery',
+                  //   options: {},
+                  // },
                 ],
                 click: '',
               },
             ];
-            const {userRole} = this.state;
-            //tele caller role module
-            if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
-              const firstpos = filter.splice(1,filter.length);
-              filter.push(
-                {
-                  name: `Dialer`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/dialercalls.png'),
-                  icontype: 2,
-                  sub: [
-                    {
-                      name: `Start Calling`,
-                      expand: false,
-                      click: 'DialerCalling',
-                      options: {},
-                    },
-                    {
-                      name: `My Lead Records`,
-                      expand: false,
-                      click: 'DialerRecords',
-                      options: {},                      
-                    },
-                  ],
-                  click: '',
-              });              
-              firstpos.map(item => filter.push(item));
             
-            }
-            //team leader module
-            else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
-              const firstpos = filter.splice(1,filter.length);
-              filter.push(
-                {
-                  name: `Dialer`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/dialercalls.png'),
-                  icontype: 2,
-                  sub: [
-                    {
-                      name: `All Lead Records`,
-                      expand: false,
-                      click: 'AllMembers',
-                      options: {reportenabled:false},
-                    },
-                    {
-                      name: `My Team Members`,
-                      expand: false,
-                      click: 'AllMembers',
-                      options: {reportenabled:false},
-                    },
-                    {
-                      name: `Performance Review`,
-                      expand: false,
-                      click: 'AllMembers',
-                      options: {reportenabled:true},
-                    },            
-                  ],
-                  click: '',
-              });              
-              firstpos.map(item => filter.push(item));
-            }
+            //dialer features
+            const {userRole} = this.state;
+            //tele caller role module => userRole = 1
+            //team leader module => userRole = 2
+            
+            // if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
+            //   const firstpos = filter.splice(1,filter.length);
+            //   filter.push(
+            //     {
+            //       name: `Dialer`,
+            //       expand: false,
+            //       heading: true,
+            //       iconname: require('../res/images/dialercalls.png'),
+            //       icontype: 2,
+            //       sub: [
+            //         {
+            //           name: `Start Calling`,
+            //           expand: false,
+            //           click: 'DialerCalling',
+            //           options: {},
+            //         },
+            //         {
+            //           name: `My Lead Records`,
+            //           expand: false,
+            //           click: 'DialerRecords',
+            //           options: {},                      
+            //         },
+            //       ],
+            //       click: '',
+            //   });              
+            //   firstpos.map(item => filter.push(item));
+            
+            // }else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
+            //   const firstpos = filter.splice(1,filter.length);
+            //   filter.push(
+            //     {
+            //       name: `Dialer`,
+            //       expand: false,
+            //       heading: true,
+            //       iconname: require('../res/images/dialercalls.png'),
+            //       icontype: 2,
+            //       sub: [
+            //         {
+            //           name: `All Lead Records`,
+            //           expand: false,
+            //           click: 'AllMembers',
+            //           options: {reportenabled:false},
+            //         },
+            //         {
+            //           name: `My Team Members`,
+            //           expand: false,
+            //           click: 'AllMembers',
+            //           options: {reportenabled:false},
+            //         },
+            //         {
+            //           name: `Performance Review`,
+            //           expand: false,
+            //           click: 'AllMembers',
+            //           options: {reportenabled:true},
+            //         },            
+            //       ],
+            //       click: '',
+            //   });              
+            //   firstpos.map(item => filter.push(item));
+            // }            
+            
+
            this.setState({menuList: filter});
           } 
         });
@@ -732,18 +736,6 @@ export default class Sidebar extends React.Component {
     if (s.heading) {
       this.menuSubHeaderClick(item, index, s, i);
     } else {
-      // if (s.click === `ChatScreen`) {
-      //   var freshchatUser = new FreshchatUser();
-      //   freshchatUser.firstName = userData.rname;
-      //   freshchatUser.lastName = '';
-      //   freshchatUser.email = userData.email;
-      //   freshchatUser.phoneCountryCode = '+91';
-      //   freshchatUser.phone = userData.rcontact;
-      //   Freshchat.setUser(freshchatUser, (error) => {
-      //     //console.log(error);
-      //   });
-      //   Freshchat.showConversations();
-      // } else {
       if (s.click === `Certificate`) {
         const {refercode} = this.state.userData;
         NavigationActions.navigate(s.click, {
@@ -752,7 +744,6 @@ export default class Sidebar extends React.Component {
       } else {
         NavigationActions.navigate(s.click, s.options);
       }
-      // }
       NavigationActions.closeDrawer();
     }
   };

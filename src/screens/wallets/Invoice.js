@@ -322,6 +322,7 @@ export default class Invoice extends React.PureComponent {
   render() {
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders showBack title={'My Invoice'} />

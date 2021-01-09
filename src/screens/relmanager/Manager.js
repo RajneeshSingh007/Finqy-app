@@ -166,6 +166,7 @@ export default class Manager extends React.PureComponent {
   render() {
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders

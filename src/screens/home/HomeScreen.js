@@ -108,7 +108,7 @@ export default class HomeScreen extends React.PureComponent {
       } else {
         endparse = parse;
       }
-      this.fetchDashboard(token, refercode, `${parse}@${endparse}`);
+      this.fetchDashboard(token, `${parse}@${endparse}`);
     } else {
       this.setState({ datefilter: false, endDate: null, startDate: null })
     }
@@ -142,8 +142,7 @@ export default class HomeScreen extends React.PureComponent {
               if (res_type === `success`) {
                 this.setState({ token: Helper.removeQuotes(data) });
                 Pref.setVal(Pref.saveToken, Helper.removeQuotes(data));
-                const { refercode} = this.state.userData;
-                this.fetchDashboard(Helper.removeQuotes(data), refercode, '');
+                this.fetchDashboard(Helper.removeQuotes(data), '');
               }
             },
             (error) => {
@@ -152,17 +151,17 @@ export default class HomeScreen extends React.PureComponent {
           );
         } else {
           this.setState({ token: value });
-          const { refercode} = this.state.userData;
-          this.fetchDashboard(value, refercode, '');
+          this.fetchDashboard(value, '');
         }
       });
     });
     
   }
 
-  fetchDashboard = (token, ref, filterdates = '') => {
+  fetchDashboard = (token,filterdates = '') => {
+    const { refercode} = this.state.userData;
     const body = JSON.stringify({
-      user_id: ref,
+      user_id: refercode,
       flag: this.state.type === "referral" ? 2 : 1,
       date_range: filterdates
     });
@@ -601,6 +600,7 @@ export default class HomeScreen extends React.PureComponent {
     }
     return (
       <CScreen
+        refresh={() => this.fetchDashboard(this.state.token, '')}
         bgColor={Pref.WHITE}
         absolute={
           <>

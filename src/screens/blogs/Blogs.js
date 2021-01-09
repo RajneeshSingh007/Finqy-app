@@ -201,6 +201,7 @@ export default class Blogs extends React.PureComponent {
   render() {
     return (
       <CScreen
+      refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders

@@ -250,7 +250,8 @@ export default class As26 extends React.PureComponent {
   render() {
     return (
       <CScreen
-        body={
+      refresh={() => this.fetchData()}
+      body={
           <>
             <LeftHeaders showBack title={'26AS'} />
 

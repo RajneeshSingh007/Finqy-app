@@ -525,22 +525,29 @@ export const downloadFile = (url, name) => {
   let lsp = sp[sp.length - 1];
   const { config, fs } = RNFetchBlob;
   let DownloadDir = fs.dirs.DownloadDir;
+  let filePath = `${DownloadDir}/${lsp.replace('.php', '')}`;
   let options = {
     fileCache: true,
     addAndroidDownloads: {
       title: ``,
       useDownloadManager: true,
       notification: true,
-      path: `${DownloadDir}/${lsp.replace('.php', '')}`,
+      path: filePath,
       description: name || '',
     },
   };
   config(options)
     .fetch('GET', `${url}`)
     .then((res) => {
-      //console.log(`res`, JSON.stringify(res));
-      showToastMessage('Download Complete', 1);
-      // do some magic here
+      RNFetchBlob.fs.exists(filePath)
+        .then((exist) => {
+          if (exist) {
+            showToastMessage('Download Complete', 1);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
 };
 
@@ -583,7 +590,15 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
       //console.log(`res`, res);
       RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
       if (notification) {
-        showToastMessage('Download Complete', 1);
+        RNFetchBlob.fs.exists(filePath)
+        .then((exist) => {
+          if (exist) {
+            showToastMessage('Download Complete', 1);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       }
     });
 };
@@ -639,8 +654,15 @@ export const saveFile = (url, name) => {
         showNotification: true,
         notification: true,
       });
-
-      showToastMessage('Download Complete', 1);
+      RNFetchBlob.fs.exists(path)
+        .then((exist) => {
+          if (exist) {
+            showToastMessage('Download Complete', 1);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   });
 };
@@ -897,3 +919,26 @@ export const getUID = () => {
   }
   return uuid.join('');
 };
+
+
+/**
+ * pagination range
+ * @param {*} page 
+ * @param {*} pageCount 
+ */
+export const pageRange = (page, pageCount)  =>{
+  var start = page - 2, end = page + 2;
+  if (end > pageCount) {
+      start -= (end - pageCount);
+      end = pageCount;
+  }
+  if (start <= 0) {
+      end += ((start - 1) * (-1));
+      start = 1;
+  }
+  end = end > pageCount ? pageCount : end;
+  return {
+      start: start,
+      end: end
+  };
+}

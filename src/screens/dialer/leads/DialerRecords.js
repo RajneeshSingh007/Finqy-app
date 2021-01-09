@@ -282,6 +282,11 @@ export default class DialerRecords extends React.PureComponent {
     const { searchQuery, enableSearch } = this.state;
     return (
       <CScreen
+        refresh={() => {
+          const {navigation} = this.props;
+          const active = navigation.getParam("active", 1);
+          this.fetchData(active);
+        }}
         body={
           <>
             <LeftHeaders

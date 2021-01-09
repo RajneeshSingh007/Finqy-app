@@ -78,14 +78,15 @@ export default class MarketingTool extends React.PureComponent {
             loading: false,
             bannerList: data,
             type: type,
+            userData:parseda
           });
         } else {
-          this.setState({ loading: false });
+          this.setState({ loading: false,userData:parseda});
         }
       },
       (error) => {
         //console.log('error', error);
-        this.setState({ loading: false });
+        this.setState({ loading: false,userData:parseda});
       },
     );
   };
@@ -146,6 +147,7 @@ export default class MarketingTool extends React.PureComponent {
   render() {
     return (
       <CScreen
+      refresh={() => this.fetchData(1, this.state.userData)}
         absolute={<Loader isShow={this.state.fullLoader} />}
         body={
           <>

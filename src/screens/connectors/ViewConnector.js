@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   TouchableWithoutFeedback,
+  BackHandler
 } from 'react-native';
 import {
   Title,
@@ -48,7 +49,7 @@ export default class ViewConnector extends React.PureComponent {
         'Email',
         'Mobile',
         'Refercode',
-        'LeadRecord',
+        'Lead Record',
         //'',
         'Status',
       ],
@@ -63,6 +64,7 @@ export default class ViewConnector extends React.PureComponent {
   }
 
   componentDidMount() {
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({ loading: true, dataList: [] });
@@ -125,11 +127,20 @@ export default class ViewConnector extends React.PureComponent {
     );
   };
 
+  backClick = () =>{
+    NavigationActions.goBack();
+    return false;
+  }
+
+
   refdataClick = (value) => {
-    NavigationActions.navigate('LeadList', { ref: value });
+    if(Helper.nullStringCheck(value) === false){
+      NavigationActions.navigate('LeadList', { ref: value,flag:1,backScreen:'ViewConnector' });
+    }
   };
 
   componentWillUnMount() {
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -286,6 +297,7 @@ export default class ViewConnector extends React.PureComponent {
     const { searchQuery, enableSearch } = this.state;
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders showBack title={'View Connector'} />

@@ -392,6 +392,7 @@ export default class DialerCalling extends React.PureComponent {
     } = this.state;
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         absolute={
           <>
             {callTrack === 1 ? (

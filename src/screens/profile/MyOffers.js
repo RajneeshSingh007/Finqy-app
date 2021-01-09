@@ -87,11 +87,11 @@ export default class MyOffers extends React.PureComponent {
             type: type,
           });
         } else {
-          this.setState({ loading: false });
+          this.setState({ loading: false,userData:parseda});
         }
       },
-      () => {
-        this.setState({ loading: false });
+      (e) => {
+        this.setState({ loading: false,userData:parseda});
       },
     );
   };
@@ -164,6 +164,7 @@ export default class MyOffers extends React.PureComponent {
   render() {
     return (
       <CScreen
+      refresh={() => this.fetchData(2, this.state.userData)}
         absolute={<Loader isShow={this.state.fullLoader} />}
         body={
           <>

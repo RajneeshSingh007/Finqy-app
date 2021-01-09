@@ -27,6 +27,8 @@ import FileUploadForm from '../finorbit/FileUploadForm';
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
+const ITEM_LIMIT = 5;
+
 export default class LeadList extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -88,7 +90,7 @@ export default class LeadList extends React.PureComponent {
       quotemailData: '',
       quotemail: '',
       type: '',
-      itemSize: 5,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -98,7 +100,10 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: '',
       downloadModal: false,
       editThird: null,
-      pageNumbers:[1,2,3,4,5]
+      pageNumbers:[1,2,3,4,5],
+      activeNumber:1,
+      flag:2,
+      backScreen:null
     };
   }
 
@@ -113,11 +118,16 @@ export default class LeadList extends React.PureComponent {
         this.setState({userData: userData});
         Pref.getVal(Pref.USERTYPE, v => {
           this.setState({type: v}, () => {
+            const {navigation} = this.props;
+            const ref = navigation.getParam('ref', null);
+            var flag = navigation.getParam('flag', 2);
+            if(v !== 'referral'){
+              flag = 1;
+            }
+            const backScreen = navigation.getParam('backScreen', null);
             Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                const {navigation} = this.props;
-                const ref = navigation.getParam('ref', null);
-                this.fetchData(ref);
+              this.setState({type:v, token: value,backScreen:backScreen, flag:flag,ref:ref}, () => {
+                this.fetchData();
               });
             });
           });
@@ -127,12 +137,21 @@ export default class LeadList extends React.PureComponent {
   }
 
   backclick = () => {
-    const {modalvis} = this.state;
+    const {modalvis, backScreen, flag} = this.state;
     if (modalvis) {
       this.setState({modalvis: false, pdfurl: ''});
       return true;
     }
-    return false;
+    if(flag === 1 && Helper.nullStringCheck(backScreen) === false){
+      this.setState({backScreen:null});
+      NavigationActions.navigate(backScreen);
+      return true;
+    }else{
+      NavigationActions.goBack();
+      BackHandler.removeEventListener('hardwareBackPress', this.backclick);
+      return true;
+    }
+    //return false;
   };
 
   componentWillUnMount() {
@@ -141,18 +160,18 @@ export default class LeadList extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = ref => {
+  fetchData = ()=> {
     //referral
     this.setState({loading: true});
-    const {type} = this.state;
+    const {type,ref,flag} = this.state;
     const {refercode, username} = this.state.userData;
     const body = JSON.stringify({
       refercode: ref === null ? refercode : ref,
       team_user: username,
-      flag: type === 'referral' ? 2 : 1,
+      flag: flag,
       type: type,
     });
-    //console.log('body', body)
+    console.log('body', body)
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,
@@ -193,7 +212,7 @@ export default class LeadList extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 5 ? 5 : sort.length,
+              itemSize: sort.length >= ITEM_LIMIT ? ITEM_LIMIT : sort.length,
             });
           } else {
             this.setState({
@@ -204,7 +223,7 @@ export default class LeadList extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      () => {
+      (e) => {
         this.setState({loading: false});
       },
     );
@@ -416,7 +435,7 @@ export default class LeadList extends React.PureComponent {
                     <IconChooser
                       name={`download`}
                       size={20}
-                      color={`#9f9880`}
+                      color={`#0270e3`}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -684,7 +703,7 @@ export default class LeadList extends React.PureComponent {
     let plus = itemSize;
     let slicedArray = [];
     if (mode) {
-      plus += 5;
+      plus += ITEM_LIMIT;
       if (itemSize < clone.length) {
         if (plus > clone.length) {
           const rem = clone.length - itemSize;
@@ -694,15 +713,15 @@ export default class LeadList extends React.PureComponent {
         this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
-      if (itemSize <= 5) {
+      if (itemSize <= ITEM_LIMIT) {
         plus = 0;
       } else {
-        plus -= 5;
+        plus -= ITEM_LIMIT;
       }
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
         if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus});
+          this.setState({dataList: slicedArray, itemSize: plus === 0 ? ITEM_LIMIT : plus});
         }
       }
     }
@@ -782,34 +801,46 @@ export default class LeadList extends React.PureComponent {
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 5);
+      const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 5});
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: ITEM_LIMIT});
   };
 
 
   pageNumberClicked = (no) =>{
-    const {cloneList} = this.state;
-    let pageNumbers = this.state.pageNumbers;
+    const {cloneList,activeNumber,itemSize} = this.state;
+    let pageNumbers = [];
     const clone = JSON.parse(JSON.stringify(cloneList));
-    const multiply = Number(no*5-1);
-    const data = this.returnData(clone, multiply, multiply+5);
-    const checkMultiple = Math.round(Number(no % 5));
-    if(checkMultiple === 0){
-      pageNumbers = [no+1,no+2, no+3, no+4, no+5];
-    }else{
-
+    var range = Helper.pageRange(itemSize-2, itemSize+3);
+    var start = range.start;
+    var end = range.end;
+    const data = this.returnData(clone, start, end);
+    for(let i=start-1; i<end; i++){
+      pageNumbers.push(start++);
     }
-    this.setState({dataList: data,itemSize:multiply,pageNumbers:pageNumbers});
+    this.setState({dataList: data,itemSize:end,pageNumbers:pageNumbers,activeNumber:no});
   }
 
   pageNumberView = () =>{
-    const {pageNumbers} = this.state;
-    return                 <View styleName='horizontal sm-gutter'>
-    {pageNumbers.map(item => {
-      return <TouchableWithoutFeedback onPress={() => this.pageNumberClicked(item)}>
-        <View styleName='sm-gutter'><Title style={styles.itemtopText}>{item}</Title></View>
+    const {pageNumbers, activeNumber} = this.state;
+    const viewStyle = {
+      alignContent:'center',
+      flexDirection:'row',
+      marginStart:4,
+      marginEnd:4,
+    };
+    const parentStyle = {
+      marginStart:4,
+      marginEnd:4
+    }
+    return                 <View styleName='horizontal' style={parentStyle}>
+    {Lodash.map(pageNumbers, (item, index) => {
+      return index === pageNumbers-1 ? null : <TouchableWithoutFeedback onPress={() => this.pageNumberClicked(item)}>
+        <View style={viewStyle}><Title style={StyleSheet.flatten([styles.itemtopText,{
+          color:activeNumber !== item ? '#656259' : '#0270e3',
+          fontSize:15
+        }])}>{item}</Title></View>
       </TouchableWithoutFeedback>
     })}
   </View>
@@ -817,14 +848,18 @@ export default class LeadList extends React.PureComponent {
   }
 
   render() {
-    const {searchQuery, enableSearch, editThird} = this.state;
+    const {searchQuery, enableSearch, editThird, flag,type} = this.state;
     return (
       <CScreen
+        refresh={() =>{
+          this.fetchData();
+        }}
         body={
           <>
             <LeftHeaders
+              backClicked={this.backclick}
               showBack
-              title={'My Lead Records'}
+              title={type === '' ? '' : type  !== 'referaal' ? 'My Lead Records' : flag === 2 ? 'My Lead Records' : 'Lead Records'}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -1056,6 +1091,7 @@ export default class LeadList extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+                //enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}

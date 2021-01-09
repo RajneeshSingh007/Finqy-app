@@ -352,6 +352,7 @@ export default class Training extends React.PureComponent {
     const { showFilter } = this.state;
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders

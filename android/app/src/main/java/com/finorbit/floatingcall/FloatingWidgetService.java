@@ -9,16 +9,20 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -45,6 +49,7 @@ public class FloatingWidgetService extends Service {
     private View mFloatingWidgetView;
     private WindowManager.LayoutParams params;
     private ImageView actionClick;
+    private int mWidth;
 
 
     public FloatingWidgetService() {
@@ -92,7 +97,9 @@ public class FloatingWidgetService extends Service {
 
 
     private void addFloatingWidgetView(LayoutInflater inflater) {
-        mFloatingWidgetView = inflater.inflate(R.layout.floating_caller, null);
+        if(mFloatingWidgetView == null){
+            mFloatingWidgetView = inflater.inflate(R.layout.floating_caller, null);
+        }
         actionClick = mFloatingWidgetView.findViewById(R.id.actionClick);
         actionClick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +112,20 @@ public class FloatingWidgetService extends Service {
         params.x = 0;
         params.y = 100;
         mWindowManager.addView(mFloatingWidgetView, params);
+        Display display = mWindowManager.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        final RelativeLayout layout = (RelativeLayout) mFloatingWidgetView.findViewById(R.id.rootContainer);
+        ViewTreeObserver vto = layout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int width = layout.getMeasuredWidth();
+                mWidth = size.x - width;
+            }
+        });
     }
 
     private WindowManager.LayoutParams setViewManagerParams() {
@@ -133,32 +154,22 @@ public class FloatingWidgetService extends Service {
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-
-                        //remember the initial position.
                         initialX = params.x;
                         initialY = params.y;
-
-                        //get the touch location
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
-
                         lastAction = event.getAction();
                         return true;
                     case MotionEvent.ACTION_UP:
-                        //As we implemented on touch listener with ACTION_MOVE,
-                        //we have to check if the previous action was ACTION_DOWN
-                        //to identify if the user clicked the view or not.
-//                        if (lastAction == MotionEvent.ACTION_DOWN) {
-//                            gotoInsideApp();
-//                        }
-                        lastAction = event.getAction();
+//                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
+//                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
+//                        mWindowManager.updateViewLayout(mFloatingWidgetView, params);
+//                        lastAction = event.getAction();
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         //Calculate the X and Y coordinates of the view.
                         params.x = initialX + (int) (event.getRawX() - initialTouchX);
                         params.y = initialY + (int) (event.getRawY() - initialTouchY);
-
-                        //Update the layout with new X & Y coordinate
                         mWindowManager.updateViewLayout(mFloatingWidgetView, params);
                         lastAction = event.getAction();
                         return true;

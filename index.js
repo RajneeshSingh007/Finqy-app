@@ -64,7 +64,7 @@ const options = {
     deploymentKey: codepushKey,
 };
 
-AppRegistry.registerHeadlessTask('ServiceHandler', () => serviceHandler);
+//AppRegistry.registerHeadlessTask('ServiceHandler', () => ServiceHandler);
 
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 

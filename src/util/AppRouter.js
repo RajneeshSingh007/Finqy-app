@@ -284,11 +284,13 @@ const OtherNav = createDrawerNavigator(
     WebComp: { screen: WebComp },
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
-    TicketNav:{screen:TicketNav},
-    DialerCalling:{screen:DialerCalling},
-    DialerRecords:{screen:DialerRecords},
-    AllMembers:{screen:AllMembers},
-    MemberReport:{screen:MemberReport}  
+    
+    // TicketNav:{screen:TicketNav},
+    // DialerCalling:{screen:DialerCalling},
+    // DialerRecords:{screen:DialerRecords},
+    // AllMembers:{screen:AllMembers},
+    // MemberReport:{screen:MemberReport}  
+ 
   },
   {
     initialRouteName: 'Home',

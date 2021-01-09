@@ -614,6 +614,7 @@ export default class TrackQuery extends React.PureComponent {
     const {detailShow} = this.state;
     return (
       <CScreen
+        refresh={() => this.fetchData(this.state.userData)}
         absolute={
           <>
             {detailShow === true ? (

@@ -1,4 +1,4 @@
-import { Screen, View } from '@shoutem/ui';
+import {Screen, View} from '@shoutem/ui';
 import React from 'react';
 import {
   ScrollView,
@@ -6,15 +6,16 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import { SafeAreaView } from 'react-navigation';
-import { sizeHeight, sizeWidth } from '../../util/Size';
+import {SafeAreaView} from 'react-navigation';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import * as Pref from '../../util/Pref';
 import Footer from '../component/Footer';
 import IconChooser from '../common/IconChooser';
 import ScrollTop from '../common/ScrollTop';
+import PTRView from 'react-native-pull-to-refresh';
 
 export default class CScreen extends React.Component {
   constructor(props) {
@@ -24,11 +25,11 @@ export default class CScreen extends React.Component {
     StatusBar.setBackgroundColor(Pref.WHITE, false);
     StatusBar.setBarStyle('dark-content');
     this.backClick = this.backClick.bind(this);
+    this.onRefreshed = this.onRefreshed.bind(this);
     this.state = {
-      scrollreset: false
-    }
+      scrollreset: false,
+    };
   }
-
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
@@ -38,12 +39,11 @@ export default class CScreen extends React.Component {
   backClick = () => {
     this.scrollToTop();
     return false;
-  }
+  };
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
-
 
   componentWillReceiveProps(nextProps) {
     //console.log(nextProps.scrollreset)
@@ -58,8 +58,8 @@ export default class CScreen extends React.Component {
       //console.log('ref',ref)
       if (ref && ref.scrollTo) {
         const timer = setTimeout(() => {
-          ref.scrollTo({ x: 0, y: 0, animated: false });
-          if(timer){
+          ref.scrollTo({x: 0, y: 0, animated: false});
+          if (timer) {
             clearTimeout(timer);
           }
         }, 150);
@@ -67,47 +67,78 @@ export default class CScreen extends React.Component {
     }
   };
 
+  onRefreshed = () => {
+    const {refresh = () => {}} = this.props;
+    return new Promise(resolve => {
+      refresh();
+      resolve();
+    });
+  };
+
   render() {
-    const { body, scrollEnable = true, absolute = null, showfooter = true, bgColor = Pref.WHITE } = this.props;
+    const {
+      body,
+      scrollEnable = true,
+      absolute = null,
+      showfooter = true,
+      bgColor = Pref.WHITE,
+    } = this.props;
     return (
-      <SafeAreaView style={StyleSheet.flatten([styles.mainContainer, {
-        backgroundColor: bgColor
-      }])} forceInset={{ top: 'never' }}>
-        <Screen style={StyleSheet.flatten([styles.mainContainer, {
-          backgroundColor: bgColor
-        }])}>
-          {scrollEnable === true ? (
-            // <KeyboardAvoidingView
-            //   style={{
-            //     flex: 1,
-            //     flexDirection: 'column',
-            //     justifyContent: 'center',
-            //   }}
-            //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
-            //   enabled
-            //   keyboardVerticalOffset={150}>
-            <ScrollView
-              ref={this.scrollViewRef}
-              style={styles.scroller}
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps={'handled'}
-              contentContainerStyle={{
-                flexGrow:1
-              }}>
-              {body}
-              {showfooter === true ?
-                <View>
-                  <ScrollTop onPress={this.scrollToTop} />
-                  <Footer />
-                </View> : null}
-            </ScrollView>
-          ) : (
+      <SafeAreaView
+        style={StyleSheet.flatten([
+          styles.mainContainer,
+          {
+            backgroundColor: bgColor,
+          },
+        ])}
+        forceInset={{top: 'never'}}>
+        <View style={styles.mainContainer}>
+          <Screen
+            style={StyleSheet.flatten([
+              styles.mainContainer,
+              {
+                backgroundColor: bgColor,
+              },
+            ])}>
+            {scrollEnable === true ? (
+              // <KeyboardAvoidingView
+              //   style={{
+              //     flex: 1,
+              //     flexDirection: 'column',
+              //     justifyContent: 'center',
+              //   }}
+              //   behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+              //   enabled
+              //   keyboardVerticalOffset={150}>
+              <ScrollView
+                ref={this.scrollViewRef}
+                style={styles.scroller}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                keyboardShouldPersistTaps={'handled'}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                }}
+                refreshControl={
+                  <PTRView onRefresh={this.onRefreshed} colors={Pref.RED}>
+                    {null}
+                  </PTRView>
+                }>
+                {body}
+                {showfooter === true ? (
+                  <View>
+                    <ScrollTop onPress={this.scrollToTop} />
+                    <Footer />
+                  </View>
+                ) : null}
+              </ScrollView>
+            ) : (
               //  </KeyboardAvoidingView>
               body
             )}
-          {absolute}
-        </Screen>
+            {absolute}
+          </Screen>
+        </View>
       </SafeAreaView>
     );
   }
@@ -119,14 +150,14 @@ const styles = StyleSheet.create({
     //position: 'absolute',
     //right: 0,
     //bottom: 0,
-    flexDirection: 'row-reverse'
+    flexDirection: 'row-reverse',
   },
-  scroller: { flex: 1 },
+  scroller: {flex: 1},
   mainContainer: {
     flex: 1,
     backgroundColor: Pref.WHITE,
   },
   icon: {
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
