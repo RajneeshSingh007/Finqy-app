@@ -58,25 +58,41 @@ export default class DialerCalling extends React.PureComponent {
       callTrack: -1,
       productList: '',
       progressLoader: false,
+      editEnabled:false
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    Helper.requestPermissionsDialer();
     AppState.addEventListener('change', this._handleAppStateChange);
+    
     const {navigation} = this.props;
+    const activeCallerItem = navigation.getParam('data', dummyJSON);
+    const editEnabled = navigation.getParam('editEnabled', false);
+
+    if(editEnabled === false){
+      try {
+        Helper.requestPermissionsDialer();
+      } catch (error) {
+        
+      }
+    }
+
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true, dataList: []});
+      this.setState({loading: true, dataList: [],editEnabled:true,callTrack:-1});
     });
+    
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
-        this.setState({userData: userData});
+        this.setState({userData: userData,editEnabled:editEnabled,activeCallerItem:activeCallerItem,progressLoader:false});
         Pref.getVal(Pref.USERTYPE, v => {
+          this.getProducts();
           this.setState({type: v}, () => {
             Pref.getVal(Pref.saveToken, value => {
               this.setState({token: value}, () => {
-                this.fetchData();
+                if(editEnabled === false){
+                  this.fetchData();
+                }
               });
             });
           });
@@ -146,7 +162,6 @@ export default class DialerCalling extends React.PureComponent {
         this.setState({loading: false});
       },
     );
-    this.getProducts();
   };
 
   getProducts = () => {
@@ -164,13 +179,22 @@ export default class DialerCalling extends React.PureComponent {
   };
 
   backClick = () => {
-    const {callTrack} = this.state;
+    const {callTrack, editEnabled,activeCallerItem} = this.state;
     if (callTrack === 1) {
-      return true;
+      if(editEnabled){
+        NavigationActions.navigate("DialerRecords", {active:-1});
+        BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+      }else{
+        BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+        return true;    
+      }
+    }else{
+      NavigationActions.goBack();
+      BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     }
     this.setState({callTrack:-1});
-    NavigationActions.goBack();
-    return true;
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    return true;  
   };
 
   startCalling = (item, isWhatsapp = false, videocall = false) => {
@@ -180,7 +204,8 @@ export default class DialerCalling extends React.PureComponent {
         if(isWhatsapp === true){
           SendIntentAndroid.whatsappPhone({
             isvideo:videocall,
-            phone:mobile
+            phone:'7208828396'
+            //mobile
           }).then(result =>{
             if(result === 'no permission granted'){
               Helper.requestPermissionsDialer();
@@ -378,8 +403,13 @@ export default class DialerCalling extends React.PureComponent {
 
   formResult = (status, message) => {
     Helper.showToastMessage(message, status === true ? 1 : 0);
-    this.setState({callTrack: -1, activeCallerItem: dummyJSON});
-    this.fetchData();
+    const {editEnabled} = this.state;
+    if(editEnabled === true){
+      NavigationActions.navigate("DialerRecords", {active:-1});
+    }else{
+      this.setState({callTrack: -1, activeCallerItem: dummyJSON});
+      this.fetchData();  
+    }
   };
 
   render() {
@@ -389,10 +419,15 @@ export default class DialerCalling extends React.PureComponent {
       productList,
       callTrack,
       token,
+      editEnabled
     } = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchData()}
+        refresh={() => {
+          if(editEnabled === true){
+            this.fetchData();
+          }
+        }}
         absolute={
           <>
             {callTrack === 1 ? (
@@ -402,8 +437,8 @@ export default class DialerCalling extends React.PureComponent {
                     <>
                       <LeftHeaders
                         showBack
-                        title={'Customer Details'}
-                        backClicked={() => {}}
+                        title={ editEnabled === true ? 'Edit Details' : 'Customer Details'}
+                        backClicked={ () =>this.backClick()}
                         bottomBody={
                           <>
                             {/* <View styleName="md-gutter">
@@ -418,6 +453,7 @@ export default class DialerCalling extends React.PureComponent {
                       />
 
                       <CallerForm
+                        editEnabled={this.state.editEnabled}
                         userData={this.state.userData}
                         productList={productList}
                         customerItem={this.state.activeCallerItem}
@@ -450,7 +486,7 @@ export default class DialerCalling extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'Start Calling'}
+              title={editEnabled === true ? '' : 'Start Calling'}
               backClicked={() => NavigationActions.goBack()}
               bottomBody={
                 <>

@@ -33,17 +33,8 @@ export default class DialerRecords extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: [
-        'Sr. No.',
-        'Name',
-        'Number',
-        'Call Date',
-        'Call Duration',
-        'Status',
-        'Remarks',
-        ''
-      ],
-      widthArr: [60, 120, 110, 110, 70, 120, 140,60],
+      tableHead: [],
+      widthArr: [],
       cloneList: [],
       type: '',
       itemSize: 50,
@@ -60,12 +51,13 @@ export default class DialerRecords extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
         const active = navigation.getParam("active", 1);
-        this.setState({ userData: userData });
+        //console.log('active', active)
+        this.setState({ userData: userData,active:active });
         Pref.getVal(Pref.USERTYPE, (v) => {
           this.setState({ type: v }, () => {
             Pref.getVal(Pref.saveToken, (value) => {
               this.setState({ token: value }, () => {
-                this.fetchData(active);
+                this.fetchData();
               });
             });
           });
@@ -79,15 +71,15 @@ export default class DialerRecords extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = (active) => {
+  fetchData = () => {
     this.setState({ loading: true });
-    const { team_id,id } = this.state.userData;
+    const {active,userData} = this.state;
+    const { team_id,id } = userData;
     const body = JSON.stringify({
       teamid: team_id,
       userid: id,
       active: active,
     });
-    //console.log('body', body)
     Helper.networkHelperTokenPost(
       Pref.DIALER_LEAD_RECORD,
       body,
@@ -97,6 +89,7 @@ export default class DialerRecords extends React.PureComponent {
         const { data, status } = result;
         if (status) {
           if (data.length > 0) {
+            const findUsername = Lodash.find(data, io => Helper.nullStringCheck(io.username) === false);
             const sorting = data.sort((a, b) => {
               const splita = a.updated_at.split(/\s/g);
               const splitb = b.updated_at.split(/\s/g);
@@ -110,7 +103,41 @@ export default class DialerRecords extends React.PureComponent {
             });
             const sort = sorting.reverse();
             const { itemSize } = this.state;
+            let tableHead = [];
+            let widthArr = [];
+            
+            if(Helper.nullCheck(findUsername) === true){
+              tableHead = [
+                'Sr. No.',
+                'Name',
+                'Number',
+                'Call Date',
+                'Call Duration',
+                'Status',
+                'Remarks',
+                ''
+              ];
+              widthArr = [60, 120, 110, 110, 70, 120, 140,60];
+            }else {
+              tableHead = [
+                'Sr. No.',
+                'Name',
+                'Number',
+                'Call Date',
+                'Call Duration',
+                'Status',
+                'Remarks',
+                'Member Name',
+                'Member Mobile',
+                'Member Refercode',
+                ''
+              ];
+              widthArr = [60, 120, 110, 110, 70, 120, 140,120,120,120,60];
+            }
+
             this.setState({
+              widthArr:widthArr,
+              tableHead:tableHead,
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
                 0,
@@ -135,7 +162,7 @@ export default class DialerRecords extends React.PureComponent {
   };
 
   editLead = (item) =>{
-    //NavigationActions.navigate('')
+    NavigationActions.navigate('DialerCalling', {data:item, editEnabled:true})
   }
 
   /**
@@ -161,6 +188,25 @@ export default class DialerRecords extends React.PureComponent {
             }
             rowData.push(Number(item.tracking_type) === 0 ? `Contactable\n${item.tracking_type_detail}` : `Non-Contactable\n${item.tracking_type_detail}`);
             rowData.push(item.remarks);
+
+            if(Helper.nullCheck(item.username) === false){
+              rowData.push(item.username);
+            }else{
+              rowData.push('');
+            }
+
+            if(Helper.nullCheck(item.mobile) === false){
+              rowData.push(item.mobile);
+            }else{
+              rowData.push('');
+            }
+
+            if(Helper.nullCheck(item.refercode) === false){
+              rowData.push(item.refercode);
+            }else{
+              rowData.push('');
+            }
+
             const editView = (value) => (
               <View
                 style={{
@@ -186,6 +232,8 @@ export default class DialerRecords extends React.PureComponent {
             }else{
               rowData.push('');
             }
+            
+
             dataList.push(rowData);
           }
         }
@@ -259,7 +307,14 @@ export default class DialerRecords extends React.PureComponent {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const result = Lodash.filter(clone, (it) => {
         const { name, mobile, product } = it;
-        return name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery);
+        if(Helper.nullCheck(it.username) === true){
+          return name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery);
+        }else{
+          return name && name.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || product && product.trim().toLowerCase().includes(trimquery) 
+          || it.username && it.username.trim().toLowerCase().includes(trimquery)
+          || it.mobile && it.mobile.trim().toLowerCase().includes(trimquery)
+          || it.refercode && it.refercode.trim().toLowerCase().includes(trimquery);
+        }
       });
       const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
@@ -279,19 +334,15 @@ export default class DialerRecords extends React.PureComponent {
   }
 
   render() {
-    const { searchQuery, enableSearch } = this.state;
+    const { searchQuery, enableSearch, active } = this.state;
     return (
       <CScreen
-        refresh={() => {
-          const {navigation} = this.props;
-          const active = navigation.getParam("active", 1);
-          this.fetchData(active);
-        }}
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders
               showBack
-              title={'My Lead Records'}
+              title={active === 1 ? 'My Lead Records': 'Team Lead Records'}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -358,7 +409,7 @@ export default class DialerRecords extends React.PureComponent {
               />
             ) : (
                   <View style={styles.emptycont}>
-                    <ListError subtitle={'No Lead Records Found...'} />
+                    <ListError subtitle={ active === -1 ? 'No Team Lead Records Found...': 'No Lead Records Found...'} />
                   </View>
                 )}
             {this.state.dataList.length > 0 ? (

@@ -89,13 +89,12 @@ export default class AllMembers extends React.PureComponent {
 
   fetchData = () => {
     this.setState({ loading: true });
-    const { team_id } = this.state.userData;
+    const { id } = this.state.userData;
     const body = JSON.stringify({
-      teamid: team_id,
+      teamid: id,
       userid: "",
       flag: 0,
     });
-    //console.log('body', body)
     Helper.networkHelperTokenPost(
       Pref.DIALER_GET_MEMBERS,
       body,

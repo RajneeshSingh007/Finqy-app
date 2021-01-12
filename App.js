@@ -31,7 +31,9 @@ class App extends React.PureComponent {
 
   componentDidMount() {
     this.checkVersionForUpdate();
-    AppState.addEventListener('change', this._handleAppStateChange);
+    
+    //AppState.addEventListener('change', this._handleAppStateChange);
+    
     //this.syncImmediate();
 
     Crashes.setEnabled(true);
@@ -78,16 +80,17 @@ class App extends React.PureComponent {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      //stopService();
+      stopService();
     }else{
-      //enableCallModule(true);
+      enableCallModule(true);
     }
     this.setState({appState: nextAppState});
   };
 
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    //AppState.removeEventListener('change', this._handleAppStateChange);
+    
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }

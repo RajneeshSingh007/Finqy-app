@@ -286,10 +286,10 @@ const OtherNav = createDrawerNavigator(
     PayoutPolicy:{screen:PayoutPolicy},
     
     // TicketNav:{screen:TicketNav},
-    // DialerCalling:{screen:DialerCalling},
-    // DialerRecords:{screen:DialerRecords},
-    // AllMembers:{screen:AllMembers},
-    // MemberReport:{screen:MemberReport}  
+    DialerCalling:{screen:DialerCalling},
+    DialerRecords:{screen:DialerRecords},
+    AllMembers:{screen:AllMembers},
+    MemberReport:{screen:MemberReport}  
  
   },
   {

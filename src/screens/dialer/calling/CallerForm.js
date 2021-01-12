@@ -3,7 +3,7 @@ import {StyleSheet, PermissionsAndroid, Platform} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {Colors, Button} from 'react-native-paper';
+import {Colors, Button, Portal} from 'react-native-paper';
 import {sizeHeight, sizeWidth} from '../../../util/Size';
 import moment from 'moment';
 import AnimatedInputBox from '../../component/AnimatedInputBox';
@@ -11,6 +11,7 @@ import NewDropDown from '../../component/NewDropDown';
 import OptionsDialog from '../../component/OptionsDialog';
 import CallLogs from 'react-native-call-log';
 import NavigationActions from '../../../util/NavigationActions';
+import FlashMessage from "react-native-flash-message";
 
 let trackTypeList = [
   {
@@ -42,6 +43,7 @@ let trackTypeDetailNonContactableList = [
 export default class CallerForm extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.flashMessage = React.createRef();
     this.formSubmit = this.formSubmit.bind(this);
     this.contactDialogClicked = this.contactDialogClicked.bind(this);
     this.noncontactDialogClicked = this.noncontactDialogClicked.bind(this);
@@ -61,58 +63,86 @@ export default class CallerForm extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {editItemRestore} = this.props;
+    const {editItemRestore,editEnabled = false,customerItem} = this.props;
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
     }
-    const {customerItem} = this.props;
+    
+    //console.log('customerItem',customerItem)
+    
     const {mobile = '', name = ''} = customerItem;
-    this.setState({name: name, mobile: mobile});
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
-        title: 'Permission Required',
-        message: 'We required to access your call logs',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      }).then(result => {
-        if (result === 'granted') {
-          let numberArray = [];
-          if (Helper.nullStringCheck(mobile) === false) {
-            let trimnumber = mobile.trim();
-            numberArray.push(`+91${trimnumber}`);
-            numberArray.push(trimnumber);
-            numberArray.push(
-              `${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                5,
-                trimnumber.length,
-              )}`,
-            );
-            numberArray.push(`+91 ${trimnumber}`);
-            numberArray.push(
-              `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                5,
-                trimnumber.length,
-              )}`,
-            );
-            //console.log('numberArray', numberArray);
-            CallLogs.load(-1, {
-              phoneNumbers: numberArray,
-            }).then(c => {
-              let callDur = 0;
-              if (c.length > 0) {
-                const {duration} = c[0];
-                if (callDur > 60) {
-                  callDur = Number(duration / 60).toPrecision(3);
+
+    //ask permissions
+    if(editEnabled === false){
+      this.setState({name: name, mobile: mobile});
+      if (Platform.OS === 'android') {
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
+          title: 'Permission Required',
+          message: 'We required to access your call logs',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }).then(result => {
+          if (result === 'granted') {
+            let numberArray = [];
+            if (Helper.nullStringCheck(mobile) === false) {
+              let trimnumber = mobile.trim();
+              numberArray.push(`+91${trimnumber}`);
+              numberArray.push(trimnumber);
+              numberArray.push(
+                `${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                  5,
+                  trimnumber.length,
+                )}`,
+              );
+              numberArray.push(`+91 ${trimnumber}`);
+              numberArray.push(
+                `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                  5,
+                  trimnumber.length,
+                )}`,
+              );
+              //console.log('numberArray', numberArray);
+              CallLogs.load(-1, {
+                phoneNumbers: numberArray,
+              }).then(c => {
+                let callDur = 0;
+                if (c.length > 0) {
+                  const {duration} = c[0];
+                  if (callDur > 60) {
+                    callDur = Number(duration / 60).toPrecision(3);
+                  }
                 }
-              }
-              this.setState({
-                callLogs: c,
-                callDur: callDur,
+                this.setState({
+                  callLogs: c,
+                  callDur: callDur,
+                });
               });
-            });
+            }
           }
-        }
-      });
+        });
+      }
+    }else{
+      let trackingType = '';
+      let trackingDetail = '';
+      let product = '';
+      let remarks = '';
+      if(Helper.nullStringCheck(customerItem.tracking_type_detail) === false){
+        trackingDetail = customerItem.tracking_type_detail;
+      }
+
+      if(Helper.nullStringCheck(customerItem.tracking_type) === false){
+        trackingType = customerItem.tracking_type === "0" ? 'Contactable' : 'Non-Contactable';
+      }
+
+      if(Helper.nullStringCheck(customerItem.product) === false){
+        product = customerItem.product;
+      }
+
+      if(Helper.nullStringCheck(customerItem.remarks) === false){
+        remarks = customerItem.remarks;
+      }
+
+      this.setState({name: name, mobile: mobile,trackingType:trackingType,trackingDetail:trackingDetail,product:product,remarks:remarks});
     }
   }
 
@@ -131,10 +161,23 @@ export default class CallerForm extends React.PureComponent {
     this.setState({trackingDetail: value, showNonContactDialog: false});
   };
 
+  showalertMessage = (msg) =>{
+    if(this.flashMessage.current && this.flashMessage.current.showMessage){
+      this.flashMessage.current.showMessage({
+        message: msg,
+        type: "danger",
+        icon:'danger',
+        duration: 7000,
+        animated:true,
+        floating:true,    
+      })
+    }
+  }
+
   formSubmit = () => {
-    const {customerItem, token, userData} = this.props;
+    const {customerItem, token, userData, editEnabled = false} = this.props;
     if ((customerItem === null || token == null, userData == null)) {
-      alert('Something went wrong');
+      this.showalertMessage('Something went wrong!')
       return false;
     }
     let id = '',
@@ -164,26 +207,28 @@ export default class CallerForm extends React.PureComponent {
     let checkData = true;
     if (name === '') {
       checkData = false;
-      alert('Name empty');
+      this.showalertMessage('Name empty')
+      //alert('Name empty');
     } else if (mobile === '') {
       checkData = false;
-      alert('Mobile empty');
+      this.showalertMessage('Mobile empty')
     } else if (
-      mobile.length < 10 ||
-      mobile === '9876543210' ||
-      mobile === '0000000000' ||
-      mobile === '1234567890'
+      mobile.length < 10 
+      //|| mobile === '9876543210' ||
+      //mobile === '0000000000' ||
+      //mobile === '1234567890'
     ) {
       errorData = false;
-      Helper.showToastMessage('Invalid mobile number', 0);
-    } else if (trackingType === '') {
+      this.showalertMessage('Invalid mobile number')
+    }
+     else if (trackingType === '') {
       checkData = false;
-      alert('Please, Select Status');
+      this.showalertMessage('Please, Select Status')
     }
     //trackingType == 'Contactable' && trackingDetail === 'Interested' &&
     else if (product === '') {
       checkData = false;
-      alert('Please, Select Product');
+      this.showalertMessage('Please, Select Product')
     }
     // else if (remarks === '') {
     //   checkData = false;
@@ -224,6 +269,7 @@ export default class CallerForm extends React.PureComponent {
       body.callDur = callDur;
       body.name = name;
       body.mobile = mobile;
+      body.editmode = editEnabled === true ? "1" : "0";
 
       let formName = product
         .trim()
@@ -263,17 +309,18 @@ export default class CallerForm extends React.PureComponent {
                 Pref.methodPost,
                 token,
                 result => {
-                  //console.log('results', result);
+                  console.log('results', result);
                   const {response_header} = result;
                   const {res_type} = response_header;
                   if (res_type === 'success') {
                     this.props.startLoader(false, 0);
                     NavigationActions.navigate('Finish', {
-                      top: 'Customer Details',
+                      top: editEnabled === true ? 'Edit Details' : 'Customer Details',
                       red: 'Success',
-                      grey: 'Lead uploaded successfully',
+                      grey: `Lead ${editEnabled === true ?'updated' : 'uploaded'} successfully`,
                       blue: 'Go back',
-                      back: 'DialerCalling',
+                      back: editEnabled === true ? 'DialerRecords' : 'DialerCalling',
+                      options: editEnabled === true ? {active:-1} : {}
                     });
                   } else {
                     this.props.startLoader(false, -1);
@@ -281,7 +328,7 @@ export default class CallerForm extends React.PureComponent {
                   }
                 },
                 e => {
-                  //console.log(e);
+                  console.log(e);
                   this.props.startLoader(false, -1);
                   this.props.formResult(false, 'Something went wrong!');
                 },
@@ -296,7 +343,7 @@ export default class CallerForm extends React.PureComponent {
           }
         },
         e => {
-          //console.log(e);
+          console.log(e);
           this.props.startLoader(false, -1);
           this.props.formResult(false, 'Something went wrong!');
         },
@@ -404,6 +451,10 @@ export default class CallerForm extends React.PureComponent {
             </Button>
           </View>
         </View>
+      
+        <Portal>
+        <FlashMessage  position='bottom' ref={this.flashMessage}/>
+        </Portal>
       </>
     );
   }

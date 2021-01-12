@@ -15,6 +15,7 @@ const FinishScreen = (prop) => {
   const blueText = navigation.getParam('blue', 'Back to main menu');
   const back = navigation.getParam('back', null);
   const profilerefresh = navigation.getParam('profilerefresh', -1);
+  const options = navigation.getParam('options', {});
 
   const clicked = () => {
     if (profilerefresh === 1) {
@@ -26,7 +27,7 @@ const FinishScreen = (prop) => {
       } else if (back !== '' && back === 'back') {
         NavigationActions.goBack();
       } else if (back !== '' && back !== 'back') {
-        NavigationActions.navigate(back);
+        NavigationActions.navigate(back,options);
       } else {
         NavigationActions.goBack();
       }

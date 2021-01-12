@@ -1,28 +1,25 @@
 import React from 'react';
-import { StyleSheet, BackHandler, TouchableWithoutFeedback } from 'react-native';
-import { Title, View } from '@shoutem/ui';
+import {StyleSheet, BackHandler} from 'react-native';
+import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import { ActivityIndicator, Searchbar, List, FAB } from 'react-native-paper';
-import { sizeHeight, sizeWidth } from '../../../util/Size';
-import Lodash from 'lodash';
+import {ActivityIndicator, List, FAB, Button, Portal} from 'react-native-paper';
+import {sizeHeight, sizeWidth} from '../../../util/Size';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
 import CommonTable from '../../common/CommonTable';
-import RNFetchBlob from 'rn-fetch-blob';
-import IconChooser from '../../common/IconChooser';
 import CScreen from './../../component/CScreen';
 import NavigationActions from '../../../util/NavigationActions';
-import Download from '../../component/Download';
 import moment from 'moment';
-import DateRangePicker from "react-native-daterange-picker";
+import DateRangePicker from 'react-native-daterange-picker';
 let DATE_FORMAT = 'DD-MM-YYYY';
+import Modal from '../../../util/Modal';
+import AnimatedWithoutInputBox from '../../component/AnimatedWithoutInputBox';
 
 export default class MemberReport extends React.PureComponent {
   constructor(props) {
     super(props);
     this.backClick = this.backClick.bind(this);
-    this.rowClicked = this.rowClicked.bind(this);
     this.filterItemClick = this.filterItemClick.bind(this);
     this.state = {
       dataList: [],
@@ -32,52 +29,49 @@ export default class MemberReport extends React.PureComponent {
       cloneList: [],
       type: '',
       dialerUserData: false,
+      filterModal: false,
+      plDates: '',
+      efDates: '',
+      dateFilter: -1,
+      startDate: null,
+      endDate: null,
+      displayedDate: moment(),
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     const dialerUserData = navigation.getParam('data', []);
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
-    //console.log('dialerUserData', dialerUserData);
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
-        this.setState({ userData: userData, dialerUserData: dialerUserData });
+        const pastStartDate = moment().format(DATE_FORMAT);
+        const pastEndDate = moment()
+          .subtract(7, 'd')
+          .format(DATE_FORMAT);
+        const efStartDate = moment().format(DATE_FORMAT);
+        const plStartDate = moment().format(DATE_FORMAT);
+        const plEndDate = moment()
+          .subtract(1, 'M')
+          .format(DATE_FORMAT);
+
+        this.setState({
+          userData: userData,
+          dialerUserData: dialerUserData,
+          pastStartDate: pastStartDate,
+          pastEndDate: pastEndDate,
+          efStartDate: efStartDate,
+          plStartDate: plStartDate,
+          plEndDate: plEndDate,
+        });
         Pref.getVal(Pref.USERTYPE, v => {
-          this.setState({ type: v }, () => {
+          this.setState({type: v}, () => {
             Pref.getVal(Pref.saveToken, value => {
-              this.setState({ token: value }, () => {
-                const pastStartDate = moment().format(DATE_FORMAT);
-                const pastEndDate = moment()
-                  .subtract(7, 'd')
-                  .format(DATE_FORMAT);
-                const efStartDate = moment().format(DATE_FORMAT);
-                const efEndDate = moment()
-                  .subtract(1, 'M')
-                  .format(DATE_FORMAT);
-                const plStartDate = moment().format(DATE_FORMAT);
-                const plEndDate = moment()
-                  .subtract(1, 'M')
-                  .format(DATE_FORMAT);
-                // console.log(
-                //   pastStartDate,
-                //   pastEndDate,
-                //   efStartDate,
-                //   efEndDate,
-                //   plStartDate,
-                //   plEndDate,
-                // );
-                this.fetchData(
-                  pastStartDate,
-                  pastEndDate,
-                  efStartDate,
-                  efEndDate,
-                  plStartDate,
-                  plEndDate,
-                );
+              this.setState({token: value}, () => {
+                this.fetchData();
               });
             });
           });
@@ -93,30 +87,28 @@ export default class MemberReport extends React.PureComponent {
   }
 
   backClick = () => {
-    const { reportenabled } = this.state;
-    if (reportenabled === true) {
-      NavigationActions.navigate('All Members', { reportenabled: true });
-      return true;
-    }
-    NavigationActions.goBack();
-    return false;
+    NavigationActions.navigate('AllMembers', {reportenabled: true});
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    return true;
   };
 
-  fetchData = (
-    pastStartDate = '',
-    pastEndDate = '',
-    efStartDate = '',
-    efEndDate = '',
-    plStartDate = '',
-    plEndDate = '',
-  ) => {
-    this.setState({ loading: true });
-    const { team_id } = this.state.userData;
-    const dialerUserData = this.state.dialerUserData;
+  fetchData = () => {
+    const {
+      pastStartDate,
+      pastEndDate,
+      efStartDate,
+      efEndDate,
+      plStartDate,
+      plEndDate,
+      userData,
+      dialerUserData,
+    } = this.state;
+    this.setState({loading: true});
+    const {id} = userData;
     const userid = dialerUserData[dialerUserData.length - 1];
     const todaysDate = moment().format(DATE_FORMAT);
     const body = JSON.stringify({
-      teamid: team_id,
+      teamid: id,
       userid: userid,
       flag: 1,
       todaydate: todaysDate,
@@ -135,7 +127,7 @@ export default class MemberReport extends React.PureComponent {
       this.state.token,
       result => {
         //console.log('result', result);
-        const { data, status } = result;
+        const {data, status} = result;
         if (status) {
           if (data.length > 0) {
             this.setState({
@@ -149,17 +141,69 @@ export default class MemberReport extends React.PureComponent {
             });
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
       e => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
       },
     );
   };
 
-  rowClicked = item => {
-    //NavigationActions.navigate('MemberReport', {data: item});
+  dateFilterSubmit = () => {
+    const {endDate, startDate, dateFilter} = this.state;
+    if (startDate != null) {
+      const parse = moment(startDate).format(DATE_FORMAT);
+      let endparse = null;
+      if (endDate != null) {
+        endparse = moment(endDate).format(DATE_FORMAT);
+      } else {
+        endparse = parse;
+      }
+
+      let plDates = '',
+        efDates = '',
+        efStartDate = '',
+        efEndDate = '',
+        plStartDate = '',
+        plEndDate = '';
+      if (dateFilter === 1) {
+        plDates = `${endparse != null ? `${parse} - ${endparse}` : parse}`;
+        plStartDate = parse;
+        plEndDate = endparse === null ? parse : endparse;
+
+        this.setState({
+          dateFilter: -1,
+          endDate: null,
+          startDate: null,
+          plDates: plDates,
+          filterModal: true,
+          plStartDate: plStartDate,
+          plEndDate: plEndDate,
+        });
+      } else if (dateFilter === 2) {
+        efDates = `${endparse != null ? `${parse} - ${endparse}` : parse}`;
+        efStartDate = parse;
+        efEndDate = endparse === null ? parse : endparse;
+
+        this.setState({
+          dateFilter: -1,
+          endDate: null,
+          startDate: null,
+          efDates: efDates,
+          filterModal: true,
+          efStartDate: efStartDate,
+          efEndDate: efEndDate,
+        });
+      }
+    } else {
+      this.setState({
+        dateFilter: -1,
+        endDate: null,
+        startDate: null,
+        filterModal: true,
+      });
+    }
   };
 
   /**
@@ -169,13 +213,7 @@ export default class MemberReport extends React.PureComponent {
    * @param {*} icon
    * @param {*} iconClick
    */
-  renderCircleItem = (
-    count = 0,
-    title = '',
-    icon = 'bell',
-    iconClick = () => { },
-    type = 1,
-  ) => {
+  renderCircleItem = (count = 0, title = '') => {
     return (
       <View
         styleName="md-gutter vertical  v-center h-center"
@@ -283,9 +321,9 @@ export default class MemberReport extends React.PureComponent {
         titleStyle={StyleSheet.flatten([
           styles.accordTitle,
           {
-            color: '#848486',
+            color: '#292929',
             fontWeight: '400',
-            fontSize: 13,
+            fontSize: 14,
           },
         ])}>
         <CommonTable
@@ -298,21 +336,127 @@ export default class MemberReport extends React.PureComponent {
     );
   };
 
-  filterItemClick = () => { };
+  setDates = dates => {
+    this.setState({
+      ...dates,
+    });
+  };
+
+  filterItemClick = () => {
+    this.setState({filterModal: false, datefilter: -1, loading: true});
+    this.fetchData();
+  };
 
   render() {
-    const { searchQuery, enableSearch, dataList, dialerUserData } = this.state;
+    const {
+      dataList,
+      dialerUserData,
+      dateFilter,
+      startDate,
+      endDate,
+      displayedDate,
+    } = this.state;
     const data = dataList[0];
     return (
       <CScreen
+        refresh={() => this.fetchData()}
         absolute={
           <>
-            {this.state.loading === false ? <FAB
-              style={styles.fab}
-              icon={'filter'}
-              onPress={this.filterItemClick}
-            /> : null}
+            {this.state.loading === false && dataList.length > 0 ? (
+              <FAB
+                style={styles.fab}
+                icon={'filter'}
+                onPress={() => this.setState({filterModal: true})}
+              />
+            ) : null}
 
+            <Modal
+              visible={this.state.filterModal}
+              setModalVisible={() =>
+                this.setState({
+                  filterModal: false,
+                })
+              }
+              ratioHeight={0.5}
+              backgroundColor={`white`}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 0.5,
+                  }}>
+                  {`Filter Reports`}
+                </Subtitle>
+              }
+              topRightElement={null}
+              children={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'white',
+                  }}>
+                  <AnimatedWithoutInputBox
+                    onChangeText={() =>
+                      this.setState({dateFilter: 1, filterModal: false})
+                    }
+                    value={this.state.plDates}
+                    placeholder={'Performance Date'}
+                    returnKeyType={'next'}
+                    changecolor
+                    containerstyle={styles.animatedInputCont}
+                  />
+
+                  <AnimatedWithoutInputBox
+                    onChangeText={() =>
+                      this.setState({dateFilter: 2, filterModal: false})
+                    }
+                    value={this.state.efDates}
+                    placeholder={'Efficiency Date'}
+                    returnKeyType={'next'}
+                    changecolor
+                    containerstyle={styles.animatedInputCont}
+                  />
+
+                  <Button
+                    mode={'flat'}
+                    uppercase={false}
+                    dark={true}
+                    loading={false}
+                    style={styles.loginButtonStyle}
+                    onPress={this.filterItemClick}>
+                    <Title style={styles.btntext}>{`Submit`}</Title>
+                  </Button>
+                </View>
+              }
+            />
+            <Portal>
+              {dateFilter !== -1 ? (
+                <DateRangePicker
+                  onChange={this.setDates}
+                  endDate={endDate}
+                  startDate={startDate}
+                  displayedDate={displayedDate}
+                  range
+                  //presetButtons
+                  //buttonStyle={styles.submitbuttonpicker}
+                  buttonTextStyle={{
+                    fontSize: 15,
+                    fontWeight: '700',
+                    color: 'white',
+                  }}
+                  submitClicked={this.dateFilterSubmit}
+                  closeCallback={() =>
+                    this.setState({
+                      startDate: null,
+                      endDate: null,
+                      datefilter: -1,
+                    })
+                  }
+                />
+              ) : null}
+            </Portal>
           </>
         }
         body={
@@ -320,6 +464,7 @@ export default class MemberReport extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Performance Report'}
+              backClicked={() => this.backClick()}
               bottomBody={<></>}
             />
 
@@ -367,20 +512,20 @@ export default class MemberReport extends React.PureComponent {
 
                 {data.today && data.today.data.length > 0
                   ? this.accordationView(
-                    data.today.data,
-                    data.today.width,
-                    data.today.head,
-                    'Today',
-                  )
+                      data.today.data,
+                      data.today.width,
+                      data.today.head,
+                      'Today',
+                    )
                   : null}
 
                 {data.past && data.past.data.length > 0
                   ? this.accordationView(
-                    data.past.data,
-                    data.past.width,
-                    data.past.head,
-                    'Last 7 Days',
-                  )
+                      data.past.data,
+                      data.past.width,
+                      data.past.head,
+                      'Last 7 Days',
+                    )
                   : null}
 
                 <List.Section
@@ -388,47 +533,37 @@ export default class MemberReport extends React.PureComponent {
                   titleStyle={styles.itemtopText}>
                   {data.hourreport && data.hourreport.data.length > 0
                     ? this.accordationView(
-                      data.hourreport.data,
-                      data.hourreport.width,
-                      data.hourreport.head,
-                      'Hour Report',
-                    )
+                        data.hourreport.data,
+                        data.hourreport.width,
+                        data.hourreport.head,
+                        'Hour Report',
+                      )
                     : null}
 
                   {data.plreport && data.plreport.data.length > 0
                     ? this.accordationView(
-                      data.plreport.data,
-                      data.plreport.width,
-                      data.plreport.head,
-                      'Performance Report',
-                    )
+                        data.plreport.data,
+                        data.plreport.width,
+                        data.plreport.head,
+                        'Performance Report',
+                      )
                     : null}
 
                   {data.efreport && data.efreport.data.length > 0
                     ? this.accordationView(
-                      data.efreport.data,
-                      data.efreport.width,
-                      data.efreport.head,
-                      'Efficiency Report',
-                    )
+                        data.efreport.data,
+                        data.efreport.width,
+                        data.efreport.head,
+                        'Efficiency Report',
+                      )
                     : null}
                 </List.Section>
-
               </View>
             ) : (
-                  // <CommonTable
-                  //   enableHeight={false}
-                  //   dataList={this.state.dataList}
-                  //   widthArr={this.state.widthArr}
-                  //   tableHead={this.state.tableHead}
-                  //   rowClicked={this.rowClicked}
-                  // />
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No data Found...'} />
-                  </View>
-                )}
-
-
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No data Found...'} />
+              </View>
+            )}
           </>
         }
       />
@@ -618,6 +753,34 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor: Pref.RED
+    backgroundColor: Pref.RED,
+  },
+  animatedInputCont: {
+    marginStart: 16,
+    marginEnd: 16,
+    paddingVertical: 10,
+    marginVertical: 8,
+  },
+  loginButtonStyle: {
+    alignContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    color: 'white',
+    backgroundColor: Pref.RED,
+    textAlign: 'center',
+    elevation: 0,
+    borderRadius: 0,
+    letterSpacing: 0.5,
+    borderRadius: 24,
+    width: '42%',
+    paddingVertical: 4,
+    fontWeight: '700',
+    marginTop: 16,
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: 0.5,
+    fontWeight: '700',
   },
 });
