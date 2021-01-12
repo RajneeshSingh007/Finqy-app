@@ -2798,7 +2798,8 @@ export const SMS_SEND = `${SMSURL}sendhttp.php`;
 // UVDESK API
 /////////////////////////////////
 export const UVDESK_API = "SFFNVBU7LHDTLG7G7ZLARKYSFNTRR75POPSTG6SUZVWQWJDTBORBGCNCQHAF6GDA";
-export const MAIN_SUPPORT_URL = `https://uat.erb.ai/ticketsystem/public/api/v1/`;
+export const MAIN_SUPPORT_URL = `${MainUrl}ticketsystem/public/api/v1/`;
+export const UVDESK_IMAGE_URL = `${MainUrl}ticketsystem/public`;
 export const UVDESK_TICKET_URL = `${MAIN_SUPPORT_URL}ticket`;
 export const UVDESK_ASSIGN_AGENT = `${MAIN_SUPPORT_URL}ticket/`;
 export const UVDESK_REPLY_THREAD = `${MAIN_SUPPORT_URL}ticket/`;

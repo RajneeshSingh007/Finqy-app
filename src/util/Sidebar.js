@@ -255,18 +255,18 @@ export default class Sidebar extends React.Component {
               click: 'Manager',
               options: {},
             },
-            // {
-            //   name: `Raise A Query`,
-            //   expand: false,
-            //   click: 'RaiseQueryForm',
-            //   options: {},
-            // },
-            // {
-            //   name: `Track My Query`,
-            //   expand: false,
-            //   click: 'TrackQuery',
-            //   options: {},
-            // },
+            {
+              name: `Raise A Query`,
+              expand: false,
+              click: 'RaiseQueryForm',
+              options: {},
+            },
+            {
+              name: `Track My Query`,
+              expand: false,
+              click: 'TrackQuery',
+              options: {},
+            },
           ],
           click: '',
         }

@@ -953,3 +953,12 @@ export const extCheckReg = (title) =>{
   }
   return (/\.(png|jpeg|jpg|jpe|jfif|pdf|)$/i).test(title);
 }
+
+
+/**
+ * 
+ * @param {*} title 
+ */
+export const separatorReg = (data) =>{
+  return (/,/g).test(data);
+}

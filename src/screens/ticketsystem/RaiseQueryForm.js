@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, BackHandler } from 'react-native';
-import { Title, View, Image } from '@shoutem/ui';
+import {StyleSheet, BackHandler} from 'react-native';
+import {Title, View, Image} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import { Button, Colors } from 'react-native-paper';
-import { sizeHeight, sizeWidth } from '../../util/Size';
+import {Button, Colors} from 'react-native-paper';
+import {sizeHeight, sizeWidth} from '../../util/Size';
 import CustomForm from '../finorbit/CustomForm';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
@@ -13,6 +13,8 @@ import NewDropDown from '../component/NewDropDown';
 import CommonFileUpload from '../common/CommonFileUpload';
 import lodash from 'lodash';
 import NavigationActions from '../../util/NavigationActions';
+
+const regex = /(<([^>]+)>)/gi;
 
 let ticketIssueList = [
   {
@@ -24,27 +26,36 @@ let ticketIssueList = [
 ];
 
 let itIssueList = [
-  { value: 'My Profile' },
-  { value: 'My FinPro' },
-  { value: 'Marketing Tool' },
-  { value: 'FinTrain Learning' },
-  { value: 'Popular Plan' },
-  { value: 'Offers' },
-  { value: 'Wallet' },
-  { value: 'FinTeam Manager' },
-  { value: 'FinNews' },
-  { value: 'HelpDesk/Relation Manager' },
+  {value: 'FinNews'},
+  {value: 'FinTrain Learning'},
+  {value: 'FinTeam Manager'},
+  {value: 'HelpDesk/Relation Manager'},
+  {value: 'My Profile'},
+  {value: 'My FinPro'},
+  {value: 'Marketing Tool'},
+  {value: 'Offers'},
+  {value: 'Popular Plan'},
+  {value: 'Wallet'},
 ];
 
 let nonitIssueList = [
   {
-    value: 'Term Insurance',
+    value: 'Auto Loan',
+  },
+  {
+    value: 'Business Loan',
+  },
+  {
+    value: 'Credit Card',
+  },
+  {
+    value: 'Fixed Deposit',
   },
   {
     value: 'Health Insurance',
   },
   {
-    value: 'Motor Insurance',
+    value: 'Home Loan',
   },
   {
     value: 'Insurance Samadhan',
@@ -53,78 +64,53 @@ let nonitIssueList = [
     value: 'Life Cum Investment Plan',
   },
   {
-    value: 'Fixed Deposit',
+    value: 'Loan Against Property',
+  },
+  {
+    value: 'Motor Insurance',
   },
   {
     value: 'Mutual Fund',
   },
   {
-    value: 'Credit Card',
-  },
-  {
-    value: 'Home Loan',
-  },
-  {
-    value: 'Loan Against Property',
-  },
-  {
     value: 'Personal Loan',
   },
   {
-    value: 'Business Loan',
+    value: 'Term Insurance',
   },
-  {
-    value: 'Auto Loan',
-  },
-  //   {
-  //   value: 'Vector Plus',
-  // },
-  // {
-  //   value: 'Insure Check',
-  // },
-  //   {
-  //   value: 'Religare Group Plan',
-  // },
-  // {
-  //   value: 'Hello Doctor Policy',
-  // },
-  // {
-  //   value: 'Asaan Health Policy',
-  // },
-  // {
-  //   value: 'Sabse Asaan Health Plan',
-  // },
 ];
 
 let nonitesubIssueList = [
   {
-    value: 'Payout',
+    value: 'Bank/Insurance Company related query',
   },
   {
     value: 'Invoice',
   },
   {
-    value: 'TDS',
-  },
-  {
-    value: 'Bank/Insurance Company related query',
-  },
-  {
     value: 'Other',
+  },
+  {
+    value: 'Payout',
+  },
+  {
+    value: 'TDS',
   },
 ];
 
 let priorityList = [
+  {
+    value: 'High',
+  },
   {
     value: 'Low',
   },
   {
     value: 'Medium',
   },
-  {
-    value: 'High',
-  },
 ];
+
+let attachmentsList = [];
 
 export default class RaiseQueryForm extends React.Component {
   constructor(props) {
@@ -136,50 +122,55 @@ export default class RaiseQueryForm extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     const data = navigation.getParam('data', null);
     const editMode = navigation.getParam('editmode', false);
     //console.log(data, editMode);
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.fetchData(userData,data, editMode);
+
+    //this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, userData => {
+        this.fetchData(userData, data, editMode);
       });
-    });
+    //});
   }
 
   fetchData = (userData, data, editMode) => {
-    this.setState({ loading: true, userData: userData,editItem:data, editMode:editMode });
+    this.setState({
+      loading: true,
+      userData: userData,
+      editItem: data,
+      editMode: editMode,
+    });
     Helper.networkHelperGet(
       Pref.AGENTS_URL,
-      (result) => {
-        const { agent, status } = JSON.parse(result);
+      result => {
+        const {agent, status} = JSON.parse(result);
         if (status === `success`) {
-          let remark= '';
-          let ticketissue= '';
-          let itissue= '';
-          let nonitissue= '';
-          let nonitesubissue= "";
-          let description='';
-          let priority = '';
-          if(editMode === true && Helper.nullCheck(data) === false){
+          let remark = '';
+          let ticketissue = '';
+          let itissue = '';
+          let nonitissue = '';
+          let nonitesubissue = '';
+          let description = '';
+          let priority = 'Low';
+          if (editMode === true && Helper.nullCheck(data) === false) {
             description = data.description;
-            if(data.TDesc === 'IT/Software/App Issue'){
+            if (data.TDesc === 'IT/Software/App Issue') {
               ticketissue = 'IT/Software/App Issue';
-            }else{
+            } else {
               ticketissue = 'Non-IT Issue';
             }
-            if(data.message.includes(',')){
+            if (data.message.includes(',')) {
               const split = data.message.split(',');
-              const regex = /(<([^>]+)>)/gi;
               remark = split[0].replace(regex, '');
-            }else{
+            } else {
               remark = data.message;
             }
-            if(data.subject.includes('|')){
+            if (data.subject.includes('|')) {
               const sp = data.subject.split('|');
               nonitissue = sp[0].trim();
               nonitesubissue = sp[1].trim();
-            }else{
+            } else {
               itissue = data.subject;
             }
 
@@ -190,32 +181,44 @@ export default class RaiseQueryForm extends React.Component {
             agentList: agent,
             loading: false,
             userData: userData,
-            remark:remark,
-            ticketissue:ticketissue,
-            description:description,
-            nonitissue:nonitissue,
-            nonitesubissue:nonitesubissue,
-            itissue:itissue,
-            priority:priority
+            remark: remark,
+            ticketissue: ticketissue,
+            description: description,
+            nonitissue: nonitissue,
+            nonitesubissue: nonitesubissue,
+            itissue: itissue,
+            priority: priority,
           });
         } else {
-          this.setState({ loading: false, userData: userData,editItem:data, editMode:editMode  });
+          this.setState({
+            loading: false,
+            userData: userData,
+            editItem: data,
+            editMode: editMode,
+          });
         }
       },
-      (e) => {
-        this.setState({ loading: false, userData: userData,editItem:data, editMode:editMode  });
+      e => {
+        this.setState({
+          loading: false,
+          userData: userData,
+          editItem: data,
+          editMode: editMode,
+        });
       },
     );
-  }
+  };
 
   backClick = () => {
     this.setState(this.returnState(false, true));
-    if(this.state.editMode === true){
+    if (this.state.editMode === true) {
       NavigationActions.navigate('TrackQuery');
-      return false;
+      BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+      return true;
     }
     NavigationActions.goBack();
-    return false;
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    return true;
   };
 
   returnState = (loading, resetAgentList) => {
@@ -226,12 +229,12 @@ export default class RaiseQueryForm extends React.Component {
       ticketissue: '',
       itissue: '',
       nonitissue: '',
-      nonitesubissue: "",
-      attachments: [],
-      description:'',
-      priority:''
+      nonitesubissue: '',
+      description: '',
+      priority: 'Low',
+      extraFileUploadArray: [],
     };
-  }
+  };
 
   componentWillUnMount() {
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
@@ -242,13 +245,16 @@ export default class RaiseQueryForm extends React.Component {
   submitt = () => {
     let checkData = true;
     const body = JSON.parse(JSON.stringify(this.state));
-    const { userData,editItem,editMode } = body;
+    const {userData, editItem, editMode} = body;
 
     if (body.ticketissue === '') {
       checkData = false;
       Helper.showToastMessage('Please, Select ticket type', 0);
       return false;
-    } else if (body.ticketissue === 'IT/Software/App Issue' && body.itissue === '') {
+    } else if (
+      body.ticketissue === 'IT/Software/App Issue' &&
+      body.itissue === ''
+    ) {
       checkData = false;
       Helper.showToastMessage('Please, Select IT Issue', 0);
       return false;
@@ -256,7 +262,11 @@ export default class RaiseQueryForm extends React.Component {
       checkData = false;
       Helper.showToastMessage('Please, Select Non-IT Issue', 0);
       return false;
-    } else if (body.ticketissue === 'Non-IT Issue' && body.nonitissue !== '' && body.nonitesubissue === '') {
+    } else if (
+      body.ticketissue === 'Non-IT Issue' &&
+      body.nonitissue !== '' &&
+      body.nonitesubissue === ''
+    ) {
       checkData = false;
       Helper.showToastMessage('Please, Select Sub Issue', 0);
       return false;
@@ -280,12 +290,17 @@ export default class RaiseQueryForm extends React.Component {
     }
 
     if (checkData) {
-
-      if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rcontact) === true) {
+      if (
+        Helper.nullCheck(userData) === false &&
+        Helper.nullCheck(userData.rcontact) === true
+      ) {
         userData.rcontact = userData.mobile;
       }
 
-      if (Helper.nullCheck(userData) === false && Helper.nullCheck(userData.rname) === true) {
+      if (
+        Helper.nullCheck(userData) === false &&
+        Helper.nullCheck(userData.rname) === true
+      ) {
         userData.rname = userData.username;
       }
 
@@ -294,32 +309,47 @@ export default class RaiseQueryForm extends React.Component {
       let agentUserID = -1;
 
       if (body.ticketissue === 'IT/Software/App Issue') {
-        subject = `${body.itissue}`
-        type = 'IT ISSUE';
-        const findTeam = lodash.find(agentList, io => io.supportTeamId === "1");
+        subject = `${body.itissue}`;
+        type = 'IT Issue';
+        const findTeam = lodash.find(agentList, io => io.supportTeamId === '1');
         //console.log('findTeamT', findTeam);
         if (findTeam != undefined) {
           agentUserID = findTeam.user_id;
         }
       } else if (body.ticketissue === 'Non-IT Issue') {
-        subject = `${body.nonitissue} | ${body.nonitesubissue}`
-        type = 'NON-IT ISSUE'
-        //console.log('body.nonitesubissue', body.nonitesubissue);   
-        if(body.nonitesubissue === 'TDS' || body.nonitesubissue === 'Payout' || body.nonitesubissue == 'Invoice'){
-          const findTeam = lodash.find(agentList, io => io.supportTeamId === "3");
+        subject = `${body.nonitissue} | ${body.nonitesubissue}`;
+        type = 'Non-IT Issue';
+        //console.log('body.nonitesubissue', body.nonitesubissue);
+        if (
+          body.nonitesubissue === 'TDS' ||
+          body.nonitesubissue === 'Payout' ||
+          body.nonitesubissue == 'Invoice'
+        ) {
+          const findTeam = lodash.find(
+            agentList,
+            io => io.supportTeamId === '3',
+          );
           //console.log('findTeamNT', findTeam);
           if (findTeam != undefined) {
             agentUserID = findTeam.user_id;
           }
-        }else{
-          if(body.nonitissue.includes('Insurance')){
-            const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation === 'Insurance');
+        } else {
+          if (body.nonitissue.includes('Insurance')) {
+            const findTeam = lodash.find(
+              agentList,
+              io => io.supportTeamId === '2' && io.designation === 'Insurance',
+            );
             //console.log('findTeamNT', findTeam);
             if (findTeam != undefined) {
               agentUserID = findTeam.user_id;
             }
-          }else{
-            const findTeam = lodash.find(agentList, io => io.supportTeamId === "2" && io.designation.toLowerCase() === body.nonitissue.toLowerCase());
+          } else {
+            const findTeam = lodash.find(
+              agentList,
+              io =>
+                io.supportTeamId === '2' &&
+                io.designation.toLowerCase() === body.nonitissue.toLowerCase(),
+            );
             //console.log('findTeamNT', findTeam);
             if (findTeam != undefined) {
               agentUserID = findTeam.user_id;
@@ -343,21 +373,20 @@ export default class RaiseQueryForm extends React.Component {
       formData.append('from', userData.email);
       formData.append('actAsType', 'customer');
       formData.append('message', body.remark);
-      formData.append('source', "app");
+      formData.append('source', 'app');
       formData.append('description', body.description);
-      if(body.priority === ''){
+      if (body.priority === '') {
         formData.append('prioritycode', 'low');
-      }else {
-        formData.append('prioritycode', body.priority.toLowerCase()); 
+      } else {
+        formData.append('prioritycode', body.priority.toLowerCase());
       }
 
-      if(editMode === true){
+      if (editMode === true) {
         const {ticket_id} = editItem;
         formData.append('ticketID', Number(ticket_id));
-      }else{
+      } else {
         formData.append('ticketID', '');
       }
-
 
       // body.subject = subject;
       // body.type = type;
@@ -367,27 +396,30 @@ export default class RaiseQueryForm extends React.Component {
       // body.actAsType = 'customer';
       // body.message = body.remark;
 
-      if(body.attachments.length > 0){
-        formData.append('attachments[0]', body.attachments[0]);
-        //body.attachments[0] = body.attachments[0];
+      if (attachmentsList.length > 0) {
+        lodash.map(attachmentsList, (io,index) =>{
+          formData.append(`attachments[${index}]`, io);
+        });
       }
+      
       delete body.userData;
       delete body.loading;
 
-      //console.log('body', formData)
+      //console.log('body', formData);
 
-      this.setState({ loading: true });
+      this.setState({loading: true});
+      
       Helper.networkHelperHelpDeskTicket(
         Pref.UVDESK_TICKET_URL,
         formData,
         Pref.methodPost,
         Pref.UVDESK_API,
         result => {
-          console.log('result', result)
-          const { message } = JSON.parse(JSON.stringify(result));
+          //console.log('result', result);
+          const {message} = JSON.parse(JSON.stringify(result));
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
-            const agentBody = { id: agentUserID };
+            const agentBody = {id: agentUserID};
             //console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
@@ -395,31 +427,42 @@ export default class RaiseQueryForm extends React.Component {
               Pref.methodPut,
               Pref.UVDESK_API,
               result => {
-                console.log('result1', result);
-                const { success } = JSON.parse(JSON.stringify(result));
-                this.setState({ loading: false });
+                //console.log('result1', result);
+                const {success} = JSON.parse(JSON.stringify(result));
+                this.setState({loading: false});
                 if (success.includes('Success')) {
-                  Helper.showToastMessage(editMode ? "Success ! Ticket updated successfully" : "Success ! Ticket has been created successfully.", 1);
+                  Helper.showToastMessage(
+                    editMode
+                      ? 'Success ! Ticket updated successfully'
+                      : 'Success ! Ticket has been created successfully.',
+                    1,
+                  );
                   NavigationActions.navigate('TrackQuery');
                 } else {
-                  Helper.showToastMessage(editMode ? `Failed to update ticket` : `Failed to create ticket`, 0);
+                  Helper.showToastMessage(
+                    editMode
+                      ? `Failed to update ticket`
+                      : `Failed to create ticket`,
+                    0,
+                  );
                 }
               },
-              (e) => {
-                this.setState({ loading: false });
+              e => {
+                this.setState({loading: false});
                 Helper.showToastMessage(`Something went wrong`, 0);
               },
             );
           } else {
-            this.setState({ loading: false });
+            this.setState({loading: false});
             Helper.showToastMessage(`Failed to create ticket`, 0);
           }
         },
-        (e) => {
-          this.setState({ loading: false });
+        e => {
+          this.setState({loading: false});
           Helper.showToastMessage(`Something went wrong`, 0);
         },
       );
+    
     }
   };
 
@@ -435,7 +478,11 @@ export default class RaiseQueryForm extends React.Component {
               bottomtext={
                 <>
                   {editMode ? 'Edit ' : `Raise A `}
-                  {<Title style={styles.passText}>{editMode ?  `Ticket` : `Query`}</Title>}
+                  {
+                    <Title style={styles.passText}>
+                      {editMode ? `Ticket` : `Query`}
+                    </Title>
+                  }
                 </>
               }
               bottomtextStyle={{
@@ -443,10 +490,10 @@ export default class RaiseQueryForm extends React.Component {
                 fontSize: 20,
               }}
               showBack
-              backClicked={() =>{
-                if(this.state.editMode === true){
+              backClicked={() => {
+                if (this.state.editMode === true) {
                   NavigationActions.navigate('TrackQuery');
-                }else{
+                } else {
                   NavigationActions.goBack();
                 }
               }}
@@ -458,7 +505,14 @@ export default class RaiseQueryForm extends React.Component {
                 placeholder={`Select Ticket Type`}
                 starVisible
                 value={this.state.ticketissue}
-                selectedItem={value => this.setState({ ticketissue: value, itissue: '', nonitissue: '', nonitesubissue: '' })}
+                selectedItem={value =>
+                  this.setState({
+                    ticketissue: value,
+                    itissue: '',
+                    nonitissue: '',
+                    nonitesubissue: '',
+                  })
+                }
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               />
@@ -469,45 +523,48 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Issue`}
                   starVisible
                   value={this.state.itissue}
-                  selectedItem={value => this.setState({ itissue: value })}
+                  selectedItem={value => this.setState({itissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
               ) : null}
 
-              {this.state.ticketissue === 'Non-IT Issue' ?
+              {this.state.ticketissue === 'Non-IT Issue' ? (
                 <NewDropDown
                   list={nonitIssueList}
                   placeholder={`Select Product`}
                   starVisible
                   value={this.state.nonitissue}
-                  selectedItem={value => this.setState({ nonitissue: value })}
+                  selectedItem={value => this.setState({nonitissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
-                /> : null}
+                />
+              ) : null}
 
-              {this.state.nonitissue !== '' ? <NewDropDown
-                list={nonitesubIssueList}
-                placeholder={`Select Issue`}
-                starVisible
-                value={this.state.nonitesubissue}
-                selectedItem={value => this.setState({ nonitesubissue: value })}
-                style={styles.dropdowncontainers}
-                textStyle={styles.dropdowntextstyle}
-              /> : null}
+              {this.state.nonitissue !== '' ? (
+                <NewDropDown
+                  list={nonitesubIssueList}
+                  placeholder={`Select Issue`}
+                  starVisible
+                  value={this.state.nonitesubissue}
+                  selectedItem={value => this.setState({nonitesubissue: value})}
+                  style={styles.dropdowncontainers}
+                  textStyle={styles.dropdowntextstyle}
+                />
+              ) : null}
 
               <NewDropDown
                 list={priorityList}
                 placeholder={`Select Priority`}
                 value={this.state.priority}
-                selectedItem={value => this.setState({ priority: value })}
+                selectedItem={value => this.setState({priority: value})}
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               />
 
               <CustomForm
                 value={this.state.description}
-                onChange={v => this.setState({ description: v })}
+                onChange={v => this.setState({description: v})}
                 label={`Short Description *`}
                 placeholder={`Enter description`}
                 keyboardType={'text'}
@@ -517,7 +574,7 @@ export default class RaiseQueryForm extends React.Component {
 
               <CustomForm
                 value={this.state.remark}
-                onChange={v => this.setState({ remark: v })}
+                onChange={v => this.setState({remark: v})}
                 label={`Remark *`}
                 placeholder={`Enter remark`}
                 keyboardType={'text'}
@@ -526,29 +583,37 @@ export default class RaiseQueryForm extends React.Component {
               />
 
               <CommonFileUpload
+                showPlusIcon={true}
+                plusClicked={() =>{
+                  if(this.state.extraFileUploadArray.length < 2){
+                    this.state.extraFileUploadArray.push(1);
+                    this.setState({extraFileUploadArray:this.state.extraFileUploadArray});  
+                    console.log(this.state.extraFileUploadArray);
+                  }
+                }}
                 title={''}
                 type={2}
                 pickedCallback={(selected, res) => {
-                  if (!selected) {
-                    const { name } = res;
-                    if (
-                      name.includes('pdf') ||
-                      name.includes('png') ||
-                      name.includes('jpeg') ||
-                      name.includes('jpg')
-                    ) {
-                      const fileList = [];
-                      fileList.push(res);
-                      this.setState({ attachments: fileList });
-                    } else {
-                      Helper.showToastMessage('Please, select Pdf or Image', 0);
-                    }
-                  }
+                  attachmentsList.push(res);
                 }}
               />
 
-              <View styleName="horizontal space-between md-gutter v-center h-center">
+              {this.state.extraFileUploadArray.length > 0 ? (
+                <>
+                  {this.state.extraFileUploadArray.map(io => {
+                    return <CommonFileUpload
+                      showPlusIcon={false}
+                      title={''}
+                      type={2}
+                      pickedCallback={(selected, res) => {
+                        attachmentsList.push(res);
+                      }}
+                    />;
+                  })}
+                </>
+              ) : null}
 
+              <View styleName="horizontal space-between md-gutter v-center h-center">
                 <Button
                   mode={'flat'}
                   uppercase={false}
@@ -558,9 +623,7 @@ export default class RaiseQueryForm extends React.Component {
                   onPress={this.submitt}>
                   <Title style={styles.btntext}>{`Submit`}</Title>
                 </Button>
-
               </View>
-
             </View>
 
             <Image
@@ -568,10 +631,9 @@ export default class RaiseQueryForm extends React.Component {
               styleName="medium-portrait"
               style={{
                 resizeMode: 'contain',
-                alignSelf: 'center'
+                alignSelf: 'center',
               }}
             />
-
           </>
         }
       />
@@ -596,6 +658,7 @@ const styles = StyleSheet.create({
     marginStart: 10,
     marginEnd: 10,
     paddingVertical: 10,
+    marginStart: 12,
   },
   dropdownbox: {
     flexDirection: 'row',
