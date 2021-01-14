@@ -143,40 +143,6 @@ export default class AllMembers extends React.PureComponent {
     return dataList;
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = mode => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 10;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= 10) {
-        plus = 0;
-      } else {
-        plus -= 10;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus});
-        }
-      }
-    }
-  };
-
   onChangeSearch = query => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
