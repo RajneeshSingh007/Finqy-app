@@ -3,11 +3,9 @@ import {
   StyleSheet,
   BackHandler,
   TouchableWithoutFeedback,
-  PermissionsAndroid,
   Platform,
   Linking,
   AppState,
-  Alert,
 } from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
@@ -18,13 +16,15 @@ import Lodash from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
 import CommonTable from '../../common/CommonTable';
-import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../../common/IconChooser';
 import CScreen from './../../component/CScreen';
 import CallerForm from './CallerForm';
 import Loader from '../../../util/Loader';
 import NavigationActions from '../../../util/NavigationActions';
 import SendIntentAndroid from 'react-native-send-intent';
+import PaginationNumbers from './../../component/PaginationNumbers';
+
+const ITEM_LIMIT = 10;
 
 const dummyJSON = {
   name: '',
@@ -43,11 +43,11 @@ export default class DialerCalling extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: ['Sr. No.', 'Call',  'Whatsapp','Data'],
-      widthArr: [60, 60,80, 150],
+      tableHead: ['Sr. No.', 'Call', 'Whatsapp', 'Data'],
+      widthArr: [60, 60, 80, 150],
       cloneList: [],
       type: '',
-      itemSize: 10,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -58,39 +58,47 @@ export default class DialerCalling extends React.PureComponent {
       callTrack: -1,
       productList: '',
       progressLoader: false,
-      editEnabled:false
+      editEnabled: false,
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     AppState.addEventListener('change', this._handleAppStateChange);
-    
+
     const {navigation} = this.props;
     const activeCallerItem = navigation.getParam('data', dummyJSON);
     const editEnabled = navigation.getParam('editEnabled', false);
 
-    if(editEnabled === false){
+    if (editEnabled === false) {
       try {
         Helper.requestPermissionsDialer();
-      } catch (error) {
-        
-      }
+      } catch (error) {}
     }
 
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true, dataList: [],editEnabled:true,callTrack:-1});
+      this.setState({
+        loading: true,
+        dataList: [],
+        editEnabled: true,
+        callTrack: -1,
+      });
     });
-    
+
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
-        this.setState({userData: userData,editEnabled:editEnabled,activeCallerItem:activeCallerItem,progressLoader:false});
+        this.setState({
+          userData: userData,
+          editEnabled: editEnabled,
+          activeCallerItem: activeCallerItem,
+          progressLoader: false,
+        });
         Pref.getVal(Pref.USERTYPE, v => {
           this.getProducts();
           this.setState({type: v}, () => {
             Pref.getVal(Pref.saveToken, value => {
               this.setState({token: value}, () => {
-                if(editEnabled === false){
+                if (editEnabled === false) {
                   this.fetchData();
                 }
               });
@@ -147,7 +155,7 @@ export default class DialerCalling extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: data.length >= 10 ? 10 : data.length,
+              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -158,7 +166,7 @@ export default class DialerCalling extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      e => {
+      () => {
         this.setState({loading: false});
       },
     );
@@ -174,71 +182,77 @@ export default class DialerCalling extends React.PureComponent {
         });
         this.setState({productList: sorting});
       },
-      e => {},
+      () => {},
     );
   };
 
   backClick = () => {
-    const {callTrack, editEnabled,activeCallerItem} = this.state;
+    const {callTrack, editEnabled} = this.state;
     if (callTrack === 1) {
-      if(editEnabled){
-        NavigationActions.navigate("DialerRecords", {active:-1});
+      if (editEnabled) {
+        NavigationActions.navigate('DialerRecords', {active: -1});
         BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-      }else{
+      } else {
         BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-        return true;    
+        return true;
       }
-    }else{
+    } else {
       NavigationActions.goBack();
       BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     }
-    this.setState({callTrack:-1});
+    this.setState({callTrack: -1});
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-    return true;  
+    return true;
   };
 
   startCalling = (item, isWhatsapp = false, videocall = false) => {
-    const {mobile, name} = item;
+    const {mobile} = item;
     if (Platform.OS === 'android') {
       try {
-        if(isWhatsapp === true){
+        if (isWhatsapp === true) {
           SendIntentAndroid.whatsappPhone({
-            isvideo:videocall,
-            phone:'7208828396'
+            isvideo: videocall,
+            phone: '7208828396',
             //mobile
-          }).then(result =>{
-            if(result === 'no permission granted'){
+          }).then(result => {
+            if (result === 'no permission granted') {
               Helper.requestPermissionsDialer();
-              Helper.showToastMessage('Please, Grant Phone Call, Contact Permissions', 2);      
-            }else if(result === 'success'){
+              Helper.showToastMessage(
+                'Please, Grant Phone Call, Contact Permissions',
+                2,
+              );
+            } else if (result === 'success') {
               this.setState({
                 activeCallerItem: item,
                 callTrack: 0,
                 progressLoader: false,
-              });          
-            }else{
-              Helper.showToastMessage(result, 0);       
+              });
+            } else {
+              Helper.showToastMessage(result, 0);
             }
-          })
-        }else{
+          });
+        } else {
           this.setState({
             activeCallerItem: item,
             callTrack: 0,
             progressLoader: false,
-          });      
+          });
           SendIntentAndroid.sendPhoneCall(mobile, false);
         }
       } catch (error) {
         //console.log(error);
         Helper.requestPermissionsDialer();
-        Helper.showToastMessage('Please, Grant Phone Call, Contact Permissions', 2);
+        Helper.showToastMessage(
+          'Please, Grant Phone Call, Contact Permissions',
+          2,
+        );
       }
     } else {
       this.setState({
         activeCallerItem: item,
         callTrack: 0,
         progressLoader: false,
-      });  
+      });
       Linking.openURL(`tel:${mobile}`);
     }
   };
@@ -265,7 +279,7 @@ export default class DialerCalling extends React.PureComponent {
                   justifyContent: 'center',
                 }}>
                 <TouchableWithoutFeedback
-                  onPress={() => this.startCalling(value, false,false)}>
+                  onPress={() => this.startCalling(value, false, false)}>
                   <View>
                     <IconChooser
                       name={`phone`}
@@ -296,7 +310,7 @@ export default class DialerCalling extends React.PureComponent {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-                <View style={{marginHorizontal:8}}></View>
+                <View style={{marginHorizontal: 8}}></View>
                 <TouchableWithoutFeedback
                   onPress={() => this.startCalling(value, true, true)}>
                   <View>
@@ -319,40 +333,6 @@ export default class DialerCalling extends React.PureComponent {
       }
     }
     return dataList;
-  };
-
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = mode => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 10;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= 10) {
-        plus = 0;
-      } else {
-        plus -= 10;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus});
-        }
-      }
-    }
   };
 
   onChangeSearch = query => {
@@ -395,21 +375,35 @@ export default class DialerCalling extends React.PureComponent {
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 10);
+      const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 10});
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
   };
 
   formResult = (status, message) => {
     Helper.showToastMessage(message, status === true ? 1 : 0);
     const {editEnabled} = this.state;
-    if(editEnabled === true){
-      NavigationActions.navigate("DialerRecords", {active:-1});
-    }else{
+    if (editEnabled === true) {
+      NavigationActions.navigate('DialerRecords', {active: -1});
+    } else {
       this.setState({callTrack: -1, activeCallerItem: dummyJSON});
-      this.fetchData();  
+      this.fetchData();
     }
+  };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
   };
 
   render() {
@@ -419,12 +413,12 @@ export default class DialerCalling extends React.PureComponent {
       productList,
       callTrack,
       token,
-      editEnabled
+      editEnabled,
     } = this.state;
     return (
       <CScreen
         refresh={() => {
-          if(editEnabled === true){
+          if (editEnabled === true) {
             this.fetchData();
           }
         }}
@@ -437,8 +431,12 @@ export default class DialerCalling extends React.PureComponent {
                     <>
                       <LeftHeaders
                         showBack
-                        title={ editEnabled === true ? 'Edit Details' : 'Customer Details'}
-                        backClicked={ () =>this.backClick()}
+                        title={
+                          editEnabled === true
+                            ? 'Edit Details'
+                            : 'Customer Details'
+                        }
+                        backClicked={() => this.backClick()}
                         bottomBody={
                           <>
                             {/* <View styleName="md-gutter">
@@ -502,23 +500,12 @@ export default class DialerCalling extends React.PureComponent {
             />
 
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback
-                  onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
                   <IconChooser

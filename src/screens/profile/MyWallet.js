@@ -19,6 +19,9 @@ import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import CommonTable from '../common/CommonTable';
 import CScreen from '../component/CScreen';
+import PaginationNumbers from '../component/PaginationNumbers';
+
+const ITEM_LIMIT = 10;
 
 export default class MyWallet extends React.PureComponent {
   constructor(props) {
@@ -43,7 +46,7 @@ export default class MyWallet extends React.PureComponent {
       ],
       widthArr: [60, 100, 140, 140, 100, 140, 100, 100, 100],
       sendData: null,
-      itemSize: 5,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -100,7 +103,7 @@ export default class MyWallet extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 5 ? 5 : sort.length,
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -166,40 +169,6 @@ export default class MyWallet extends React.PureComponent {
     return dataList;
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = (mode) => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 5;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= 5) {
-        plus = 0;
-      } else {
-        plus -= 5;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if(slicedArray.length > 0){
-        this.setState({dataList: slicedArray, itemSize: plus});
-        }
-      }
-    }
-  };
-
   claimAmt = () => {
     const {wallet, sendData} = this.state;
     if (Number(wallet) > 0) {
@@ -212,6 +181,16 @@ export default class MyWallet extends React.PureComponent {
     }
   };
 
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
+
   render() {
     return (
       <CScreen
@@ -220,23 +199,6 @@ export default class MyWallet extends React.PureComponent {
           <>
             <LeftHeaders title={'Earning History'} showBack />
             <View styleName="horizontal md-gutter space-between v-center">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback
-                  onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
               <Title
                 style={StyleSheet.flatten([
                   styles.itemtopText,
@@ -253,12 +215,41 @@ export default class MyWallet extends React.PureComponent {
                 <Title style={styles.btnText}>{`Claim`}</Title>
               </Button>
             </View>
+            
+            <View styleName="horizontal md-gutter space-between v-center">
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
+
+              {/* <Title
+                style={StyleSheet.flatten([
+                  styles.itemtopText,
+                  {
+                    color: '#555555',
+                    fontSize: 20,
+                    lineHeight: 36,
+                  },
+                ])}>{`₹ ${this.state.wallet} /-`}</Title>
+              <Button
+                style={styles.loginButtonStyle}
+                uppercase={false}
+                onPress={this.claimAmt}>
+                <Title style={styles.btnText}>{`Claim`}</Title>
+              </Button> */}
+            </View>
+
+            
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+                              enableHeight={false}
+
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
@@ -279,137 +270,6 @@ export default class MyWallet extends React.PureComponent {
           </>
         }
       />
-      // <CommonScreen
-      //   title={'My Wallet'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={<LeftHeaders title={'My Wallet'} showBack />}
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      //       {this.state.loading ? (
-      //         <View
-      //           style={{
-      //             justifyContent: 'center',
-      //             alignSelf: 'center',
-      //             flex: 1,
-      //           }}>
-      //           <ActivityIndicator />
-      //         </View>
-      //       ) : (
-      //         <View style={{flex: 1}}>
-      //           <Card
-      //             elevation={2}
-      //             style={{
-      //               flex: 0.3,
-      //               marginVertical: sizeHeight(2),
-      //               marginHorizontal: sizeWidth(4),
-      //               backgroundColor: 'white',
-      //               borderRadius: 8,
-      //             }}>
-      //             <View
-      //               style={{
-      //                 marginVertical: sizeHeight(0.5),
-      //                 paddingVertical: sizeHeight(2),
-      //                 paddingHorizontal: sizeWidth(1),
-      //               }}>
-      //               <Title style={styles.title1}> {'Available Balance'}</Title>
-      //               <View
-      //                 style={{
-      //                   marginVertical: sizeHeight(3),
-      //                   alignContents: 'center',
-      //                   alignItems: 'center',
-      //                   justifyContent: 'center',
-      //                   // backgroundColor: Colors.teal200,
-      //                   borderColor: 'transparent',
-      //                   //borderRadius: 96 / 2, width: 96, height: 96, borderWidth: 0,
-      //                   alignSelf: 'center',
-      //                   flexDirection: 'row',
-      //                 }}>
-      //                 {/* <Icons name='wallet' size={36} color={Colors.red200} /> */}
-      //                 <Subtitle
-      //                   styleName="wrap"
-      //                   style={{
-      //                     justifyContent: 'center',
-      //                     fontSize: 20,
-      //                     fontFamily: 'Rubik',
-      //                     letterSpacing: 1,
-      //                     color: '#292929',
-      //                     fontWeight: '700',
-      //                   }}>{`₹${this.state.wallet}`}</Subtitle>
-      //               </View>
-      //               {/* {text !== '' ? (
-      //                 <View style={{marginVertical: sizeHeight(1)}}>
-      //                   <Caption
-      //                     style={{
-      //                       fontSize: 14,
-      //                       color: '#757575',
-      //                       marginHorizontal: sizeWidth(3),
-      //                     }}>
-      //                     {text}
-      //                   </Caption>
-      //                 </View>
-      //               ) : null} */}
-      //             </View>
-      //             <TouchableWithoutFeedback
-      //               onPress={() => {
-      // const {wallet, sendData} = this.state;
-      // if (Number(wallet) > 0) {
-      //   NavigationActions.navigate('Redeem', {
-      //     wallet: wallet,
-      //     sendData: sendData,
-      //   });
-      // } else {
-      //   Helper.showToastMessage('Balance is low', 0);
-      // }
-      //               }}>
-      //               <View
-      //                 style={{
-      //                   backgroundColor: Pref.RED,
-      //                   paddingVertical: 10,
-      //                   borderBottomRightRadius: 8,
-      //                   borderBottomLeftRadius: 8,
-      //                   borderBottomEndRadius: 8,
-      //                   borderBottomStartRadius: 8,
-      //                 }}>
-      //                 <Caption
-      //                   style={{
-      //                     fontSize: 16,
-      //                     color: 'white',
-      //                     justifyContent: 'center',
-      //                     padding: 4,
-      //                     alignSelf: 'center',
-      //                   }}>{`Claim Now`}</Caption>
-      //               </View>
-      //             </TouchableWithoutFeedback>
-      //           </Card>
-      //           <View style={{marginTop: 36, flex: 0.7}}>
-      //             <Title style={styles.title1}> {'Earning History'}</Title>
-      // {this.state.dataList.length > 0 ? (
-      //   <CommonTable
-      //     dataList={this.state.dataList}
-      //     widthArr={this.state.widthArr}
-      //     tableHead={this.state.tableHead}
-      //   />
-      // ) : (
-      //   <View
-      //     style={{
-      //       flex: 1,
-      //       justifyContent: 'center',
-      //       alignItems: 'center',
-      //       alignContents: 'center',
-      //       color: '#767676',
-      //     }}>
-      //     <ListError subtitle={'No transaction history found...'} />
-      //   </View>
-      // )}
-      //           </View>
-      //         </View>
-      //       )}
-      //     </>
-      //   }
-      // />
     );
   }
 }

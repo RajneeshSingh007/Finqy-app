@@ -31,6 +31,9 @@ import NewDropDown from '../component/NewDropDown';
 import CustomForm from '../finorbit/CustomForm';
 import Loader from '../../util/Loader';
 import Timeline from 'react-native-timeline-flatlist';
+import PaginationNumbers from '../component/PaginationNumbers';
+
+const ITEM_LIMIT = 10;
 
 const regex = /(<([^>]+)>)/gi;
 
@@ -39,6 +42,7 @@ export default class TrackQuery extends React.PureComponent {
     super(props);
     const date = new Date();
     this.backclick = this.backclick.bind(this);
+    this.queryFileDownload = this.queryFileDownload.bind(this);
     // this.submitTicketEdit = this.submitTicketEdit.bind(this);
     this.detailThread = this.detailThread.bind(this);
     this.renderDetail = this.renderDetail.bind(this);
@@ -73,7 +77,7 @@ export default class TrackQuery extends React.PureComponent {
       quotemailData: '',
       quotemail: '',
       type: '',
-      itemSize: 5,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -109,13 +113,11 @@ export default class TrackQuery extends React.PureComponent {
         detailShow: false,
       });
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, userData => {
-      this.fetchData(userData);
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, userData => {
+        this.fetchData(userData);
+      });
     });
-    //});
-
-    
   }
 
   backclick = () => {
@@ -192,7 +194,7 @@ export default class TrackQuery extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 5 ? 5 : sort.length,
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
               userData: userData,
               profilePic: profilePic,
             });
@@ -289,7 +291,7 @@ export default class TrackQuery extends React.PureComponent {
             let finalMsg = '';
             if (Helper.separatorReg(msg)) {
               const split = msg.split(',');
-              finalMsg = split.length > 1 ? split[split.length - 1] : '';
+              finalMsg = split.length === 1 ? '' : split[split.length - 1];
             } else {
               finalMsg = '';
             }
@@ -352,15 +354,6 @@ export default class TrackQuery extends React.PureComponent {
       //console.log('findItem', findItem);
       this.setState({threadLoader: true, detailShow: true, editItem: findItem});
       const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticketId}`;
-      let fileList = [];
-      if (Helper.nullStringCheck(findItem.filepath) === false) {
-        const filesList = findItem.filepath.split(',');
-        fileList = filesList.map(io => {
-          return {
-            path:`${Pref.UVDESK_IMAGE_URL}${io}`
-          }
-        });
-      }
       //console.log('url', url);
       const startObj = {
         circleColor: editItem[editItem.length - 2],
@@ -374,7 +367,7 @@ export default class TrackQuery extends React.PureComponent {
           profilePic == null
             ? require('../../res/images/account.png')
             : profilePic,
-        fileList: fileList,
+        fileList: findItem.attachments,
       };
       //console.log('startObj', startObj)
       Helper.networkHelperHelpDeskTicketGet(
@@ -444,49 +437,15 @@ export default class TrackQuery extends React.PureComponent {
     }
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = mode => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 5;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= 5) {
-        plus = 0;
-      } else {
-        plus -= 5;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus});
-        }
-      }
-    }
-  };
-
   revertBack = () => {
     const {enableSearch} = this.state;
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 5);
+      const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 5});
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: ITEM_LIMIT});
   };
 
   // submitTicketEdit = () => {
@@ -536,6 +495,14 @@ export default class TrackQuery extends React.PureComponent {
   //   );
   // };
 
+  queryFileDownload = ({path, name}) =>{
+    let mimeType = "image/png";
+    if(path.includes('.pdf')){
+      mimeType = "application/pdf";
+    }
+    Helper.downloadFileWithFileName(path, name,name, mimeType, true,false);
+  }
+
   renderDetail = (rowData, sectionID, rowID) => {
     return (
       <View styleName="vertical" style={styles.mainTcontainer}>
@@ -571,7 +538,7 @@ export default class TrackQuery extends React.PureComponent {
             keyExtractor={({item, index}) => `${index}`}
             renderItem={({item, index}) => {
               if(item.path.includes('.pdf')){
-                return <TouchableWithoutFeedback>
+                return <TouchableWithoutFeedback onPress={() => this.queryFileDownload(item)}>
                 <View styleName="horizontal v-center h-center">
                   <IconChooser
                     name={'file-pdf'}
@@ -585,7 +552,7 @@ export default class TrackQuery extends React.PureComponent {
               }
               return (
                 
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => this.queryFileDownload(item)}>
                   <Image styleName="small" source={{uri: item.path, cache:false}} style={{marginHorizontal:2}} />
                 </TouchableWithoutFeedback>
               );
@@ -616,10 +583,10 @@ export default class TrackQuery extends React.PureComponent {
       io => io.SCode.toLowerCase() === 'open',
     );
     this.setState({
-      dataList: this.returnData(filterData, 0, filterData.length).slice(0, 5),
+      dataList: this.returnData(filterData, 0, filterData.length).slice(0, ITEM_LIMIT),
       loading: false,
       filterModal: false,
-      itemSize: filterData.length >= 5 ? 5 : filterData.length,
+      itemSize: filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
       priorityFilter: '',
       statusFilter: '',
       ticketTypeFilter: '',
@@ -667,12 +634,23 @@ export default class TrackQuery extends React.PureComponent {
       }
     });
     this.setState({
-      dataList: this.returnData(filterData, 0, filterData.length).slice(0, 5),
+      dataList: this.returnData(filterData, 0, filterData.length).slice(0, ITEM_LIMIT),
       loading: false,
       filterModal: false,
-      itemSize: filterData.length >= 5 ? 5 : filterData.length,
+      itemSize: filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT
     });
   };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
+
 
   render() {
     const {detailShow,editItem} = this.state;
@@ -1057,23 +1035,14 @@ export default class TrackQuery extends React.PureComponent {
             />
 
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback
-                  onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
+
               <TouchableWithoutFeedback onPress={this.filterClicked}>
                 <View styleName="horizontal v-center h-center">
                   <IconChooser
@@ -1092,6 +1061,7 @@ export default class TrackQuery extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+                enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}

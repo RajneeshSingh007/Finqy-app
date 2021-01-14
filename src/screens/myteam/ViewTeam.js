@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback,BackHandler} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
@@ -14,9 +14,11 @@ import IconChooser from '../common/IconChooser';
 import CScreen from '../component/CScreen';
 import Download from './../component/Download';
 import NavigationActions from '../../util/NavigationActions';
+import PaginationNumbers from './../component/PaginationNumbers';
 
 let HEADER = `Sr. No,Username,Email,Mobile,Pancard,Aadharcard,Refercode,Status\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
+const ITEM_LIMIT = 10;
 
 export default class ViewTeam extends React.PureComponent {
   constructor(props) {
@@ -41,8 +43,8 @@ export default class ViewTeam extends React.PureComponent {
         'Lead Record',
         'Status',
       ],
-      widthArr: [60, 100, 160, 100, 100, 100, 100, 100,100],
-      itemSize: 5,
+      widthArr: [60, 100, 160, 100, 100, 100, 100, 100, 100],
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
@@ -62,10 +64,10 @@ export default class ViewTeam extends React.PureComponent {
     });
   }
 
-  backClick = () =>{
+  backClick = () => {
     NavigationActions.goBack();
     return false;
-  }
+  };
 
   // componentDidUpdate(prevProp, nextState) {
   //   if (this.state.dataList.length == 0) {
@@ -118,7 +120,7 @@ export default class ViewTeam extends React.PureComponent {
                 false,
               ).slice(0, itemSize),
               loading: false,
-              itemSize: data.length >= 5 ? 5 : data.length,
+              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
             this.setState({loading: false});
@@ -127,15 +129,19 @@ export default class ViewTeam extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      (e) => {
+      () => {
         this.setState({loading: false});
       },
     );
   };
 
-  refdataClick = (value) => {
-    if(Helper.nullStringCheck(value.refercode) === false){
-      NavigationActions.navigate('LeadList', { ref: value.refercode,flag:1,backScreen:'ViewTeam' });
+  refdataClick = value => {
+    if (Helper.nullStringCheck(value.refercode) === false) {
+      NavigationActions.navigate('LeadList', {
+        ref: value.refercode,
+        flag: 1,
+        backScreen: 'ViewTeam',
+      });
     }
   };
 
@@ -160,7 +166,8 @@ export default class ViewTeam extends React.PureComponent {
             rowData.push(`${item.aadharcard}`);
             rowData.push(`${item.refercode === null ? '' : item.refercode}`);
             const leadView = value => (
-              <TouchableWithoutFeedback onPress={() => this.refdataClick(value)}>
+              <TouchableWithoutFeedback
+                onPress={() => this.refdataClick(value)}>
                 <View>
                   <Title
                     style={{
@@ -199,40 +206,6 @@ export default class ViewTeam extends React.PureComponent {
     return dataList;
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = mode => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 5;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus, false);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= 5) {
-        plus = 0;
-      } else {
-        plus -= 5;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize, false);
-        if (slicedArray.length > 0) {
-          this.setState({dataList: slicedArray, itemSize: plus});
-        }
-      }
-    }
-  };
-
   componentWillUnMount() {
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
@@ -242,7 +215,7 @@ export default class ViewTeam extends React.PureComponent {
     const {cloneList, userData} = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length, true);
-      const {refercode, username} = userData;
+      const {refercode} = userData;
       const name = `${refercode}_MyTeam`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
       Helper.writeCSV(HEADER, data, finalFilePath, result => {
@@ -320,10 +293,24 @@ export default class ViewTeam extends React.PureComponent {
     const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 5, false);
+      const data = this.returnData(clone, 0, ITEM_LIMIT, false);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 5});
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
+  };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
   };
 
   render() {
@@ -336,23 +323,12 @@ export default class ViewTeam extends React.PureComponent {
           <>
             <LeftHeaders showBack title={'My Team'} />
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback
-                  onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
 
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
@@ -387,6 +363,8 @@ export default class ViewTeam extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+              enableHeight={false}
+
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
@@ -407,77 +385,6 @@ export default class ViewTeam extends React.PureComponent {
           </>
         }
       />
-      // <CommonScreen
-      //   title={'Finorbit'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={
-      //     <LeftHeaders
-      //       title={'View Team'}
-      //       showAvtar
-      //       showBack
-      //       showBottom
-      //       bottomIconName={'download'}
-      //       bottomIconTitle={`Excel`}
-      //       bottombg={Colors.red600}
-      //       bottomClicked={() => {
-      //   const {dataList} = this.state;
-      //   if (dataList.length > 0) {
-      //     Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //       //console.log(result);
-      //       if (result) {
-      //         RNFetchBlob.fs.scanFile([
-      //           {path: FILEPATH, mime: 'text/csv'},
-      //         ]),
-      //           RNFetchBlob.android.addCompleteDownload({
-      //             title: 'Lead Record',
-      //             description: 'Lead record exported successfully',
-      //             mime: 'text/csv',
-      //             path: FILEPATH,
-      //             showNotification: true,
-      //           }),
-      //           Helper.showToastMessage('Download Complete', 1);
-      //       }
-      //     });
-      //    }
-      // }
-      //      }
-      //     />
-      //   }
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      //   {this.state.loading ? (
-      //     <View
-      //       style={{
-      //         justifyContent: 'center',
-      //         alignSelf: 'center',
-      //         flex: 1,
-      //       }}>
-      //       <ActivityIndicator />
-      //     </View>
-      //   ) : this.state.dataList.length > 0 ? (
-      //     <CommonTable
-      //       dataList={this.state.dataList}
-      //       widthArr={this.state.widthArr}
-      //       tableHead={this.state.tableHead}
-      //       style={{marginTop: sizeHeight(6)}}
-      //     />
-      //   ) : (
-      //     <View
-      //       style={{
-      //         flex: 1,
-      //         justifyContent: 'center',
-      //         alignItems: 'center',
-      //         alignContents: 'center',
-      //       }}>
-      //       <ListError subtitle={'No teams found...'} />
-      //     </View>
-      //   )}
-      // </>
-      //   }
-      // />
     );
   }
 }

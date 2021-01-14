@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-  StyleSheet,
-  TouchableWithoutFeedback,
-  BackHandler
-} from 'react-native';
-import {
-  Title,
-  View,
-} from '@shoutem/ui';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  ActivityIndicator,
-  Searchbar
-} from 'react-native-paper';
+import {ActivityIndicator, Searchbar} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { sizeHeight } from '../../util/Size';
+import {sizeHeight} from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -24,10 +14,11 @@ import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../common/IconChooser';
 import CScreen from '../component/CScreen';
 import Download from './../component/Download';
+import PaginationNumbers from './../component/PaginationNumbers';
 
 let HEADER = `Sr. No,Username,Name,Email,Mobile,Refercode,Status\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
-
+const ITEM_LIMIT = 10;
 
 export default class ViewConnector extends React.PureComponent {
   constructor(props) {
@@ -50,30 +41,29 @@ export default class ViewConnector extends React.PureComponent {
         'Mobile',
         'Refercode',
         'Lead Record',
-        //'',
         'Status',
       ],
       widthArr: [60, 100, 140, 140, 100, 140, 100, 100],
-      itemSize: 5,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
       cloneList: [],
-      enableSearch: false
+      enableSearch: false,
     };
   }
 
   componentDidMount() {
     //BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.setState({ userData: userData });
-        Pref.getVal(Pref.saveToken, (value) => {
-          this.setState({ token: value }, () => {
+      Pref.getVal(Pref.userData, userData => {
+        this.setState({userData: userData});
+        Pref.getVal(Pref.saveToken, value => {
+          this.setState({token: value}, () => {
             this.fetchData();
           });
         });
@@ -87,8 +77,8 @@ export default class ViewConnector extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({ loading: true });
-    const { refercode } = this.state.userData;
+    this.setState({loading: true});
+    const {refercode} = this.state.userData;
     const body = JSON.stringify({
       refercode: refercode,
     });
@@ -97,45 +87,49 @@ export default class ViewConnector extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
-        const { data, response_header } = result;
-        const { res_type } = response_header;
+      result => {
+        const {data, response_header} = result;
+        const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const dataList = data.reverse();
-            //console.log('dataList', dataList)
-            const { itemSize } = this.state;
+            const {itemSize} = this.state;
             this.setState({
               cloneList: dataList,
-              dataList: this.returnData(dataList, 0, dataList.length, false).slice(
+              dataList: this.returnData(
+                dataList,
                 0,
-                itemSize,
-              ),
+                dataList.length,
+                false,
+              ).slice(0, itemSize),
               loading: false,
-              itemSize: data.length >= 5 ? 5 : data.length,
+              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
-            this.setState({ loading: false });
+            this.setState({loading: false});
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
       () => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
       },
     );
   };
 
-  backClick = () =>{
+  backClick = () => {
     NavigationActions.goBack();
     return false;
-  }
+  };
 
-
-  refdataClick = (value) => {
-    if(Helper.nullStringCheck(value) === false){
-      NavigationActions.navigate('LeadList', { ref: value,flag:1,backScreen:'ViewConnector' });
+  refdataClick = value => {
+    if (Helper.nullStringCheck(value) === false) {
+      NavigationActions.navigate('LeadList', {
+        ref: value,
+        flag: 1,
+        backScreen: 'ViewConnector',
+      });
     }
   };
 
@@ -166,7 +160,7 @@ export default class ViewConnector extends React.PureComponent {
             //rowData.push(`${Lodash.capitalize(item.pancard)}`);
             rowData.push(`${item.refercode}`);
             if (enablestatus === false) {
-              const refdataView = (value) => (
+              const refdataView = value => (
                 <TouchableWithoutFeedback
                   onPress={() => this.refdataClick(value)}>
                   <View>
@@ -184,7 +178,7 @@ export default class ViewConnector extends React.PureComponent {
               );
               rowData.push(refdataView(item.refercode));
             }
-            const stdataView = (value) => (
+            const stdataView = value => (
               <View>
                 <Title
                   style={{
@@ -197,7 +191,13 @@ export default class ViewConnector extends React.PureComponent {
                 </Title>
               </View>
             );
-            rowData.push(enablestatus === true ? item.status === 1 ? `Active` : `Deactive` : stdataView(item.status));
+            rowData.push(
+              enablestatus === true
+                ? item.status === 1
+                  ? `Active`
+                  : `Deactive`
+                : stdataView(item.status),
+            );
             dataList.push(rowData);
           }
         }
@@ -207,16 +207,16 @@ export default class ViewConnector extends React.PureComponent {
   };
 
   clickedexport = () => {
-    const { cloneList, userData } = this.state;
+    const {cloneList, userData} = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length, true);
-      const { refercode, username } = userData;
+      const {refercode} = userData;
       const name = `${refercode}_Connector`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
+      Helper.writeCSV(HEADER, data, finalFilePath, result => {
         //console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
+          RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: name,
               description: 'Connector record exported successfully',
@@ -230,71 +230,98 @@ export default class ViewConnector extends React.PureComponent {
     }
   };
 
-
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 5;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus, false);
-        this.setState({ dataList: slicedArray, itemSize: plus });
-      }
-    } else {
-      if (itemSize <= 5) {
-        plus = 0;
-      } else {
-        plus -= 5;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize, false);
-        if (slicedArray.length > 0) {
-          this.setState({ dataList: slicedArray, itemSize: plus });
-        }
-      }
-    }
-  };
-
-
-  onChangeSearch = (query) => {
-    this.setState({ searchQuery: query });
-    const { cloneList, itemSize } = this.state;
+  onChangeSearch = query => {
+    this.setState({searchQuery: query});
+    const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query).trim().toLowerCase();
+      const trimquery = String(query)
+        .trim()
+        .toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, (it) => {
-        const { pancard, refercode, status, rcontact, email, rname, username } = it;
-        return pancard && pancard.trim().toLowerCase().includes(trimquery) || refercode && refercode.trim().toLowerCase().includes(trimquery) || status && status.trim().toLowerCase().includes(trimquery) || rcontact && rcontact.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery) || rname && rname.trim().toLowerCase().includes(trimquery) || username && username.trim().toLowerCase().includes(trimquery);
+      const result = Lodash.filter(clone, it => {
+        const {
+          pancard,
+          refercode,
+          status,
+          rcontact,
+          email,
+          rname,
+          username,
+        } = it;
+        return (
+          (pancard &&
+            pancard
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (refercode &&
+            refercode
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (status &&
+            status
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (rcontact &&
+            rcontact
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (email &&
+            email
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (rname &&
+            rname
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (username &&
+            username
+              .trim()
+              .toLowerCase()
+              .includes(trimquery))
+        );
       });
-      const data = result.length > 0 ? this.returnData(result, 0, result.length, false) : [];
+      const data =
+        result.length > 0
+          ? this.returnData(result, 0, result.length, false)
+          : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({ dataList: data, itemSize: count });
+      this.setState({dataList: data, itemSize: count});
     }
   };
 
   revertBack = () => {
-    const { enableSearch } = this.state;
-    const { cloneList } = this.state;
+    const {enableSearch} = this.state;
+    const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 5, false);
-      this.setState({ dataList: data });
+      const data = this.returnData(clone, 0, ITEM_LIMIT, false);
+      this.setState({dataList: data});
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 5 });
-  }
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
+  };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
 
   render() {
-    const { searchQuery, enableSearch } = this.state;
+    const {searchQuery, enableSearch} = this.state;
     return (
       <CScreen
         refresh={() => this.fetchData()}
@@ -303,45 +330,39 @@ export default class ViewConnector extends React.PureComponent {
             <LeftHeaders showBack title={'View Connector'} />
 
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
-                  <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                  <IconChooser
+                    name={enableSearch ? 'x' : 'search'}
+                    size={24}
+                    color={'#555555'}
+                  />
                 </View>
               </TouchableWithoutFeedback>
-
             </View>
 
-            {enableSearch === true ? <View styleName='md-gutter'>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={this.onChangeSearch}
-                value={searchQuery}
-                style={{
-                  elevation: 0,
-                  borderColor: '#dbd9cc',
-                  borderWidth: 0.5,
-                  borderRadius: 8
-                }}
-                clearIcon={() => null}
-              />
-            </View> : null}
-
+            {enableSearch === true ? (
+              <View styleName="md-gutter">
+                <Searchbar
+                  placeholder="Search"
+                  onChangeText={this.onChangeSearch}
+                  value={searchQuery}
+                  style={{
+                    elevation: 0,
+                    borderColor: '#dbd9cc',
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                  }}
+                  clearIcon={() => null}
+                />
+              </View>
+            ) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
@@ -349,88 +370,27 @@ export default class ViewConnector extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+                enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No connectors found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No connectors found...'} />
+              </View>
+            )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
-                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}
           </>
         }
       />
-      // <CommonScreen
-      //   title={'Finorbit'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={
-      //     <LeftHeaders
-      //       title={'View Connector'}
-      //       // showAvtar
-      //        showBack
-      //       // showBottom
-      //       // bottomIconName={'download'}
-      //       // bottomIconTitle={`Excel`}
-      //       // bottombg={Colors.red600}
-      //       // bottomClicked={() => {
-      //       //   const {dataList} = this.state;
-      //       //   if (dataList.length > 0) {
-      //       //     Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //       //       //console.log(result);
-      //       //       if (result) {
-      //       //         alert(
-      //       //           'Data exported successfully \n You can check in Download/ErbFinPro/ directory',
-      //       //         );
-      //       //         //Linking.openURL(`uri:${FILEPATH}`);
-      //       //       }
-      //       //     });
-      //       //   }
-      //       // }}
-      //     />
-      //   }
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      // {this.state.loading ? (
-      //   <View
-      //     style={{
-      //       justifyContent: 'center',
-      //       alignSelf: 'center',
-      //       flex: 1,
-      //     }}>
-      //     <ActivityIndicator />
-      //   </View>
-      // ) : this.state.dataList.length > 0 ? (
-      //   <CommonTable
-      //     dataList={this.state.dataList}
-      //     widthArr={this.state.widthArr}
-      //     tableHead={this.state.tableHead}
-      //     style={{marginTop: sizeHeight(1.5)}}
-      //   />
-      // ) : (
-      //   <View
-      //     style={{
-      //       flex: 1,
-      //       justifyContent: 'center',
-      //       alignItems: 'center',
-      //       alignContents: 'center',
-      //     }}>
-      //     <ListError subtitle={'No connectors found...'} />
-      //   </View>
-      // )}
-      //     </>
-      //   }
-      // />
     );
   }
 }

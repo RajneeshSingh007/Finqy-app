@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
+import {
+  StyleSheet,
+  BackHandler,
+  TouchableWithoutFeedback,
+  FlatList,
+} from 'react-native';
 import {Subtitle, Title, View, Text} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
@@ -23,11 +28,12 @@ import {
   constructObjEditSamadhan,
 } from '../../util/FormCheckHelper';
 import FileUploadForm from '../finorbit/FileUploadForm';
+import PaginationNumbers from '../component/PaginationNumbers';
 
 let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
-const ITEM_LIMIT = 5;
+const ITEM_LIMIT = 10;
 
 export default class LeadList extends React.PureComponent {
   constructor(props) {
@@ -100,8 +106,6 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: '',
       downloadModal: false,
       editThird: null,
-      pageNumbers: [1, 2, 3, 4, 5],
-      activeNumber: 1,
       flag: 2,
       backScreen: null,
     };
@@ -180,7 +184,7 @@ export default class LeadList extends React.PureComponent {
       flag: flag,
       type: type,
     });
-    console.log('body', body);
+    //console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,
@@ -221,7 +225,7 @@ export default class LeadList extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= ITEM_LIMIT ? ITEM_LIMIT : sort.length,
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -702,43 +706,6 @@ export default class LeadList extends React.PureComponent {
     }
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = mode => {
-    const {itemSize, cloneList} = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += ITEM_LIMIT;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({dataList: slicedArray, itemSize: plus});
-      }
-    } else {
-      if (itemSize <= ITEM_LIMIT) {
-        plus = 0;
-      } else {
-        plus -= ITEM_LIMIT;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if (slicedArray.length > 0) {
-          this.setState({
-            dataList: slicedArray,
-            itemSize: plus === 0 ? ITEM_LIMIT : plus,
-          });
-        }
-      }
-    }
-  };
-
   onChangeSearch = query => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
@@ -823,60 +790,14 @@ export default class LeadList extends React.PureComponent {
     });
   };
 
-  pageNumberClicked = no => {
-    const {cloneList, activeNumber, itemSize} = this.state;
-    let pageNumbers = [];
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
     const clone = JSON.parse(JSON.stringify(cloneList));
-    var range = Helper.pageRange(itemSize - 2, itemSize + 3);
-    var start = range.start;
-    var end = range.end;
     const data = this.returnData(clone, start, end);
-    for (let i = start - 1; i < end; i++) {
-      pageNumbers.push(start++);
-    }
     this.setState({
       dataList: data,
       itemSize: end,
-      pageNumbers: pageNumbers,
-      activeNumber: no,
     });
-  };
-
-  pageNumberView = () => {
-    const {pageNumbers, activeNumber} = this.state;
-    const viewStyle = {
-      alignContent: 'center',
-      flexDirection: 'row',
-      marginStart: 4,
-      marginEnd: 4,
-    };
-    const parentStyle = {
-      marginStart: 4,
-      marginEnd: 4,
-    };
-    return (
-      <View styleName="horizontal" style={parentStyle}>
-        {Lodash.map(pageNumbers, (item, index) => {
-          return index === pageNumbers - 1 ? null : (
-            <TouchableWithoutFeedback
-              onPress={() => this.pageNumberClicked(item)}>
-              <View style={viewStyle}>
-                <Title
-                  style={StyleSheet.flatten([
-                    styles.itemtopText,
-                    {
-                      color: activeNumber !== item ? '#656259' : '#0270e3',
-                      fontSize: 15,
-                    },
-                  ])}>
-                  {item}
-                </Title>
-              </View>
-            </TouchableWithoutFeedback>
-          );
-        })}
-      </View>
-    );
   };
 
   render() {
@@ -1080,24 +1001,12 @@ export default class LeadList extends React.PureComponent {
               }
             />
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback
-                  onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                {/* {this.pageNumberView()} */}
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
                   <IconChooser
@@ -1132,7 +1041,7 @@ export default class LeadList extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
-                //enableHeight={false}
+                enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}

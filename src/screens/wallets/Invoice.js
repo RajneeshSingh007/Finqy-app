@@ -36,8 +36,8 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { SafeAreaView } from 'react-navigation';
-import { sizeFont, sizeHeight, sizeWidth } from '../../util/Size';
+import {SafeAreaView} from 'react-navigation';
+import {sizeFont, sizeHeight, sizeWidth} from '../../util/Size';
 import PlaceholderLoader from '../../util/PlaceholderLoader';
 import Icon from 'react-native-vector-icons/Feather';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -55,9 +55,12 @@ import Pdf from 'react-native-pdf';
 import Modal from './../../util/Modal';
 import CScreen from '../component/CScreen';
 import Download from '../component/Download';
+import PaginationNumbers from '../component/PaginationNumbers';
+
 //Summary
 let HEADER = `Sr. No.,Invoice No,Status,Invoice Amount,Gross Amount,TDS,Paid Amount,Payment Date,Reference No,Invoice\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.SDCardDir}/Invoice.csv`;
+const ITEM_LIMIT = 10;
 
 export default class Invoice extends React.PureComponent {
   constructor(props) {
@@ -89,28 +92,28 @@ export default class Invoice extends React.PureComponent {
       cloneList: [],
       modalvis: false,
       pdfurl: '',
-      itemSize: 5,
+      itemSize: ITEM_LIMIT,
       disableNext: false,
       disableBack: false,
       searchQuery: '',
       enableSearch: false,
-      utype: ''
+      utype: '',
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backclick);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
-        this.setState({ userData: userData });
-        Pref.getVal(Pref.USERTYPE, (v) => {
-          this.setState({ utype: v });
-          Pref.getVal(Pref.saveToken, (value) => {
-            this.setState({ token: value }, () => {
+      Pref.getVal(Pref.userData, userData => {
+        this.setState({userData: userData});
+        Pref.getVal(Pref.USERTYPE, v => {
+          this.setState({utype: v});
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({token: value}, () => {
               this.fetchData();
             });
           });
@@ -120,9 +123,9 @@ export default class Invoice extends React.PureComponent {
   }
 
   backclick = () => {
-    const { modalvis } = this.state;
+    const {modalvis} = this.state;
     if (modalvis) {
-      this.setState({ modalvis: false, pdfurl: '' });
+      this.setState({modalvis: false, pdfurl: ''});
       return true;
     }
     return false;
@@ -135,8 +138,8 @@ export default class Invoice extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({ loading: true });
-    const { refercode, id } = this.state.userData;
+    this.setState({loading: true});
+    const {refercode, id} = this.state.userData;
     const body = JSON.stringify({
       user_id: `${refercode}`,
     });
@@ -145,9 +148,9 @@ export default class Invoice extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
-        const { data, response_header } = result;
-        const { res_type, message } = response_header;
+      result => {
+        const {data, response_header} = result;
+        const {res_type, message} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
             const sorting = data.sort((a, b) => {
@@ -160,7 +163,7 @@ export default class Invoice extends React.PureComponent {
               );
             });
             const sort = sorting.reverse();
-            const { itemSize } = this.state;
+            const {itemSize} = this.state;
             this.setState({
               cloneList: sort,
               dataList: this.returnData(sort, 0, sort.length).slice(
@@ -168,17 +171,17 @@ export default class Invoice extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 5 ? 5 : sort.length,
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
             });
           } else {
-            this.setState({ loading: false });
+            this.setState({loading: false});
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
-      (error) => {
-        this.setState({ loading: false });
+      error => {
+        this.setState({loading: false});
       },
     );
   };
@@ -188,8 +191,8 @@ export default class Invoice extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  invoiceViewClick = (value) => {
-    const { utype } = this.state;
+  invoiceViewClick = value => {
+    const {utype} = this.state;
     //http://uat.erb.ai/Finprond/new_invoice.php?id=92
     //pdfurl: `${Pref.ApiDirUrl}${value}`,
     //console.log('value', `${Pref.ApiDirUrl}${value}${utype}`)
@@ -205,7 +208,7 @@ export default class Invoice extends React.PureComponent {
    * @param {*} data
    */
   returnData = (sort, start = 0, end) => {
-    const { refercode, id } = this.state.userData;
+    const {refercode, id} = this.state.userData;
     const dataList = [];
     if (sort.length > 0) {
       if (start >= 0) {
@@ -215,7 +218,7 @@ export default class Invoice extends React.PureComponent {
             const rowData = [];
             rowData.push(`${i + 1}`);
             rowData.push(`${Lodash.capitalize(item.invoice_no)}`);
-            const statusView = (value) => (
+            const statusView = value => (
               <View>
                 <Title
                   style={{
@@ -266,46 +269,15 @@ export default class Invoice extends React.PureComponent {
     return dataList;
   };
 
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 5;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({ dataList: slicedArray, itemSize: plus });
-      }
-    } else {
-      if (itemSize <= 5) {
-        plus = 0;
-      } else {
-        plus -= 5;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        this.setState({ dataList: slicedArray, itemSize: plus });
-      }
-    }
-  };
 
   clickedexport = () => {
-    const { cloneList } = this.state;
+    const {cloneList} = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
-      Helper.writeCSV(HEADER, data, FILEPATH, (result) => {
+      Helper.writeCSV(HEADER, data, FILEPATH, result => {
         //console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{ path: FILEPATH, mime: 'text/csv' }]),
+          RNFetchBlob.fs.scanFile([{path: FILEPATH, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
               title: 'Invoice Record',
               description: 'Invoice record exported successfully',
@@ -319,6 +291,17 @@ export default class Invoice extends React.PureComponent {
     }
   };
 
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
+
   render() {
     return (
       <CScreen
@@ -327,25 +310,17 @@ export default class Invoice extends React.PureComponent {
           <>
             <LeftHeaders showBack title={'My Invoice'} />
             <View styleName="horizontal md-gutter">
-              <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                <Title style={styles.itemtopText}>{`Back`}</Title>
-              </TouchableWithoutFeedback>
-              <View
-                style={{
-                  height: 16,
-                  marginHorizontal: 12,
-                  backgroundColor: '#0270e3',
-                  width: 1.5,
-                }}
+            <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
               />
-              <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                <Title style={styles.itemtopText}>{`Next`}</Title>
-              </TouchableWithoutFeedback>
             </View>
             <Modal
               visible={this.state.modalvis}
               setModalVisible={() =>
-                this.setState({ pdfurl: '', modalvis: false })
+                this.setState({pdfurl: '', modalvis: false})
               }
               ratioHeight={0.87}
               backgroundColor={`white`}
@@ -360,7 +335,14 @@ export default class Invoice extends React.PureComponent {
               }
               topRightElement={
                 <TouchableWithoutFeedback
-                  onPress={() =>Helper.downloadFileWithFileName(`${this.state.pdfurl}`,'Invoice', 'Invoice.pdf','application/pdf')}>
+                  onPress={() =>
+                    Helper.downloadFileWithFileName(
+                      `${this.state.pdfurl}`,
+                      'Invoice',
+                      'Invoice.pdf',
+                      'application/pdf',
+                    )
+                  }>
                   <View>
                     <IconChooser
                       name="download"
@@ -388,11 +370,10 @@ export default class Invoice extends React.PureComponent {
                       width: '100%',
                       height: '100%',
                     }}
-                                  fitWidth
-              fitPolicy={0}
-              enablePaging
-              scale={1}
-
+                    fitWidth
+                    fitPolicy={0}
+                    enablePaging
+                    scale={1}
                   />
                 </View>
               }
@@ -403,148 +384,28 @@ export default class Invoice extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
+              enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No invoice found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No invoice found...'} />
+              </View>
+            )}
 
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
-                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}
           </>
         }
       />
-      // <CommonScreen
-      //   title={'Finorbit'}
-      //   loading={this.state.loading}
-      //   enabelWithScroll={false}
-      //   header={
-      //     <LeftHeaders
-      //       title={'My Invoice'}
-      //       showAvtar
-      //       showBack
-      //       showBottom
-      //       bottomIconName={'download'}
-      //       bottomIconTitle={`Excel`}
-      //       bottombg={Colors.red600}
-      //       bottomClicked={() => {
-      // const {dataList} = this.state;
-      // if (dataList.length > 0) {
-      //   Helper.writeCSV(HEADER, dataList, FILEPATH, (result) => {
-      //     //console.log(result);
-      //     if (result) {
-      //       RNFetchBlob.fs.scanFile([
-      //         {path: FILEPATH, mime: 'text/csv'},
-      //       ]),
-      //         RNFetchBlob.android.addCompleteDownload({
-      //           title: 'Lead Record',
-      //           description: 'Lead record exported successfully',
-      //           mime: 'text/csv',
-      //           path: FILEPATH,
-      //           showNotification: true,
-      //         }),
-      //         Helper.showToastMessage('Download Complete', 1);
-      //       //Linking.openURL(`uri:${FILEPATH}`);
-      //     }
-      //   });
-      // }
-      //       }}
-      //     />
-      //   }
-      //   headerDis={0.15}
-      //   bodyDis={0.85}
-      //   body={
-      //     <>
-      // <Modal
-      //   visible={this.state.modalvis}
-      //   setModalVisible={() =>
-      //     this.setState({pdfurl: '', modalvis: false})
-      //   }
-      //   ratioHeight={0.87}
-      //   backgroundColor={`white`}
-      //   topCenterElement={
-      //     <Subtitle
-      //       style={{
-      //         color: '#292929',
-      //         fontSize: 17,
-      //         fontWeight: '700',
-      //         letterSpacing: 1,
-      //       }}>{`Invoice`}</Subtitle>
-      //   }
-      //   topRightElement={
-      //     <TouchableWithoutFeedback
-      //       onPress={() => Helper.downloadFile(this.state.pdfurl, '')}>
-      //       <View>
-      //         <IconChooser
-      //           name="download"
-      //           size={24}
-      //           color={Colors.blue900}
-      //         />
-      //       </View>
-      //     </TouchableWithoutFeedback>
-      //   }
-      //   children={
-      //     <View
-      //       style={{
-      //         flex: 1,
-      //         width: '100%',
-      //         height: '100%',
-      //         backgroundColor: 'white',
-      //       }}>
-      //       <Pdf
-      //         source={{
-      //           uri: this.state.pdfurl,
-      //           cache: false,
-      //         }}
-      //         style={{
-      //           flex: 1,
-      //           width: '100%',
-      //           height: '100%',
-      //         }}
-      //       />
-      //     </View>
-      //   }
-      // />
-      // {this.state.loading ? (
-      //   <View
-      //     style={{
-      //       justifyContent: 'center',
-      //       alignSelf: 'center',
-      //       flex: 1,
-      //     }}>
-      //     <ActivityIndicator />
-      //   </View>
-      // ) : this.state.dataList.length > 0 ? (
-      //   <CommonTable
-      //     dataList={this.state.dataList}
-      //     widthArr={this.state.widthArr}
-      //     tableHead={this.state.tableHead}
-      //     style={{marginVertical: sizeHeight(6)}}
-      //   />
-      // ) : (
-      //   <View
-      //     style={{
-      //       flex: 1,
-      //       justifyContent: 'center',
-      //       alignItems: 'center',
-      //       alignContents: 'center',
-      //       color: '#767676',
-      //     }}>
-      //     <ListError subtitle={'No invoice found...'} />
-      //   </View>
-      // )}
-      //     </>
-      //   }
-      // />
     );
   }
 }

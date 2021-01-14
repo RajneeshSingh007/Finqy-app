@@ -1,20 +1,10 @@
 import React from 'react';
-import {
-  StyleSheet,
-  BackHandler,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import {
-  Title,
-  View,
-} from '@shoutem/ui';
+import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
+import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {
-  ActivityIndicator,
-  Searchbar,
-} from 'react-native-paper';
-import { sizeHeight } from '../../../util/Size';
+import {ActivityIndicator, Searchbar} from 'react-native-paper';
+import {sizeHeight} from '../../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
@@ -25,9 +15,12 @@ import CScreen from './../../component/CScreen';
 import NavigationActions from '../../../util/NavigationActions';
 import Download from '../../component/Download';
 import moment from 'moment';
+import PaginationNumbers from '../../component/PaginationNumbers';
 
-let HEADER = `Sr. No.,Name,Mobile No,Email,Uniquecode\n`;
+let HEADER = `Sr. No.,Name,Mobile No,Email,Refercode\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
+
+const ITEM_LIMIT = 10;
 
 export default class AllMembers extends React.PureComponent {
   constructor(props) {
@@ -38,14 +31,8 @@ export default class AllMembers extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: [
-        'Sr. No.',
-        'Name',
-        'Number',
-        'Email',
-        'Refercode',
-      ],
-      widthArr: [60, 140,120,150,100],
+      tableHead: ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode'],
+      widthArr: [60, 140, 120, 150, 100],
       cloneList: [],
       type: '',
       itemSize: 10,
@@ -55,24 +42,24 @@ export default class AllMembers extends React.PureComponent {
       enableSearch: false,
       orderBy: 'asc',
       fileName: '',
-      reportenabled:false,
+      reportenabled: false,
     };
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true, dataList: [] });
+      this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (userData) => {
+      Pref.getVal(Pref.userData, userData => {
         const reportenabled = navigation.getParam('reportenabled', false);
         //console.log('reportenabled', reportenabled)
-        this.setState({ userData: userData,reportenabled:reportenabled});
-        Pref.getVal(Pref.USERTYPE, (v) => {
-          this.setState({ type: v }, () => {
-            Pref.getVal(Pref.saveToken, (value) => {
-              this.setState({ token: value }, () => {
+        this.setState({userData: userData, reportenabled: reportenabled});
+        Pref.getVal(Pref.USERTYPE, v => {
+          this.setState({type: v}, () => {
+            Pref.getVal(Pref.saveToken, value => {
+              this.setState({token: value}, () => {
                 this.fetchData();
               });
             });
@@ -88,11 +75,11 @@ export default class AllMembers extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({ loading: true });
-    const { id } = this.state.userData;
+    this.setState({loading: true});
+    const {id} = this.state.userData;
     const body = JSON.stringify({
       teamid: id,
-      userid: "",
+      userid: '',
       flag: 0,
     });
     Helper.networkHelperTokenPost(
@@ -100,12 +87,12 @@ export default class AllMembers extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
+      result => {
         //console.log('result',result);
-        const { data, status } = result;
+        const {data, status} = result;
         if (status) {
           if (data.length > 0) {
-            const { itemSize } = this.state;
+            const {itemSize} = this.state;
             this.setState({
               cloneList: data,
               dataList: this.returnData(data, 0, data.length).slice(
@@ -113,7 +100,7 @@ export default class AllMembers extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: data.length >= 10 ? 10 : data.length,
+              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -121,11 +108,11 @@ export default class AllMembers extends React.PureComponent {
             });
           }
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
-      (e) => {
-        this.setState({ loading: false });
+      e => {
+        this.setState({loading: false});
       },
     );
   };
@@ -160,8 +147,8 @@ export default class AllMembers extends React.PureComponent {
    *
    * @param {*} mode true ? next : back
    */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
+  pagination = mode => {
+    const {itemSize, cloneList} = this.state;
     let clone = JSON.parse(JSON.stringify(cloneList));
     let plus = itemSize;
     let slicedArray = [];
@@ -173,7 +160,7 @@ export default class AllMembers extends React.PureComponent {
           plus = itemSize + rem;
         }
         slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({ dataList: slicedArray, itemSize: plus });
+        this.setState({dataList: slicedArray, itemSize: plus});
       }
     } else {
       if (itemSize <= 10) {
@@ -184,49 +171,82 @@ export default class AllMembers extends React.PureComponent {
       if (plus >= 0 && plus < clone.length) {
         slicedArray = this.returnData(clone, plus, itemSize);
         if (slicedArray.length > 0) {
-          this.setState({ dataList: slicedArray, itemSize: plus });
+          this.setState({dataList: slicedArray, itemSize: plus});
         }
       }
     }
   };
 
-  onChangeSearch = (query) => {
-    this.setState({ searchQuery: query });
-    const { cloneList, itemSize } = this.state;
+  onChangeSearch = query => {
+    this.setState({searchQuery: query});
+    const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query).trim().toLowerCase();
+      const trimquery = String(query)
+        .trim()
+        .toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, (it) => {
-        const { username, mobile, refercode,email } = it;
-        return username && username.trim().toLowerCase().includes(trimquery) || mobile && mobile.trim().toLowerCase().includes(trimquery) || refercode && refercode.trim().toLowerCase().includes(trimquery) || email && email.trim().toLowerCase().includes(trimquery);
+      const result = Lodash.filter(clone, it => {
+        const {username, mobile, refercode, email} = it;
+        return (
+          (username &&
+            username
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (mobile &&
+            mobile
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (refercode &&
+            refercode
+              .trim()
+              .toLowerCase()
+              .includes(trimquery)) ||
+          (email &&
+            email
+              .trim()
+              .toLowerCase()
+              .includes(trimquery))
+        );
       });
-      const data = result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const data =
+        result.length > 0 ? this.returnData(result, 0, result.length) : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({ dataList: data, itemSize: count });
+      this.setState({dataList: data, itemSize: count});
     }
   };
 
   revertBack = () => {
-    const { enableSearch } = this.state;
-    const { cloneList } = this.state;
+    const {enableSearch} = this.state;
+    const {cloneList} = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, 10);
-      this.setState({ dataList: data });
+      this.setState({dataList: data});
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 10 });
-  }
+    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 10});
+  };
 
-
-  rowClicked = (item) =>{
+  rowClicked = item => {
     const {reportenabled} = this.state;
-    if(reportenabled === true){
-      NavigationActions.navigate('MemberReport', {data:item});
+    if (reportenabled === true) {
+      NavigationActions.navigate('MemberReport', {data: item});
     }
-  }
+  };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
 
   render() {
-    const { searchQuery, enableSearch,reportenabled } = this.state;
+    const {searchQuery, enableSearch, reportenabled} = this.state;
     return (
       <CScreen
         body={
@@ -248,44 +268,39 @@ export default class AllMembers extends React.PureComponent {
             />
 
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+              <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
-                  <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
+                  <IconChooser
+                    name={enableSearch ? 'x' : 'search'}
+                    size={24}
+                    color={'#555555'}
+                  />
                 </View>
               </TouchableWithoutFeedback>
-
             </View>
 
-            {enableSearch === true ? <View styleName='md-gutter'>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={this.onChangeSearch}
-                value={searchQuery}
-                style={{
-                  elevation: 0,
-                  borderColor: '#dbd9cc',
-                  borderWidth: 0.5,
-                  borderRadius: 8
-                }}
-                clearIcon={() => null}
-              />
-            </View> : null}
+            {enableSearch === true ? (
+              <View styleName="md-gutter">
+                <Searchbar
+                  placeholder="Search"
+                  onChangeText={this.onChangeSearch}
+                  value={searchQuery}
+                  style={{
+                    elevation: 0,
+                    borderColor: '#dbd9cc',
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                  }}
+                  clearIcon={() => null}
+                />
+              </View>
+            ) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
@@ -300,14 +315,15 @@ export default class AllMembers extends React.PureComponent {
                 rowClicked={this.rowClicked}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No team members Found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No team members Found...'} />
+              </View>
+            )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
-                  }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${
+                  this.state.itemSize
+                }/${Number(this.state.cloneList.length)} entries`}</Title>
               </>
             ) : null}
           </>

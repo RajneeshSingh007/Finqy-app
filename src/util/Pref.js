@@ -2829,6 +2829,9 @@ export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
 //playstore Link
 export const APP_PLAY_STORE_LINK = `https://play.google.com/store/apps/details?id=com.erb.finpro`;
 
+//limit file size
+export const LIMIT_FILE_SIZE = 10485760;
+
 /**
  * Set Val
  * @param key

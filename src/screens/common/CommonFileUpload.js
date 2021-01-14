@@ -114,7 +114,7 @@ class CommonFileUpload extends React.PureComponent {
             (fileType === -1 && res.name.includes('jpe')));
 
         const fileSize =
-          Helper.nullCheck(res.size) === false && res.size <= 10485760;
+          Helper.nullCheck(res.size) === false && res.size <= Pref.LIMIT_FILE_SIZE;
 
         if (fileformatCheck) {
           if (fileSize) {

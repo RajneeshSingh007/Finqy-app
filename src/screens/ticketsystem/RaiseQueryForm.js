@@ -127,11 +127,11 @@ export default class RaiseQueryForm extends React.Component {
     const editMode = navigation.getParam('editmode', false);
     //console.log(data, editMode);
 
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         this.fetchData(userData, data, editMode);
       });
-    //});
+    });
   }
 
   fetchData = (userData, data, editMode) => {
@@ -317,7 +317,8 @@ export default class RaiseQueryForm extends React.Component {
           agentUserID = findTeam.user_id;
         }
       } else if (body.ticketissue === 'Non-IT Issue') {
-        subject = `${body.nonitissue} | ${body.nonitesubissue}`;
+        const productSelected = body.nonitissue;
+        subject = `${productSelected} | ${body.nonitesubissue}`;
         type = 'Non-IT Issue';
         //console.log('body.nonitesubissue', body.nonitesubissue);
         if (
@@ -334,27 +335,48 @@ export default class RaiseQueryForm extends React.Component {
             agentUserID = findTeam.user_id;
           }
         } else {
-          if (body.nonitissue.includes('Insurance')) {
-            const findTeam = lodash.find(
-              agentList,
-              io => io.supportTeamId === '2' && io.designation === 'Insurance',
-            );
-            //console.log('findTeamNT', findTeam);
+          const findTeam = lodash.find(agentList, io =>{
+            const teamid = io.supportTeamId === '2';
+            const desg = String(io.designation).trim();
+            let designationCheck = "";
+            if(productSelected.includes("Insurance")){
+              designationCheck  = desg === 'Insurance'
+            }else if(productSelected === "Home Loan"){
+              designationCheck  = desg === 'Home Loan'
+            }else if(productSelected === "Business Loan"){
+              designationCheck  = desg === 'Business Loan'
+            }else if(productSelected === "Credit Card"){
+              designationCheck  = desg === 'Credit Card'
+            }else if(productSelected === "Loan Against Property"){
+              designationCheck  = desg === 'Loan Against Property'
+            }else if(productSelected === "Personal Loan"){
+              designationCheck  = desg === 'Personal Loan'
+            }else {
+              designationCheck  = desg === 'Investment'
+            }
+            return teamid && designationCheck
+          })
+          // if (productSelected.includes('Insurance')) {
+          //   const findTeam = lodash.find(
+          //     agentList,
+          //     io => io.supportTeamId === '2' && io.designation.toLowerCase() === 'insurance',
+          //   );
+          //   //console.log('findTeamNT', findTeam);
+          //   if (findTeam != undefined) {
+          //     agentUserID = findTeam.user_id;
+          //   }
+          // } else {
+          //   const findTeam = lodash.find(
+          //     agentList,
+          //     io =>
+          //       io.supportTeamId === '2' &&
+          //       io.designation.toLowerCase() === productSelected.toLowerCase(),
+          //   );
+          //   //console.log('findTeamNT', findTeam);
             if (findTeam != undefined) {
               agentUserID = findTeam.user_id;
             }
-          } else {
-            const findTeam = lodash.find(
-              agentList,
-              io =>
-                io.supportTeamId === '2' &&
-                io.designation.toLowerCase() === body.nonitissue.toLowerCase(),
-            );
-            //console.log('findTeamNT', findTeam);
-            if (findTeam != undefined) {
-              agentUserID = findTeam.user_id;
-            }
-          }
+          // }
         }
       }
 
@@ -420,14 +442,14 @@ export default class RaiseQueryForm extends React.Component {
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
             const agentBody = {id: agentUserID};
-            //console.log('agentBody', agentBody);
+            console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
               JSON.stringify(agentBody),
               Pref.methodPut,
               Pref.UVDESK_API,
               result => {
-                //console.log('result1', result);
+                console.log('result1', result);
                 const {success} = JSON.parse(JSON.stringify(result));
                 this.setState({loading: false});
                 if (success.includes('Success')) {

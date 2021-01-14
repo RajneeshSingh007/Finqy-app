@@ -24,6 +24,9 @@ import IconChooser from '../../common/IconChooser';
 import CScreen from './../../component/CScreen';
 import NavigationActions from '../../../util/NavigationActions';
 import moment from 'moment';
+import PaginationNumbers from './../../component/PaginationNumbers';
+
+const ITEM_LIMIT = 50;
 
 export default class DialerRecords extends React.PureComponent {
   constructor(props) {
@@ -37,7 +40,7 @@ export default class DialerRecords extends React.PureComponent {
       widthArr: [],
       cloneList: [],
       type: '',
-      itemSize: 50,
+      itemSize: ITEM_LIMIT,
       orderBy: 'asc',
       fileName: ''
     };
@@ -144,7 +147,7 @@ export default class DialerRecords extends React.PureComponent {
                 itemSize,
               ),
               loading: false,
-              itemSize: sort.length >= 50 ? 50 : sort.length,
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -264,39 +267,14 @@ export default class DialerRecords extends React.PureComponent {
       });
     }
   };
-
-  /**
-   *
-   * @param {*} mode true ? next : back
-   */
-  pagination = (mode) => {
-    const { itemSize, cloneList } = this.state;
-    let clone = JSON.parse(JSON.stringify(cloneList));
-    let plus = itemSize;
-    let slicedArray = [];
-    if (mode) {
-      plus += 50;
-      if (itemSize < clone.length) {
-        if (plus > clone.length) {
-          const rem = clone.length - itemSize;
-          plus = itemSize + rem;
-        }
-        slicedArray = this.returnData(clone, itemSize, plus);
-        this.setState({ dataList: slicedArray, itemSize: plus });
-      }
-    } else {
-      if (itemSize <= 50) {
-        plus = 0;
-      } else {
-        plus -= 50;
-      }
-      if (plus >= 0 && plus < clone.length) {
-        slicedArray = this.returnData(clone, plus, itemSize);
-        if (slicedArray.length > 0) {
-          this.setState({ dataList: slicedArray, itemSize: plus });
-        }
-      }
-    }
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
   };
 
   onChangeSearch = (query) => {
@@ -327,10 +305,10 @@ export default class DialerRecords extends React.PureComponent {
     const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const data = this.returnData(clone, 0, 50);
+      const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({ dataList: data });
     }
-    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: 50 });
+    this.setState({ searchQuery: '', enableSearch: !enableSearch, itemSize: ITEM_LIMIT });
   }
 
   render() {
@@ -357,22 +335,13 @@ export default class DialerRecords extends React.PureComponent {
             />
 
             <View styleName="horizontal md-gutter space-between">
-              <View styleName="horizontal">
-                <TouchableWithoutFeedback onPress={() => this.pagination(false)}>
-                  <Title style={styles.itemtopText}>{`Back`}</Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    height: 16,
-                    marginHorizontal: 12,
-                    backgroundColor: '#0270e3',
-                    width: 1.5,
-                  }}
-                />
-                <TouchableWithoutFeedback onPress={() => this.pagination(true)}>
-                  <Title style={styles.itemtopText}>{`Next`}</Title>
-                </TouchableWithoutFeedback>
-              </View>
+            <PaginationNumbers
+                dataSize={this.state.cloneList.length}
+                itemSize={this.state.itemSize}
+                itemLimit={ITEM_LIMIT}
+                pageNumberClicked={this.pageNumberClicked}
+              />
+
               <TouchableWithoutFeedback onPress={this.revertBack}>
                 <View styleName="horizontal v-center h-center">
                   <IconChooser name={enableSearch ? 'x' : 'search'} size={24} color={'#555555'} />
