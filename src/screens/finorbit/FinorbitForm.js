@@ -64,10 +64,8 @@ export default class FinorbitForm extends React.PureComponent {
     const title = navigation.getParam('title', '');
     const editMode = navigation.getParam('edit', false);
     const editLeadData = navigation.getParam('leadData', null);
-    //console.log(editLeadData.third);
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, value => {
-        //console.log('token', value);
         this.setState({token: value}, () => {
           Pref.getVal(Pref.userData, userData => {
             const checknullEdit = Helper.nullCheck(editLeadData);

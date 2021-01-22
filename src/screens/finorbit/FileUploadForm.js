@@ -427,13 +427,15 @@ export default class FileUploadForm extends React.PureComponent {
       current_add_proof,
     } = this.state;
     //console.log(exisitng_loan_doc, proof_of_property,current_add_proof)
+    const loanCheck = Helper.nullStringCheck(title) === false && title === 'Auto Loan' ||
+    title === 'Business Loan' ||
+    title === 'Personal Loan' ||
+    title === 'Loan Against Property' ||
+    title === 'Home Loan' ? true : false;
+
     return (
       <View>
-        {title === 'Auto Loan' ||
-        title === 'Business Loan' ||
-        title === 'Personal Loan' ||
-        title === 'Loan Against Property' ||
-        title === 'Home Loan' ? (
+        {loanCheck ? (
           <>
             {this.renderSelectedMultiChoice(
               current_add_proof,
@@ -602,7 +604,8 @@ export default class FileUploadForm extends React.PureComponent {
         {title !== 'Motor Insurance' ? (
           <>
             <CommonFileUpload
-              showPlusIcon={title !== 'Profile'}
+              //showPlusIcon={title !== 'Profile'}
+              showPlusIcon={loanCheck} 
               truDownloadEnable={truDownloadEnable}
               downloadTitles={downloadTitles}
               mode={mode}
@@ -620,7 +623,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={'pancard'}
             />
 
-            { title !== 'Profile' && this.state.multipleFilesList[0].filled.map((e, index) => {
+            {loanCheck && this.state.multipleFilesList[0].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[0].downloadUrl;
               const namesList = this.state.multipleFilesList[0].names;
 
@@ -645,7 +648,7 @@ export default class FileUploadForm extends React.PureComponent {
             })}
 
             <CommonFileUpload
-              showPlusIcon={title !== 'Profile'}
+              showPlusIcon={loanCheck}
               truDownloadEnable={truDownloadEnable}
               //title={'Aadhar Card'}
               title={`${this.mandatoryName(
@@ -674,7 +677,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={title === 'Demat' ? 'addressproof' : 'aadharcard'}
             />
 
-            {title !== 'Profile' && this.state.multipleFilesList[1].filled.map((e, index) => {
+            {loanCheck && this.state.multipleFilesList[1].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[1].downloadUrl;
               return (
                 <CommonFileUpload
@@ -749,8 +752,7 @@ export default class FileUploadForm extends React.PureComponent {
         {title === 'Motor Insurance' ? (
           <View>
             <CommonFileUpload
-              // title={'RC Book *'}
-              showPlusIcon={true}
+              showPlusIcon={false}
               plusClicked={() => this.insertValueFormultipleFilePick(4)}
               truDownloadEnable={truDownloadEnable}
               title={`RC Book ${truDownloadEnable === 1 ? '1' : ''}`}
@@ -789,9 +791,8 @@ export default class FileUploadForm extends React.PureComponent {
             })}
 
             <CommonFileUpload
-              showPlusIcon={true}
+              showPlusIcon={false}
               plusClicked={() => this.insertValueFormultipleFilePick(5)}
-              // title={'Policy *'}
               title={`Policy ${truDownloadEnable === 1 ? '1' : ''}`}
               type={2}
               pickedTitle={this.findFileName(`policycopy`)}
@@ -828,7 +829,7 @@ export default class FileUploadForm extends React.PureComponent {
             })}
 
             <CommonFileUpload
-              showPlusIcon={true}
+              showPlusIcon={false}
               plusClicked={() => this.insertValueFormultipleFilePick(6)}
               title={`Old Insurance Policy ${
                 truDownloadEnable === 1 ? '1' : ''
@@ -869,7 +870,7 @@ export default class FileUploadForm extends React.PureComponent {
             })}
 
             <CommonFileUpload
-              showPlusIcon={true}
+              showPlusIcon={false}
               plusClicked={() => this.insertValueFormultipleFilePick(7)}
               title={`PUC ${truDownloadEnable === 1 ? '1' : ''}`}
               type={2}
@@ -926,18 +927,8 @@ export default class FileUploadForm extends React.PureComponent {
           />
         ) : null}
 
-        {title === 'Auto Loan' ||
-        title === 'Business Loan' ||
-        title === 'Personal Loan' ||
-        title === 'Credit Card' ||
-        title === 'Loan Against Property' ||
-        title === 'Home Loan' ? (
+        {loanCheck ? (
           <View>
-            {truDownloadEnable === 1 ? (
-              <View
-                styleName="vertical"
-                style={{marginStart: sizeWidth(2), marginVertical: 0}}></View>
-            ) : null}
 
             <CommonFileUpload
               showPlusIcon={true}
@@ -1042,52 +1033,6 @@ export default class FileUploadForm extends React.PureComponent {
               );
             })}
 
-            {/* {title === 'Auto Loan' ||
-            title === 'Business Loan' ||
-            title === 'Personal Loan' ||
-            title === 'Loan Against Property' ||
-            title === 'Home Loan' ? (
-              <View>
-                <CommonFileUpload
-                  showPlusIcon={true}
-                  plusClicked={() => this.insertValueFormultipleFilePick(8)}
-                  title={
-                    truDownloadEnable === 1
-                      ? `Existing Loan Document 1`
-                      : this.mandatoryName(`Existing Loan Document`, title)
-                  }
-                  type={2}
-                  fileType={-1}
-                  pickedTitle={this.findFileName(`existing`)}
-                  pickedCallback={(selected, res) => this.fileselected(res, 'existing', -1, false)}
-                  enableDownloads={this.checkurl(0, existing)}
-                  downloadUrl={this.checkurl(1, existing)}
-                  mode={mode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                />
-
-                {this.state.multipleFilesList[8].filled.map((e, index) => {
-                  const durl = this.state.multipleFilesList[8].downloadUrl;
-                  return (
-                    <CommonFileUpload
-                      editMode={editMode}
-                      downloadTitles={`Existing Loan Document ${index + 2}`}
-                      truDownloadEnable={truDownloadEnable}
-                      mode={mode}
-                      title={''}
-                      type={2}
-                      fileType={-1}
-                      pickedTitle={this.findFileName(`existing${index + 1}`)}
-                      pickedCallback={(selected, res) => this.fileselected(res, 'existing', index, true)}
-                      enableDownloads={this.checkurl(0, durl[index])}
-                      downloadUrl={this.checkurl(1, durl[index])}
-                    />
-                  );
-                })}
-              </View>
-            ) : null} */}
-
             <CommonFileUpload
               showPlusIcon={true}
               plusClicked={() => this.insertValueFormultipleFilePick(9)}
@@ -1132,6 +1077,256 @@ export default class FileUploadForm extends React.PureComponent {
                 />
               );
             })}
+
+
+            
+          {/* <CommonFileUpload
+            showPlusIcon={true}
+            plusClicked={() => this.insertValueFormultipleFilePick(8)}
+            title={
+              truDownloadEnable === 1
+                ? `Existing Loan Document 1`
+                : this.mandatoryName(`Existing Loan Document`, title)
+            }
+            type={2}
+            fileType={-1}
+            pickedTitle={this.findFileName(`existing`)}
+            pickedCallback={(selected, res) => this.fileselected(res, 'existing', -1, false)}
+            enableDownloads={this.checkurl(0, existing)}
+            downloadUrl={this.checkurl(1, existing)}
+            mode={mode}
+            downloadTitles={downloadTitles}
+            truDownloadEnable={truDownloadEnable}
+            />
+
+            {this.state.multipleFilesList[8].filled.map((e, index) => {
+            const durl = this.state.multipleFilesList[8].downloadUrl;
+            return (
+              <CommonFileUpload
+                editMode={editMode}
+                downloadTitles={`Existing Loan Document ${index + 2}`}
+                truDownloadEnable={truDownloadEnable}
+                mode={mode}
+                title={''}
+                type={2}
+                fileType={-1}
+                pickedTitle={this.findFileName(`existing${index + 1}`)}
+                pickedCallback={(selected, res) => this.fileselected(res, 'existing', index, true)}
+                enableDownloads={this.checkurl(0, durl[index])}
+                downloadUrl={this.checkurl(1, durl[index])}
+              />
+            );
+            })} */}
+
+          </View>
+        ) : null}
+
+        {title === 'Credit Card' ? (
+          <View>
+            {truDownloadEnable === 1 ? (
+              <View
+                styleName="vertical"
+                style={{marginStart: sizeWidth(2), marginVertical: 0}}>
+                {/* <Subtitle style={styles.title1}>
+                  {this.showhideheading()}
+                </Subtitle> */}
+              </View>
+            ) : (
+              <View
+                styleName="vertical"
+                style={{marginStart: sizeWidth(2), marginVertical: 12}}>
+                <Subtitle style={styles.title1}>
+                  {title === 'Personal Loan'
+                    ? `3 Months Salary Slip`
+                    : title === 'Credit Card'
+                    ? `3 Months Salary Slip or 1 Years ITR`
+                    : (title === 'Home Loan' ||
+                        title === 'Loan Against Property') &&
+                      headerchange === true
+                    ? `6 Months Salary Slip`
+                    : (title === 'Home Loan' ||
+                        title === 'Loan Against Property') &&
+                      headerchange === false
+                    ? `3 Years ITR`
+                    : title === 'Loan Against Property'
+                    ? `6 Months Salary Slip or 3 Years ITR`
+                    : `3 Years ITR`}
+                </Subtitle>
+              </View>
+            )}
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 1`
+                }`,
+                title,
+              )}
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 1`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip: res});
+              }}
+              enableDownloads={
+                salarySlip != null && this.checkurl(0, salarySlip)
+              }
+              downloadUrl={this.checkurl(1, salarySlip)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 1'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
+
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 2`
+                }`,
+                title,
+              )}
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 2`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip1`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip1: res});
+              }}
+              enableDownloads={
+                salarySlip1 != null && this.checkurl(0, salarySlip1)
+              }
+              downloadUrl={this.checkurl(1, salarySlip1)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 2'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
+
+            <CommonFileUpload
+              // title={`${(title === 'Home Loan' || title === 'Loan Against Property') && headerchange === false ? `` : `Salary Slip 3`}${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`}
+              title={this.mandatoryName(
+                `${
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property' ||
+                    'Auto Loan' ||
+                    title === 'Business Loan') &&
+                  headerchange === false
+                    ? ``
+                    : `Salary Slip 3`
+                }`,
+                title,
+              )}
+              type={2}
+              pickedTitle={this.findFileName(`salaryslip2`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({salaryslip2: res});
+              }}
+              enableDownloads={
+                salarySlip2 != null && this.checkurl(0, salarySlip2)
+              }
+              downloadUrl={this.checkurl(1, salarySlip2)}
+              mode={mode}
+              downloadTitles={
+                downloadTitles === '' ? downloadTitles : 'Salary Slip 3'
+              }
+              truDownloadEnable={truDownloadEnable}
+            />
+
+            {(title === 'Loan Against Property' || title === 'Home Loan') &&
+            headerchange === true ? (
+              <View>
+                <CommonFileUpload
+                  title={'Salary Slip 4'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip3`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip3: res});
+                  }}
+                  enableDownloads={
+                    salarySlip3 != null && this.checkurl(0, salarySlip3)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip3)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 4'
+                  }
+                  truDownloadEnable={truDownloadEnable}
+                />
+                <CommonFileUpload
+                  title={'Salary Slip 5'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip4`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip4: res});
+                  }}
+                  enableDownloads={
+                    salarySlip4 != null && this.checkurl(0, salarySlip4)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip4)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 5'
+                  }
+                  truDownloadEnable={truDownloadEnable}
+                />
+                <CommonFileUpload
+                  title={'Salary Slip 6'}
+                  type={2}
+                  pickedTitle={this.findFileName(`salaryslip5`)}
+                  pickedCallback={(selected, res) => {
+                    this.state.fileList.push({salaryslip5: res});
+                  }}
+                  enableDownloads={
+                    salarySlip5 != null && this.checkurl(0, salarySlip5)
+                  }
+                  downloadUrl={this.checkurl(1, salarySlip5)}
+                  mode={mode}
+                  downloadTitles={
+                    downloadTitles === '' ? downloadTitles : 'Salary Slip 6'
+                  }
+                  truDownloadEnable={truDownloadEnable}
+                />
+              </View>
+            ) : null}
+
+            <CommonFileUpload
+              title={this.mandatoryName(
+                `${
+                  title === 'Home Loan'
+                    ? '1 Year Bank Statement'
+                    : `3 Month Bank Statement`
+                }`,
+                title,
+              )}
+              // title={
+              //   title === 'Home Loan'
+              //     ? '1 Year Bank Statement'
+              //     : `3 Month Bank Statement ${title === 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan' ? ` *` : ``}`
+              // }
+              type={1}
+              fileType={1}
+              pickedTitle={this.findFileName(`bankstate`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({bankstate: res});
+              }}
+              enableDownloads={bankState != null && this.checkurl(0, bankState)}
+              downloadUrl={this.checkurl(1, bankState)}
+              mode={mode}
+              downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
+            />
           </View>
         ) : null}
       </View>
