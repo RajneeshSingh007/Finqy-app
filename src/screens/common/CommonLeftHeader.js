@@ -127,7 +127,7 @@ const LeftHeaders = props => {
                         userData !== null &&
                           Helper.nullStringCheck(userData.rname) === false
                           ? userData.rname
-                          : type !== 'connector' && type !== 'Referral'
+                          : type !== 'connector' && type !== 'Referral Partner'
                           ? userData.username
                           : '',
                         {

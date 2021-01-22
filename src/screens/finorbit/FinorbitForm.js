@@ -64,6 +64,7 @@ export default class FinorbitForm extends React.PureComponent {
     const title = navigation.getParam('title', '');
     const editMode = navigation.getParam('edit', false);
     const editLeadData = navigation.getParam('leadData', null);
+    //console.log(editLeadData.third);
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, value => {
         //console.log('token', value);
@@ -83,19 +84,21 @@ export default class FinorbitForm extends React.PureComponent {
               editThird: checknullEdit === false ? editLeadData.third : null,
               editFour: checknullEdit === false ? editLeadData.four : null,
             });
-            if(checknullEdit === false){
+            if (checknullEdit === false) {
               if (
                 Helper.nullCheck(editLeadData.first) === false &&
                 Helper.nullStringCheck(editLeadData.first.employ) === false
               ) {
                 if (
-                  (title === 'Home Loan' || title === 'Loan Against Property') &&
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property') &&
                   editLeadData.first &&
                   editLeadData.first.employ === 'Salaried'
                 ) {
                   this.headerchange = true;
                 } else if (
-                  (title === 'Home Loan' || title === 'Loan Against Property') &&
+                  (title === 'Home Loan' ||
+                    title === 'Loan Against Property') &&
                   editLeadData.first &&
                   editLeadData.first.employ === 'Self Employed'
                 ) {
@@ -426,6 +429,8 @@ export default class FinorbitForm extends React.PureComponent {
             formData.append('formid', id);
           }
 
+          formData.append('frommobile', 'frommobile');
+
           const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
           //console.log('formData', formData);
@@ -436,7 +441,7 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             result => {
-              console.log('result', result);
+              //console.log('result', result);
               const {response_header} = result;
               const {res_type, res} = response_header;
               this.setState({progressLoader: false});
@@ -595,6 +600,29 @@ export default class FinorbitForm extends React.PureComponent {
                       salarySlip5={editThird && editThird.salarySlip5}
                       bankState={editThird && editThird.bankState}
                       policycopy={editThird && editThird.policycopy}
+                      multipleFilesList={
+                        editThird &&
+                        editThird.multipleFilesList != null &&
+                        editThird.multipleFilesList
+                      }
+                      editMode={this.state.editMode}
+                      exisitng_loan_doc={
+                        this.restoreList[1] &&
+                        this.restoreList[1].exisitng_loan_doc
+                      }
+                      current_add_proof={
+                        this.restoreList[1] &&
+                        this.restoreList[1].current_add_proof
+                      }
+                      proof_of_property={
+                        this.restoreList[1] &&
+                        this.restoreList[1].proof_of_property
+                      }
+                      other = {editThird && editThird.other}
+                      passportPhoto = {editThird && editThird.passportPhoto}
+                      cap_aadhar = {editThird && editThird.cap_aadhar}
+                      pop_electricity = {editThird && editThird.pop_electricity}
+                      current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}
                     />
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm
@@ -649,7 +677,6 @@ export default class FinorbitForm extends React.PureComponent {
                     </Title>
                   </Button>
                 </View>
-              
               </>
             )}
           </>

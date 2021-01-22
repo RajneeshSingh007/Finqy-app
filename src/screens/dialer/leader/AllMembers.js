@@ -51,7 +51,7 @@ export default class AllMembers extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         const reportenabled = navigation.getParam('reportenabled', false);
         //console.log('reportenabled', reportenabled)
@@ -66,7 +66,7 @@ export default class AllMembers extends React.PureComponent {
           });
         });
       });
-    });
+    //});
   }
 
   componentWillUnMount() {

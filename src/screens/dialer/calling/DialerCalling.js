@@ -70,6 +70,8 @@ export default class DialerCalling extends React.PureComponent {
     const activeCallerItem = navigation.getParam('data', dummyJSON);
     const editEnabled = navigation.getParam('editEnabled', false);
 
+    //console.log(editEnabled)
+
     if (editEnabled === false) {
       try {
         Helper.requestPermissionsDialer();
@@ -79,19 +81,20 @@ export default class DialerCalling extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({
         loading: true,
-        dataList: [],
-        editEnabled: true,
-        callTrack: -1,
+        //dataList: [],
+        //editEnabled: true,
+        //callTrack: -1,
       });
     });
 
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         this.setState({
           userData: userData,
           editEnabled: editEnabled,
           activeCallerItem: activeCallerItem,
           progressLoader: false,
+          callTrack: editEnabled ? 1 : -1
         });
         Pref.getVal(Pref.USERTYPE, v => {
           this.getProducts();
@@ -106,7 +109,7 @@ export default class DialerCalling extends React.PureComponent {
           });
         });
       });
-    });
+    //});
   }
 
   componentWillUnMount() {
@@ -191,16 +194,24 @@ export default class DialerCalling extends React.PureComponent {
     if (callTrack === 1) {
       if (editEnabled) {
         NavigationActions.navigate('DialerRecords', {active: -1});
+        if (this.focusListener !== undefined) this.focusListener.remove();
+        if (this.willfocusListener !== undefined) this.willfocusListener.remove();    
         BackHandler.removeEventListener('hardwareBackPress', this.backClick);
       } else {
+        if (this.focusListener !== undefined) this.focusListener.remove();
+        if (this.willfocusListener !== undefined) this.willfocusListener.remove();    
         BackHandler.removeEventListener('hardwareBackPress', this.backClick);
         return true;
       }
     } else {
       NavigationActions.goBack();
+      if (this.focusListener !== undefined) this.focusListener.remove();
+      if (this.willfocusListener !== undefined) this.willfocusListener.remove();  
       BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     }
     this.setState({callTrack: -1});
+    if (this.focusListener !== undefined) this.focusListener.remove();
+    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return true;
   };
@@ -386,11 +397,14 @@ export default class DialerCalling extends React.PureComponent {
   };
 
   formResult = (status, message) => {
-    Helper.showToastMessage(message, status === true ? 1 : 0);
     const {editEnabled} = this.state;
+    console.log('editEnabled', editEnabled)
     if (editEnabled === true) {
-      NavigationActions.navigate('DialerRecords', {active: -1});
+      //NavigationActions.navigate('DialerRecords', {active: -1});
+      Helper.showToastMessage(message, status === true ? 1 : 0);
+      this.backClick();
     } else {
+      Helper.showToastMessage(message, status === true ? 1 : 0);
       this.setState({callTrack: -1, activeCallerItem: dummyJSON});
       this.fetchData();
     }

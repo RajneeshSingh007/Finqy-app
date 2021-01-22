@@ -21,26 +21,24 @@ class CommonFileUpload extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {title, mode = false} = this.props;
-    this.setState({mode: mode, title: title});
+    const {title = '', mode = false, pickedTitle=''} = this.props;
+    this.setState({mode: mode, title: title, pickedName: pickedTitle});
   }
 
-  // componentDidUpdate(prevProp, nextState){
-  //   console.log(prevProp);
-  //   if(prevProp.pickedName === '' && prevProp.pickedTitle != ''){
-  //     this.setState({pickedName:prevProp.pickedTitle})
-  //   }
-  // }
+  componentDidUpdate(prevProp, nextState){
+    if(prevProp.pickedName === '' && prevProp.pickedTitle != ''){
+      this.setState({pickedName:prevProp.pickedTitle})
+    }
+  }
 
   componentWillReceiveProps(prop) {
     if (prop.pickedTitle && prop.pickedTitle != '') {
       this.setState({pickedName: prop.pickedTitle, title: prop.title});
     }
-    //console.log(prop);
   }
 
   filePicker = async () => {
-    const {type = 0, mode = false, fileType = -1, title = ''} = this.props;
+    const {type = 0, mode = false, fileType = -1, title = '',keyName=''} = this.props;
     if (mode === false) {
       let fileTypes = [];
       if (type === 0) {
@@ -51,19 +49,17 @@ class CommonFileUpload extends React.PureComponent {
         fileTypes = [DocumentPicker.types.images, DocumentPicker.types.pdf];
       }
       try {
-        const res = await DocumentPicker.pick({
-          // type: [
-          //   type === 0
-          //     ? DocumentPicker.types.images
-          //     : type === 1
-          //       ? DocumentPicker.types.pdf
-          //       : DocumentPicker.types.allFiles,
-          // ],
-          type: fileTypes,
-        });
+        const res = await DocumentPicker.pick({type: fileTypes});
         if (
           res.name !== '' &&
           res.type === 'application/pdf' &&
+          !res.name.includes('.')
+        ) {
+          const pname = res.name;
+          res.name = `${pname}.pdf`;
+        }else if (
+          res.name !== '' &&
+          res.type === 'application/PDF' &&
           !res.name.includes('.')
         ) {
           const pname = res.name;
@@ -104,26 +100,18 @@ class CommonFileUpload extends React.PureComponent {
           const pname = res.name;
           res.name = `${pname}.jpe`;
         }
-        const fileformatCheck =
-          res.name !== '' &&
-          (res.name.includes('pdf') ||
-            (fileType === -1 && res.name.includes('png')) ||
-            (fileType === -1 && res.name.includes('jpeg')) ||
-            (fileType === -1 && res.name.includes('jpg')) ||
-            (fileType === -1 && res.name.includes('jfif')) ||
-            (fileType === -1 && res.name.includes('jpe')));
+        const fileformatCheck = Helper.extCheckReg(res.name);
 
         const fileSize =
-          Helper.nullCheck(res.size) === false && res.size <= Pref.LIMIT_FILE_SIZE;
+          Helper.nullCheck(res.size) === false &&
+          res.size <= Pref.LIMIT_FILE_SIZE;
 
         if (fileformatCheck) {
           if (fileSize) {
+            res.key = keyName;
             this.props.pickedCallback(res.name !== '' ? false : true, res);
             this.setState({
-              pickedName: Lodash.truncate(res.name, {
-                length: 40,
-                separator: '...',
-              }),
+              pickedName: res.name,
             });
           } else {
             Helper.showToastMessage('Please, select files less than 10MB', 0);
@@ -141,35 +129,6 @@ class CommonFileUpload extends React.PureComponent {
             );
           }
         }
-
-        //console.log(res);
-        // if (res.name !== '') {
-        //   if (
-        //     res.name.includes('pdf') ||
-        //    fileType === -1 && res.name.includes('png') ||
-        //    fileType === -1 && res.name.includes('jpeg') ||
-        //    fileType === -1 && res.name.includes('jpg') ||
-        //    fileType === -1 && res.name.includes('jfif')
-        //   ) {
-        //     if (res.size <= 10485760) {
-        // this.setState({
-        //   pickedName: Lodash.truncate(res.name, {
-        //     length: 40,
-        //     separator: '...'
-        //   })
-        // });
-        //     }
-        //   }else{
-        // Helper.showToastMessage('Please, Select files only PNG, JPEG, JPG, JIFI and PDF ')
-        //   }
-        // }
-        // //2097152 2mb
-        // //10485760 10mb
-        // if (res.size <= 10485760) {
-        // this.props.pickedCallback(res.name !== '' ? false : true, res);
-        // } else {
-        // Helper.showToastMessage('Please, select files less than 10MB ')
-        // }
       } catch (err) {
         if (DocumentPicker.isCancel(err)) {
           this.props.pickedCallback(true, null);
@@ -194,13 +153,20 @@ class CommonFileUpload extends React.PureComponent {
         parseurl.length,
       );
       let finalName = fullName.slice(0, fullName.lastIndexOf('.'));
-      //console.log('fullName', fullName);
+      let extension = fullName.slice(fullName.lastIndexOf('.')+1, fullName.length);
+      let mimeType = 'application/pdf';
+      if(extension !== 'pdf'){
+        mimeType = `image/${extension}`;
+      }
+
+      //console.log('mimeType', mimeType);
       //console.log('finalName', finalName);
+      
       Helper.downloadFileWithFileName(
         downloadUrl,
         finalName,
         fullName,
-        mime,
+        mimeType,
         true,
         false,
       );
@@ -221,10 +187,11 @@ class CommonFileUpload extends React.PureComponent {
       downloadTitles = '',
       downloadUrl = '',
       truDownloadEnable = -1,
+      editMode = false
     } = this.props;
     return truDownloadEnable === 1 &&
       Helper.nullStringCheck(downloadUrl) === false ? (
-      <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+      <View style={styles.maincontainers}>
         <View
           style={StyleSheet.flatten([
             styles.insideContainer,
@@ -278,87 +245,103 @@ class CommonFileUpload extends React.PureComponent {
       downloadUrl = '',
       truDownloadEnable = -1,
       showPlusIcon = false,
-      plusClicked = () =>{}
+      plusClicked = () => {},
+      editMode=false
     } = this.props;
     return truDownloadEnable === 1 ? (
       this.downloadView()
     ) : (
-      <View
-        style={StyleSheet.flatten([
-          {flex: 1, flexDirection: 'row', alignItems: 'center'},
-          style,
-        ])}>
-        <TouchableWithoutFeedback onPress={this.filePicker}>
-          <View
-            style={StyleSheet.flatten([
-              styles.insideContainer,
-              {
-                flex: enableDownloads ? 0.9 : 1,
-              },
-              enableDownloads ? {height: 56} : {},
-            ])}>
-            <View style={{flexDirection:'row',justifyContent:'space-between', flex:1}}>
-              <View>
-              <Title
-                style={StyleSheet.flatten([
-                  styles.title,
-                  {
-                    bottom: pickedName !== '' ? 2 : 0,
-                    color: pickedName !== '' ? Pref.RED : '#555555',
-                    marginStart: 4,
-                    flex: showPlusIcon ? 0.9 : 1,
-                  },
-                ])}>
-                {downloadTitles === ''
-                  ? pickedName === ''
-                    ? `Upload ${this.state.title} File Type:`
-                    : `${this.state.title}`
-                  : this.state.title === ''
-                  ? downloadTitles
-                  : this.state.title}<Title
+      <View style={StyleSheet.flatten([styles.maincontainers, style])}>
+        <View
+          style={StyleSheet.flatten([
+            styles.insideContainer,
+            {
+              flex: enableDownloads ? 0.9 : 1,
+            },
+            enableDownloads ? {height: 56} : {},
+          ])}>
+          <View style={styles.filemaincontainers}>
+            <TouchableWithoutFeedback onPress={this.filePicker}>
+              <View style={{flexShrink: 1,flex:0.9}}>
+                <Title
                   style={StyleSheet.flatten([
                     styles.title,
                     {
-                      color: '#bbbbbb',
+                      bottom: pickedName !== '' ? 2 : 0,
+                      color: pickedName !== '' ? Pref.RED : '#555555',
+                      marginStart: 4,
+                      //flex: showPlusIcon ? 0.9 : 1,
                     },
                   ])}>
-                  {downloadTitles === ''
+                  {editMode ? `Upload ${this.state.title} File Type:` : downloadTitles === ''
                     ? pickedName === ''
-                      ? fileType != -1
-                        ? `PDF`
-                        : ` PDF/Image`
-                      : ''
-                    : ''}
+                      ? `Upload ${this.state.title} File Type:`
+                      : `${this.state.title}`
+                    : this.state.title === ''
+                    ? downloadTitles
+                    : this.state.title}
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.title,
+                      {
+                        color: '#bbbbbb',
+                      },
+                    ])}>
+                    {editMode ? fileType != -1
+                          ? `PDF`
+                          : ` PDF/Image` : downloadTitles === ''
+                      ? pickedName === ''
+                        ? fileType != -1
+                          ? `PDF`
+                          : ` PDF/Image`
+                        : ''
+                      : ''}
+                  </Title>
                 </Title>
-              </Title>
-              {pickedName !== '' ? (
-                <Title style={styles.subtitle}>{pickedName}</Title>
-              ) : null}
+                {pickedName !== '' ? (
+                  <Title style={styles.subtitle}>{Lodash.truncate(pickedName, {
+                    separator:'...',
+                    length: downloadUrl !== '' ? 30 : 36
+                  })}</Title>
+                ) : null}
               </View>
-              {showPlusIcon ?
+            </TouchableWithoutFeedback>
+            {showPlusIcon ? (
               <TouchableWithoutFeedback onPress={plusClicked}>
-                <View style={{
-                  flex:0.05
-                }}>
-                <View style={StyleSheet.flatten([styles.circle,{justifyContent:'center', marginEnd:8,}])}>
-                  <IconChooser
-                    name={'plus'}
-                    size={18}
-                    iconType={2}
-                    color={'white'}
-                    style={{
-                      alignSelf: 'center',
-                    }}
-                  />
+                <View
+                  style={{
+                    flex: 0.05,
+                    marginTop: downloadUrl !== '' ? 4 : 0
+                  }}>
+                  <View
+                    style={StyleSheet.flatten([
+                      styles.circle,
+                      {justifyContent: 'center', marginEnd: 8, marginTop: 4},
+                    ])}>
+                    <IconChooser
+                      name={'plus'}
+                      size={16}
+                      iconType={2}
+                      color={'white'}
+                      style={{
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </View>
                 </View>
-                </View>
-              </TouchableWithoutFeedback> : null}
-            </View>
+              </TouchableWithoutFeedback>
+            ) : null}
           </View>
-        </TouchableWithoutFeedback>
+        </View>
         {enableDownloads === true ? (
           <TouchableWithoutFeedback onPress={this.download}>
-            <View style={{flex: 0.1}}>
+            <View
+              style={{
+                flex: 0.1,
+                marginStart: showPlusIcon ? 12 : 0,
+                alignSelf: 'center',
+                justifyContent: 'center',
+              }}>
               <View style={styles.circle}>
                 <IconChooser
                   name={'download'}
@@ -378,11 +361,18 @@ class CommonFileUpload extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  filemaincontainers: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  maincontainers: {flex: 1, flexDirection: 'row', alignItems: 'center'},
   circle: {
     width: 36,
     height: 36,
     justifyContent: 'center',
     alignSelf: 'center',
+    alignItems: 'center',
     marginBottom: 4,
     borderRadius: 36 / 2,
     //borderColor: '#4a4949',
@@ -402,11 +392,11 @@ const styles = StyleSheet.create({
     marginStart: 4,
   },
   title: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: '#555555',
     letterSpacing: 0.5,
-    textAlign:'left'
+    textAlign: 'left',
   },
   insideContainer: {
     flexDirection: 'row',

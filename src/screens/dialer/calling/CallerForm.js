@@ -299,7 +299,7 @@ export default class CallerForm extends React.PureComponent {
         Pref.methodPost,
         token,
         result => {
-          //console.log('result', result);
+          console.log('result', result);
           const {status, message} = result;
           if (status == true) {
             if (leadConfirm === 1) {

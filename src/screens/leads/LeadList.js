@@ -108,6 +108,7 @@ export default class LeadList extends React.PureComponent {
       editThird: null,
       flag: 2,
       backScreen: null,
+      editSecond:null,
     };
   }
 
@@ -308,6 +309,7 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: pname,
       downloadModal: true,
       editThird: getAll.third,
+      editSecond:getAll.second
     });
   };
 
@@ -801,7 +803,7 @@ export default class LeadList extends React.PureComponent {
   };
 
   render() {
-    const {searchQuery, enableSearch, editThird, flag, type} = this.state;
+    const {searchQuery, enableSearch, editThird, editSecond, flag, type} = this.state;
     return (
       <CScreen
         refresh={() => {
@@ -876,6 +878,15 @@ export default class LeadList extends React.PureComponent {
                         salarySlip4={editThird && editThird.salarySlip4}
                         salarySlip5={editThird && editThird.salarySlip5}
                         bankState={editThird && editThird.bankState}
+                        multipleFilesList={editThird && editThird.multipleFilesList}
+                        other = {editThird && editThird.other}
+                        passportPhoto = {editThird && editThird.passportPhoto}
+                        cap_aadhar = {editThird && editThird.cap_aadhar}
+                        pop_electricity = {editThird && editThird.pop_electricity}
+                        current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}  
+                        current_add_proof = {editSecond && editSecond.current_add_proof}
+                        exisitng_loan_doc = {editSecond && editSecond.exisitng_loan_doc}
+                        proof_of_property = {editSecond && editSecond.proof_of_property}
                       />
                     </View>
                   }

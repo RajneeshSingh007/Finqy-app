@@ -30,10 +30,14 @@ const IntroHeader = (prop) => {
           </View>
           <View style={styles.rightcon}>
             {showRight === false  ?<> 
+              <TouchableWithoutFeedback onPress={iconClick}>
+                        <View>
                         <Title style={styles.rightText}>
               {`Login `}
               <IconChooser name={'arrow-right'} size={20} color={'#bbb8ac'} />
             </Title>
+                        </View>
+            </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={iconClick}>
               <View style={styles.circle}>
                 <IconChooser
