@@ -223,8 +223,13 @@ export default class Samadhan extends React.Component {
 
             <View styleName="md-gutter">
               <CustomForm
+                              onChange={(value) => {
+                                if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+                                  this.setState({ name: value })
+                                }
+                              }}
                 value={this.state.name}
-                onChange={(v) => this.setState({ name: v })}
+                //onChange={(v) => this.setState({ name: v })}
                 label={`Full Name *`}
                 placeholder={`Enter full name`}
               />

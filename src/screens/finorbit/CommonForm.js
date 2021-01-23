@@ -245,7 +245,11 @@ export default class CommonForm extends React.PureComponent {
     return (
       <View>
         <AnimatedInputBox
-          onChangeText={(value) => this.setState({ name: value })}
+          onChangeText={(value) => {
+            if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+              this.setState({ name: value })
+            }
+          }}
           value={this.state.name}
           placeholder={
             title === 'Profile'

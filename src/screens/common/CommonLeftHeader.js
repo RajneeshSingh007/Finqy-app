@@ -123,37 +123,31 @@ const LeftHeaders = props => {
                           fontSize: 16,
                         },
                       ])}>
-                      {Lodash.truncate(
-                        userData !== null &&
+                      {userData !== null ? userData.rname != null && Lodash.truncate(
                           Helper.nullStringCheck(userData.rname) === false
                           ? userData.rname
-                          : type !== 'connector' && type !== 'Referral Partner'
-                          ? userData.username
-                          : '',
-                        {
+                          : userData.username != null && Helper.nullStringCheck(userData.username) === false
+                          ? userData.username : '',{
                           length: 24,
                           separator: '...',
                         },
-                      )}
+                      ) : null}
                     </Title>
                     <Title
                       style={StyleSheet.flatten([
                         styles.passText,
                         {
                           color: Pref.RED,
-                          fontSize: 15,
+                          fontSize: 14,
                           paddingVertical: 0,
                           marginBottom: 2,
                           marginTop: 4,
                         },
                       ])}>
-                      {`${
-                        type === 'connector'
-                          ? `Connector`
-                          : type === `referral`
-                          ? 'Referral'
-                          : `${
-                              leaderData != null
+                      {`${type === `referral`
+                          ? 'Partner'
+                          : `${type === 'connector' ? 'Connector' : 'Team'}/${
+                              leaderData != null && leaderData.rname != null
                                 ? Helper.nullCheck(leaderData.rname) === false
                                   ? leaderData.rname
                                   : ''
@@ -172,16 +166,10 @@ const LeftHeaders = props => {
                           marginBottom: 8,
                         },
                       ])}>
-                      {userData != null
-                        ? type === 'connector' &&
-                          Helper.nullStringCheck(userData.rcontact) === false
+                      {userData != null ? userData.rcontact != null && Helper.nullStringCheck(userData.rcontact) === false
                           ? userData.rcontact
-                          : type === 'referral' &&
-                            Helper.nullStringCheck(userData.rcontact) === false
-                          ? userData.rcontact
-                          : (type === 'team' || type === 'dialer') &&
-                            Helper.nullStringCheck(userData.mobile) === false
-                          ? `${userData.mobile}`
+                          : userData.mobile != null && Helper.nullStringCheck(userData.mobile) === false
+                          ? userData.mobile
                           : ''
                         : ''}
                     </Subtitle>

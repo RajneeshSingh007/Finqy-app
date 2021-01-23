@@ -246,7 +246,9 @@ class CommonFileUpload extends React.PureComponent {
       truDownloadEnable = -1,
       showPlusIcon = false,
       plusClicked = () => {},
-      editMode=false
+      editMode=false,
+      showMinusIcon = false,
+      minusClicked = () =>{}
     } = this.props;
     return truDownloadEnable === 1 ? (
       this.downloadView()
@@ -258,7 +260,7 @@ class CommonFileUpload extends React.PureComponent {
             {
               flex: enableDownloads ? 0.9 : 1,
             },
-            enableDownloads ? {height: 56} : {},
+            //enableDownloads ? {height: 56, paddingVertical} : {},
           ])}>
           <View style={styles.filemaincontainers}>
             <TouchableWithoutFeedback onPress={this.filePicker}>
@@ -301,7 +303,7 @@ class CommonFileUpload extends React.PureComponent {
                 {pickedName !== '' ? (
                   <Title style={styles.subtitle}>{Lodash.truncate(pickedName, {
                     separator:'...',
-                    length: downloadUrl !== '' ? 30 : 36
+                    length: downloadUrl !== '' ? 29 : 35
                   })}</Title>
                 ) : null}
               </View>
@@ -320,6 +322,31 @@ class CommonFileUpload extends React.PureComponent {
                     ])}>
                     <IconChooser
                       name={'plus'}
+                      size={16}
+                      iconType={2}
+                      color={'white'}
+                      style={{
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            ) : null}
+            {showMinusIcon ? (
+              <TouchableWithoutFeedback onPress={minusClicked}>
+                <View
+                  style={{
+                    flex: 0.05,
+                    marginTop: downloadUrl !== '' ? 4 : 0
+                  }}>
+                  <View
+                    style={StyleSheet.flatten([
+                      styles.circle,
+                      {justifyContent: 'center', marginEnd: 8, marginTop: 4,backgroundColor:'#555'},
+                    ])}>
+                    <IconChooser
+                      name={'minus'}
                       size={16}
                       iconType={2}
                       color={'white'}

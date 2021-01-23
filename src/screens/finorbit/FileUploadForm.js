@@ -22,175 +22,958 @@ export default class FileUploadForm extends React.PureComponent {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
         {
           count: 0,
           filled: [],
           downloadUrl: [],
-          names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+          names: [
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+          ],
         },
       ],
       exisitng_loan_doc: '',
@@ -224,8 +1007,8 @@ export default class FileUploadForm extends React.PureComponent {
             return file;
           }
         });
-        if(filters.length > 0){
-          filters.splice(0,1);
+        if (filters.length > 0) {
+          filters.splice(0, 1);
         }
         io.downloadUrl = filters;
         io.filled = new Array(filters.length).fill(1, 0, filters.length);
@@ -247,9 +1030,9 @@ export default class FileUploadForm extends React.PureComponent {
     const {fileList} = this.state;
     if (Helper.nullStringCheck(input) === false && fileList.length > 0) {
       let find = Lodash.find(fileList, io => {
-        if(Helper.nullCheck(io[input]) === false){
-          return io[input];  
-        }else{
+        if (Helper.nullCheck(io[input]) === false) {
+          return io[input];
+        } else {
           return undefined;
         }
       });
@@ -293,21 +1076,33 @@ export default class FileUploadForm extends React.PureComponent {
     }
   };
 
+  removeValueFormultipleFilePick = (position, index) => {
+    const {multipleFilesList} = this.state;
+    const oldercount = multipleFilesList[position].count;
+    multipleFilesList[position].filled.splice(index, 1);
+    multipleFilesList[position].count = oldercount - 1;
+    this.setState({multipleFilesList: multipleFilesList}, () => {
+      this.forceUpdate();
+    });
+  };
+
   fileselected = (res, key, index, withIndex = false, arrayPosition = -1) => {
     let obj = {};
     let findPositionExisting = -1;
     let name = res.name;
     if (withIndex) {
       obj[`${key}${index + 1}`] = res;
-      findPositionExisting = this.state.fileList.findIndex(io => io[`${key}${index + 1}`])
+      findPositionExisting = this.state.fileList.findIndex(
+        io => io[`${key}${index + 1}`],
+      );
     } else {
       obj[`${key}`] = res;
-      findPositionExisting = this.state.fileList.findIndex(io => io[`${key}`])
+      findPositionExisting = this.state.fileList.findIndex(io => io[`${key}`]);
     }
-    if(findPositionExisting !== -1){
+    if (findPositionExisting !== -1) {
       this.state.fileList.splice(findPositionExisting);
     }
-    if(arrayPosition !== -1 && index !== -1){
+    if (arrayPosition !== -1 && index !== -1) {
       this.state.multipleFilesList[arrayPosition].names[index] = name;
     }
     this.state.fileList.push(obj);
@@ -328,12 +1123,12 @@ export default class FileUploadForm extends React.PureComponent {
       editMode = false,
     } = this.props;
 
-
-    if(Helper.nullStringCheck(selectedItems) === true){
+    if (Helper.nullStringCheck(selectedItems) === true) {
       return null;
     }
 
-    return ( <>
+    return (
+      <>
         <CommonFileUpload
           showPlusIcon={true}
           truDownloadEnable={truDownloadEnable}
@@ -344,7 +1139,7 @@ export default class FileUploadForm extends React.PureComponent {
           keyName={key}
           pickedTitle={this.findFileName(key)}
           pickedCallback={(selected, res) =>
-            this.fileselected(res, key, -1, false,-1)
+            this.fileselected(res, key, -1, false, -1)
           }
           enableDownloads={this.checkurl(0, firstItemUrl)}
           downloadUrl={this.checkurl(1, firstItemUrl)}
@@ -356,16 +1151,18 @@ export default class FileUploadForm extends React.PureComponent {
           const namesList = this.state.multipleFilesList[arrayposition].names;
           return (
             <CommonFileUpload
+              minusClicked={() => this.removeValueFormultipleFilePick(1, index)}
+              showMinusIcon={true}
               pickedTitle={namesList[index]}
-              editMode={editMode}
+              //editMode={editMode}
+              downloadTitles={downloadTitles}
               truDownloadEnable={truDownloadEnable}
-              downloadTitles={`${title} ${index + 2}`}
               mode={mode}
-              title={''}
+              title={`${title} ${index + 2}`}
               keyName={key}
               type={2}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, key, index, true,arrayposition)
+                this.fileselected(res, key, index, true, arrayposition)
               }
               enableDownloads={this.checkurl(0, durl[index])}
               downloadUrl={this.checkurl(1, durl[index])}
@@ -427,11 +1224,14 @@ export default class FileUploadForm extends React.PureComponent {
       current_add_proof,
     } = this.state;
     //console.log(exisitng_loan_doc, proof_of_property,current_add_proof)
-    const loanCheck = Helper.nullStringCheck(title) === false && title === 'Auto Loan' ||
-    title === 'Business Loan' ||
-    title === 'Personal Loan' ||
-    title === 'Loan Against Property' ||
-    title === 'Home Loan' ? true : false;
+    const loanCheck =
+      (Helper.nullStringCheck(title) === false && title === 'Auto Loan') ||
+      title === 'Business Loan' ||
+      title === 'Personal Loan' ||
+      title === 'Loan Against Property' ||
+      title === 'Home Loan'
+        ? true
+        : false;
 
     return (
       <View>
@@ -591,7 +1391,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={'passport_photo'}
               pickedTitle={this.findFileName(`passport_photo`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'passport_photo', -1, false,-1)
+                this.fileselected(res, 'passport_photo', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, passportPhoto)}
               downloadUrl={this.checkurl(1, passportPhoto)}
@@ -605,7 +1405,7 @@ export default class FileUploadForm extends React.PureComponent {
           <>
             <CommonFileUpload
               //showPlusIcon={title !== 'Profile'}
-              showPlusIcon={loanCheck} 
+              showPlusIcon={loanCheck}
               truDownloadEnable={truDownloadEnable}
               downloadTitles={downloadTitles}
               mode={mode}
@@ -615,7 +1415,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`pancard`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'pancard', -1, false,-1)
+                this.fileselected(res, 'pancard', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, panCard)}
               downloadUrl={this.checkurl(1, panCard)}
@@ -623,29 +1423,33 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={'pancard'}
             />
 
-            {loanCheck && this.state.multipleFilesList[0].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[0].downloadUrl;
-              const namesList = this.state.multipleFilesList[0].names;
+            {loanCheck &&
+              this.state.multipleFilesList[0].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[0].downloadUrl;
+                const namesList = this.state.multipleFilesList[0].names;
 
-              return (
-                <CommonFileUpload
-                  editMode={editMode}
-                  truDownloadEnable={truDownloadEnable}
-                  downloadTitles={`Pan Card ${index + 2}`}
-                  mode={mode}
-                  title={''}
-                  keyName={`pancard${index + 1}`}
-                  type={2}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'pancard', index, true, 0)
-                  }
-                  
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                />
-              );
-            })}
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(0, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    truDownloadEnable={truDownloadEnable}
+                    downloadTitles={downloadTitles}
+                    mode={mode}
+                    title={`Pan Card ${index+2}`}
+                    keyName={`pancard${index + 1}`}
+                    type={2}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'pancard', index, true, 0)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={loanCheck}
@@ -666,7 +1470,7 @@ export default class FileUploadForm extends React.PureComponent {
                   title === 'Demat' ? 'addressproof' : 'aadharcard',
                   -1,
                   false,
-                  -1
+                  -1,
                 )
               }
               enableDownloads={this.checkurl(0, aadharCard)}
@@ -677,42 +1481,45 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={title === 'Demat' ? 'addressproof' : 'aadharcard'}
             />
 
-            {loanCheck && this.state.multipleFilesList[1].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[1].downloadUrl;
-              return (
-                <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`${
-                    title === 'Demat' ? 'Address Proof' : 'Aadhar Card'
-                  } ${index + 2}`}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={''}
-                  type={2}
-                  keyName={
-                    title === 'Demat'
-                      ? `addressproof${index + 1}`
-                      : `aadharcard${index + 1}`
-                  }
-                  pickedTitle={this.findFileName(
-                    title === 'Demat'
-                      ? `addressproof${index + 1}`
-                      : `aadharcard${index + 1}`,
-                  )}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(
-                      res,
-                      title === 'Demat' ? 'addressproof' : 'aadharcard',
-                      index,
-                      true,
-                      1
-                    )
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                />
-              );
-            })}
+            {loanCheck &&
+              this.state.multipleFilesList[1].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[1].downloadUrl;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(1, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    title={`${title === 'Demat' ? 'Address Proof' : 'Aadhar Card'} ${index+2}`}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    type={2}
+                    keyName={
+                      title === 'Demat'
+                        ? `addressproof${index + 1}`
+                        : `aadharcard${index + 1}`
+                    }
+                    pickedTitle={this.findFileName(
+                      title === 'Demat'
+                        ? `addressproof${index + 1}`
+                        : `aadharcard${index + 1}`,
+                    )}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(
+                        res,
+                        title === 'Demat' ? 'addressproof' : 'aadharcard',
+                        index,
+                        true,
+                        1,
+                      )
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                  />
+                );
+              })}
           </>
         ) : null}
 
@@ -759,7 +1566,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`rcbookcopy`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'rcbookcopy', -1, false,-1)
+                this.fileselected(res, 'rcbookcopy', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, rcCopy)}
               downloadUrl={this.checkurl(1, rcCopy)}
@@ -773,11 +1580,17 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[4].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`RC Book ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(4, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  // downloadTitles={
+                  //   truDownloadEnable === -1 ? '' : `RC Book ${index + 2}`
+                  // }
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`RC Book ${index+2}`}
                   type={2}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
@@ -797,7 +1610,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`policycopy`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'policycopy', -1, false,-1)
+                this.fileselected(res, 'policycopy', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, policycopy)}
               downloadUrl={this.checkurl(1, policycopy)}
@@ -811,11 +1624,18 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[5].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`Policy ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(5, index)
+                  }
+                  showMinusIcon={true}
+                  // editMode={editMode}
+                  // downloadTitles={
+                  //   truDownloadEnable === -1 ? '' : `Policy ${index + 2}`
+                  // }
+                  // truDownloadEnable={truDownloadEnable}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`Policy ${index + 2}`}
                   type={2}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
@@ -837,7 +1657,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName(`oldinsurancecopy`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'oldinsurancecopy', -1, false,-1)
+                this.fileselected(res, 'oldinsurancecopy', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, oldInsCopy)}
               downloadUrl={this.checkurl(1, oldInsCopy)}
@@ -852,16 +1672,20 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[6].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`Old Insurance Policy ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(6, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  downloadTitles={downloadTitles}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`Old Insurance Policy ${index + 2}`}
                   type={2}
                   keyName={`oldinsurancecopy${index + 1}`}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'oldinsurancecopy', index, true,6)
+                    this.fileselected(res, 'oldinsurancecopy', index, true, 6)
                   }
                   enableDownloads={this.checkurl(0, durl[index])}
                   downloadUrl={this.checkurl(1, durl[index])}
@@ -891,16 +1715,20 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[7].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`PUC ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(7, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  downloadTitles={downloadTitles}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`PUC ${index + 2}`}
                   type={2}
                   keyName={`puccopy${index + 1}`}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'puccopy', index, true,7)
+                    this.fileselected(res, 'puccopy', index, true, 7)
                   }
                   enableDownloads={this.checkurl(0, durl[index])}
                   downloadUrl={this.checkurl(1, durl[index])}
@@ -929,7 +1757,6 @@ export default class FileUploadForm extends React.PureComponent {
 
         {loanCheck ? (
           <View>
-
             <CommonFileUpload
               showPlusIcon={true}
               truDownloadEnable={truDownloadEnable}
@@ -938,8 +1765,9 @@ export default class FileUploadForm extends React.PureComponent {
                   ? `Salary Slip 1`
                   : this.mandatoryName(
                       `${
-                        title.includes('Loan') ? `3 Months Salary Slip/3 Year ITR` :
-                        title === 'Credit Card'
+                        title.includes('Loan')
+                          ? `3 Months Salary Slip/3 Year ITR`
+                          : title === 'Credit Card'
                           ? `3 Months Salary Slip`
                           : `6 Months Salary Slip`
                       }`,
@@ -949,7 +1777,7 @@ export default class FileUploadForm extends React.PureComponent {
               type={2}
               pickedTitle={this.findFileName('salaryslip')}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'salaryslip', -1, false,-1)
+                this.fileselected(res, 'salaryslip', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, salarySlip)}
               downloadUrl={this.checkurl(1, salarySlip)}
@@ -964,15 +1792,19 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[2].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`Salary Slip ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(2, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  downloadTitles={downloadTitles}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`Salary Slip ${index + 2}`}
                   type={2}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'salaryslip', index, true,2)
+                    this.fileselected(res, 'salaryslip', index, true, 2)
                   }
                   enableDownloads={this.checkurl(0, durl[index])}
                   downloadUrl={this.checkurl(1, durl[index])}
@@ -996,11 +1828,11 @@ export default class FileUploadForm extends React.PureComponent {
                       title,
                     )
               }
-              type={1}
-              fileType={1}
+              type={2}
+              //fileType={1}
               pickedTitle={this.findFileName(`bankstate`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'bankstate', -1, false,-1)
+                this.fileselected(res, 'bankstate', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, bankState)}
               downloadUrl={this.checkurl(1, bankState)}
@@ -1015,16 +1847,20 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[3].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`Bank Statement ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(3, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  downloadTitles={downloadTitles}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
-                  type={1}
-                  fileType={1}
+                  title={`Bank Statement ${index + 2}`}
+                  type={2}
+                  //fileType={1}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'bankstate', index, true,3)
+                    this.fileselected(res, 'bankstate', index, true, 3)
                   }
                   enableDownloads={this.checkurl(0, durl[index])}
                   downloadUrl={this.checkurl(1, durl[index])}
@@ -1045,7 +1881,7 @@ export default class FileUploadForm extends React.PureComponent {
               fileType={-1}
               pickedTitle={this.findFileName(`Other`)}
               pickedCallback={(selected, res) =>
-                this.fileselected(res, 'other', -1, false,-1)
+                this.fileselected(res, 'other', -1, false, -1)
               }
               enableDownloads={this.checkurl(0, other)}
               downloadUrl={this.checkurl(1, other)}
@@ -1060,16 +1896,20 @@ export default class FileUploadForm extends React.PureComponent {
               const namesList = this.state.multipleFilesList[9].names;
               return (
                 <CommonFileUpload
-                  editMode={editMode}
-                  downloadTitles={`Other ${index + 2}`}
+                  minusClicked={() =>
+                    this.removeValueFormultipleFilePick(9, index)
+                  }
+                  showMinusIcon={true}
+                  //editMode={editMode}
+                  downloadTitles={downloadTitles}
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={''}
+                  title={`Other ${index + 2}`}
                   type={2}
                   fileType={-1}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'other', index, true,9)
+                    this.fileselected(res, 'other', index, true, 9)
                   }
                   enableDownloads={this.checkurl(0, durl[index])}
                   downloadUrl={this.checkurl(1, durl[index])}
@@ -1078,9 +1918,7 @@ export default class FileUploadForm extends React.PureComponent {
               );
             })}
 
-
-            
-          {/* <CommonFileUpload
+            {/* <CommonFileUpload
             showPlusIcon={true}
             plusClicked={() => this.insertValueFormultipleFilePick(8)}
             title={
@@ -1117,7 +1955,6 @@ export default class FileUploadForm extends React.PureComponent {
               />
             );
             })} */}
-
           </View>
         ) : null}
 

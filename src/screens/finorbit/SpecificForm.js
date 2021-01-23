@@ -1287,7 +1287,7 @@ export default class SpecificForm extends React.PureComponent {
               // ? ' *' : ''}`}
               placeholder={`${this.state.eaadharcardNo === 'Aadhar' ? 'Aadhar' : 'E-Aadhar'} Card Number`}
               showStarVisible={false}
-              maxLength={16}
+              maxLength={this.state.eaadharcardNo === 'Aadhar' ? 12 : 16}
               keyboardType={'text'}
               onChangeText={value => {
                 if (this.state.eaadharcardNo === 'Aadhar' && String(value).match(/^[0-9]*$/g) !== null) {

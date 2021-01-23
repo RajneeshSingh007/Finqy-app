@@ -255,18 +255,18 @@ export default class Sidebar extends React.Component {
               click: 'Manager',
               options: {},
             },
-            {
-              name: `Raise A Query`,
-              expand: false,
-              click: 'RaiseQueryForm',
-              options: {},
-            },
-            {
-              name: `Track My Query`,
-              expand: false,
-              click: 'TrackQuery',
-              options: {},
-            },
+            // {
+            //   name: `Raise A Query`,
+            //   expand: false,
+            //   click: 'RaiseQueryForm',
+            //   options: {},
+            // },
+            // {
+            //   name: `Track My Query`,
+            //   expand: false,
+            //   click: 'TrackQuery',
+            //   options: {},
+            // },
           ],
           click: '',
         }
@@ -598,71 +598,71 @@ export default class Sidebar extends React.Component {
               },
             ];
             
-            //dialer features
-            const {userRole} = this.state;
-            //tele caller role module => userRole = 1
-            //team leader module => userRole = 2
+            // //dialer features
+            // const {userRole} = this.state;
+            // //tele caller role module => userRole = 1
+            // //team leader module => userRole = 2
             
-            if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
-              const firstpos = filter.splice(1,filter.length);
-              filter.push(
-                {
-                  name: `Dialer`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/dialercalls.png'),
-                  icontype: 2,
-                  sub: [
-                    {
-                      name: `Start Calling`,
-                      expand: false,
-                      click: 'DialerCalling',
-                      options: {},
-                    },
-                    {
-                      name: `My Lead Records`,
-                      expand: false,
-                      click: 'DialerRecords',
-                      options: {},                      
-                    },
-                  ],
-                  click: '',
-              });              
-              firstpos.map(item => filter.push(item));
+            // if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
+            //   const firstpos = filter.splice(1,filter.length);
+            //   filter.push(
+            //     {
+            //       name: `Dialer`,
+            //       expand: false,
+            //       heading: true,
+            //       iconname: require('../res/images/dialercalls.png'),
+            //       icontype: 2,
+            //       sub: [
+            //         {
+            //           name: `Start Calling`,
+            //           expand: false,
+            //           click: 'DialerCalling',
+            //           options: {},
+            //         },
+            //         {
+            //           name: `My Lead Records`,
+            //           expand: false,
+            //           click: 'DialerRecords',
+            //           options: {},                      
+            //         },
+            //       ],
+            //       click: '',
+            //   });              
+            //   firstpos.map(item => filter.push(item));
             
-            }else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
-              const firstpos = filter.splice(1,filter.length);
-              filter.push(
-                {
-                  name: `Dialer`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/dialercalls.png'),
-                  icontype: 2,
-                  sub: [
-                    {
-                      name: `Team Lead Records`,
-                      expand: false,
-                      click: 'DialerRecords',
-                      options: {active:-1},
-                    },
-                    {
-                      name: `My Team Members`,
-                      expand: false,
-                      click: 'AllMembers',
-                      options: {reportenabled:false},
-                    },
-                    {
-                      name: `Performance Review`,
-                      expand: false,
-                      click: 'AllMembers',
-                      options: {reportenabled:true},
-                    },            
-                  ],
-                  click: '',
-              });              
-              firstpos.map(item => filter.push(item));
-            }            
+            // }else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
+            //   const firstpos = filter.splice(1,filter.length);
+            //   filter.push(
+            //     {
+            //       name: `Dialer`,
+            //       expand: false,
+            //       heading: true,
+            //       iconname: require('../res/images/dialercalls.png'),
+            //       icontype: 2,
+            //       sub: [
+            //         {
+            //           name: `Team Lead Records`,
+            //           expand: false,
+            //           click: 'DialerRecords',
+            //           options: {active:-1},
+            //         },
+            //         {
+            //           name: `My Team Members`,
+            //           expand: false,
+            //           click: 'AllMembers',
+            //           options: {reportenabled:false},
+            //         },
+            //         {
+            //           name: `Performance Review`,
+            //           expand: false,
+            //           click: 'AllMembers',
+            //           options: {reportenabled:true},
+            //         },            
+            //       ],
+            //       click: '',
+            //   });              
+            //   firstpos.map(item => filter.push(item));
+            // }            
             
 
            this.setState({menuList: filter});

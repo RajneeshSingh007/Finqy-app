@@ -35,7 +35,7 @@ import PaginationNumbers from '../component/PaginationNumbers';
 
 const ITEM_LIMIT = 10;
 
-const regex = /(<([^>]+)>)/gi;
+const regex = /(<([^>]+)>|&nbsp;|\s{2,})/gi;
 
 export default class TrackQuery extends React.PureComponent {
   constructor(props) {
@@ -66,9 +66,10 @@ export default class TrackQuery extends React.PureComponent {
         'Priority',
         'Status',
         'Remark',
+        'View',
         '',
       ],
-      widthArr: [60, 100, 120, 120, 70, 70, 200, 60],
+      widthArr: [60, 100, 120, 120, 70, 70, 200, 60,60],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -118,6 +119,7 @@ export default class TrackQuery extends React.PureComponent {
         this.fetchData(userData);
       });
     });
+    
   }
 
   backclick = () => {
@@ -183,7 +185,7 @@ export default class TrackQuery extends React.PureComponent {
             // });
             const sort = Lodash.filter(
               tickets,
-              io => io.SCode.toLowerCase() === 'open',
+              io => io.SCode.toLowerCase() === 'open' || io.SCode.toLowerCase() === 'assigned',
             );
             const {itemSize} = this.state;
             this.setState({
@@ -225,23 +227,6 @@ export default class TrackQuery extends React.PureComponent {
 
   editQuery = item => {
     NavigationActions.navigate('RaiseQueryForm', {data: item, editmode: true});
-    // const {SCode, message} = item;
-    // console.log('item', item);
-    // let remark = '';
-    // if (Helper.nullStringCheck(message) === false) {
-    //   if (message.includes(',')) {
-    //     const spl = message.split(',');
-    //     remark = spl[0];
-    //   } else {
-    //     remark = message;
-    //   }
-    // }
-    // this.setState({
-    //   showModal: true,
-    //   editItem: item,
-    //   status: Lodash.capitalize(SCode),
-    //   remark: '',
-    // });
   };
 
   /**
@@ -286,25 +271,37 @@ export default class TrackQuery extends React.PureComponent {
 
             rowData.push(statusText(item.SCode, item.SColor));
 
-            const msg =
-              item.message !== null && item.message !== '' ? item.message : '';
-            let finalMsg = '';
-            if (Helper.separatorReg(msg)) {
-              const split = msg.split(',');
-              finalMsg = split.length === 1 ? '' : split[split.length - 1];
-            } else {
-              finalMsg = '';
-            }
-            finalMsg = finalMsg.replace(regex, '');
+            const finalMsg = item.message.replace(regex, '');
 
-            rowData.push(
-              Lodash.capitalize(
-                Lodash.truncate(finalMsg, {
-                  length: 46,
-                  separator: '...',
-                }),
-              ),
+            rowData.push(Lodash.truncate(finalMsg, {
+              length: 120,
+              separator: '...',
+            }));
+
+            const viewThread = value => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback onPress={() => this.detailThread(value)}>
+                  <View>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.itemtext,
+                      {
+                        color: '#0270e3',
+                      },
+                    ])}>
+                    {"View"}
+                  </Title>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
             );
+            rowData.push(viewThread(item));
 
             const editView = value => (
               <View
@@ -322,21 +319,9 @@ export default class TrackQuery extends React.PureComponent {
               </View>
             );
 
-            rowData.push(item.replied === '0' ? editView(item) : '');
+            const checkeditmode = item.replied === '0' && item.SCode == 'open' && item.SCode === 'assigned';
+            rowData.push( checkeditmode ? editView(item) : '');
 
-            rowData.push(item.ticket_id);
-            let finalMsg1 = '';
-            if (Helper.separatorReg(msg)) {
-              const split = msg.split(',');
-              finalMsg1 = split[0];
-            } else {
-              finalMsg1 = msg;
-            }
-            finalMsg1 = finalMsg1.replace(regex, '');
-            rowData.push(finalMsg1);
-            rowData.push(item.updated_at);
-            rowData.push(item.SColor);
-            rowData.push(item.PColor);
             dataList.push(rowData);
           }
         }
@@ -346,20 +331,17 @@ export default class TrackQuery extends React.PureComponent {
   };
 
   detailThread = editItem => {
-    //console.log('editItem', editItem);
-    const {profilePic, originalList} = this.state;
-    const ticketId = Number(editItem[editItem.length - 5]);
-    if (ticketId) {
-      const findItem = Lodash.find(originalList, io => io.ticket_id === `${ticketId}`);
-      //console.log('findItem', findItem);
-      this.setState({threadLoader: true, detailShow: true, editItem: findItem});
-      const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticketId}`;
-      //console.log('url', url);
+    const {profilePic} = this.state;
+    const {ticket_id} = editItem;
+    this.setState({threadLoader: true, detailShow: true, editItem: editItem});
+    const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticket_id}`;
+    const parseTime = moment(editItem.created_at).format('lll');
       const startObj = {
-        circleColor: editItem[editItem.length - 2],
-        lineColor: editItem[editItem.length - 1],
-        time: editItem[editItem.length - 3],
-        description: editItem[editItem.length - 4],
+        circleColor: editItem.SColor,
+        lineColor: editItem.PColor,
+        time: parseTime,
+        description: editItem.description,
+        umessage : editItem.umessage,
         userType: 'customer',
         threadType: 'created',
         title: 'You',
@@ -367,16 +349,14 @@ export default class TrackQuery extends React.PureComponent {
           profilePic == null
             ? require('../../res/images/account.png')
             : profilePic,
-        fileList: findItem.attachments,
+        fileList: editItem.attachments,
       };
-      //console.log('startObj', startObj)
       Helper.networkHelperHelpDeskTicketGet(
         url,
         null,
         Pref.methodGet,
         Pref.UVDESK_API,
         result => {
-          //console.log('result1', result);
           const {success, thread} = result;
           let threadList = [];
           let priorityList = [];
@@ -400,12 +380,16 @@ export default class TrackQuery extends React.PureComponent {
                 reply,
                 threadType,
                 fullname,
-                attachments
+                attachments,
+                timestamp
               } = element;
+              const {date} = timestamp;
+              const parseTime = moment(date).format('lll');
               threadList.push({
+                umessage:'',
                 circleColor: colorCodeStatus,
                 lineColor: colorCodePriority,
-                time: formatedCreatedAt,
+                time: parseTime,
                 description: reply.replace(regex, ''),
                 userType: userType,
                 threadType: threadType,
@@ -433,8 +417,6 @@ export default class TrackQuery extends React.PureComponent {
           this.setState({threadList: [], threadLoader: false});
         },
       );
-    } else {
-    }
   };
 
   revertBack = () => {
@@ -445,7 +427,11 @@ export default class TrackQuery extends React.PureComponent {
       const data = this.returnData(clone, 0, ITEM_LIMIT);
       this.setState({dataList: data});
     }
-    this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: ITEM_LIMIT});
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
   };
 
   // submitTicketEdit = () => {
@@ -495,13 +481,13 @@ export default class TrackQuery extends React.PureComponent {
   //   );
   // };
 
-  queryFileDownload = ({path, name}) =>{
-    let mimeType = "image/png";
-    if(path.includes('.pdf')){
-      mimeType = "application/pdf";
+  queryFileDownload = ({path, name}) => {
+    let mimeType = 'image/png';
+    if (path.includes('.pdf')) {
+      mimeType = 'application/pdf';
     }
-    Helper.downloadFileWithFileName(path, name,name, mimeType, true,false);
-  }
+    Helper.downloadFileWithFileName(path, name, name, mimeType, true, false);
+  };
 
   renderDetail = (rowData, sectionID, rowID) => {
     return (
@@ -517,43 +503,57 @@ export default class TrackQuery extends React.PureComponent {
           />
           <Title style={styles.timelinetitle}>{rowData.title}</Title>
         </View>
+        {rowData.umessage !== '' ? 
         <View
-            style={{
-              flexDirection: 'column',
-              flexShrink: 1,
-              marginVertical:2
-            }}>
-            <Subtitle style={styles.timelinedesc}>
-              {rowData.description}
-            </Subtitle>
-          </View>
-
+          style={{
+            flexDirection: 'column',
+            flexShrink: 1,
+            marginVertical: 2,
+          }}>
+          <Title style={StyleSheet.flatten([styles.timelinedesc, {color:'black'}])}>{rowData.umessage}</Title>
+        </View>
+        : null}
+        <View
+          style={{
+            flexDirection: 'column',
+            flexShrink: 1,
+            marginVertical: 2,
+          }}>
+          <Subtitle style={styles.timelinedesc}>{rowData.description}</Subtitle>
+        </View>
         {rowData.fileList.length > 0 ? (
           <FlatList
             style={{
-              marginTop:8
+              marginTop: 8,
             }}
             data={rowData.fileList}
             numColumns={2}
             keyExtractor={({item, index}) => `${index}`}
             renderItem={({item, index}) => {
-              if(item.path.includes('.pdf')){
-                return <TouchableWithoutFeedback onPress={() => this.queryFileDownload(item)}>
-                <View styleName="horizontal v-center h-center">
-                  <IconChooser
-                    name={'file-pdf'}
-                    size={36}
-                    color={'#555555'}
-                    iconType={5}
-                    style={{marginHorizontal:2}}
-                  />
-                </View>
-                </TouchableWithoutFeedback>
+              if (item.path.includes('.pdf')) {
+                return (
+                  <TouchableWithoutFeedback
+                    onPress={() => this.queryFileDownload(item)}>
+                    <View styleName="horizontal v-center h-center">
+                      <IconChooser
+                        name={'file-pdf'}
+                        size={36}
+                        color={'#555555'}
+                        iconType={5}
+                        style={{marginHorizontal: 2}}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                );
               }
               return (
-                
-                <TouchableWithoutFeedback onPress={() => this.queryFileDownload(item)}>
-                  <Image styleName="small" source={{uri: item.path, cache:false}} style={{marginHorizontal:2}} />
+                <TouchableWithoutFeedback
+                  onPress={() => this.queryFileDownload(item)}>
+                  <Image
+                    styleName="small"
+                    source={{uri: item.path, cache: false}}
+                    style={{marginHorizontal: 2}}
+                  />
                 </TouchableWithoutFeedback>
               );
             }}
@@ -580,13 +580,17 @@ export default class TrackQuery extends React.PureComponent {
     });
     const filterData = Lodash.filter(
       sorting,
-      io => io.SCode.toLowerCase() === 'open',
+      io => io.SCode.toLowerCase() === 'open' || io.SCode.toLowerCase() === 'assigned',
     );
     this.setState({
-      dataList: this.returnData(filterData, 0, filterData.length).slice(0, ITEM_LIMIT),
+      dataList: this.returnData(filterData, 0, filterData.length).slice(
+        0,
+        ITEM_LIMIT,
+      ),
       loading: false,
       filterModal: false,
-      itemSize: filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
+      itemSize:
+        filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
       priorityFilter: '',
       statusFilter: '',
       ticketTypeFilter: '',
@@ -634,10 +638,14 @@ export default class TrackQuery extends React.PureComponent {
       }
     });
     this.setState({
-      dataList: this.returnData(filterData, 0, filterData.length).slice(0, ITEM_LIMIT),
+      dataList: this.returnData(filterData, 0, filterData.length).slice(
+        0,
+        ITEM_LIMIT,
+      ),
       loading: false,
       filterModal: false,
-      itemSize: filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT
+      itemSize:
+        filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
     });
   };
 
@@ -651,9 +659,8 @@ export default class TrackQuery extends React.PureComponent {
     });
   };
 
-
   render() {
-    const {detailShow,editItem} = this.state;
+    const {detailShow, editItem} = this.state;
     return (
       <CScreen
         refresh={() => this.fetchData(this.state.userData)}
@@ -693,22 +700,23 @@ export default class TrackQuery extends React.PureComponent {
                         timeStyle={{
                           textAlign: 'center',
                           backgroundColor: '#555',
-                          padding: 7,
+                          padding: 8,
                           borderRadius: 16,
                           overflow: 'hidden',
                           color: 'white',
-                          fontSize: 14,
+                          fontSize: 13,
                         }}
                         renderDetail={this.renderDetail}
                         columnFormat="two-column"
                         separator={false}
                       />
-                      {editItem.replied === "0" ? 
-                      <FAB
-                        style={styles.fab}
-                        icon={'pencil'}
-                        onPress={() => this.editQuery(this.state.editItem)}
-                      /> : null}
+                      {editItem.replied === '0' ? (
+                        <FAB
+                          style={styles.fab}
+                          icon={'pencil'}
+                          onPress={() => this.editQuery(this.state.editItem)}
+                        />
+                      ) : null}
                     </>
                   ) : (
                     <View style={styles.emptycont}>
@@ -882,12 +890,12 @@ export default class TrackQuery extends React.PureComponent {
                             styleName="horizontal"
                             style={{alignSelf: 'center', alignItems: 'center'}}>
                             <RadioButton
-                              value="Non-It Issue"
+                              value="Non-IT Issue"
                               style={{alignSelf: 'center'}}
                             />
                             <Title
                               styleName="v-center h-center"
-                              style={styles.textopen}>{`NON-IT Issue`}</Title>
+                              style={styles.textopen}>{`Non-IT Issue`}</Title>
                           </View>
                         </View>
                       </RadioButton.Group>
@@ -901,7 +909,11 @@ export default class TrackQuery extends React.PureComponent {
                         marginVertical: 4,
                       },
                     ])}>
-                    <View style={styles.radiodownbox}>
+                    <View
+                      style={StyleSheet.flatten([
+                        styles.radiodownbox,
+                        {height: 96},
+                      ])}>
                       <Title style={styles.bbstyle}>{`Status`}</Title>
 
                       <RadioButton.Group
@@ -909,39 +921,101 @@ export default class TrackQuery extends React.PureComponent {
                           this.setState({statusFilter: value});
                         }}
                         value={this.state.statusFilter}>
-                        <View styleName="horizontal" style={{marginBottom: 8}}>
+                        <View>
                           <View
                             styleName="horizontal"
-                            style={{alignSelf: 'center', alignItems: 'center'}}>
-                            <RadioButton
-                              value="open"
-                              style={{alignSelf: 'center'}}
-                            />
-                            <Title
-                              styleName="v-center h-center"
-                              style={styles.textopen}>{`Open`}</Title>
+                            style={{marginBottom: 8}}>
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="open"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Open`}</Title>
+                            </View>
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="closed"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Closed`}</Title>
+                            </View>
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="assigned"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Assigned`}</Title>
+                            </View>
+
                           </View>
                           <View
                             styleName="horizontal"
-                            style={{alignSelf: 'center', alignItems: 'center'}}>
-                            <RadioButton
-                              value="closed"
-                              style={{alignSelf: 'center'}}
-                            />
-                            <Title
-                              styleName="v-center h-center"
-                              style={styles.textopen}>{`Closed`}</Title>
-                          </View>
-                          <View
-                            styleName="horizontal"
-                            style={{alignSelf: 'center', alignItems: 'center'}}>
-                            <RadioButton
-                              value="wip"
-                              style={{alignSelf: 'center'}}
-                            />
-                            <Title
-                              styleName="v-center h-center"
-                              style={styles.textopen}>{`WIP`}</Title>
+                            style={{marginBottom: 8}}>
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="pending"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Pending`}</Title>
+                            </View>
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="assigned"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Resolved`}</Title>
+                            </View>
+
+                            <View
+                              styleName="horizontal"
+                              style={{
+                                alignSelf: 'center',
+                                alignItems: 'center',
+                              }}>
+                              <RadioButton
+                                value="answered"
+                                style={{alignSelf: 'center'}}
+                              />
+                              <Title
+                                styleName="v-center h-center"
+                                style={styles.textopen}>{`Answered`}</Title>
+                            </View>
+
                           </View>
                         </View>
                       </RadioButton.Group>
@@ -1035,7 +1109,6 @@ export default class TrackQuery extends React.PureComponent {
             />
 
             <View styleName="horizontal md-gutter space-between">
-
               <PaginationNumbers
                 dataSize={this.state.cloneList.length}
                 itemSize={this.state.itemSize}
@@ -1065,7 +1138,6 @@ export default class TrackQuery extends React.PureComponent {
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
-                rowClicked={this.detailThread}
               />
             ) : (
               <View style={styles.emptycont}>
@@ -1088,27 +1160,27 @@ export default class TrackQuery extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-mainTcontainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-        borderColor: '#bcbaa1',
-        borderWidth: 0.8,
-        borderRadius: 10,
-        marginVertical: 10,
-        paddingVertical: 8,
-        paddingHorizontal: 6,    
-      },
+  mainTcontainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 10,
+    marginVertical: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+  },
   timelinetitle: {
     color: '#555',
     fontSize: 15,
     fontFamily: Pref.getFontName(5),
-    flexShrink:1
+    flexShrink: 1,
   },
   timelinedesc: {
     color: '#292929',
     fontSize: 14,
     fontFamily: Pref.getFontName(1),
-    flexShrink:1
+    flexShrink: 1,
   },
   timelineContainer: {
     flexDirection: 'row',

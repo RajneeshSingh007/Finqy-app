@@ -240,7 +240,11 @@ export default class AddTeam extends React.Component {
             <View styleName="md-gutter">
               <CustomForm
                 value={this.state.name}
-                onChange={(v) => this.setState({ name: v })}
+                onChange={(value) => {
+                  if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+                    this.setState({ name: value })
+                  }
+                }}
                 label={`Name *`}
                 placeholder={`Enter name`}
               />

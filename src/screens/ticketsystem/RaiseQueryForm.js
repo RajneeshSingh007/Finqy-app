@@ -14,7 +14,7 @@ import CommonFileUpload from '../common/CommonFileUpload';
 import lodash from 'lodash';
 import NavigationActions from '../../util/NavigationActions';
 
-const regex = /(<([^>]+)>)/gi;
+const regex = /(<([^>]+)>|&nbsp;|\s{2,})/gi;
 
 let ticketIssueList = [
   {
@@ -154,18 +154,13 @@ export default class RaiseQueryForm extends React.Component {
           let description = '';
           let priority = 'Low';
           if (editMode === true && Helper.nullCheck(data) === false) {
-            description = data.description;
             if (data.TDesc === 'IT/Software/App Issue') {
               ticketissue = 'IT/Software/App Issue';
             } else {
               ticketissue = 'Non-IT Issue';
             }
-            if (data.message.includes(',')) {
-              const split = data.message.split(',');
-              remark = split[0].replace(regex, '');
-            } else {
-              remark = data.message;
-            }
+            description = data.description.replace(regex, '');
+            remark = data.umessage.replace(regex, '');
             if (data.subject.includes('|')) {
               const sp = data.subject.split('|');
               nonitissue = sp[0].trim();
@@ -173,7 +168,6 @@ export default class RaiseQueryForm extends React.Component {
             } else {
               itissue = data.subject;
             }
-
             priority = lodash.capitalize(data.Pcode);
           }
           //console.log('priority', priority);
@@ -270,15 +264,16 @@ export default class RaiseQueryForm extends React.Component {
       checkData = false;
       Helper.showToastMessage('Please, Select Sub Issue', 0);
       return false;
-    } else if (body.description === '') {
-      checkData = false;
-      Helper.showToastMessage('Description empty', 0);
-      return false;
-    } else if (body.remark === '') {
-      checkData = false;
-      Helper.showToastMessage('Remark empty', 0);
-      return false;
     }
+    // else if (body.description === '') {
+    //   checkData = false;
+    //   Helper.showToastMessage('Description empty', 0);
+    //   return false;
+    // } else if (body.remark === '') {
+    //   checkData = false;
+    //   Helper.showToastMessage('Remark empty', 0);
+    //   return false;
+    // }
 
     const agentList = body.agentList;
     //console.log('agentList', agentList)
@@ -335,27 +330,27 @@ export default class RaiseQueryForm extends React.Component {
             agentUserID = findTeam.user_id;
           }
         } else {
-          const findTeam = lodash.find(agentList, io =>{
+          const findTeam = lodash.find(agentList, io => {
             const teamid = io.supportTeamId === '2';
             const desg = String(io.designation).trim();
-            let designationCheck = "";
-            if(productSelected.includes("Insurance")){
-              designationCheck  = desg === 'Insurance'
-            }else if(productSelected === "Home Loan"){
-              designationCheck  = desg === 'Home Loan'
-            }else if(productSelected === "Business Loan"){
-              designationCheck  = desg === 'Business Loan'
-            }else if(productSelected === "Credit Card"){
-              designationCheck  = desg === 'Credit Card'
-            }else if(productSelected === "Loan Against Property"){
-              designationCheck  = desg === 'Loan Against Property'
-            }else if(productSelected === "Personal Loan"){
-              designationCheck  = desg === 'Personal Loan'
-            }else {
-              designationCheck  = desg === 'Investment'
+            let designationCheck = '';
+            if (productSelected.includes('Insurance')) {
+              designationCheck = desg === 'Insurance';
+            } else if (productSelected === 'Home Loan') {
+              designationCheck = desg === 'Home Loan';
+            } else if (productSelected === 'Business Loan') {
+              designationCheck = desg === 'Business Loan';
+            } else if (productSelected === 'Credit Card') {
+              designationCheck = desg === 'Credit Card';
+            } else if (productSelected === 'Loan Against Property') {
+              designationCheck = desg === 'Loan Against Property';
+            } else if (productSelected === 'Personal Loan') {
+              designationCheck = desg === 'Personal Loan';
+            } else {
+              designationCheck = desg === 'Investment';
             }
-            return teamid && designationCheck
-          })
+            return teamid && designationCheck;
+          });
           // if (productSelected.includes('Insurance')) {
           //   const findTeam = lodash.find(
           //     agentList,
@@ -373,9 +368,9 @@ export default class RaiseQueryForm extends React.Component {
           //       io.designation.toLowerCase() === productSelected.toLowerCase(),
           //   );
           //   //console.log('findTeamNT', findTeam);
-            if (findTeam != undefined) {
-              agentUserID = findTeam.user_id;
-            }
+          if (findTeam != undefined) {
+            agentUserID = findTeam.user_id;
+          }
           // }
         }
       }
@@ -419,18 +414,18 @@ export default class RaiseQueryForm extends React.Component {
       // body.message = body.remark;
 
       if (attachmentsList.length > 0) {
-        lodash.map(attachmentsList, (io,index) =>{
+        lodash.map(attachmentsList, (io, index) => {
           formData.append(`attachments[${index}]`, io);
         });
       }
-      
+
       delete body.userData;
       delete body.loading;
 
       //console.log('body', formData);
 
       this.setState({loading: true});
-      
+
       Helper.networkHelperHelpDeskTicket(
         Pref.UVDESK_TICKET_URL,
         formData,
@@ -484,7 +479,6 @@ export default class RaiseQueryForm extends React.Component {
           Helper.showToastMessage(`Something went wrong`, 0);
         },
       );
-    
     }
   };
 
@@ -587,7 +581,7 @@ export default class RaiseQueryForm extends React.Component {
               <CustomForm
                 value={this.state.description}
                 onChange={v => this.setState({description: v})}
-                label={`Short Description *`}
+                label={`Short Description`}
                 placeholder={`Enter description`}
                 keyboardType={'text'}
                 multiline
@@ -597,7 +591,7 @@ export default class RaiseQueryForm extends React.Component {
               <CustomForm
                 value={this.state.remark}
                 onChange={v => this.setState({remark: v})}
-                label={`Remark *`}
+                label={`Remark`}
                 placeholder={`Enter remark`}
                 keyboardType={'text'}
                 multiline
@@ -606,14 +600,15 @@ export default class RaiseQueryForm extends React.Component {
 
               <CommonFileUpload
                 showPlusIcon={true}
-                plusClicked={() =>{
-                  if(this.state.extraFileUploadArray.length < 2){
+                plusClicked={() => {
+                  if (this.state.extraFileUploadArray.length < 2) {
                     this.state.extraFileUploadArray.push(1);
-                    this.setState({extraFileUploadArray:this.state.extraFileUploadArray});  
-                    console.log(this.state.extraFileUploadArray);
+                    this.setState({
+                      extraFileUploadArray: this.state.extraFileUploadArray,
+                    });
                   }
                 }}
-                title={''}
+                title={'Attachment'}
                 type={2}
                 pickedCallback={(selected, res) => {
                   attachmentsList.push(res);
@@ -622,15 +617,24 @@ export default class RaiseQueryForm extends React.Component {
 
               {this.state.extraFileUploadArray.length > 0 ? (
                 <>
-                  {this.state.extraFileUploadArray.map(io => {
-                    return <CommonFileUpload
-                      showPlusIcon={false}
-                      title={''}
-                      type={2}
-                      pickedCallback={(selected, res) => {
-                        attachmentsList.push(res);
-                      }}
-                    />;
+                  {this.state.extraFileUploadArray.map((io, index) => {
+                    return (
+                      <CommonFileUpload
+                        minusClicked={() => {
+                          this.state.extraFileUploadArray.splice(index, 1);
+                          this.setState({
+                            extraFileUploadArray: this.state
+                              .extraFileUploadArray,
+                          });
+                        }}
+                        showMinusIcon
+                        title={`Attachment ${index + 1}`}
+                        type={2}
+                        pickedCallback={(selected, res) => {
+                          attachmentsList.push(res);
+                        }}
+                      />
+                    );
                   })}
                 </>
               ) : null}
