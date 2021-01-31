@@ -360,9 +360,16 @@ export default class SpecificForm extends React.PureComponent {
       loan_property_address: '',
       floaterItemList: [],
       eaadharcardNo: '',
-      exisitng_loan_doc: '',
-      current_add_proof: '',
-      proof_of_property: '',
+      cpincode:'',
+      cstate:'',
+      ccity:'',
+      // exisitng_loan_doc: '',
+      // current_add_proof: '',    
+      // proof_of_property: '',
+      // proofOfProprtyList1:[],
+      // proofOfProprtyList2:[],
+      // proof_of_property1:'',
+      // proof_of_property2:'',
     };
   }
 
@@ -774,7 +781,7 @@ export default class SpecificForm extends React.PureComponent {
             if (res_type === `error`) {
               this.setState({
                 loan_property_city: '',
-                state: '',
+                homestate: '',
                 lppincode: value,
               });
             } else {
@@ -827,12 +834,90 @@ export default class SpecificForm extends React.PureComponent {
     }
   };
 
+  fetchcityCurrentstateCompany = value => {
+    const parse = String(value);
+    if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
+      if (parse.length === 6) {
+        this.setState({cpincode: parse});
+        const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
+        //console.log(`url`, url);
+        Helper.getNetworkHelper(
+          url,
+          Pref.methodGet,
+          result => {
+            const {res_type, data} = JSON.parse(result);
+            //console.log(`result`, result, res_type);
+            if (res_type === `error`) {
+              this.setState({
+                ccity: '',
+                cstate: '',
+                cpincode: value,
+              });
+            } else {
+              if (data.length > 0) {
+                const filterActive = Lodash.filter(
+                  data,
+                  io => io.status === 'Active',
+                );
+                const state = String(filterActive[0]['State']).trim();
+                const city = String(filterActive[0]['City']).trim();
+                this.setState({
+                  ccity: city,
+                  cstate: state,
+                  cpincode: value,
+                  companylocation:`${city},${state},${value}`
+                });
+              } else {
+                this.setState({
+                  ccity: '',
+                  cstate: '',
+                  cpincode: value,
+                });
+              }
+            }
+          },
+          error => {
+            this.setState({
+              ccity: '',
+              cstate: '',
+              cpincode: parse,
+            });
+            //console.log(`error`, error);
+          },
+        );
+      } else {
+        this.setState({
+          ccity: '',
+          cstate: '',
+          cpincode: parse,
+        });
+      }
+    } else {
+      this.setState({
+        ccity: '',
+        cstate: '',
+        cpincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.cpincode,
+      });
+    }
+  };
+
   render() {
     const {
       title,
       heading = `Corporate Information`,
       showHeader = true,
     } = this.props;
+
+    const loanCheck =
+    Helper.nullStringCheck(title) === false &&  (
+    title === 'Business Loan' ||
+    title === 'Personal Loan' ||
+    title === 'Loan Against Property' ||
+    title === 'Home Loan' 
+    || title === 'Auto Loan')
+      ? true
+      : false;
+
     return (
       <View>
         {/* {showHeader ? (
@@ -1288,11 +1373,9 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={`${this.state.eaadharcardNo === 'Aadhar' ? 'Aadhar' : 'E-Aadhar'} Card Number`}
               showStarVisible={false}
               maxLength={this.state.eaadharcardNo === 'Aadhar' ? 12 : 16}
-              keyboardType={'text'}
+              keyboardType={'numeric'}
               onChangeText={value => {
-                if (this.state.eaadharcardNo === 'Aadhar' && String(value).match(/^[0-9]*$/g) !== null) {
-                  this.setState({aadharcardNo: value});
-                }else if(this.state.eaadharcardNo === 'EAadhar' && String(value).match(/^[a-z,A-Z,0-9]*$/g) !== null) {
+                if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({aadharcardNo: value});
                 }
               }}
@@ -2833,51 +2916,88 @@ export default class SpecificForm extends React.PureComponent {
                         {this.state.showExisitingList ? <DropDown itemCallback={value => this.setState({ showExisitingList: false, existingcard: value })} list={this.state.exisitingList} /> : null}
                     </View> */}
 
-            <View style={styles.radiocont}>
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  this.setState({
-                    showCompanyCityList: !this.state.showCompanyCityList,
-                    showExisitingList: false,
-                    showLoanCityList: false,
-                    showCarList: false,
-                  })
-                }>
-                <View style={styles.dropdownbox}>
-                  <Title style={styles.boxsubtitle}>
-                    {/* {this.state.companylocation === ''
-                        ? `Select Company Location ${title === 'Auto Loan' 
-                        //|| title === 'Home Loan' 
-                        || title === 'Business Loan' 
-                        //|| title === 'Personal Loan' 
-                        ? ' *' : ''}`
-                        : this.state.companylocation} */}
-                    {this.state.companylocation === ''
-                      ? `Select Company Location`
-                      : this.state.companylocation}
-                  </Title>
-                  <Icon
-                    name={'chevron-down'}
-                    size={24}
-                    color={'#6d6a57'}
-                    style={styles.downIcon}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-              {this.state.showCompanyCityList ? (
-                <DropDown
-                  itemCallback={value =>
-                    this.setState({
-                      showCompanyCityList: false,
-                      companylocation: value,
-                    })
-                  }
-                  list={this.state.cityList}
-                  isCityList
-                  enableSearch
+          {loanCheck ? <View>
+            <AnimatedInputBox
+              onChangeText={this.fetchcityCurrentstateCompany}
+              maxLength={6}
+              keyboardType={'number-pad'}
+              value={this.state.cpincode}
+              placeholder={`Company Pincode`}
+              showStarVisible={false}
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+            />
+
+            <AnimatedInputBox
+              onChangeText={value => this.setState({ccity: value})}
+              value={this.state.ccity}
+              placeholder={`Company City`}
+              editable={false}
+              disabled={true}
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+            />
+
+            <AnimatedInputBox
+              onChangeText={value => this.setState({cstate: value})}
+              value={this.state.cstate}
+              placeholder={'Company State'}
+              editable={false}
+              disabled={true}
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+            />
+          </View>
+                
+            :    <View style={styles.radiocont}>
+            <TouchableWithoutFeedback
+              onPress={() =>
+                this.setState({
+                  showCompanyCityList: !this.state.showCompanyCityList,
+                  showExisitingList: false,
+                  showLoanCityList: false,
+                  showCarList: false,
+                })
+              }>
+              <View style={styles.dropdownbox}>
+                <Title style={styles.boxsubtitle}>
+                  {/* {this.state.companylocation === ''
+                      ? `Select Company Location ${title === 'Auto Loan' 
+                      //|| title === 'Home Loan' 
+                      || title === 'Business Loan' 
+                      //|| title === 'Personal Loan' 
+                      ? ' *' : ''}`
+                      : this.state.companylocation} */}
+                  {this.state.companylocation === ''
+                    ? `Select Company Location`
+                    : this.state.companylocation}
+                </Title>
+                <Icon
+                  name={'chevron-down'}
+                  size={24}
+                  color={'#6d6a57'}
+                  style={styles.downIcon}
                 />
-              ) : null}
-            </View>
+              </View>
+            </TouchableWithoutFeedback>
+            {this.state.showCompanyCityList ? (
+              <DropDown
+                itemCallback={value =>
+                  this.setState({
+                    showCompanyCityList: false,
+                    companylocation: value,
+                  })
+                }
+                list={this.state.cityList}
+                isCityList
+                enableSearch
+              />
+            ) : null}
+          </View> }
+                
           </View>
         ) : null}
 
@@ -2957,7 +3077,7 @@ export default class SpecificForm extends React.PureComponent {
             <AnimatedInputBox
               onChangeText={value => this.setState({loan_property_city: value})}
               value={this.state.loan_property_city}
-              placeholder={`City`}
+              placeholder={`Current Property City`}
               editable={false}
               disabled={true}
               returnKeyType={'next'}
@@ -2968,7 +3088,7 @@ export default class SpecificForm extends React.PureComponent {
             <AnimatedInputBox
               onChangeText={value => this.setState({homestate: value})}
               value={this.state.homestate}
-              placeholder={'State'}
+              placeholder={'Current Property State'}
               editable={false}
               disabled={true}
               returnKeyType={'next'}
@@ -2992,7 +3112,7 @@ export default class SpecificForm extends React.PureComponent {
               changecolor
               containerstyle={styles.animatedInputCont}
             />
-          </View>
+          </View>      
         ) : null}
         {title === 'Insure Check' ? (
           <View>
@@ -3263,7 +3383,7 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {
+        {/* {
         title === 'Auto Loan' ||
         title === 'Business Loan' ||
         title === 'Personal Loan' ||
@@ -3278,7 +3398,7 @@ export default class SpecificForm extends React.PureComponent {
               textStyle={styles.dropdowntextstyle}
               value={this.state.current_add_proof}
               closedMenu={this.multidropdownClosed}
-            /> */}
+            /> 
 
             {this.state.existingcard === 'Yes' ? (
               <NewDropDown
@@ -3294,16 +3414,40 @@ export default class SpecificForm extends React.PureComponent {
             ) : null}
 
             {title === 'Home Loan' || title === 'Loan Against Property' ? (
+              <>
               <NewDropDown
                 list={proofOfProprtyList}
                 placeholder={'Select Proof of Property'}
                 value={this.state.proof_of_property}
-                selectedItem={value =>
-                  this.setState({proof_of_property: value})
-                }
+                selectedItem={value =>{
+                  const proofOfProprtyList1 = Lodash.filter(proofOfProprtyList, io => io.value !== value);
+                  this.setState({proof_of_property: value,proofOfProprtyList1:proofOfProprtyList1})
+                }}
                 style={styles.newdropdowncontainers}
                 textStyle={styles.newdropdowntextstyle}
               />
+              {this.state.proof_of_property !== '' ? <NewDropDown
+                list={this.state.proofOfProprtyList1}
+                placeholder={'Select One'}
+                value={this.state.proof_of_property1}
+                selectedItem={value =>{
+                  const proofOfProprtyList2 = Lodash.filter(this.state.proofOfProprtyList1, io => io.value !== value  && io !== this.state.proof_of_property);
+                  this.setState({proof_of_property1: value,proofOfProprtyList2:proofOfProprtyList2})
+                }}
+                style={styles.newdropdowncontainers}
+                textStyle={styles.newdropdowntextstyle}
+              /> : null}
+              {this.state.proof_of_property1 !== '' ? <NewDropDown
+                list={this.state.proofOfProprtyList2}
+                placeholder={'Select One'}
+                value={this.state.proof_of_property2}
+                selectedItem={value =>
+                  this.setState({proof_of_property2: value})
+                }
+                style={styles.newdropdowncontainers}
+                textStyle={styles.newdropdowntextstyle}
+              /> : null}
+              </>
             ) : null}
 
             <NewDropDown
@@ -3316,7 +3460,7 @@ export default class SpecificForm extends React.PureComponent {
             />
 
           </>
-        ) : null}
+        ) : null} */}
 
         {this.state.showCalendar ? (
           <DateTimePicker

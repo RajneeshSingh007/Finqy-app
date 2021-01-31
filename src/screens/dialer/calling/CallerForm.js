@@ -453,7 +453,7 @@ export default class CallerForm extends React.PureComponent {
         </View>
       
         <Portal>
-        <FlashMessage  position='bottom' ref={this.flashMessage}/>
+        <FlashMessage  position='bottom' ref={this.flashMessage} duration={5000}/>
         </Portal>
       </>
     );

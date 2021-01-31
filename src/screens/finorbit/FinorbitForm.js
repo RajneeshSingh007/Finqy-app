@@ -394,6 +394,13 @@ export default class FinorbitForm extends React.PureComponent {
             });
           }
 
+          if(fileListForms){
+            let property = `${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property1)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property2)}`;
+            formData.append('exisitng_loan_doc', fileListForms.exisitng_loan_doc);
+            formData.append('proof_of_property', property);
+            formData.append('current_add_proof', fileListForms.current_add_proof);
+          }
+
           //forth
           if (dateForm && this.state.currentPosition === 3) {
             // if (dateForm.baa === "") {
@@ -431,7 +438,7 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-          //console.log('formData', formData);
+          console.log('formData', formData);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -574,11 +581,13 @@ export default class FinorbitForm extends React.PureComponent {
                       title={this.state.title}
                     />
                   ) : this.state.currentPosition === 1 ? (
+                    <>
                     <SpecificForm
                       ref={this.specificFormRef}
                       editItemRestore={editSecond}
                       title={this.state.title}
                     />
+                    </>
                   ) : this.state.currentPosition === 2 ? (
                     <FileUploadForm
                       ref={this.FileUploadFormRef}
@@ -600,27 +609,28 @@ export default class FinorbitForm extends React.PureComponent {
                       policycopy={editThird && editThird.policycopy}
                       multipleFilesList={
                         editThird &&
-                        editThird.multipleFilesList != null &&
+                        Helper.nullCheck(editThird.multipleFilesList) === false &&
                         editThird.multipleFilesList
                       }
                       editMode={this.state.editMode}
                       exisitng_loan_doc={
-                        this.restoreList[1] &&
-                        this.restoreList[1].exisitng_loan_doc
+                        editMode ? (editThird &&
+                        editThird.exisitng_loan_doc) : (this.restoreList[2] && this.restoreList[2].exisitng_loan_doc)
                       }
                       current_add_proof={
-                        this.restoreList[1] &&
-                        this.restoreList[1].current_add_proof
+                        editMode ? (editThird &&
+                        editThird.current_add_proof) : (this.restoreList[2] && this.restoreList[2].current_add_proof)
                       }
                       proof_of_property={
-                        this.restoreList[1] &&
-                        this.restoreList[1].proof_of_property
+                        editMode ? (editThird &&
+                        editThird.proof_of_property) : (this.restoreList[2] && this.restoreList[2].proof_of_property)
                       }
                       other = {editThird && editThird.other}
                       passportPhoto = {editThird && editThird.passportPhoto}
                       cap_aadhar = {editThird && editThird.cap_aadhar}
                       pop_electricity = {editThird && editThird.pop_electricity}
                       current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}
+                      existingcard={editMode ? (editSecond && editSecond.type_loan === 'Fresh' ? 'No' : 'Yes') : (this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh' ? 'No' : 'Yes')  }
                     />
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm

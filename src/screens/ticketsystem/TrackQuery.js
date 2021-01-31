@@ -114,11 +114,11 @@ export default class TrackQuery extends React.PureComponent {
         detailShow: false,
       });
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         this.fetchData(userData);
       });
-    });
+    //});
     
   }
 
@@ -319,7 +319,7 @@ export default class TrackQuery extends React.PureComponent {
               </View>
             );
 
-            const checkeditmode = item.replied === '0' && item.SCode == 'open' && item.SCode === 'assigned';
+            const checkeditmode = item.replied === '0' && (item.SCode == 'open' || item.SCode === 'assigned');
             rowData.push( checkeditmode ? editView(item) : '');
 
             dataList.push(rowData);
@@ -337,8 +337,10 @@ export default class TrackQuery extends React.PureComponent {
     const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticket_id}`;
     const parseTime = moment(editItem.created_at).format('lll');
       const startObj = {
-        circleColor: editItem.SColor,
-        lineColor: editItem.PColor,
+        circleColor: '#555',
+        //circleColor: editItem.SColor,
+        //lineColor: editItem.PColor,
+        lineColor:'#bcbaa1',
         time: parseTime,
         description: editItem.description,
         umessage : editItem.umessage,
@@ -387,8 +389,10 @@ export default class TrackQuery extends React.PureComponent {
               const parseTime = moment(date).format('lll');
               threadList.push({
                 umessage:'',
-                circleColor: colorCodeStatus,
-                lineColor: colorCodePriority,
+                circleColor: '#555',
+                //circleColor:colorCodeStatus,
+                //lineColor: colorCodePriority,
+                lineColor:'#bcbaa1',
                 time: parseTime,
                 description: reply.replace(regex, ''),
                 userType: userType,

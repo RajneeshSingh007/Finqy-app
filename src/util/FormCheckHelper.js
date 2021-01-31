@@ -1475,6 +1475,21 @@ export const constructObjEditLead = item => {
   }
 
 
+  let ccity = '', cpincode = '', cstate = '',companyLocation = '';
+  if(Helper.nullStringCheck(companylocation) === false){
+    if(Helper.separatorReg(companylocation)){
+      const spx = companylocation.split(',').filter(io => io !== '');
+      if(spx.length > 0){
+        ccity = spx[0];
+        cpincode = spx[2];
+        cstate = spx[1];  
+      }
+    }else{
+      companyLocation = companylocation;
+    }
+  }
+
+
   const convertedjsonObj = {
     first: {
       name: Helper.nullStringCheckWithReturn(name),
@@ -1497,12 +1512,16 @@ export const constructObjEditLead = item => {
     },
     second: {
       eaadharcardNo:Helper.nullStringCheckWithReturn(eaadharcard),
-      current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
-      exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
-      proof_of_property: Helper.nullStringCheckWithReturn(proof_of_property),
+      // current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
+      // exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
+      // proof_of_property: Helper.nullStringCheckWithReturn(proof_of_property),
       company: Helper.nullStringCheckWithReturn(company),
       amount: Helper.nullStringCheckWithReturn(damount),
-      companylocation: Helper.nullStringCheckWithReturn(companylocation),
+      companylocation:companyLocation,
+      ccity:ccity,
+      cpincode:cpincode,
+      cstate:cstate,
+      //companylocation: Helper.nullStringCheckWithReturn(companylocation),
       aadharcardNo: aadharcardnos,
       pancardNo: Helper.nullStringCheckWithReturn(pancard_no),
       turnover: Helper.nullStringCheckWithReturn(turnover),
@@ -1551,6 +1570,10 @@ export const constructObjEditLead = item => {
       homestate: Helper.nullStringCheckWithReturn(lpstate),
     },
     third: {
+      existingcard: Helper.nullStringCheckWithReturn(existingcard),
+      current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
+      exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
+      proof_of_property: Helper.nullStringCheckWithReturn(proof_of_property),
       other: Other,
       passportPhoto: passportPhoto,
       cap_aadhar: CapAadhar,

@@ -331,25 +331,33 @@ export default class RaiseQueryForm extends React.Component {
           }
         } else {
           const findTeam = lodash.find(agentList, io => {
-            const teamid = io.supportTeamId === '2';
+            //const teamid = io.supportTeamId === '2';
             const desg = String(io.designation).trim();
             let designationCheck = '';
             if (productSelected.includes('Insurance')) {
-              designationCheck = desg === 'Insurance';
+              designationCheck = io.supportTeamId === '9';
+              //desg === 'Insurance';
             } else if (productSelected === 'Home Loan') {
-              designationCheck = desg === 'Home Loan';
+              designationCheck = io.supportTeamId === '4';
+              //desg === 'Home Loan';
             } else if (productSelected === 'Business Loan') {
-              designationCheck = desg === 'Business Loan';
+              designationCheck = io.supportTeamId === '7';
+              //designationCheck = desg === 'Business Loan';
             } else if (productSelected === 'Credit Card') {
-              designationCheck = desg === 'Credit Card';
+              //designationCheck = desg === 'Credit Card';
+              designationCheck = io.supportTeamId === '8';
             } else if (productSelected === 'Loan Against Property') {
-              designationCheck = desg === 'Loan Against Property';
+              //designationCheck = desg === 'Loan Against Property';
+              designationCheck = io.supportTeamId === '6';
             } else if (productSelected === 'Personal Loan') {
-              designationCheck = desg === 'Personal Loan';
-            } else {
-              designationCheck = desg === 'Investment';
+              //designationCheck = desg === 'Personal Loan';
+              designationCheck = io.supportTeamId === '5';
+            } else if (productSelected === 'Investment'){
+              //designationCheck = desg === 'Investment';
+              designationCheck = io.supportTeamId === '10';
             }
-            return teamid && designationCheck;
+            //return teamid && designationCheck;
+            return designationCheck;
           });
           // if (productSelected.includes('Insurance')) {
           //   const findTeam = lodash.find(
@@ -437,14 +445,14 @@ export default class RaiseQueryForm extends React.Component {
           if (message.includes('Success')) {
             const ticketID = result.ticketId;
             const agentBody = {id: agentUserID};
-            console.log('agentBody', agentBody);
+            //console.log('agentBody', agentBody);
             Helper.networkHelperHelpDeskTicket(
               `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/agent`,
               JSON.stringify(agentBody),
               Pref.methodPut,
               Pref.UVDESK_API,
               result => {
-                console.log('result1', result);
+                //console.log('result1', result);
                 const {success} = JSON.parse(JSON.stringify(result));
                 this.setState({loading: false});
                 if (success.includes('Success')) {
@@ -456,12 +464,16 @@ export default class RaiseQueryForm extends React.Component {
                   );
                   NavigationActions.navigate('TrackQuery');
                 } else {
-                  Helper.showToastMessage(
-                    editMode
-                      ? `Failed to update ticket`
-                      : `Failed to create ticket`,
-                    0,
-                  );
+                  if(result.description.includes('already assigned')){
+                    Helper.showToastMessage('Ticket updated successfully');
+                  }else{
+                    Helper.showToastMessage(
+                      editMode
+                        ? `Failed to update ticket`
+                        : `Failed to create ticket`,
+                      0,
+                    );
+                  }
                 }
               },
               e => {

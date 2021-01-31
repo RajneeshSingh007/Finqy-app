@@ -30,7 +30,6 @@ class NewDropDown extends React.Component {
 
   componentWillReceiveProps(props) {
     const {list = []} = props;
-    // //console.log('list', list)
     this.setState({finalList: list, cloneList: list});
   }
 
@@ -70,6 +69,7 @@ class NewDropDown extends React.Component {
       textStyle,
       value = '',
       starVisible = false,
+      truncate = false,
     } = this.props;
     const {visible, finalList, width, height, displayValue, query} = this.state;
     return (
@@ -100,7 +100,10 @@ class NewDropDown extends React.Component {
                       : {},
                   ])}>
                   {value != null && value !== ''
-                    ? value
+                    ?  truncate ?  Lodash.truncate(value,{
+                      separator:'...',
+                      length:12
+                    }) : value
                     : placeholder === ''
                     ? displayValue
                     : displayValue !== ''

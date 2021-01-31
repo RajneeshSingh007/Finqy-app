@@ -343,7 +343,7 @@ class CommonFileUpload extends React.PureComponent {
                   <View
                     style={StyleSheet.flatten([
                       styles.circle,
-                      {justifyContent: 'center', marginEnd: 8, marginTop: 4,backgroundColor:'#555'},
+                      {justifyContent: 'center', marginEnd: 8, marginTop: 4},
                     ])}>
                     <IconChooser
                       name={'minus'}

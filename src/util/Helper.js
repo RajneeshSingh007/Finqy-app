@@ -439,7 +439,7 @@ export const showToastMessage = (message, type = 0) => {
           : type === 2
             ? 'info'
             : 'default',
-    duration: 7000,
+    duration: 5000,
     animated:true,
     floating:true,
   });

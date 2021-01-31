@@ -884,9 +884,10 @@ export default class LeadList extends React.PureComponent {
                         cap_aadhar = {editThird && editThird.cap_aadhar}
                         pop_electricity = {editThird && editThird.pop_electricity}
                         current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}  
-                        current_add_proof = {editSecond && editSecond.current_add_proof}
-                        exisitng_loan_doc = {editSecond && editSecond.exisitng_loan_doc}
-                        proof_of_property = {editSecond && editSecond.proof_of_property}
+                        current_add_proof = {editThird && editThird.current_add_proof}
+                        exisitng_loan_doc = {editThird && editThird.exisitng_loan_doc}
+                        proof_of_property = {editThird && editThird.proof_of_property}
+                        existingcard={editSecond && editSecond.existingcard}
                       />
                     </View>
                   }

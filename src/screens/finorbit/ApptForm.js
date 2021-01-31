@@ -72,31 +72,35 @@ export default class ApptForm extends React.PureComponent {
   onChange = (event, selectedDate) => {
     if (selectedDate !== undefined && selectedDate !== null) {
       if (this.state.mode == 'date') {
+        const current = moment(selectedDate).format('DD-MM-YYYY');
         this.setState({
           currentDate: selectedDate,
           showdatesx: selectedDate,
-          mode: 'time',
+          mode: 'date',
           intervaltime: 30,
+          baa:current,
+          showCalendar: false
         });
-      } else {
-        const hours = selectedDate.getHours();
-        const time = selectedDate.getMinutes();
-        if (hours >= 10 && hours <= 18) {
-          //if (time === 0 || time === 30) {
-          this.state.showdatesx.setHours(hours, time, 0, 0);
-          const current = moment(this.state.showdatesx).format(
-            'DD-MM-YYYY hh:mm A',
-          );
-          this.setState({ baa: current, mode: 'date', showCalendar: false });
-          // } else {
-          //     alert('Please, select 00 or 30 min');
-          //     this.setState({ showCalendar: false, mode: 'date' });
-          // }
-        } else {
-          alert('Please, select time between 10AM - 7PM');
-          this.setState({ showCalendar: false, mode: 'date' });
-        }
-      }
+      } 
+      // else {
+      //   const hours = selectedDate.getHours();
+      //   const time = selectedDate.getMinutes();
+      //   if (hours >= 10 && hours <= 18) {
+      //     //if (time === 0 || time === 30) {
+      //     this.state.showdatesx.setHours(hours, time, 0, 0);
+          // const current = moment(this.state.showdatesx).format(
+          //   'DD-MM-YYYY hh:mm A',
+          // );
+      //     this.setState({ baa: current, mode: 'date', showCalendar: false });
+      //     // } else {
+      //     //     alert('Please, select 00 or 30 min');
+      //     //     this.setState({ showCalendar: false, mode: 'date' });
+      //     // }
+      //   } else {
+      //     alert('Please, select time between 10AM - 7PM');
+      //     this.setState({ showCalendar: false, mode: 'date' });
+      //   }
+      // }
     } else {
       this.setState({ showCalendar: false, mode: 'date' });
     }

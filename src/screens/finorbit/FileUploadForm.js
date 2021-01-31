@@ -8,6 +8,1034 @@ import {sizeWidth} from '../../util/Size';
 import moment from 'moment';
 import CommonFileUpload from '../common/CommonFileUpload';
 import Lodash from 'lodash';
+import NewDropDown from '../component/NewDropDown';
+
+const currentAddressProofList = [
+  {
+    value: 'Aadhar',
+    checked: 'unchecked',
+  },
+  {
+    value: 'Electricity Bill',
+    checked: 'unchecked',
+  },
+  {
+    value: 'Landline Bill',
+    checked: 'unchecked',
+  },
+  {
+    value: 'License',
+    checked: 'unchecked',
+  },
+  // {
+  //   value: 'Passport+B45',
+  //   checked: 'unchecked',
+  // },
+  {
+    value: 'Postpaid Bill',
+    checked: 'unchecked',
+  },
+  {
+    value: 'Rent Agreement',
+    checked: 'unchecked',
+  },
+  {
+    value: 'Voter ID',
+    checked: 'unchecked',
+  },
+];
+
+var proofOfProprtyList = [
+  {
+    value: `Electricity Bill`,
+  },
+  {
+    value: `Society Maintenance Bill`,
+  },
+  {
+    value: `Water Bill`,
+  },
+];
+
+const existingLoanDocumentList = [
+  {
+    value: `Current Loan Repayment Statement`,
+  },
+  // {
+  //   value: `Credit Card Front Copy`,
+  //   checked: 'unchecked',
+  // },
+  // {
+  //   value: `2 Months Card Statement`,
+  //   checked: 'unchecked',
+  // },
+  {
+    value: `Sanction Letter`,
+  },
+  {
+    value: `Statement of Accounts`,
+  },
+];
+
+const listoffiles = [
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+  {
+    count: 0,
+    filled: [],
+    downloadUrl: [],
+    names: [
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ],
+  },
+];
 
 export default class FileUploadForm extends React.PureComponent {
   constructor(props) {
@@ -17,990 +1045,99 @@ export default class FileUploadForm extends React.PureComponent {
     this.onChange = this.onChange.bind(this);
     this.state = {
       fileList: [],
-      multipleFilesList: [
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-        {
-          count: 0,
-          filled: [],
-          downloadUrl: [],
-          names: [
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-          ],
-        },
-      ],
+      multipleFilesList: listoffiles,
       exisitng_loan_doc: '',
       current_add_proof: '',
       proof_of_property: '',
+      proofOfProprtyList1: [],
+      proofOfProprtyList2: [],
+      proof_of_property1: '',
+      proof_of_property2: '',
+      existingcard: '',
     };
+    proofOfProprtyList = [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ];
   }
 
   restoreData(obj) {
+    proofOfProprtyList = [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ];
     if (obj !== undefined) {
-      //console.log(obj.fileList)
+      this.setuppop(
+        Helper.nullCheck(obj.multipleFilesList) === false ? obj.multipleFilesList : [],
+        Helper.nullStringCheckWithReturn(obj.exisitng_loan_doc),
+        Helper.nullStringCheckWithReturn(obj.current_add_proof),
+        Helper.nullStringCheckWithReturn(obj.proof_of_property),
+        Helper.nullStringCheckWithReturn(obj.existingcard),
+      );
       this.setState(obj);
     }
   }
 
   componentDidMount() {
+    proofOfProprtyList = [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ];
     const {
-      multipleFilesList = [],
+      multipleFilesList = listoffiles,
       exisitng_loan_doc = '',
       current_add_proof = '',
       proof_of_property = '',
+      existingcard = '',
     } = this.props;
+    this.setuppop(
+      multipleFilesList,
+      exisitng_loan_doc,
+      current_add_proof,
+      proof_of_property,
+      existingcard,
+    );
+    //console.log(filterList);
+  }
+
+  setuppop = (
+    multipleFilesList = listoffiles,
+    exisitng_loan_doc = '',
+    current_add_proof = '',
+    proof_of_property = '',
+    existingcard = '',
+  ) => {
+    var filterList = listoffiles;
+    var proofOfProprtyList1 = [];
+    var proofOfProprtyList2 = [];
+    let spx = [];
+
     if (
       Helper.nullCheck(multipleFilesList) === false &&
       multipleFilesList.length > 0
     ) {
-      const filter = Lodash.map(multipleFilesList, io => {
+      filterList = Lodash.map(multipleFilesList, io => {
         const {downloadUrl} = io;
         const filters = Lodash.filter(downloadUrl, file => {
           if (Helper.extCheckReg(file)) {
@@ -1015,15 +1152,72 @@ export default class FileUploadForm extends React.PureComponent {
         io.count = io.filled.length;
         return io;
       });
-      this.setState({multipleFilesList: filter});
     }
+    if (
+      Helper.nullStringCheck(proof_of_property) === false &&
+      Helper.separatorReg(proof_of_property)
+    ) {
+      spx = proof_of_property.split(',').filter(io => io !== '');
+      if (spx.length > 0) {
+        const cloneList = JSON.parse(JSON.stringify(proofOfProprtyList));
+        proofOfProprtyList = [];
+        for (let j = 0; j < cloneList.length; j++) {
+          const el = cloneList[j];
+          if (el.value === spx[0]) {
+            proofOfProprtyList.push(el);
+          } else {
+            proofOfProprtyList1.push(el);
+          }
+          if (el.value === spx[0] || el.value === spx[1]) {
+          } else {
+            proofOfProprtyList2.push(el);
+            const ind = proofOfProprtyList1.findIndex(
+              io => io.value == el.value,
+            );
+            if (ind !== -1) {
+              proofOfProprtyList1.splice(ind, 1);
+            }
+          }
+        }
+      }
+    }
+
     this.setState({
+      multipleFilesList: filterList,
+      existingcard: existingcard,
       exisitng_loan_doc: exisitng_loan_doc,
       current_add_proof: current_add_proof,
-      proof_of_property: proof_of_property,
+      proof_of_property: spx.length > 0 ? spx[0] : '',
+      proof_of_property1: spx.length > 1 ? spx[1] : '',
+      proof_of_property2: spx.length > 2 ? spx[2] : '',
+      proofOfProprtyList1: proofOfProprtyList1,
+      proofOfProprtyList2: proofOfProprtyList2,
     });
-    //console.log(this.props.multipleFilesList);
-  }
+
+    // if (Helper.nullStringCheck(existingcard) === false)
+    //   this.setState({existingcard: existingcard});
+
+    // if (Helper.nullStringCheck(exisitng_loan_doc) === false)
+    //   this.setState({exisitng_loan_doc: exisitng_loan_doc});
+
+    // if (Helper.nullStringCheck(current_add_proof) === false)
+    //   this.setState({current_add_proof: current_add_proof});
+
+    // if (Helper.nullStringCheck(proofofproperty) === false)
+    //   this.setState({
+    //     proof_of_property: proofofproperty,
+    //     proofOfProprtyList1: proofOfProprtyList1,
+    //   });
+
+    // if (Helper.nullStringCheck(proof_of_property2) === false)
+    //   this.setState({proof_of_property2: proof_of_property2});
+
+    // if (Helper.nullStringCheck(proof_of_property1) === false)
+    //   this.setState({
+    //     proof_of_property1: proof_of_property1,
+    //     proofOfProprtyList2: proofOfProprtyList2,
+    //   });
+  };
 
   findFileName = input => {
     //console.log('input', input);
@@ -1146,12 +1340,14 @@ export default class FileUploadForm extends React.PureComponent {
           plusClicked={() => this.insertValueFormultipleFilePick(arrayposition)}
         />
 
-        {this.state.multipleFilesList[arrayposition].filled.map((e, index) => {
+        {this.state.multipleFilesList && this.state.multipleFilesList[arrayposition].filled.map((e, index) => {
           const durl = this.state.multipleFilesList[arrayposition].downloadUrl;
           const namesList = this.state.multipleFilesList[arrayposition].names;
           return (
             <CommonFileUpload
-              minusClicked={() => this.removeValueFormultipleFilePick(1, index)}
+              minusClicked={() =>
+                this.removeValueFormultipleFilePick(arrayposition, index)
+              }
               showMinusIcon={true}
               pickedTitle={namesList[index]}
               //editMode={editMode}
@@ -1225,11 +1421,12 @@ export default class FileUploadForm extends React.PureComponent {
     } = this.state;
     //console.log(exisitng_loan_doc, proof_of_property,current_add_proof)
     const loanCheck =
-      (Helper.nullStringCheck(title) === false && title === 'Auto Loan') ||
-      title === 'Business Loan' ||
-      title === 'Personal Loan' ||
-      title === 'Loan Against Property' ||
-      title === 'Home Loan'
+      Helper.nullStringCheck(title) === false &&
+      (title === 'Business Loan' ||
+        title === 'Personal Loan' ||
+        title === 'Loan Against Property' ||
+        title === 'Home Loan' ||
+        title === 'Auto Loan')
         ? true
         : false;
 
@@ -1237,6 +1434,19 @@ export default class FileUploadForm extends React.PureComponent {
       <View>
         {loanCheck ? (
           <>
+            {truDownloadEnable === -1 ? (
+              <NewDropDown
+                list={currentAddressProofList}
+                placeholder={'Select Residence Proof'}
+                value={this.state.current_add_proof}
+                selectedItem={value =>
+                  this.setState({current_add_proof: value})
+                }
+                style={styles.newdropdowncontainers}
+                textStyle={styles.newdropdowntextstyle}
+              />
+            ) : null}
+
             {this.renderSelectedMultiChoice(
               current_add_proof,
               'Aadhar',
@@ -1309,18 +1519,301 @@ export default class FileUploadForm extends React.PureComponent {
               cap_voterid,
             )} */}
 
-            {title === 'Home Loan' ? (
+            {this.state.existingcard === 'Yes' ? (
               <>
+                {truDownloadEnable === -1 ? (
+                  <NewDropDown
+                    list={existingLoanDocumentList}
+                    placeholder={'Existing Loan Document'}
+                    value={this.state.exisitng_loan_doc}
+                    selectedItem={value =>
+                      this.setState({exisitng_loan_doc: value})
+                    }
+                    style={styles.newdropdowncontainers}
+                    textStyle={styles.newdropdowntextstyle}
+                  />
+                ) : null}
+
                 {this.renderSelectedMultiChoice(
+                  exisitng_loan_doc,
+                  'Current',
+                  'Existing Loan Document',
+                  'current_loan_repayment_statement',
+                  21,
+                  current_loan_repayment_statement,
+                )}
+              </>
+            ) : null}
+
+            {title === 'Home Loan' || title === 'Loan Against Property' ? (
+              <>
+                {truDownloadEnable !== -1 ? (
+                  <View>
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 1`}
+                      type={2}
+                      keyName={'pop_electricity'}
+                      pickedTitle={this.findFileName('pop_electricity')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(res, 'pop_electricity', -1, false, -1)
+                      }
+                      enableDownloads={this.checkurl(0, pop_electricity)}
+                      downloadUrl={this.checkurl(1, pop_electricity)}
+                    />
+
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 2`}
+                      type={2}
+                      keyName={'pop_electricity1'}
+                      pickedTitle={this.findFileName('pop_electricity1')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity1',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[0],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[0],
+                      )}
+                    />
+
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 3`}
+                      type={2}
+                      keyName={'pop_electricity2'}
+                      pickedTitle={this.findFileName('pop_electricity2')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity2',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[1],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[1],
+                      )}
+                    />
+                  </View>
+                ) : (
+                  <View>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.title2,
+                        {
+                          marginVertical: 8,
+                          color: Pref.RED,
+                          fontSize: 14,
+                          paddingVertical: 4,
+                        },
+                      ])}>{`Select Proof Of Property`}</Title>
+                    <View style={styles.popcont}>
+                      <View style={{flex: 0.4}}>
+                        <NewDropDown
+                          truncate
+                          list={proofOfProprtyList}
+                          placeholder={'Select One'}
+                          value={this.state.proof_of_property}
+                          selectedItem={value => {
+                            const proofOfProprtyList1 = Lodash.filter(
+                              proofOfProprtyList,
+                              io => io.value !== value,
+                            );
+                            this.setState({
+                              proof_of_property: value,
+                              proofOfProprtyList1: proofOfProprtyList1,
+                            });
+                          }}
+                          style={StyleSheet.flatten([
+                            styles.newdropdowncontainers,
+                          ])}
+                          textStyle={styles.newdropdowntextstyle}
+                        />
+                      </View>
+
+                      {this.state.proof_of_property !== '' ? (
+                        <View style={{flex: 0.6}}>
+                          <CommonFileUpload
+                            truDownloadEnable={truDownloadEnable}
+                            downloadTitles={downloadTitles}
+                            mode={mode}
+                            title={``}
+                            type={2}
+                            keyName={'pop_electricity'}
+                            pickedTitle={this.findFileName('pop_electricity')}
+                            pickedCallback={(selected, res) =>
+                              this.fileselected(
+                                res,
+                                'pop_electricity',
+                                -1,
+                                false,
+                                -1,
+                              )
+                            }
+                            enableDownloads={this.checkurl(0, pop_electricity)}
+                            downloadUrl={this.checkurl(1, pop_electricity)}
+                          />
+                        </View>
+                      ) : null}
+                    </View>
+                    {this.state.proof_of_property !== '' &&
+                    this.state.proofOfProprtyList1.length > 0 ? (
+                      <View style={styles.popcont}>
+                        <View style={{flex: 0.4}}>
+                          <NewDropDown
+                            truncate
+                            list={this.state.proofOfProprtyList1}
+                            placeholder={'Select One'}
+                            value={this.state.proof_of_property1}
+                            selectedItem={value => {
+                              const proofOfProprtyList2 = Lodash.filter(
+                                this.state.proofOfProprtyList1,
+                                io =>
+                                  io.value !== value &&
+                                  io.value !== this.state.proof_of_property,
+                              );
+                              const ind = this.state.proofOfProprtyList1.findIndex(
+                                io => io.value == value,
+                              );
+                              if (ind !== -1) {
+                                this.state.proofOfProprtyList1.splice(ind, 1);
+                              }
+                              this.setState({
+                                proof_of_property1: value,
+                                proofOfProprtyList1: this.state.proofOfProprtyList1,
+                                proofOfProprtyList2: proofOfProprtyList2,
+                              });
+                            }}
+                            style={styles.newdropdowncontainers}
+                            textStyle={styles.newdropdowntextstyle}
+                          />
+                        </View>
+
+                        <View style={{flex: 0.6}}>
+                          {this.state.proof_of_property1 !== '' &&
+                          this.state.proofOfProprtyList1.length > 0 ? (
+                            <CommonFileUpload
+                              truDownloadEnable={truDownloadEnable}
+                              downloadTitles={downloadTitles}
+                              mode={mode}
+                              title={``}
+                              type={2}
+                              keyName={'pop_electricity1'}
+                              pickedTitle={this.findFileName(
+                                'pop_electricity1',
+                              )}
+                              pickedCallback={(selected, res) =>
+                                this.fileselected(
+                                  res,
+                                  'pop_electricity1',
+                                  -1,
+                                  false,
+                                  -1,
+                                )
+                              }
+                              enableDownloads={this.checkurl(
+                                0,
+                                this.state.multipleFilesList[18].downloadUrl[0],
+                              )}
+                              downloadUrl={this.checkurl(
+                                1,
+                                this.state.multipleFilesList[18].downloadUrl[0],
+                              )}
+                            />
+                          ) : null}
+                        </View>
+                      </View>
+                    ) : null}
+                    {this.state.proof_of_property1 !== '' &&
+                    this.state.proofOfProprtyList2.length > 0 ? (
+                      <View style={styles.popcont}>
+                        <View style={{flex: 0.4}}>
+                          <NewDropDown
+                            truncate
+                            list={this.state.proofOfProprtyList2}
+                            placeholder={'Select One'}
+                            value={this.state.proof_of_property2}
+                            selectedItem={value =>
+                              this.setState({proof_of_property2: value})
+                            }
+                            style={styles.newdropdowncontainers}
+                            textStyle={styles.newdropdowntextstyle}
+                          />
+                        </View>
+
+                        <View style={{flex: 0.6}}>
+                          {this.state.proof_of_property2 !== '' &&
+                          this.state.proofOfProprtyList2.length > 0 ? (
+                            <CommonFileUpload
+                              truDownloadEnable={truDownloadEnable}
+                              downloadTitles={downloadTitles}
+                              mode={mode}
+                              title={``}
+                              type={2}
+                              keyName={'pop_electricity2'}
+                              pickedTitle={this.findFileName(
+                                'pop_electricity2',
+                              )}
+                              pickedCallback={(selected, res) =>
+                                this.fileselected(
+                                  res,
+                                  'pop_electricity2',
+                                  -1,
+                                  false,
+                                  -1,
+                                )
+                              }
+                              enableDownloads={this.checkurl(
+                                0,
+                                this.state.multipleFilesList[18].downloadUrl[1],
+                              )}
+                              downloadUrl={this.checkurl(
+                                1,
+                                this.state.multipleFilesList[18].downloadUrl[1],
+                              )}
+                            />
+                          ) : null}
+                        </View>
+                      </View>
+                    ) : null}
+                  </View>
+                )}
+              </>
+            ) : null}
+
+            {/* {this.renderSelectedMultiChoice(
                   proof_of_property,
                   'Electricity',
                   'Proof Of Property',
                   'pop_electricity',
                   18,
                   pop_electricity,
-                )}
+                )} */}
 
-                {/* {this.renderSelectedMultiChoice(
+            {/* {this.renderSelectedMultiChoice(
                   proof_of_property,
                   'Index',
                   'Index Bill',
@@ -1337,16 +1830,6 @@ export default class FileUploadForm extends React.PureComponent {
                   20,
                   pop_water_bill,
                 )} */}
-              </>
-            ) : null}
-            {this.renderSelectedMultiChoice(
-              exisitng_loan_doc,
-              'Current',
-              'Existing Loan Document',
-              'current_loan_repayment_statement',
-              21,
-              current_loan_repayment_statement,
-            )}
 
             {/* {this.renderSelectedMultiChoice(
               exisitng_loan_doc,
@@ -1424,7 +1907,7 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             {loanCheck &&
-              this.state.multipleFilesList[0].filled.map((e, index) => {
+             this.state.multipleFilesList && this.state.multipleFilesList[0].filled.map((e, index) => {
                 const durl = this.state.multipleFilesList[0].downloadUrl;
                 const namesList = this.state.multipleFilesList[0].names;
 
@@ -1438,7 +1921,7 @@ export default class FileUploadForm extends React.PureComponent {
                     truDownloadEnable={truDownloadEnable}
                     downloadTitles={downloadTitles}
                     mode={mode}
-                    title={`Pan Card ${index+2}`}
+                    title={`Pan Card ${index + 2}`}
                     keyName={`pancard${index + 1}`}
                     type={2}
                     pickedTitle={namesList[index]}
@@ -1482,7 +1965,7 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             {loanCheck &&
-              this.state.multipleFilesList[1].filled.map((e, index) => {
+              this.state.multipleFilesList && this.state.multipleFilesList[1].filled.map((e, index) => {
                 const durl = this.state.multipleFilesList[1].downloadUrl;
                 return (
                   <CommonFileUpload
@@ -1492,7 +1975,9 @@ export default class FileUploadForm extends React.PureComponent {
                     showMinusIcon={true}
                     //editMode={editMode}
                     downloadTitles={downloadTitles}
-                    title={`${title === 'Demat' ? 'Address Proof' : 'Aadhar Card'} ${index+2}`}
+                    title={`${
+                      title === 'Demat' ? 'Address Proof' : 'Aadhar Card'
+                    } ${index + 2}`}
                     truDownloadEnable={truDownloadEnable}
                     mode={mode}
                     type={2}
@@ -1575,7 +2060,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={'rcbookcopy'}
             />
 
-            {this.state.multipleFilesList[4].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[4].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[4].downloadUrl;
               const namesList = this.state.multipleFilesList[4].names;
               return (
@@ -1590,7 +2075,7 @@ export default class FileUploadForm extends React.PureComponent {
                   // }
                   truDownloadEnable={truDownloadEnable}
                   mode={mode}
-                  title={`RC Book ${index+2}`}
+                  title={`RC Book ${index + 2}`}
                   type={2}
                   pickedTitle={namesList[index]}
                   pickedCallback={(selected, res) =>
@@ -1619,7 +2104,7 @@ export default class FileUploadForm extends React.PureComponent {
               truDownloadEnable={truDownloadEnable}
               keyName={`policycopy`}
             />
-            {this.state.multipleFilesList[5].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[5].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[5].downloadUrl;
               const namesList = this.state.multipleFilesList[5].names;
               return (
@@ -1667,7 +2152,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`oldinsurancecopy`}
             />
 
-            {this.state.multipleFilesList[6].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[6].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[6].downloadUrl;
               const namesList = this.state.multipleFilesList[6].names;
               return (
@@ -1710,7 +2195,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`puccopy`}
             />
 
-            {this.state.multipleFilesList[7].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[7].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[7].downloadUrl;
               const namesList = this.state.multipleFilesList[7].names;
               return (
@@ -1787,7 +2272,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`salaryslip`}
             />
 
-            {this.state.multipleFilesList[2].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[2].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[2].downloadUrl;
               const namesList = this.state.multipleFilesList[2].names;
               return (
@@ -1842,7 +2327,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`bankstate`}
             />
 
-            {this.state.multipleFilesList[3].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[3].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[3].downloadUrl;
               const namesList = this.state.multipleFilesList[3].names;
               return (
@@ -1891,7 +2376,7 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`other`}
             />
 
-            {this.state.multipleFilesList[9].filled.map((e, index) => {
+            {this.state.multipleFilesList && this.state.multipleFilesList[9].filled.map((e, index) => {
               const durl = this.state.multipleFilesList[9].downloadUrl;
               const namesList = this.state.multipleFilesList[9].names;
               return (
@@ -2175,6 +2660,21 @@ export default class FileUploadForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  popcont: {flex: 1, flexDirection: 'row'},
+  newdropdowntextstyle: {
+    color: '#6d6a57',
+    fontSize: 14,
+    fontFamily: Pref.getFontName(4),
+  },
+  newdropdowncontainers: {
+    borderRadius: 0,
+    borderBottomColor: '#f2f1e6',
+    borderBottomWidth: 1.3,
+    borderWidth: 0,
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
   dropdowntextstyle: {
     color: '#6d6a57',
     fontSize: 14,
@@ -2225,5 +2725,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginStart: 4,
     marginVertical: 8,
+  },
+  title2: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#6d6a57',
+    lineHeight: 20,
+    marginStart: 8,
+    marginVertical: 10,
   },
 });

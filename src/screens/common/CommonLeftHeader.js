@@ -123,37 +123,10 @@ const LeftHeaders = props => {
                           fontSize: 16,
                         },
                       ])}>
-                      {userData !== null ? userData.rname != null && Lodash.truncate(
-                          Helper.nullStringCheck(userData.rname) === false
+                      {userData !== null && Helper.nullStringCheck(userData.rname) === false
                           ? userData.rname
-                          : userData.username != null && Helper.nullStringCheck(userData.username) === false
-                          ? userData.username : '',{
-                          length: 24,
-                          separator: '...',
-                        },
-                      ) : null}
-                    </Title>
-                    <Title
-                      style={StyleSheet.flatten([
-                        styles.passText,
-                        {
-                          color: Pref.RED,
-                          fontSize: 14,
-                          paddingVertical: 0,
-                          marginBottom: 2,
-                          marginTop: 4,
-                        },
-                      ])}>
-                      {`${type === `referral`
-                          ? 'Partner'
-                          : `${type === 'connector' ? 'Connector' : 'Team'}/${
-                              leaderData != null && leaderData.rname != null
-                                ? Helper.nullCheck(leaderData.rname) === false
-                                  ? leaderData.rname
-                                  : ''
-                                : ''
-                            }(Leader)`
-                      }`}
+                          : userData !== null && Helper.nullStringCheck(userData.username) === false
+                          ? userData.username : ''}
                     </Title>
 
                     <Subtitle
@@ -163,16 +136,34 @@ const LeftHeaders = props => {
                           color: '#666666',
                           fontSize: 13,
                           paddingVertical: 0,
-                          marginBottom: 8,
+                          marginTop: 4,
                         },
                       ])}>
-                      {userData != null ? userData.rcontact != null && Helper.nullStringCheck(userData.rcontact) === false
-                          ? userData.rcontact
-                          : userData.mobile != null && Helper.nullStringCheck(userData.mobile) === false
-                          ? userData.mobile
-                          : ''
-                        : ''}
+                      {userData != null && Helper.nullStringCheck(userData.rcontact) === false
+                          ? `${userData.rcontact}${type==='referral' ? '' : '(Connector)'}`
+                          : userData != null && Helper.nullStringCheck(userData.mobile) === false
+                          ? `${userData.mobile}(Team)`
+                          : ''}
                     </Subtitle>
+
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.passText,
+                        {
+                          color: Pref.RED,
+                          fontSize: 14,
+                          paddingVertical: 0,
+                          marginBottom: 2,
+                          paddingBottom:2,
+                          marginTop:1
+                        },
+                      ])}>
+                      {`${type === `referral`
+                          ? 'Partner'
+                          : leaderData != null && Helper.nullCheck(leaderData.rname) === false
+                          ? `${leaderData.rname}(Partner)` : ''
+                      }`}
+                    </Title>
 
                     <View style={styles.line}></View>
 
@@ -272,7 +263,7 @@ const LeftHeaders = props => {
                         ? require('../../res/images/account.png')
                         : pic
                     }
-                    size={48}
+                    size={44}
                     style={{
                       backgroundColor: 'transparent',
                       borderColor: 'transparent',

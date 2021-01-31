@@ -320,7 +320,7 @@ export default class DialerRecords extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={active === 1 ? 'My Lead Records': 'Team Lead Records'}
+              title={active === 1 ? 'My Calls Record': 'Team Calls Record'}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
