@@ -604,7 +604,7 @@ export default class Sidebar extends React.Component {
               //team leader module => userRole = 2
               //dialer features
 
-              // const {userRole} = this.state;
+              const {userRole} = this.state;
 
               // if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
               //   const firstpos = filter.splice(1,filter.length);
@@ -623,7 +623,7 @@ export default class Sidebar extends React.Component {
               //           options: {},
               //         },
               //         {
-              //           name: `My Lead Records`,
+              //           name: `My Calls Records`,
               //           expand: false,
               //           click: 'DialerRecords',
               //           options: {},

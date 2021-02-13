@@ -59,6 +59,9 @@ var proofOfProprtyList = [
 
 const existingLoanDocumentList = [
   {
+    value: 'Foreclosure Document',
+  },
+  {
     value: `Current Loan Repayment Statement`,
   },
   // {
@@ -69,6 +72,7 @@ const existingLoanDocumentList = [
   //   value: `2 Months Card Statement`,
   //   checked: 'unchecked',
   // },
+  {value: 'LOD'},
   {
     value: `Sanction Letter`,
   },
@@ -1037,11 +1041,276 @@ const listoffiles = [
   },
 ];
 
+// const popitemList = [
+//   {
+//     value:'',
+//     options:[
+//       {value: 'Share Certificate'},
+//       {value: 'Maintenance Slip'},
+//       {value: 'Property Tax'},
+//       {value: 'Water Bill'},
+//     ],
+//     key:'pop_electricity'
+//   }
+// ]
+
+
+const lapPopList = [
+  {
+    enable:true,
+    value:'',
+    options:[
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key:'pop_electricity',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key:'pop_electricity1',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key:'pop_electricity2',
+    res:{}
+  },
+];
+
+const btpopList = [
+  {
+    enable:true,
+    value:'',
+    options:[
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity1',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity2',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity3',
+    res:{}
+  }
+];
+
+const freshPopListBuild = [
+  {
+    enable:true,
+    value:'',
+    options:[
+      {value: 'Cost Sheet'},
+      {value: 'Blue Print'},
+      {value: 'CC Copy'},
+    ],
+    key:'pop_electricity',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Cost Sheet'},
+      {value: 'Blue Print'},
+      {value: 'CC Copy'},
+    ],
+    key:'pop_electricity1',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Cost Sheet'},
+      {value: 'Blue Print'},
+      {value: 'CC Copy'},
+    ],
+    key:'pop_electricity2',
+    res:{}
+  },
+]
+
+const freshPopListResale = [
+  {
+    enable:true,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity1',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity2',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity3',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity4',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity5',
+    res:{}
+  },
+  {
+    enable:false,
+    value:'',
+    options:[
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key:'pop_electricity6',
+    res:{}
+  },
+]
+
+
 export default class FileUploadForm extends React.PureComponent {
   constructor(props) {
     super(props);
     this.findFileName = this.findFileName.bind(this);
     this.fileselected = this.fileselected.bind(this);
+    this.renderpop = this.renderpop.bind(this);
     this.onChange = this.onChange.bind(this);
     this.state = {
       fileList: [],
@@ -1051,72 +1320,183 @@ export default class FileUploadForm extends React.PureComponent {
       proof_of_property: '',
       proofOfProprtyList1: [],
       proofOfProprtyList2: [],
+      proofOfProprtyList3: [],
+      proofOfProprtyList4: [],
+      proofOfProprtyList5: [],
+      proofOfProprtyList6: [],
       proof_of_property1: '',
       proof_of_property2: '',
+      proof_of_property3: '',
+      proof_of_property4: '',
+      proof_of_property5: '',
+      proof_of_property6: '',
       existingcard: '',
+      fresh_pop: '',
+      popitemList:lapPopList
     };
-    proofOfProprtyList = [
-      {
-        value: `Electricity Bill`,
-      },
-      {
-        value: `Society Maintenance Bill`,
-      },
-      {
-        value: `Water Bill`,
-      },
-    ];
+    // const {title} = props;
+    // proofOfProprtyList = title.includes('Home')
+    //   ? [
+    //       {value: 'Share Certificate'},
+    //       {value: 'Maintenance Slip'},
+    //       {value: 'Property Tax'},
+    //       {value: 'Water Bill'},
+    //     ]
+    //   : [
+    //       {
+    //         value: `Electricity Bill`,
+    //       },
+    //       {
+    //         value: `Society Maintenance Bill`,
+    //       },
+    //       {
+    //         value: `Water Bill`,
+    //       },
+    //     ];
   }
 
+  optionsSelected = (item, index, value) =>{
+    const {popitemList} = this.state;
+    //const current  = popitemList[index];
+    const filter = Lodash.filter(item.options, (io) => io.value === value);
+    item.options = filter;
+    item.value = value;
+    popitemList[index] = item;
+    const nextpos = index+1;
+    if(nextpos < popitemList.length){
+      const next  = popitemList[nextpos];
+      const nextoptions = next.options;
+      for(let i=0; i<popitemList.length; i++){
+        const elmet = popitemList[i];
+        if(elmet.value != ''){
+          const find = Lodash.findLastIndex(nextoptions, io => io.value === elmet.value);
+          if(find !== -1){
+            nextoptions.splice(find, 1);
+          }
+        };
+      }
+      next.options = nextoptions;
+      next.enable = true;
+      popitemList[nextpos] = next;
+    }
+    this.setState({popitemList:popitemList}, () => this.forceUpdate());
+  }
+
+  renderpop = (item, index) => {
+    const {mode} = this.props;
+    return (
+      <View style={styles.popcont}>
+        {item.enable ? <View style={{flex: 0.4}}>
+          <NewDropDown
+            truncate
+            list={item.options}
+            placeholder={'Select One'}
+            value={item.value}
+            selectedItem={value => this.optionsSelected(item, index, value)}
+            style={styles.newdropdowncontainers}
+            textStyle={styles.newdropdowntextstyle}
+          />
+        </View> : null}
+
+        <View style={{flex: 0.57}}>
+          {item.value != '' ? (
+            <CommonFileUpload
+              mode={mode}
+              title={``}
+              type={2}
+              keyName={item.key}
+              pickedTitle={this.findFileName(item.key)}
+              pickedCallback={(selected, res) =>
+                this.fileselected(
+                  res,
+                  item.key,
+                  -1,
+                  false,
+                  -1,
+                )
+              }
+              enableDownloads={this.checkurl(
+                0,
+                this.state.multipleFilesList[18].downloadUrl[index],
+              )}
+              downloadUrl={this.checkurl(
+                1,
+                this.state.multipleFilesList[18].downloadUrl[index],
+              )}
+            />
+          ) : null}
+        </View>
+      </View>
+    );
+  };
+
   restoreData(obj) {
-    proofOfProprtyList = [
-      {
-        value: `Electricity Bill`,
-      },
-      {
-        value: `Society Maintenance Bill`,
-      },
-      {
-        value: `Water Bill`,
-      },
-    ];
+    const {title, fresh_pop} = this.props;
     if (obj !== undefined) {
+      // var popitemList = [];
+      // if (obj.fresh_pop !== undefined && obj.fresh_pop === 'Builder Purchase') {
+      //   popitemList = freshPopListBuild;
+      // } else if (
+      //   obj.fresh_pop !== undefined &&
+      //   obj.fresh_pop === 'Resale Property'
+      // ) {
+      //   popitemList = freshPopListResale;
+      // }
+      // obj.popitemList = popitemList;
       this.setuppop(
-        Helper.nullCheck(obj.multipleFilesList) === false ? obj.multipleFilesList : [],
+        Helper.nullCheck(obj.multipleFilesList) === false
+          ? obj.multipleFilesList
+          : [],
         Helper.nullStringCheckWithReturn(obj.exisitng_loan_doc),
         Helper.nullStringCheckWithReturn(obj.current_add_proof),
         Helper.nullStringCheckWithReturn(obj.proof_of_property),
         Helper.nullStringCheckWithReturn(obj.existingcard),
+        Helper.nullStringCheckWithReturn(obj.fresh_pop),
+        Helper.nullCheck(obj.popitemList) === false ? obj.popitemList : []
       );
-      this.setState(obj);
+      this.setState(obj, () => this.forceUpdate());
     }
   }
 
   componentDidMount() {
-    proofOfProprtyList = [
-      {
-        value: `Electricity Bill`,
-      },
-      {
-        value: `Society Maintenance Bill`,
-      },
-      {
-        value: `Water Bill`,
-      },
-    ];
+    // const {title} = this.props;
+    // proofOfProprtyList = title.includes('Home')
+    //   ? [
+    //       {value: 'Share Certificate'},
+    //       {value: 'Maintenance Slip'},
+    //       {value: 'Property Tax'},
+    //       {value: 'Water Bill'},
+    //     ]
+    //   : [
+    //       {
+    //         value: `Electricity Bill`,
+    //       },
+    //       {
+    //         value: `Society Maintenance Bill`,
+    //       },
+    //       {
+    //         value: `Water Bill`,
+    //       },
+    //     ];
+
     const {
       multipleFilesList = listoffiles,
       exisitng_loan_doc = '',
       current_add_proof = '',
       proof_of_property = '',
       existingcard = '',
+      fresh_pop = '',
+      popitemList = []
     } = this.props;
+    //console.log('didmount', popitemList,fresh_pop);
     this.setuppop(
       multipleFilesList,
       exisitng_loan_doc,
       current_add_proof,
       proof_of_property,
       existingcard,
+      fresh_pop,
+      popitemList
     );
     //console.log(filterList);
   }
@@ -1127,24 +1507,60 @@ export default class FileUploadForm extends React.PureComponent {
     current_add_proof = '',
     proof_of_property = '',
     existingcard = '',
+    fresh_pop = '',
+    popitemList = []
   ) => {
+    const {title} = this.props;
+    console.log(title);
     var filterList = listoffiles;
     var proofOfProprtyList1 = [];
     var proofOfProprtyList2 = [];
+    var proofOfProprtyList3 = [];
+    var proofOfProprtyList4 = [];
+    var proofOfProprtyList5 = [];
+    var proofOfProprtyList6 = [];
     let spx = [];
 
+    var newpopitemList = [];
+
+    if(popitemList.length === 0){
+      if(title.includes('Against')){
+        newpopitemList = lapPopList;
+      }else{
+        if(Helper.nullStringCheck(fresh_pop) === false){
+          if(fresh_pop.toLowerCase() === 'builder purchase'){
+            newpopitemList = freshPopListBuild;
+          }else{
+            newpopitemList = freshPopListResale;     
+          }
+        }else if(Helper.nullStringCheck(existingcard) === false){
+          if(existingcard.toLowerCase() === 'yes'){
+            newpopitemList = btpopList;
+          }
+        }else{
+          newpopitemList = lapPopList;
+        }
+      }
+    }else{
+      newpopitemList = popitemList;
+    }
+    
     if (
       Helper.nullCheck(multipleFilesList) === false &&
       multipleFilesList.length > 0
     ) {
       filterList = Lodash.map(multipleFilesList, io => {
         const {downloadUrl} = io;
+        let isproof = false;
         const filters = Lodash.filter(downloadUrl, file => {
           if (Helper.extCheckReg(file)) {
+            if(file.includes('pop_electricity')){
+              isproof = true;
+            }
             return file;
           }
         });
-        if (filters.length > 0) {
+        if (isproof === false && filters.length > 0) {
           filters.splice(0, 1);
         }
         io.downloadUrl = filters;
@@ -1153,46 +1569,55 @@ export default class FileUploadForm extends React.PureComponent {
         return io;
       });
     }
-    if (
-      Helper.nullStringCheck(proof_of_property) === false &&
-      Helper.separatorReg(proof_of_property)
-    ) {
-      spx = proof_of_property.split(',').filter(io => io !== '');
-      if (spx.length > 0) {
-        const cloneList = JSON.parse(JSON.stringify(proofOfProprtyList));
-        proofOfProprtyList = [];
-        for (let j = 0; j < cloneList.length; j++) {
-          const el = cloneList[j];
-          if (el.value === spx[0]) {
-            proofOfProprtyList.push(el);
-          } else {
-            proofOfProprtyList1.push(el);
-          }
-          if (el.value === spx[0] || el.value === spx[1]) {
-          } else {
-            proofOfProprtyList2.push(el);
-            const ind = proofOfProprtyList1.findIndex(
-              io => io.value == el.value,
-            );
-            if (ind !== -1) {
-              proofOfProprtyList1.splice(ind, 1);
-            }
-          }
-        }
-      }
-    }
+    // if (
+    //   Helper.nullStringCheck(proof_of_property) === false &&
+    //   Helper.separatorReg(proof_of_property)
+    // ) {
+    //   spx = proof_of_property.split(',').filter(io => io !== '');
+    //   if (spx.length > 0) {
+    //     const cloneList = JSON.parse(JSON.stringify(proofOfProprtyList));
+    //     proofOfProprtyList = [];
+    //     for (let j = 0; j < cloneList.length; j++) {
+    //       const el = cloneList[j];
+    //       if (el.value === spx[0]) {
+    //         proofOfProprtyList.push(el);
+    //       } else {
+    //         proofOfProprtyList1.push(el);
+    //       }
+    //       if (el.value === spx[0] || el.value === spx[1]) {
+    //       } else {
+    //         proofOfProprtyList2.push(el);
+    //         const ind = proofOfProprtyList1.findIndex(
+    //           io => io.value == el.value,
+    //         );
+    //         if (ind !== -1) {
+    //           proofOfProprtyList1.splice(ind, 1);
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    
+    //console.log('newpopitemList', newpopitemList);
+    
+    //console.log(filterList[18].downloadUrl);
 
     this.setState({
+      popitemList:newpopitemList,
       multipleFilesList: filterList,
       existingcard: existingcard,
       exisitng_loan_doc: exisitng_loan_doc,
       current_add_proof: current_add_proof,
-      proof_of_property: spx.length > 0 ? spx[0] : '',
-      proof_of_property1: spx.length > 1 ? spx[1] : '',
-      proof_of_property2: spx.length > 2 ? spx[2] : '',
-      proofOfProprtyList1: proofOfProprtyList1,
-      proofOfProprtyList2: proofOfProprtyList2,
-    });
+      // proof_of_property: spx.length > 0 ? spx[0] : '',
+      // proof_of_property1: spx.length > 1 ? spx[1] : '',
+      // proof_of_property2: spx.length > 2 ? spx[2] : '',
+      // proof_of_property3: spx.length > 3 ? spx[3] : '',
+      // proof_of_property4: spx.length > 4 ? spx[4] : '',
+      // proof_of_property5: spx.length > 5 ? spx[5] : '',
+      // proof_of_property6: spx.length > 6 ? spx[6] : '',
+      // proofOfProprtyList1: proofOfProprtyList1,
+      // proofOfProprtyList2: proofOfProprtyList2,
+    }, () => this.forceUpdate());
 
     // if (Helper.nullStringCheck(existingcard) === false)
     //   this.setState({existingcard: existingcard});
@@ -1340,31 +1765,33 @@ export default class FileUploadForm extends React.PureComponent {
           plusClicked={() => this.insertValueFormultipleFilePick(arrayposition)}
         />
 
-        {this.state.multipleFilesList && this.state.multipleFilesList[arrayposition].filled.map((e, index) => {
-          const durl = this.state.multipleFilesList[arrayposition].downloadUrl;
-          const namesList = this.state.multipleFilesList[arrayposition].names;
-          return (
-            <CommonFileUpload
-              minusClicked={() =>
-                this.removeValueFormultipleFilePick(arrayposition, index)
-              }
-              showMinusIcon={true}
-              pickedTitle={namesList[index]}
-              //editMode={editMode}
-              downloadTitles={downloadTitles}
-              truDownloadEnable={truDownloadEnable}
-              mode={mode}
-              title={`${title} ${index + 2}`}
-              keyName={key}
-              type={2}
-              pickedCallback={(selected, res) =>
-                this.fileselected(res, key, index, true, arrayposition)
-              }
-              enableDownloads={this.checkurl(0, durl[index])}
-              downloadUrl={this.checkurl(1, durl[index])}
-            />
-          );
-        })}
+        {this.state.multipleFilesList &&
+          this.state.multipleFilesList[arrayposition].filled.map((e, index) => {
+            const durl = this.state.multipleFilesList[arrayposition]
+              .downloadUrl;
+            const namesList = this.state.multipleFilesList[arrayposition].names;
+            return (
+              <CommonFileUpload
+                minusClicked={() =>
+                  this.removeValueFormultipleFilePick(arrayposition, index)
+                }
+                showMinusIcon={true}
+                pickedTitle={namesList[index]}
+                //editMode={editMode}
+                downloadTitles={downloadTitles}
+                truDownloadEnable={truDownloadEnable}
+                mode={mode}
+                title={`${title} ${index + 2}`}
+                keyName={key}
+                type={2}
+                pickedCallback={(selected, res) =>
+                  this.fileselected(res, key, index, true, arrayposition)
+                }
+                enableDownloads={this.checkurl(0, durl[index])}
+                downloadUrl={this.checkurl(1, durl[index])}
+              />
+            );
+          })}
       </>
     );
   };
@@ -1412,6 +1839,8 @@ export default class FileUploadForm extends React.PureComponent {
       credit_card_front_copy = null,
       passportPhoto = null,
       card_statement = null,
+      quotes = null,
+      policy = null,
     } = this.props;
 
     const {
@@ -1432,6 +1861,28 @@ export default class FileUploadForm extends React.PureComponent {
 
     return (
       <View>
+        {truDownloadEnable !== -1 && quotes !== null ? (
+          <CommonFileUpload
+            truDownloadEnable={truDownloadEnable}
+            downloadTitles={downloadTitles}
+            mode={mode}
+            title={`Quotes`}
+            type={2}
+            enableDownloads={this.checkurl(0, quotes)}
+            downloadUrl={this.checkurl(1, quotes)}
+          />
+        ) : null}
+        {truDownloadEnable !== -1 && policy !== null ? (
+          <CommonFileUpload
+            truDownloadEnable={truDownloadEnable}
+            downloadTitles={downloadTitles}
+            mode={mode}
+            title={`Policy`}
+            type={2}
+            enableDownloads={this.checkurl(0, policy)}
+            downloadUrl={this.checkurl(1, policy)}
+          />
+        ) : null}
         {loanCheck ? (
           <>
             {truDownloadEnable === -1 ? (
@@ -1617,6 +2068,115 @@ export default class FileUploadForm extends React.PureComponent {
                         this.state.multipleFilesList[18].downloadUrl[1],
                       )}
                     />
+
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 4`}
+                      type={2}
+                      keyName={'pop_electricity3'}
+                      pickedTitle={this.findFileName('pop_electricity3')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity3',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[2],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[2],
+                      )}
+                    />
+
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 5`}
+                      type={2}
+                      keyName={'pop_electricity4'}
+                      pickedTitle={this.findFileName('pop_electricity4')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity4',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[3],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[3],
+                      )}
+                    />
+
+                    <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 6`}
+                      type={2}
+                      keyName={'pop_electricity5'}
+                      pickedTitle={this.findFileName('pop_electricity5')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity5',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[4],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[4],
+                      )}
+                    />
+
+
+                  <CommonFileUpload
+                      truDownloadEnable={truDownloadEnable}
+                      downloadTitles={downloadTitles}
+                      mode={mode}
+                      title={`Proof Of Property 7`}
+                      type={2}
+                      keyName={'pop_electricity6'}
+                      pickedTitle={this.findFileName('pop_electricity6')}
+                      pickedCallback={(selected, res) =>
+                        this.fileselected(
+                          res,
+                          'pop_electricity6',
+                          -1,
+                          false,
+                          -1,
+                        )
+                      }
+                      enableDownloads={this.checkurl(
+                        0,
+                        this.state.multipleFilesList[18].downloadUrl[5],
+                      )}
+                      downloadUrl={this.checkurl(
+                        1,
+                        this.state.multipleFilesList[18].downloadUrl[5],
+                      )}
+                    />
                   </View>
                 ) : (
                   <View>
@@ -1630,7 +2190,8 @@ export default class FileUploadForm extends React.PureComponent {
                           paddingVertical: 4,
                         },
                       ])}>{`Select Proof Of Property`}</Title>
-                    <View style={styles.popcont}>
+                    
+                    {/*<View style={styles.popcont}>
                       <View style={{flex: 0.4}}>
                         <NewDropDown
                           truncate
@@ -1679,7 +2240,8 @@ export default class FileUploadForm extends React.PureComponent {
                         </View>
                       ) : null}
                     </View>
-                    {this.state.proof_of_property !== '' &&
+
+                     {this.state.proof_of_property !== '' &&
                     this.state.proofOfProprtyList1.length > 0 ? (
                       <View style={styles.popcont}>
                         <View style={{flex: 0.4}}>
@@ -1703,7 +2265,8 @@ export default class FileUploadForm extends React.PureComponent {
                               }
                               this.setState({
                                 proof_of_property1: value,
-                                proofOfProprtyList1: this.state.proofOfProprtyList1,
+                                proofOfProprtyList1: this.state
+                                  .proofOfProprtyList1,
                                 proofOfProprtyList2: proofOfProprtyList2,
                               });
                             }}
@@ -1747,6 +2310,7 @@ export default class FileUploadForm extends React.PureComponent {
                         </View>
                       </View>
                     ) : null}
+
                     {this.state.proof_of_property1 !== '' &&
                     this.state.proofOfProprtyList2.length > 0 ? (
                       <View style={styles.popcont}>
@@ -1756,9 +2320,42 @@ export default class FileUploadForm extends React.PureComponent {
                             list={this.state.proofOfProprtyList2}
                             placeholder={'Select One'}
                             value={this.state.proof_of_property2}
-                            selectedItem={value =>
-                              this.setState({proof_of_property2: value})
-                            }
+                            selectedItem={value => {
+                              if (this.state.existingcard === 'Yes') {
+                                this.setState({proof_of_property2: value});
+                              } else {
+                                const proofOfProprtyList3 = Lodash.filter(
+                                  this.state.proofOfProprtyList2,
+                                  io =>
+                                    io.value !== value &&
+                                    io.value !== this.state.proof_of_property &&
+                                    io.value !== this.state.proof_of_property1,
+                                );
+                                const ind = this.state.proofOfProprtyList1.findIndex(
+                                  io => io.value == value,
+                                );
+                                if (ind !== -1) {
+                                  this.state.proofOfProprtyList1.splice(ind, 1);
+                                }
+                                const ind1 = this.state.proofOfProprtyList2.findIndex(
+                                  io => io.value == value,
+                                );
+                                if (ind1 !== -1) {
+                                  this.state.proofOfProprtyList2.splice(
+                                    ind1,
+                                    1,
+                                  );
+                                }
+                                this.setState({
+                                  proof_of_property2: value,
+                                  proofOfProprtyList1: this.state
+                                    .proofOfProprtyList1,
+                                  proofOfProprtyList2: this.state
+                                    .proofOfProprtyList2,
+                                  proofOfProprtyList3: proofOfProprtyList3,
+                                });
+                              }
+                            }}
                             style={styles.newdropdowncontainers}
                             textStyle={styles.newdropdowntextstyle}
                           />
@@ -1798,7 +2395,15 @@ export default class FileUploadForm extends React.PureComponent {
                           ) : null}
                         </View>
                       </View>
-                    ) : null}
+                    ) : null} */}
+
+                    <FlatList
+                      data={this.state.popitemList}
+                      keyExtractor={(item, index) => `${index}`}
+                      renderItem={({item, index}) =>
+                        this.renderpop(item, index)
+                      }
+                    />
                   </View>
                 )}
               </>
@@ -1907,7 +2512,8 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             {loanCheck &&
-             this.state.multipleFilesList && this.state.multipleFilesList[0].filled.map((e, index) => {
+              this.state.multipleFilesList &&
+              this.state.multipleFilesList[0].filled.map((e, index) => {
                 const durl = this.state.multipleFilesList[0].downloadUrl;
                 const namesList = this.state.multipleFilesList[0].names;
 
@@ -1965,7 +2571,8 @@ export default class FileUploadForm extends React.PureComponent {
             />
 
             {loanCheck &&
-              this.state.multipleFilesList && this.state.multipleFilesList[1].filled.map((e, index) => {
+              this.state.multipleFilesList &&
+              this.state.multipleFilesList[1].filled.map((e, index) => {
                 const durl = this.state.multipleFilesList[1].downloadUrl;
                 return (
                   <CommonFileUpload
@@ -2060,33 +2667,34 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={'rcbookcopy'}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[4].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[4].downloadUrl;
-              const namesList = this.state.multipleFilesList[4].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(4, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  // downloadTitles={
-                  //   truDownloadEnable === -1 ? '' : `RC Book ${index + 2}`
-                  // }
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`RC Book ${index + 2}`}
-                  type={2}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'rcbookcopy', index, true, 4)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                  keyName={`rcbookcopy${index + 1}`}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[4].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[4].downloadUrl;
+                const namesList = this.state.multipleFilesList[4].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(4, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    // downloadTitles={
+                    //   truDownloadEnable === -1 ? '' : `RC Book ${index + 2}`
+                    // }
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`RC Book ${index + 2}`}
+                    type={2}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'rcbookcopy', index, true, 4)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                    keyName={`rcbookcopy${index + 1}`}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={false}
@@ -2104,34 +2712,35 @@ export default class FileUploadForm extends React.PureComponent {
               truDownloadEnable={truDownloadEnable}
               keyName={`policycopy`}
             />
-            {this.state.multipleFilesList && this.state.multipleFilesList[5].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[5].downloadUrl;
-              const namesList = this.state.multipleFilesList[5].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(5, index)
-                  }
-                  showMinusIcon={true}
-                  // editMode={editMode}
-                  // downloadTitles={
-                  //   truDownloadEnable === -1 ? '' : `Policy ${index + 2}`
-                  // }
-                  // truDownloadEnable={truDownloadEnable}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`Policy ${index + 2}`}
-                  type={2}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'policycopy', index, true)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                  keyName={`policycopy${index + 1}`}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[5].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[5].downloadUrl;
+                const namesList = this.state.multipleFilesList[5].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(5, index)
+                    }
+                    showMinusIcon={true}
+                    // editMode={editMode}
+                    // downloadTitles={
+                    //   truDownloadEnable === -1 ? '' : `Policy ${index + 2}`
+                    // }
+                    // truDownloadEnable={truDownloadEnable}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`Policy ${index + 2}`}
+                    type={2}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'policycopy', index, true)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                    keyName={`policycopy${index + 1}`}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={false}
@@ -2152,31 +2761,32 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`oldinsurancecopy`}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[6].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[6].downloadUrl;
-              const namesList = this.state.multipleFilesList[6].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(6, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`Old Insurance Policy ${index + 2}`}
-                  type={2}
-                  keyName={`oldinsurancecopy${index + 1}`}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'oldinsurancecopy', index, true, 6)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[6].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[6].downloadUrl;
+                const namesList = this.state.multipleFilesList[6].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(6, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`Old Insurance Policy ${index + 2}`}
+                    type={2}
+                    keyName={`oldinsurancecopy${index + 1}`}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'oldinsurancecopy', index, true, 6)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={false}
@@ -2195,31 +2805,32 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`puccopy`}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[7].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[7].downloadUrl;
-              const namesList = this.state.multipleFilesList[7].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(7, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`PUC ${index + 2}`}
-                  type={2}
-                  keyName={`puccopy${index + 1}`}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'puccopy', index, true, 7)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[7].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[7].downloadUrl;
+                const namesList = this.state.multipleFilesList[7].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(7, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`PUC ${index + 2}`}
+                    type={2}
+                    keyName={`puccopy${index + 1}`}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'puccopy', index, true, 7)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                  />
+                );
+              })}
           </View>
         ) : null}
 
@@ -2272,31 +2883,32 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`salaryslip`}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[2].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[2].downloadUrl;
-              const namesList = this.state.multipleFilesList[2].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(2, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`Salary Slip ${index + 2}`}
-                  type={2}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'salaryslip', index, true, 2)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                  keyName={`salaryslip${index + 1}`}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[2].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[2].downloadUrl;
+                const namesList = this.state.multipleFilesList[2].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(2, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`Salary Slip ${index + 2}`}
+                    type={2}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'salaryslip', index, true, 2)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                    keyName={`salaryslip${index + 1}`}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={true}
@@ -2327,32 +2939,33 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`bankstate`}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[3].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[3].downloadUrl;
-              const namesList = this.state.multipleFilesList[3].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(3, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`Bank Statement ${index + 2}`}
-                  type={2}
-                  //fileType={1}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'bankstate', index, true, 3)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                  keyName={`bankstate${index + 1}`}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[3].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[3].downloadUrl;
+                const namesList = this.state.multipleFilesList[3].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(3, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`Bank Statement ${index + 2}`}
+                    type={2}
+                    //fileType={1}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'bankstate', index, true, 3)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                    keyName={`bankstate${index + 1}`}
+                  />
+                );
+              })}
 
             <CommonFileUpload
               showPlusIcon={true}
@@ -2376,32 +2989,33 @@ export default class FileUploadForm extends React.PureComponent {
               keyName={`other`}
             />
 
-            {this.state.multipleFilesList && this.state.multipleFilesList[9].filled.map((e, index) => {
-              const durl = this.state.multipleFilesList[9].downloadUrl;
-              const namesList = this.state.multipleFilesList[9].names;
-              return (
-                <CommonFileUpload
-                  minusClicked={() =>
-                    this.removeValueFormultipleFilePick(9, index)
-                  }
-                  showMinusIcon={true}
-                  //editMode={editMode}
-                  downloadTitles={downloadTitles}
-                  truDownloadEnable={truDownloadEnable}
-                  mode={mode}
-                  title={`Other ${index + 2}`}
-                  type={2}
-                  fileType={-1}
-                  pickedTitle={namesList[index]}
-                  pickedCallback={(selected, res) =>
-                    this.fileselected(res, 'other', index, true, 9)
-                  }
-                  enableDownloads={this.checkurl(0, durl[index])}
-                  downloadUrl={this.checkurl(1, durl[index])}
-                  keyName={`other${index + 1}`}
-                />
-              );
-            })}
+            {this.state.multipleFilesList &&
+              this.state.multipleFilesList[9].filled.map((e, index) => {
+                const durl = this.state.multipleFilesList[9].downloadUrl;
+                const namesList = this.state.multipleFilesList[9].names;
+                return (
+                  <CommonFileUpload
+                    minusClicked={() =>
+                      this.removeValueFormultipleFilePick(9, index)
+                    }
+                    showMinusIcon={true}
+                    //editMode={editMode}
+                    downloadTitles={downloadTitles}
+                    truDownloadEnable={truDownloadEnable}
+                    mode={mode}
+                    title={`Other ${index + 2}`}
+                    type={2}
+                    fileType={-1}
+                    pickedTitle={namesList[index]}
+                    pickedCallback={(selected, res) =>
+                      this.fileselected(res, 'other', index, true, 9)
+                    }
+                    enableDownloads={this.checkurl(0, durl[index])}
+                    downloadUrl={this.checkurl(1, durl[index])}
+                    keyName={`other${index + 1}`}
+                  />
+                );
+              })}
 
             {/* <CommonFileUpload
             showPlusIcon={true}

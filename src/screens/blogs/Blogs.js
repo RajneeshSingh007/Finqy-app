@@ -51,11 +51,6 @@ export default class Blogs extends React.PureComponent {
         });
       });
     });
-    analytics().logEvent("FinNews", {
-      id:123456
-    }).then(e =>{
-      console.log(e)
-    }).catch(e => console.log(e))
   }
 
   back = () => {
@@ -86,7 +81,7 @@ export default class Blogs extends React.PureComponent {
             const { category } = io;
             const find = Lodash.find(
               categoryList,
-              (ui) => ui.name === category,
+              (ui) => String(ui.name).toLowerCase() === String(category).toLowerCase(),
             );
             if (find === undefined) {
               categoryList.push({ name: category, selected: false });

@@ -290,7 +290,6 @@ const OtherNav = createDrawerNavigator(
     // DialerRecords:{screen:DialerRecords},
     // AllMembers:{screen:AllMembers},
     // MemberReport:{screen:MemberReport}  
- 
   },
   {
     initialRouteName: 'Home',

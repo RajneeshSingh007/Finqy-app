@@ -64,6 +64,7 @@ class App extends React.PureComponent {
                 if(Platform.OS === 'android'){
                   Linking.openURL(`${Pref.APP_PLAY_STORE_LINK}`)
                 }
+                BackHandler.exitApp();
               }
             }
           ]);

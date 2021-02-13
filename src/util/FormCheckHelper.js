@@ -2,6 +2,243 @@ import * as Helper from './Helper';
 import * as Pref from './Pref';
 import Lodash from 'lodash';
 
+const lapPopList = [
+  {
+    enable: true,
+    value: '',
+    options: [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key: 'pop_electricity',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key: 'pop_electricity1',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {
+        value: `Electricity Bill`,
+      },
+      {
+        value: `Society Maintenance Bill`,
+      },
+      {
+        value: `Water Bill`,
+      },
+    ],
+    key: 'pop_electricity2',
+    res: {},
+  },
+];
+
+const btpopList = [
+  {
+    enable: true,
+    value: '',
+    options: [
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity1',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity2',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity3',
+    res: {},
+  },
+];
+
+const freshPopListBuild = [
+  {
+    enable: true,
+    value: '',
+    options: [{value: 'Cost Sheet'}, {value: 'Blue Print'}, {value: 'CC Copy'}],
+    key: 'pop_electricity',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [{value: 'Cost Sheet'}, {value: 'Blue Print'}, {value: 'CC Copy'}],
+    key: 'pop_electricity1',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [{value: 'Cost Sheet'}, {value: 'Blue Print'}, {value: 'CC Copy'}],
+    key: 'pop_electricity2',
+    res: {},
+  },
+];
+
+const freshPopListResale = [
+  {
+    enable: true,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity1',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity2',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity3',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity4',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity5',
+    res: {},
+  },
+  {
+    enable: false,
+    value: '',
+    options: [
+      {value: 'Chain of Agreement'},
+      {value: 'Society Registration'},
+      {value: 'Share Certificate'},
+      {value: 'Maintenance Slip'},
+      {value: 'Property Tax'},
+      {value: 'OC Copy'},
+      {value: 'Water Bill'},
+    ],
+    key: 'pop_electricity6',
+    res: {},
+  },
+];
+
 /**
  * first form check
  * @param {} title
@@ -160,6 +397,12 @@ export const secondFormCheck = (title, specificForms) => {
   ) {
     result = false;
     Helper.showToastMessage('Invalid aadhar card number', 0);
+  } else if (
+    title === `Health Insurance` &&
+    specificForms.existing_diseases === ''
+  ) {
+    result = false;
+    Helper.showToastMessage('Select Any Pre Existing Disease', 0);
   } else if (title === `Health Insurance` && specificForms.claim_type === '') {
     result = false;
     Helper.showToastMessage('Please, Select Type Of Insurance', 0);
@@ -934,7 +1177,7 @@ export const constructObjEditLead = item => {
     proof_of_property,
     exisitng_loan_doc,
     current_add_proof,
-    eaadharcard
+    eaadharcard,
   } = alldata;
 
   let salarySlip = null,
@@ -1065,175 +1308,958 @@ export const constructObjEditLead = item => {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
     {
       count: 0,
       filled: [],
       downloadUrl: [],
-      names:["","","","","","","","","","","","","","","","","","","","","","","","","","",]
+      names: [
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ],
     },
   ];
 
@@ -1470,25 +2496,52 @@ export const constructObjEditLead = item => {
   }
 
   let passportPhoto = null;
-  if(Helper.nullStringCheck(passport_photo) === false){
-    passportPhoto =`${fileurls}/passport_photo/${passport_photo}`;
+  if (Helper.nullStringCheck(passport_photo) === false) {
+    passportPhoto = `${fileurls}/passport_photo/${passport_photo}`;
   }
 
-
-  let ccity = '', cpincode = '', cstate = '',companyLocation = '';
-  if(Helper.nullStringCheck(companylocation) === false){
-    if(Helper.separatorReg(companylocation)){
+  let ccity = '',
+    cpincode = '',
+    cstate = '',
+    companyLocation = '';
+  if (Helper.nullStringCheck(companylocation) === false) {
+    if (Helper.separatorReg(companylocation)) {
       const spx = companylocation.split(',').filter(io => io !== '');
-      if(spx.length > 0){
+      if (spx.length > 0) {
         ccity = spx[0];
         cpincode = spx[2];
-        cstate = spx[1];  
+        cstate = spx[1];
       }
-    }else{
+    } else {
       companyLocation = companylocation;
     }
   }
 
+  var popitemList = [];
+  let proofList = [];
+  if (product.includes('Against')) {
+    if (popitemList.length > 0) {
+      popitemList = returneditPop(lapPopList, proofList);
+    }
+  } else {
+    if (Helper.nullStringCheck(proof_of_property) === false) {
+      proofList = proof_of_property.split(',').filter(io => io !== '');
+      if (Helper.nullStringCheck(alldata.fresh_pop) === false) {
+        if (alldata.fresh_pop.toLowerCase() === 'builder purchase') {
+          popitemList = returneditPop(freshPopListBuild, proofList);
+        } else {
+          popitemList = returneditPop(freshPopListResale, proofList);
+        }
+      } else if (
+        Helper.nullStringCheck(existingcard) === false &&
+        existingcard.toLowerCase() === 'yes'
+      ) {
+        popitemList = returneditPop(btpopList, proofList);
+      }
+    }
+  }
+
+  //console.log(proofList);
 
   const convertedjsonObj = {
     first: {
@@ -1511,16 +2564,17 @@ export const constructObjEditLead = item => {
       state: Helper.nullStringCheckWithReturn(state),
     },
     second: {
-      eaadharcardNo:Helper.nullStringCheckWithReturn(eaadharcard),
+      fresh_pop: Helper.nullStringCheckWithReturn(alldata.fresh_pop),
+      eaadharcardNo: Helper.nullStringCheckWithReturn(eaadharcard),
       // current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
       // exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
       // proof_of_property: Helper.nullStringCheckWithReturn(proof_of_property),
       company: Helper.nullStringCheckWithReturn(company),
       amount: Helper.nullStringCheckWithReturn(damount),
-      companylocation:companyLocation,
-      ccity:ccity,
-      cpincode:cpincode,
-      cstate:cstate,
+      companylocation: companyLocation,
+      ccity: ccity,
+      cpincode: cpincode,
+      cstate: cstate,
       //companylocation: Helper.nullStringCheckWithReturn(companylocation),
       aadharcardNo: aadharcardnos,
       pancardNo: Helper.nullStringCheckWithReturn(pancard_no),
@@ -1564,12 +2618,15 @@ export const constructObjEditLead = item => {
       ownership: Helper.nullStringCheckWithReturn(ownership),
       pincode: Helper.nullStringCheckWithReturn(pincode),
       homestate: Helper.nullStringCheckWithReturn(homestate),
-      loan_property_address: Helper.nullStringCheckWithReturn(loan_property_address),
+      loan_property_address: Helper.nullStringCheckWithReturn(
+        loan_property_address,
+      ),
       floaterItemList: floaterItemList,
       type_loan: Helper.nullStringCheckWithReturn(loan_type),
       homestate: Helper.nullStringCheckWithReturn(lpstate),
     },
     third: {
+      popitemList: popitemList,
       existingcard: Helper.nullStringCheckWithReturn(existingcard),
       current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
       exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
@@ -1882,3 +2939,56 @@ export const thirdFormFileCheck = (title, allfileslist) => {
  * star return
  */
 export const returnAsterik = () => '*';
+
+export const returneditPop = (data, existingPopList) => {
+  const filterList = Lodash.map(data, (io, index) => {
+    if (existingPopList.length > 0) {
+      io.value = Helper.nullStringCheckWithReturn(existingPopList[index]);
+      if (io.value !== '') {
+        io.enable = true;
+      } else {
+        io.enable = false;
+        io.value = '';
+      }
+    }
+    return io;
+  });
+  //console.log('filterList', filterList)
+  // var finalMapData = [];
+  // for(let i = 0; i<filterList.length; i++){
+  //   const value = filterList[i].value;
+  //   if(value !== ''){
+  //     finalMapData = mapData(filterList,filterList[i], i, value);
+  //   }
+  // }
+  // console.log('finalMapData', finalMapData);
+  return filterList;
+};
+
+export const mapData = (popitemList, item, index, value) => {
+  const filter = Lodash.filter(item.options, io => io.value === value);
+  item.options = filter;
+  item.value = value;
+  popitemList[index] = item;
+  const nextpos = index + 1;
+  if (nextpos < popitemList.length) {
+    const next = popitemList[nextpos];
+    const nextoptions = next.options;
+    for (let i = 0; i < popitemList.length; i++) {
+      const elmet = popitemList[i];
+      if (elmet.value != '') {
+        const find = Lodash.findLastIndex(
+          nextoptions,
+          io => io.value === elmet.value,
+        );
+        if (find !== -1) {
+          nextoptions.splice(find, 1);
+        }
+      }
+    }
+    next.options = nextoptions;
+    next.enable = true;
+    popitemList[nextpos] = next;
+  }
+  return popitemList;
+};

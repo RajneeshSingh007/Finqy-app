@@ -43,7 +43,7 @@ export default class TrackQuery extends React.PureComponent {
     const date = new Date();
     this.backclick = this.backclick.bind(this);
     this.queryFileDownload = this.queryFileDownload.bind(this);
-    // this.submitTicketEdit = this.submitTicketEdit.bind(this);
+    this.submitTicketEdit = this.submitTicketEdit.bind(this);
     this.detailThread = this.detailThread.bind(this);
     this.renderDetail = this.renderDetail.bind(this);
     this.filterClicked = this.filterClicked.bind(this);
@@ -67,9 +67,10 @@ export default class TrackQuery extends React.PureComponent {
         'Status',
         'Remark',
         'View',
-        '',
+        'Edit',
+        'Reopen'
       ],
-      widthArr: [60, 100, 120, 120, 70, 70, 200, 60,60],
+      widthArr: [60, 100, 120, 120, 70, 70, 200, 60,60,60],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -88,6 +89,7 @@ export default class TrackQuery extends React.PureComponent {
       remark: '',
       status: '',
       showModal: false,
+      modalType:-1,
       editItem: null,
       threadList: [],
       detailShow: false,
@@ -114,11 +116,14 @@ export default class TrackQuery extends React.PureComponent {
         detailShow: false,
       });
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         this.fetchData(userData);
       });
-    //});
+    });
+
+    // this.detailThread({"PColor": "#1B5E20", "PDesc": "Low", "Pcode": "low", "SCode": "open", "SColor": "#0D47A1", "SDesc": "Open", "TCode": "IT Issue", "TDesc": "IT/Software/App Issue", "agent_viewed_at": null, "attachments": [], "created_at": "2021-02-05 13:38:14", "customer_id": "23", "description": "dhdh", "is_locked": "0", "mailbox_email": "coolalien01@gmail.com", "message": "<p>dggdg</p>", "mobile": "8169186245", "replied": "0", "source": "web", "subject": "FinNews", "threadId": "6", "ticket_id": "2", "umessage": "Testing......", "updated_at": "2021-02-05 15:19:11"})
     
   }
 
@@ -319,9 +324,33 @@ export default class TrackQuery extends React.PureComponent {
               </View>
             );
 
-            const checkeditmode = item.replied === '0' && (item.SCode == 'open' || item.SCode === 'assigned');
+            const checkeditmode = Helper.nullStringCheck(finalMsg) === true && (item.SCode == 'open' || item.SCode === 'assigned');
             rowData.push( checkeditmode ? editView(item) : '');
 
+            const reopenThread = value => (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableWithoutFeedback onPress={() => this.replybtnClicked(2,value)}>
+                  <View>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.itemtext,
+                      {
+                        color: '#ab4903',
+                      },
+                    ])}>
+                    {"Reopen"}
+                  </Title>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            );
+            rowData.push( item.SCode === 'closed' ? reopenThread(item) : '');
             dataList.push(rowData);
           }
         }
@@ -331,8 +360,15 @@ export default class TrackQuery extends React.PureComponent {
   };
 
   detailThread = editItem => {
+    //console.log(editItem);
     const {profilePic} = this.state;
-    const {ticket_id} = editItem;
+    const {ticket_id, message} = editItem;
+    const finalMsg = message.replace(regex, '');
+    if(Helper.nullStringCheck(finalMsg) === false){
+      editItem.replied =  "1";
+    }
+    //console.log(editItem);
+
     this.setState({threadLoader: true, detailShow: true, editItem: editItem});
     const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticket_id}`;
     const parseTime = moment(editItem.created_at).format('lll');
@@ -438,52 +474,58 @@ export default class TrackQuery extends React.PureComponent {
     });
   };
 
-  // submitTicketEdit = () => {
-  //   const {remark, status, userData, editItem} = this.state;
-  //   if (Helper.nullCheck(editItem) === true) {
-  //     alert('Failed to find ticket');
-  //     return false;
-  //   } else if (Helper.nullStringCheck(remark) === true) {
-  //     alert('Remark empty');
-  //     return false;
-  //   }
-  //   this.setState({loader: true, showModal: false});
-  //   const {email} = userData;
-  //   const {ticket_id} = editItem;
-  //   const ticketID = Number(ticket_id);
-  //   const threadBody = JSON.stringify({
-  //     message: remark,
-  //     actAsType: 'customer',
-  //     actAsEmail: email,
-  //     threadType: 'reply',
-  //     source: 'app',
-  //     status: String(status)
-  //       .trim()
-  //       .toLowerCase(),
-  //     createdBy: 'customer',
-  //   });
-  //   //console.log('threadBody',userData,  threadBody);
+  submitTicketEdit = () => {
+    const {remark, userData, editItem, modalType } = this.state;
+    if (Helper.nullCheck(editItem) === true) {
+      alert('Failed to find ticket');
+      return false;
+    } else if (Helper.nullStringCheck(remark) === true) {
+      alert('Remark empty');
+      return false;
+    }
+    this.setState({loader: true, showModal: false});
+    const {email} = userData;
+    const {ticket_id} = editItem;
+    const ticketID = Number(ticket_id);
+    const body = {
+      message: remark,
+      actAsType: 'customer',
+      actAsEmail: email,
+      threadType: 'reply',
+      source: 'app',
+      createdBy: 'customer',
+    };
+    if(modalType === 2){
+      body.status = 'open';
+    }
 
-  //   Helper.networkHelperHelpDeskTicket(
-  //     `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/thread`,
-  //     threadBody,
-  //     Pref.methodPost,
-  //     Pref.UVDESK_API,
-  //     result => {
-  //       this.setState({loader: false});
-  //       if (result.success.includes('success')) {
-  //         this.fetchData(this.state.userData);
-  //         Helper.showToastMessage('Ticket updated successfully', 1);
-  //       } else {
-  //         Helper.showToastMessage(`Failed to update ticket`, 0);
-  //       }
-  //     },
-  //     e => {
-  //       this.setState({loader: false});
-  //       Helper.showToastMessage(`Something went wrong`, 0);
-  //     },
-  //   );
-  // };
+    Helper.networkHelperHelpDeskTicket(
+      `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/thread`,
+      JSON.stringify(body),
+      Pref.methodPost,
+      Pref.UVDESK_API,
+      result => {
+        this.setState({loader: false, showModal: false, 
+          filterModal: false,
+          priorityFilter: '',
+          statusFilter: '',
+          ticketTypeFilter: '',});
+        if (result.success.includes('success')) {
+          if(modalType === 2){
+            this.fetchData(userData);
+          }else{
+            this.detailThread(editItem);
+          }
+        } else {
+          alert('Failed to update ticket');
+        }
+      },
+      e => {
+        this.setState({loader: false, showModal: false});
+        alert('Something wents wrong...');
+      },
+    );
+  };
 
   queryFileDownload = ({path, name}) => {
     let mimeType = 'image/png';
@@ -592,9 +634,9 @@ export default class TrackQuery extends React.PureComponent {
         ITEM_LIMIT,
       ),
       loading: false,
-      filterModal: false,
       itemSize:
         filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
+        filterModal: false,
       priorityFilter: '',
       statusFilter: '',
       ticketTypeFilter: '',
@@ -663,6 +705,11 @@ export default class TrackQuery extends React.PureComponent {
     });
   };
 
+  replybtnClicked = (type, editItem) =>{
+    console.log(type, editItem);
+    this.setState({showModal:true,modalType:type,editItem:editItem});
+  }
+
   render() {
     const {detailShow, editItem} = this.state;
     return (
@@ -721,6 +768,22 @@ export default class TrackQuery extends React.PureComponent {
                           onPress={() => this.editQuery(this.state.editItem)}
                         />
                       ) : null}
+
+                      {editItem != null && editItem.SCode !== 'closed' ? 
+                        <Button
+                        mode={'flat'}
+                        uppercase={false}
+                        dark={true}
+                        loading={false}
+                        style={StyleSheet.flatten([styles.loginButtonStyle, {
+                          backgroundColor:'#0270e3',
+                          paddingVertical:0,
+                          fontSize:14,
+                          fontWeight:'400'
+                        }])}
+                        onPress={() =>this.replybtnClicked(1,null)}>
+                        <Title style={styles.btntext}>{`Reply`}</Title>
+                      </Button> : null}
                     </>
                   ) : (
                     <View style={styles.emptycont}>
@@ -731,14 +794,14 @@ export default class TrackQuery extends React.PureComponent {
               </Portal>
             ) : null}
             <Loader isShow={this.state.loader} />
-            {/* <Modal
+            <Modal
               visible={this.state.showModal}
               setModalVisible={() =>
                 this.setState({
                   showModal: false,
                 })
               }
-              ratioHeight={0.8}
+              ratioHeight={0.5}
               backgroundColor={`white`}
               topCenterElement={
                 <Subtitle
@@ -748,7 +811,7 @@ export default class TrackQuery extends React.PureComponent {
                     fontWeight: '700',
                     letterSpacing: 1,
                   }}>
-                  {`Edit Ticket`}
+                  {this.state.modalType === 2 ? `Reopen Ticket` : `Reply`}
                 </Subtitle>
               }
               topRightElement={null}
@@ -758,54 +821,15 @@ export default class TrackQuery extends React.PureComponent {
                     flex: 1,
                     backgroundColor: 'white',
                   }}>
-                  <View style={styles.radiocont}>
-                    <View style={styles.radiodownbox}>
-                      <Title style={styles.bbstyle}>{`Select Status`}</Title>
-
-                      <RadioButton.Group
-                        onValueChange={value => {
-                          if (value === 'Closed') {
-                            this.setState({status: value});
-                          } else {
-                            alert('Ticket is already open');
-                          }
-                        }}
-                        value={this.state.status}>
-                        <View styleName="horizontal" style={{marginBottom: 8}}>
-                          <View
-                            styleName="horizontal"
-                            style={{alignSelf: 'center', alignItems: 'center'}}>
-                            <RadioButton
-                              value="Open"
-                              style={{alignSelf: 'center'}}
-                            />
-                            <Title
-                              styleName="v-center h-center"
-                              style={styles.textopen}>{`Open`}</Title>
-                          </View>
-                          <View
-                            styleName="horizontal"
-                            style={{alignSelf: 'center', alignItems: 'center'}}>
-                            <RadioButton
-                              value="Closed"
-                              style={{alignSelf: 'center'}}
-                            />
-                            <Title
-                              styleName="v-center h-center"
-                              style={styles.textopen}>{`Close`}</Title>
-                          </View>
-                        </View>
-                      </RadioButton.Group>
-                    </View>
-                  </View>
-
                   <CustomForm
-                    label={`Remark *`}
-                    placeholder={`Remark`}
+                    label={`Message *`}
+                    placeholder={`Enter your message`}
                     value={this.state.remark}
                     onChange={v => this.setState({remark: v})}
                     keyboardType={'text'}
                     style={{marginHorizontal: 12}}
+                    maxLength={200}
+                    multiLine
                   />
 
                   <Button
@@ -819,7 +843,7 @@ export default class TrackQuery extends React.PureComponent {
                   </Button>
                 </View>
               }
-            /> */}
+            />
 
             <Modal
               visible={this.state.filterModal}
@@ -997,7 +1021,7 @@ export default class TrackQuery extends React.PureComponent {
                                 alignItems: 'center',
                               }}>
                               <RadioButton
-                                value="assigned"
+                                value="resolved"
                                 style={{alignSelf: 'center'}}
                               />
                               <Title

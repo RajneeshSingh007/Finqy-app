@@ -31,8 +31,8 @@ export default class AllMembers extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode'],
-      widthArr: [60, 140, 120, 150, 100],
+      tableHead: ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode', 'View'],
+      widthArr: [60, 140, 120, 150, 100, 100],
       cloneList: [],
       type: '',
       itemSize: 10,
@@ -48,14 +48,20 @@ export default class AllMembers extends React.PureComponent {
 
   componentDidMount() {
     const {navigation} = this.props;
+    const reportenabled = navigation.getParam('reportenabled', false);
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
     //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
-        const reportenabled = navigation.getParam('reportenabled', false);
         //console.log('reportenabled', reportenabled)
-        this.setState({userData: userData, reportenabled: reportenabled});
+        let tableHead = ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode'];
+        let widthArr = [60, 140, 120, 150, 100];
+        if(reportenabled){
+          tableHead = ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode', 'View'];
+          widthArr = [60, 140, 120, 150, 100, 100];
+        }
+        this.setState({tableHead:tableHead,widthArr:widthArr,userData: userData, reportenabled: reportenabled});
         Pref.getVal(Pref.USERTYPE, v => {
           this.setState({type: v}, () => {
             Pref.getVal(Pref.saveToken, value => {
@@ -70,6 +76,7 @@ export default class AllMembers extends React.PureComponent {
   }
 
   componentWillUnMount() {
+    this.setState({reportenabled: false});
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -122,6 +129,7 @@ export default class AllMembers extends React.PureComponent {
    * @param {*} data
    */
   returnData = (sort, start = 0, end) => {
+    const {reportenabled} = this.state;
     const dataList = [];
     if (sort.length > 0) {
       if (start >= 0) {
@@ -134,6 +142,26 @@ export default class AllMembers extends React.PureComponent {
             rowData.push(item.mobile);
             rowData.push(item.email);
             rowData.push(item.refercode);
+            const leadView = value => (
+              <TouchableWithoutFeedback
+                onPress={() => this.rowClicked(value)}>
+                <View>
+                  <Title
+                    style={{
+                      textAlign: 'center',
+                      fontWeight: '400',
+                      color: '#0270e3',
+                      fontSize: 15,
+                    }}>
+                    {`View`}
+                  </Title>
+                </View>
+              </TouchableWithoutFeedback>
+            );
+            if(reportenabled){
+              rowData.push(leadView(item));
+            }
+
             rowData.push(item.id);
             dataList.push(rowData);
           }
@@ -278,7 +306,7 @@ export default class AllMembers extends React.PureComponent {
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
-                rowClicked={this.rowClicked}
+                //rowClicked={this.rowClicked}
               />
             ) : (
               <View style={styles.emptycont}>

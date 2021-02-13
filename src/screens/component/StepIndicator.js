@@ -3,18 +3,19 @@ import {StyleSheet, TouchableWithoutFeedback, ScrollView} from 'react-native';
 import {Image, Subtitle, View, Title} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 
-const StepIndicator = (prop) => {
-  const {
-    stepCount = 2,
-    activeCounter = 0,
-  } = prop;
+const StepIndicator = prop => {
+  const {stepCount = 2, activeCounter = 0, positionClicked = pos => {}} = prop;
   const fillArray = Array(stepCount).fill(0);
   return (
     <ScrollView
       horizontal
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{flexGrow:1, alignItems:'center', justifyContent:'center'}}>
+      contentContainerStyle={{
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       <View
         styleName="md-gutter"
         style={{
@@ -26,27 +27,29 @@ const StepIndicator = (prop) => {
           const incr = index + 1;
           return (
             <>
-              <View
-                style={StyleSheet.flatten([
-                  styles.circle,
-                  {
-                    borderColor:
-                      activeCounter === index ? 'transparent' : '#707070',
-                    borderWidth: activeCounter === index ? 0 : 2,
-                    backgroundColor:
-                      activeCounter === index ? '#0270e3' : 'white',
-                  },
-                ])}>
-                <Title
+              <TouchableWithoutFeedback onPress={() => positionClicked(index)}>
+                <View
                   style={StyleSheet.flatten([
-                    styles.rightText,
+                    styles.circle,
                     {
-                      color: activeCounter === index ? 'white' : '#707070',
+                      borderColor:
+                        activeCounter === index ? 'transparent' : '#707070',
+                      borderWidth: activeCounter === index ? 0 : 2,
+                      backgroundColor:
+                        activeCounter === index ? '#0270e3' : 'white',
                     },
-                  ])}>{`${incr}`}</Title>
-              </View>
+                  ])}>
+                  <Title
+                    style={StyleSheet.flatten([
+                      styles.rightText,
+                      {
+                        color: activeCounter === index ? 'white' : '#707070',
+                      },
+                    ])}>{`${incr}`}</Title>
+                </View>
+              </TouchableWithoutFeedback>
               {index === stepCount - 1 ? null : (
-                <Title style={styles.line}>{`-----`}</Title>
+                <Title style={styles.line}>{`----`}</Title>
               )}
             </>
           );

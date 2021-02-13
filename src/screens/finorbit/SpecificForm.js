@@ -47,6 +47,12 @@ import AnimatedInputBox from '../component/AnimatedInputBox';
 import NewDropDown from '../component/NewDropDown';
 import MultiSelectDropDown from '../component/MultiSelectDropDown';
 
+
+let freshTypeofLoan = [
+  {value:'Builder Purchase'},
+  {value:'Resale Property'}
+];
+
 let itemData = null;
 let curpos = -1;
 let floatCloneList = [
@@ -363,6 +369,7 @@ export default class SpecificForm extends React.PureComponent {
       cpincode:'',
       cstate:'',
       ccity:'',
+      fresh_pop:''
       // exisitng_loan_doc: '',
       // current_add_proof: '',    
       // proof_of_property: '',
@@ -1929,7 +1936,7 @@ export default class SpecificForm extends React.PureComponent {
               <View style={styles.radiodownbox}>
                 {/* {`Any Pre Existing Diseases *`} */}
                 <Title style={styles.bbstyle}>
-                  {`Any Pre Existing Diseases`}
+                  {`Any Pre Existing Diseases *`}
                 </Title>
 
                 <RadioButton.Group
@@ -2784,6 +2791,7 @@ export default class SpecificForm extends React.PureComponent {
               <RadioButton.Group
                 onValueChange={value => {
                   this.setState({
+                    fresh_pop:'',
                     type_loan: value,
                     existingcard: value === 'Fresh' ? 'No' : 'Yes',
                   });
@@ -2833,6 +2841,17 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
+        {title === `Home Loan` && this.state.type_loan === 'Fresh' ?  <NewDropDown
+                list={freshTypeofLoan}
+                placeholder={'Select Type of Fresh Loan'}
+                value={this.state.fresh_pop}
+                selectedItem={value =>{
+                  this.setState({fresh_pop: value})
+                }}
+                style={styles.newdropdowncontainers}
+                textStyle={styles.newdropdowntextstyle}
+              /> : null } 
+
         {title !== 'Vector Plus' &&
         title !== 'Mutual Fund' &&
         title !== 'Demat' &&
@@ -2855,13 +2874,14 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Existing Card/Loan`}</Title>
 
                 <RadioButton.Group
+                  
                   //onValueChange={value => this.setState({existingcard: value})}
                   value={this.state.existingcard}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="Yes" style={{alignSelf: 'center'}} />
+                      <RadioButton value="Yes" style={{alignSelf: 'center'}} disabled />
                       <Title
                         styleName="v-center h-center"
                         style={styles.textopen}>{`Yes`}</Title>
@@ -2869,7 +2889,7 @@ export default class SpecificForm extends React.PureComponent {
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="No" style={{alignSelf: 'center'}} />
+                      <RadioButton value="No" style={{alignSelf: 'center'}} disabled />
                       <Title
                         styleName="v-center h-center"
                         style={styles.textopen}>{`No`}</Title>

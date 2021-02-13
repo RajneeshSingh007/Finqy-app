@@ -14,19 +14,28 @@ const PaginationNumbers = props => {
     pageNumberClicked = (start, end) => {},
   } = props;
 
-  const [activeNumber, setActiveNumber] = useState(-1);
-  const [pageNumbers, setPageNumbers] = useState([1, 2, 3, 4, 5, 6]);
+  const [activeNumber, setActiveNumber] = useState(0);
+  //[1, 2, 3, 4, 5, 6]
+  const [pageNumbers, setPageNumbers] = useState([]);
   const flatRef = React.createRef();
-
+  
   useEffect(() => {
-    const totalPages = Math.ceil(Number(dataSize / itemLimit));
-    if (totalPages > 6) {
-      let pageNumbers = [];
-      for (let index = 0; index < totalPages; index++) {
-        pageNumbers.push(Number(index + 1));
-      }
-      setPageNumbers(pageNumbers);
+    //console.log('dataSize', dataSize, itemLimit);
+    let totalPages = Number(dataSize / itemLimit);
+    if(String(totalPages).includes('.')){
+      totalPages = Math.ceil(totalPages);
     }
+  
+    //if (totalPages > 6) {
+      let pageNumbersData = [];
+      for (let index = 0; index < totalPages; index++) {
+        pageNumbersData.push(Number(index));
+      }
+      if(pageNumbers.length === 0){
+        setPageNumbers(pageNumbersData);
+        //itemClicked(1);
+      }
+    //}
     return () => {};
   }, [dataSize]);
 
@@ -65,7 +74,7 @@ const PaginationNumbers = props => {
             data={pageNumbers}
             horizontal
             keyExtractor={(item, index) => `${index}`}
-            renderItem={({item}) => {
+            renderItem={({item, index}) => {
               return (
                 <TouchableWithoutFeedback onPress={() => itemClicked(item)}>
                   <View style={styles.viewStyle}>
@@ -76,7 +85,7 @@ const PaginationNumbers = props => {
                           color: activeNumber !== item ? '#656259' : '#0270e3',
                         },
                       ])}>
-                      {item}
+                      {Number(item+1)}
                     </Title>
                   </View>
                 </TouchableWithoutFeedback>

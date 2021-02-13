@@ -29,8 +29,9 @@ import {
 } from '../../util/FormCheckHelper';
 import FileUploadForm from '../finorbit/FileUploadForm';
 import PaginationNumbers from '../component/PaginationNumbers';
+import moment from 'moment';
 
-let HEADER = `Sr. No.,Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Policy,Remark\n`;
+let HEADER = `Sr. No.,Date,Modified Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Remark,Backend Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 const ITEM_LIMIT = 10;
@@ -57,6 +58,7 @@ export default class LeadList extends React.PureComponent {
       tableHead: [
         'Sr. No.',
         'Date',
+        'Modified Date',
         'Lead No',
         'Source',
         'Customer Name',
@@ -66,13 +68,15 @@ export default class LeadList extends React.PureComponent {
         'Status',
         'Quote',
         'Cif',
-        'Policy',
+        //'Policy',
         'Remark',
+        'Backend Remark',
         'Download',
-        '',
+        'Edit',
       ],
       widthArr: [
         60,
+        120,
         120,
         100,
         100,
@@ -81,11 +85,12 @@ export default class LeadList extends React.PureComponent {
         140,
         100,
         140,
+        60,
         100,
-        100,
-        100,
+        //100,
         140,
-        80,
+        160,
+        90,
         60,
       ],
       cloneList: [],
@@ -186,6 +191,7 @@ export default class LeadList extends React.PureComponent {
       type: type,
     });
     //console.log('body', body);
+    console.log(Pref.LeadRecordUrl, body)
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,
@@ -274,7 +280,8 @@ export default class LeadList extends React.PureComponent {
   };
 
   downloadFile = item => {
-    const {product} = item;
+    const {product,quotes,policy} = item;
+    //policy, quote
     //console.log('item', item)
     let pname = '';
     if (product === 'Mutual Fund') {
@@ -309,7 +316,9 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: pname,
       downloadModal: true,
       editThird: getAll.third,
-      editSecond:getAll.second
+      editSecond:getAll.second,
+      quotes:quotes,
+      policy:policy
     });
   };
 
@@ -324,10 +333,14 @@ export default class LeadList extends React.PureComponent {
         for (let i = start; i < end; i++) {
           const item = sort[i];
           if (item !== undefined && item !== null) {
-            const {quotes, mail, sharewhatsapp, sharemail, policy} = item;
+            const {quotes, mail, sharewhatsapp, sharemail, policy,modified_date} = item;
+            const {alldata}  = item;
+            const {event_descrip} = alldata;
+            const parsedate = moment(modified_date).format('DD-MM-YYYY hh:mm a');
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
             rowData.push(item.date);
+            rowData.push(parsedate==='Invalid date' ? '' : parsedate);
             rowData.push(item.leadno);
             rowData.push(item.source_type);
             rowData.push(item.name);
@@ -345,7 +358,7 @@ export default class LeadList extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                {value !== '' ? (
+                {/* {value !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.quotesClick(value, 'Quote')}>
                     <View>
@@ -357,7 +370,7 @@ export default class LeadList extends React.PureComponent {
                       />
                     </View>
                   </TouchableWithoutFeedback>
-                ) : null}
+                ) : null} */}
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.quotesClick(mail, 'Mail')}>
@@ -412,7 +425,31 @@ export default class LeadList extends React.PureComponent {
               </View>
             );
             rowData.push(shareView(sharewhatsapp, sharemail));
-            const policyView = value => (
+            // const policyView = value => (
+            //   <View
+            //     style={{
+            //       flexDirection: 'row',
+            //       alignSelf: 'center',
+            //       alignItems: 'center',
+            //       justifyContent: 'center',
+            //     }}>
+            //     <TouchableWithoutFeedback
+            //       onPress={() => this.invoiceViewClick(value, 'Policy')}>
+            //       <View>
+            //         <IconChooser
+            //           name={`download`}
+            //           size={20}
+            //           iconType={2}
+            //           color={`#9f9880`}
+            //         />
+            //       </View>
+            //     </TouchableWithoutFeedback>
+            //   </View>
+            // );
+            // rowData.push(policy === '' ? '' : policyView(policy));
+            rowData.push(item.remark);
+
+            const eventDescView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -420,21 +457,12 @@ export default class LeadList extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <TouchableWithoutFeedback
-                  onPress={() => this.invoiceViewClick(value, 'Policy')}>
-                  <View>
-                    <IconChooser
-                      name={`download`}
-                      size={20}
-                      iconType={2}
-                      color={`#9f9880`}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
+                  <Title style={styles.event}>
+                    {value}
+                  </Title>
               </View>
             );
-            rowData.push(policy === '' ? '' : policyView(policy));
-            rowData.push(item.remark);
+            rowData.push(eventDescView(event_descrip));
 
             const downloadView = value => (
               <View
@@ -888,6 +916,10 @@ export default class LeadList extends React.PureComponent {
                         exisitng_loan_doc = {editThird && editThird.exisitng_loan_doc}
                         proof_of_property = {editThird && editThird.proof_of_property}
                         existingcard={editSecond && editSecond.existingcard}
+                        fresh_pop={editSecond && editSecond.fresh_pop}
+                        quotes={this.state.quotes}
+                        policy={this.state.policy}
+                        popitemList={editThird && editThird.popitemList}
                       />
                     </View>
                   }
@@ -1126,5 +1158,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0270e3',
     fontSize: 16,
+  },
+  event: {
+    fontWeight: '700',
+    fontSize: 15,
+    color:Pref.RED
   },
 });

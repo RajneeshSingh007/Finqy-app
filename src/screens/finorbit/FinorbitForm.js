@@ -395,7 +395,21 @@ export default class FinorbitForm extends React.PureComponent {
           }
 
           if(fileListForms){
-            let property = `${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property1)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property2)}`;
+            const popItemList = fileListForms.popitemList;
+            let property = '';
+            if(popItemList !== undefined && popItemList != null && popItemList.length > 0){
+              Lodash.map(popItemList, io =>{
+                const {value} = io;
+                if(Helper.nullStringCheck(value) === false){
+                  property += `${value},`;
+                }
+              })
+            }
+            //console.log('popItemList1', popItemList);
+            console.log('property', property);
+            //console.log('popItemList', popItemList);
+
+            // let property = `${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property1)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property2)}`;
             formData.append('exisitng_loan_doc', fileListForms.exisitng_loan_doc);
             formData.append('proof_of_property', property);
             formData.append('current_add_proof', fileListForms.current_add_proof);
@@ -438,7 +452,7 @@ export default class FinorbitForm extends React.PureComponent {
 
           const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-          console.log('formData', formData);
+          //console.log('formData', formData);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -489,6 +503,7 @@ export default class FinorbitForm extends React.PureComponent {
               Helper.showToastMessage('Something went wrong', 0);
             },
           );
+
         }
       }
     }
@@ -557,6 +572,16 @@ export default class FinorbitForm extends React.PureComponent {
             <StepIndicator
               activeCounter={this.state.currentPosition}
               stepCount={this.state.title === 'Insure Check' ? 2 : 4}
+              positionClicked={(pos) =>{
+                // const {currentPosition} = this.state;
+                // if(pos > currentPosition){
+                //   this.formSubmit();
+                // }else{
+                //   this.backNav();
+                // }
+                // //this.setState({currentPosition:pos});
+                // console.log('pos',currentPosition, 'new', pos);
+              }}
             />
             {title === '' ? (
               <View style={styles.loader}>
@@ -631,6 +656,8 @@ export default class FinorbitForm extends React.PureComponent {
                       pop_electricity = {editThird && editThird.pop_electricity}
                       current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}
                       existingcard={editMode ? (editSecond && editSecond.type_loan === 'Fresh' ? 'No' : 'Yes') : (this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh' ? 'No' : 'Yes')  }
+                      fresh_pop={editMode ? (editSecond && editSecond.fresh_pop !== '' ? editSecond.fresh_pop : '') : (this.restoreList[1] && this.restoreList[1].fresh_pop !== '' ? this.restoreList[1].fresh_pop : '')  }
+                      popitemList={editMode ? (editThird && editThird.popitemList) : (this.restoreList[1] && this.restoreList[1].popitemList)}
                     />
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm
