@@ -191,7 +191,7 @@ export default class LeadList extends React.PureComponent {
       type: type,
     });
     //console.log('body', body);
-    console.log(Pref.LeadRecordUrl, body)
+    //console.log(Pref.LeadRecordUrl, body)
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,

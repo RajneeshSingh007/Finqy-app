@@ -471,7 +471,7 @@ export default class FinorbitForm extends React.PureComponent {
                     : 'Form updated successfully',
                   1,
                 );
-                if (title === `Health Insurance` && editMode === false) {
+                if (title === `Health Insurance` && Helper.nullCheck(res.id) === false && res.id !== '') {
                   const {id} = res;
                   const cov = Number(specificForms.required_cover);
                   NavigationActions.navigate('GetQuotes', {

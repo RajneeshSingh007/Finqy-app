@@ -4,6 +4,7 @@ import {Image, Subtitle, View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 import {Avatar} from 'react-native-paper';
 import * as Pref from '../../util/Pref';
+import * as Helper from '../../util/Helper';
 
 const Download = (prop) => {
   const {
@@ -12,6 +13,17 @@ const Download = (prop) => {
     showLeft = false,
     style,
   } = prop;
+
+  const rightClicked = () =>{
+    try {
+      Helper.requestPermissions().then(op =>{
+        rightIconClick();
+      });
+    } catch (error) {
+      Helper.showToastMessage('Please, grant permission',0);
+    }
+  }
+
   return (
     <View
       styleName="md-gutter"
@@ -42,7 +54,7 @@ const Download = (prop) => {
           ) : null}
         </View>
       </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={rightIconClick}>
+      <TouchableWithoutFeedback onPress={() => rightClicked()}>
         <View style={styles.circle}>
           <IconChooser
             name={'download'}

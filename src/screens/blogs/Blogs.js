@@ -4,7 +4,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   BackHandler,
-  Platform
+  Platform,
+  Linking
 } from 'react-native';
 import { Image, Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
@@ -118,9 +119,13 @@ export default class Blogs extends React.PureComponent {
     return (
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
-          onPress={() =>
-            NavigationActions.navigate(`BlogDetails`, { item: item })
-          }>
+          onPress={() =>{
+            if(item.post.includes('https') || item.post.includes('http')){
+              Linking.openURL(item.post)
+            }else {
+              NavigationActions.navigate(`BlogDetails`, { item: item });
+            }
+          }}>
           <View styleName="vertical" style={styles.itemContainer}>
             <Image
               source={{ uri: `${encodeURI(url)}` }}
