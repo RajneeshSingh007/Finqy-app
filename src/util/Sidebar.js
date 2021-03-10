@@ -598,143 +598,146 @@ export default class Sidebar extends React.Component {
       pic: '',
       name: ``,
       type: '',
-      menuList: [],
+      menuList: MainMenuList,
     };
   }
 
   componentDidMount() {
-    Pref.getVal(Pref.userData, parse => {
-      const pp = parse.user_prof;
-      const url = {
-        uri:
-          pp === ''
-            ? Pref.profileDefaultPic
-            : pp === undefined
-            ? Pref.profileDefaultPic
-            : pp,
-      };
-      //console.log(`url`, url);
-      this.setState(
-        {
-          userData: parse,
-          pic: url,
-          name: parse.rname === undefined ? parse.username : parse.rname,
-          userRole: parse.user_role,
-        },
-        () => {
-          Pref.getVal(Pref.USERTYPE, v => {
-            //console.log(v);
-            this.setState({type: v});
-            if (v === `connector`) {
-              this.setState({menuList: ConnectorMenuList});
-            } else if (v === 'team') {
-              var filter = TeamMenuList;
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, parse => {
+        const pp = parse.user_prof;
+        const url = {
+          uri:
+            pp === ''
+              ? Pref.profileDefaultPic
+              : pp === undefined
+              ? Pref.profileDefaultPic
+              : pp,
+        };
+        //console.log(`url`, url);
+        this.setState(
+          {
+            userData: parse,
+            pic: url,
+            name: parse.rname === undefined ? parse.username : parse.rname,
+            userRole: parse.user_role,
+          },
+          () => {
+            Pref.getVal(Pref.USERTYPE, v => {
+              //console.log(v);
+              this.setState({type: v});
+              if (v === `connector`) {
+                this.setState({menuList: ConnectorMenuList});
+              } else if (v === 'team') {
+                var filter = TeamMenuList;
 
-              const leader = Helper.nullCheck(parse.leader) === false ? parse.leader : [];
-              
-              if(leader.length > 0){
-                const leaderData = leader[0];
-                const {id} = leaderData; 
-                const loggedMemberId = parse.id;
-                this.firebaseListerner =  firebase.firestore()
-                .collection(Pref.COLLECTION_PARENT)
-                .doc(id)
-                .onSnapshot(documentSnapshot =>{
-                  if(documentSnapshot.exists){
-                    const {role, teamlist} = documentSnapshot.data();
-                    if(role === 0){      
-                      let existence = false;  
-                      const dialerData = [];             
-                      for(let j=0; j <teamlist.length; j++){
-                        const {memberlist, tllist,name} = teamlist[j];
-                        
-                        let membererlist = '';
-                        
-                        //console.log(memberlist, tllist);
-                        
-                        let find = undefined;
-                        
-                        if(memberlist){
-                          Lodash.map(memberlist, io =>{
-                              if(io.enabled === 0 && io.id === Number(loggedMemberId)){
-                                find = io;
-                                membererlist += `${io.id},`;
-                              }else if(io.enabled === 0){
-                                membererlist += `${io.id},`;
-                              }
-                          })
-                        }
-                        
-                        //find = memberlist ? Lodash.find(memberlist, io => ) : undefined;
-                        
-                        if(membererlist !== ''){
-                        
-                          const lastpos = membererlist[membererlist.length-1];
-                        
-                          if(lastpos === ','){
-                            membererlist = membererlist.substr(0, membererlist.length-1);
+                const leader = Helper.nullCheck(parse.leader) === false ? parse.leader : [];
+                
+                if(leader.length > 0){
+                  const leaderData = leader[0];
+                  const {id} = leaderData; 
+                  const loggedMemberId = parse.id;
+                  this.firebaseListerner =  firebase.firestore()
+                  .collection(Pref.COLLECTION_PARENT)
+                  .doc(id)
+                  .onSnapshot(documentSnapshot =>{
+                    if(documentSnapshot.exists){
+                      const {role, teamlist} = documentSnapshot.data();
+                      if(role === 0){      
+                        let existence = false;  
+                        const dialerData = [];             
+                        for(let j=0; j <teamlist.length; j++){
+                          const {memberlist, tllist,name} = teamlist[j];
+                          
+                          let membererlist = '';
+                          
+                          //console.log(memberlist, tllist);
+                          
+                          let find = undefined;
+                          
+                          if(memberlist){
+                            Lodash.map(memberlist, io =>{
+                                if(io.enabled === 0 && io.id === Number(loggedMemberId)){
+                                  find = io;
+                                  membererlist += `${io.id},`;
+                                }else if(io.enabled === 0){
+                                  membererlist += `${io.id},`;
+                                }
+                            })
                           }
-                        
-                        }
+                          
+                          //find = memberlist ? Lodash.find(memberlist, io => ) : undefined;
+                          
+                          if(membererlist !== ''){
+                          
+                            const lastpos = membererlist[membererlist.length-1];
+                          
+                            if(lastpos === ','){
+                              membererlist = membererlist.substr(0, membererlist.length-1);
+                            }
+                          
+                          }
 
-                        //console.log('tc', find, membererlist);
-                       
-                        const tlfind = tllist ? Lodash.find(tllist, io => io.enabled === 0 && io.id === Number(loggedMemberId)) : undefined; 
-                       
-                        //console.log('tl', tlfind);
-                       
-                        if(find || tlfind){
-                          existence = true;
-                          if(Helper.nullCheck(find) === false){
-                            find.tlid = tllist.length > 0 ? tllist[0].id : {}
-                            find.pname = tllist.length > 0 ? `${tllist[0].id}&${name}&${membererlist}` : ''
-                          }
-                          //console.log('find', find);
-                          dialerData.push({
-                            tl:tlfind,
-                            tc:find
-                          })
-                        } 
+                          //console.log('tc', find, membererlist);
+                        
+                          const tlfind = tllist ? Lodash.find(tllist, io => io.enabled === 0 && io.id === Number(loggedMemberId)) : undefined; 
+                        
+                          //console.log('tl', tlfind);
+                        
+                          if(find || tlfind){
+                            existence = true;
+                            if(Helper.nullCheck(find) === false){
+                              find.tlid = tllist.length > 0 ? tllist[0].id : {}
+                              find.pname = tllist.length > 0 ? `${tllist[0].id}&${name}&${membererlist}` : ''
+                            }
+                            //console.log('find', find);
+                            dialerData.push({
+                              tl:tlfind,
+                              tc:find
+                            })
+                          } 
+                        }
+                        const finalFilterList = [];
+                        if(existence){
+                          Pref.setVal(Pref.DIALER_DATA, dialerData);
+                          const cloneobject = JSON.parse(JSON.stringify(filter));
+                          finalFilterList.push(cloneobject[0]);
+                          finalFilterList.push(
+                            {
+                              name: `Dialer`,
+                              expand: false,
+                              click: 'SwitchUser',
+                              options: {},
+                              iconname: require('../res/images/dialercalls.png'),
+                              icontype: 2,
+                            });
+                          const lastpos = cloneobject.splice(1,cloneobject.length);
+                          lastpos.map(item => finalFilterList.push(item));  
+                        }else{
+                          finalFilterList = filter
+                        }  
+                        this.teamMenuSet(finalFilterList, parse);
+                      }else{                      
+                        this.teamMenuSet(filter, parse);
                       }
-                      const finalFilterList = [];
-                      if(existence){
-                        Pref.setVal(Pref.DIALER_DATA, dialerData);
-                        const cloneobject = JSON.parse(JSON.stringify(filter));
-                        finalFilterList.push(cloneobject[0]);
-                        finalFilterList.push(
-                          {
-                            name: `Dialer`,
-                            expand: false,
-                            click: 'SwitchUser',
-                            options: {},
-                            iconname: require('../res/images/dialercalls.png'),
-                            icontype: 2,
-                          });
-                        const lastpos = cloneobject.splice(1,cloneobject.length);
-                        lastpos.map(item => finalFilterList.push(item));  
-                      }else{
-                        finalFilterList = filter
-                      }  
-                      this.teamMenuSet(finalFilterList, parse);
-                    }else{                      
+                    }else{
                       this.teamMenuSet(filter, parse);
                     }
-                  }else{
+                  }).catch(e =>{
                     this.teamMenuSet(filter, parse);
-                  }
-                }).catch(e =>{
+                  })  
+                }else{    
                   this.teamMenuSet(filter, parse);
-                })  
-              }else{    
-                this.teamMenuSet(filter, parse);
+                }
+              }else{
+                this.setState({menuList:MainMenuList})
               }
-            }else{
-              this.setState({menuList:MainMenuList})
-            }
-          });
-        },
-      );
+            });
+          },
+        );
 
+      });
     });
   }
 

@@ -377,7 +377,7 @@ export default class CommonForm extends React.PureComponent {
             keyboardType={'number-pad'}
             value={this.state.pincode}
             //placeholder={'Current Residence Pincode'}
-            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' ? returnAsterik() : ''}`}
+            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Gold Loan' ? returnAsterik() : ''}`}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}

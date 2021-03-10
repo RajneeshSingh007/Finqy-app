@@ -3032,6 +3032,9 @@ export const PARTNER_LIST = `${ApiDirUrl}sales/partner-data.php`;
 export const PARTNER_PAYOUT_URL = `${ApiDirUrl}sales/current-payout.php`;
 export const UPDATE_PAYOUT = `${ApiDirUrl}sales/update-payout.php`;
 
+//gold loan///
+export const GOLD_LOAN_DETAIL = `${FinorbitFormUrl}gold_detail.php`;
+
 /**
  * Set Val
  * @param key

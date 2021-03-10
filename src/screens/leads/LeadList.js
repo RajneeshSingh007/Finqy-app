@@ -66,7 +66,7 @@ export default class LeadList extends React.PureComponent {
         'Product',
         'Company',
         'Status',
-        'Quote',
+        'Email Quote',
         'Cif',
         //'Policy',
         'Remark',
@@ -85,7 +85,7 @@ export default class LeadList extends React.PureComponent {
         140,
         100,
         140,
-        60,
+        80,
         100,
         //100,
         140,
@@ -908,6 +908,7 @@ export default class LeadList extends React.PureComponent {
                         bankState={editThird && editThird.bankState}
                         multipleFilesList={editThird && editThird.multipleFilesList}
                         other = {editThird && editThird.other}
+                        existing = {editThird && editThird.existing}
                         passportPhoto = {editThird && editThird.passportPhoto}
                         cap_aadhar = {editThird && editThird.cap_aadhar}
                         pop_electricity = {editThird && editThird.pop_electricity}
@@ -1116,7 +1117,7 @@ const styles = StyleSheet.create({
     paddingVertical: sizeHeight(0.5),
     marginTop: 24,
     marginHorizontal: 24,
-    backgroundColor: '#e21226',
+    backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,

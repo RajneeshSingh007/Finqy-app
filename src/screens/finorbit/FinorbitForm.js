@@ -68,6 +68,7 @@ export default class FinorbitForm extends React.PureComponent {
     const editLeadData = navigation.getParam('leadData', null);
     const dialerName = navigation.getParam('dialerName', '');
     const dialerMobile = navigation.getParam('dialerMobile', '');
+    
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, value => {
         this.setState({token: value}, () => {
@@ -136,17 +137,19 @@ export default class FinorbitForm extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
   }
 
-  backNav = () => {
+  backNav = (jumped = false, position = 0) => {
     const {currentPosition} = this.state;
     if (currentPosition === 0) {
+      this.setState({scrollReset: true});
+      return false;
+    }else if (jumped && position === 0) {
       this.setState({scrollReset: true});
       return false;
     }
     this.setState(
       prev => {
         return {
-          currentPosition: prev.currentPosition - 1,
-          bottontext: 'Next',
+          currentPosition: jumped ? position : prev.currentPosition - 1,
           scrollReset: true,
         };
       },
@@ -167,7 +170,7 @@ export default class FinorbitForm extends React.PureComponent {
   /**
    * submit form
    */
-  formSubmit = () => {
+  formSubmit = (jumped = false, position = 0) => {
     const {
       title,
       currentPosition,
@@ -261,10 +264,15 @@ export default class FinorbitForm extends React.PureComponent {
         if (this.state.title === 'Insure Check') {
           this.setState(
             prevState => {
+              // let btnText = 'Next';
+              // if(jumped){
+              //   btnText = position === 2 ? 'Submit' : 'Next';
+              // }else{
+              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';             
+              // }
               return {
-                currentPosition: prevState.currentPosition + 1,
-                bottontext:
-                  prevState.currentPosition + 1 > 0 ? 'Submit' : 'Next',
+                currentPosition: jumped ? position : prevState.currentPosition + 1,
+                //bottontext: btnText,
                 scrollReset: true,
               };
             },
@@ -279,10 +287,15 @@ export default class FinorbitForm extends React.PureComponent {
         } else {
           this.setState(
             prevState => {
+              // let btnText = 'Next';
+              // if(jumped){
+              //   btnText = position === 3 ? 'Submit' : 'Next';
+              // }else{
+              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';             
+              // }
               return {
-                currentPosition: prevState.currentPosition + 1,
-                bottontext:
-                  prevState.currentPosition + 1 > 2 ? 'Submit' : 'Next',
+                currentPosition: jumped ? position : prevState.currentPosition + 1,
+                //bottontext: btnText,
                 scrollReset: true,
               };
             },
@@ -515,6 +528,19 @@ export default class FinorbitForm extends React.PureComponent {
     }
   };
 
+  btnText = () =>{
+    let btnText = 'Next';
+    const {title, currentPosition} = this.state;
+    if(Helper.nullStringCheck(title) === false){
+      if(title === 'Insure Check'){
+        btnText = currentPosition === 2 ? 'Submit' : 'Next';
+      }else{
+        btnText = currentPosition === 3 ? 'Submit' : 'Next';       
+      }
+    }
+    return btnText;
+  }
+
   render() {
     const {
       title,
@@ -579,14 +605,12 @@ export default class FinorbitForm extends React.PureComponent {
               activeCounter={this.state.currentPosition}
               stepCount={this.state.title === 'Insure Check' ? 2 : 4}
               positionClicked={(pos) =>{
-                // const {currentPosition} = this.state;
-                // if(pos > currentPosition){
-                //   this.formSubmit();
-                // }else{
-                //   this.backNav();
-                // }
-                // //this.setState({currentPosition:pos});
-                // console.log('pos',currentPosition, 'new', pos);
+                const {currentPosition} = this.state;
+                if(pos > currentPosition){
+                  this.formSubmit(true, pos);
+                }else{
+                  this.backNav(true, pos);
+                }
               }}
             />
             {title === '' ? (
@@ -606,7 +630,8 @@ export default class FinorbitForm extends React.PureComponent {
                         this.state.title !== 'Mutual Fund' &&
                         this.state.title !== 'Motor Insurance' &&
                         this.state.title !== 'Life Cum Invt. Plan' &&
-                        this.state.title !== 'Insure Check'
+                        this.state.title !== 'Insure Check' &&
+                        this.state.title !== 'Gold Loan'
                       }
                       editItemRestore={editFirst}
                       title={this.state.title}
@@ -659,6 +684,7 @@ export default class FinorbitForm extends React.PureComponent {
                         editThird.proof_of_property) : (this.restoreList[2] && this.restoreList[2].proof_of_property)
                       }
                       other = {editThird && editThird.other}
+                      existing = {editThird && editThird.existing}
                       passportPhoto = {editThird && editThird.passportPhoto}
                       cap_aadhar = {editThird && editThird.cap_aadhar}
                       pop_electricity = {editThird && editThird.pop_electricity}
@@ -696,7 +722,7 @@ export default class FinorbitForm extends React.PureComponent {
                           borderWidth: 1.3,
                         },
                       ]}
-                      onPress={this.backNav}>
+                      onPress={() => this.backNav(false)}>
                       <Title
                         style={StyleSheet.flatten([
                           styles.btntext,
@@ -714,9 +740,9 @@ export default class FinorbitForm extends React.PureComponent {
                     dark={true}
                     loading={false}
                     style={styles.loginButtonStyle}
-                    onPress={this.formSubmit}>
+                    onPress={() => this.formSubmit(false)}>
                     <Title style={styles.btntext}>
-                      {this.state.bottontext}
+                      {this.btnText()}
                     </Title>
                   </Button>
                 </View>

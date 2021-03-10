@@ -46,12 +46,9 @@ import Lodash from 'lodash';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import NewDropDown from '../component/NewDropDown';
 import MultiSelectDropDown from '../component/MultiSelectDropDown';
+import {findGoldPledge} from '../../util/FormCheckHelper';
 
-
-let freshTypeofLoan = [
-  {value:'Builder Purchase'},
-  {value:'Resale Property'}
-];
+let freshTypeofLoan = [{value: 'Builder Purchase'}, {value: 'Resale Property'}];
 
 let itemData = null;
 let curpos = -1;
@@ -366,12 +363,16 @@ export default class SpecificForm extends React.PureComponent {
       loan_property_address: '',
       floaterItemList: [],
       eaadharcardNo: '',
-      cpincode:'',
-      cstate:'',
-      ccity:'',
-      fresh_pop:''
+      cpincode: '',
+      cstate: '',
+      ccity: '',
+      fresh_pop: '',
+      desired_amount: '',
+      goldDetailList: [],
+      gold_karat: '',
+      gold_pledge: '',
       // exisitng_loan_doc: '',
-      // current_add_proof: '',    
+      // current_add_proof: '',
       // proof_of_property: '',
       // proofOfProprtyList1:[],
       // proofOfProprtyList2:[],
@@ -394,9 +395,9 @@ export default class SpecificForm extends React.PureComponent {
   //   });
   // };
 
-
   componentDidMount() {
     const {editItemRestore} = this.props;
+    this.goldLoan_details();
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
     }
@@ -872,7 +873,7 @@ export default class SpecificForm extends React.PureComponent {
                   ccity: city,
                   cstate: state,
                   cpincode: value,
-                  companylocation:`${city},${state},${value}`
+                  companylocation: `${city},${state},${value}`,
                 });
               } else {
                 this.setState({
@@ -903,9 +904,29 @@ export default class SpecificForm extends React.PureComponent {
       this.setState({
         ccity: '',
         cstate: '',
-        cpincode: parse.match(/^[0-9]*$/g) !== null ? parse : this.state.cpincode,
+        cpincode:
+          parse.match(/^[0-9]*$/g) !== null ? parse : this.state.cpincode,
       });
     }
+  };
+
+  /**
+   * Gold Loan details fetch
+   */
+  goldLoan_details = () => {
+    Helper.getNetworkHelper(
+      Pref.GOLD_LOAN_DETAIL,
+      Pref.methodGet,
+      result => {
+        const {status, data} = JSON.parse(result);
+        if (status) {
+          this.setState({
+            goldDetailList: data,
+          });
+        }
+      },
+      error => {},
+    );
   };
 
   render() {
@@ -916,14 +937,14 @@ export default class SpecificForm extends React.PureComponent {
     } = this.props;
 
     const loanCheck =
-    Helper.nullStringCheck(title) === false &&  (
-    title === 'Business Loan' ||
-    title === 'Personal Loan' ||
-    title === 'Loan Against Property' ||
-    title === 'Home Loan' 
-    || title === 'Auto Loan')
-      ? true
-      : false;
+      Helper.nullStringCheck(title) === false &&
+      (title === 'Business Loan' ||
+        title === 'Personal Loan' ||
+        title === 'Loan Against Property' ||
+        title === 'Home Loan' ||
+        title === 'Auto Loan')
+        ? true
+        : false;
 
     return (
       <View>
@@ -971,6 +992,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Term Insurance' &&
         title !== 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' &&
+        title !== 'Gold Loan' &&
         title !== 'Insure Check' ? (
           <View>
             <AnimatedInputBox
@@ -1097,6 +1119,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Motor Insurance' &&
         title != 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' &&
+        title !== 'Gold Loan' &&
         title !== 'Insure Check' ? (
           <AnimatedInputBox
             keyboardType={'number-pad'}
@@ -1322,7 +1345,8 @@ export default class SpecificForm extends React.PureComponent {
 
 
                 </View> : null} */}
-        {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
+        {title !== 'Insure Check' &&
+        title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
               // placeholder={`PAN Card Number${title === 'Auto Loan'
@@ -1340,81 +1364,97 @@ export default class SpecificForm extends React.PureComponent {
               returnKeyType={'next'}
             />
 
-            {title.includes('Loan') ? 
-            <>
-            <View style={styles.radiocont}>
-              <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Aadhar Card Detail`}</Title>
-                <RadioButton.Group
-                  onValueChange={value => this.setState({eaadharcardNo: value,aadharcardNo:''})}
-                  value={this.state.eaadharcardNo}>
-                  <View styleName="horizontal" style={{marginBottom: 8}}>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="Aadhar" style={{alignSelf: 'center'}} />
-                      <Title
-                        styleName="v-center h-center"
-                        style={styles.textopen}>{`Aadhar`}</Title>
-                    </View>
-                    <View
-                      styleName="horizontal"
-                      style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="EAadhar" style={{alignSelf: 'center'}} />
-                      <Title
-                        styleName="v-center h-center"
-                        style={styles.textopen}>{`E-Aadhar`}</Title>
-                    </View>
+            {title.includes('Loan') ? (
+              <>
+                <View style={styles.radiocont}>
+                  <View style={styles.radiodownbox}>
+                    <Title style={styles.bbstyle}>{`Aadhar Card Detail`}</Title>
+                    <RadioButton.Group
+                      onValueChange={value =>
+                        this.setState({eaadharcardNo: value, aadharcardNo: ''})
+                      }
+                      value={this.state.eaadharcardNo}>
+                      <View styleName="horizontal" style={{marginBottom: 8}}>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="Aadhar"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`Aadhar`}</Title>
+                        </View>
+                        <View
+                          styleName="horizontal"
+                          style={{alignSelf: 'center', alignItems: 'center'}}>
+                          <RadioButton
+                            value="EAadhar"
+                            style={{alignSelf: 'center'}}
+                          />
+                          <Title
+                            styleName="v-center h-center"
+                            style={styles.textopen}>{`E-Aadhar`}</Title>
+                        </View>
+                      </View>
+                    </RadioButton.Group>
                   </View>
-                </RadioButton.Group>
-              </View>
-            </View> 
+                </View>
 
-            {this.state.eaadharcardNo !== '' ?
-            <AnimatedInputBox
-              // placeholder={`Aadhar Card Number ${title === 'Auto Loan'
-              // //|| title === 'Home Loan'
-              // || title === 'Business Loan'
-              // //|| title === 'Personal Loan'
-              // ? ' *' : ''}`}
-              placeholder={`${this.state.eaadharcardNo === 'Aadhar' ? 'Aadhar' : 'E-Aadhar'} Card Number`}
-              showStarVisible={false}
-              maxLength={this.state.eaadharcardNo === 'Aadhar' ? 12 : 16}
-              keyboardType={'numeric'}
-              onChangeText={value => {
-                if (String(value).match(/^[0-9]*$/g) !== null) {
-                  this.setState({aadharcardNo: value});
-                }
-              }}
-              value={this.state.aadharcardNo}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-              returnKeyType={'next'}
-            /> : null}
-            </>
-            : null}
-            
+                {this.state.eaadharcardNo !== '' ? (
+                  <AnimatedInputBox
+                    // placeholder={`Aadhar Card Number ${title === 'Auto Loan'
+                    // //|| title === 'Home Loan'
+                    // || title === 'Business Loan'
+                    // //|| title === 'Personal Loan'
+                    // ? ' *' : ''}`}
+                    placeholder={`${
+                      this.state.eaadharcardNo === 'Aadhar'
+                        ? 'Aadhar'
+                        : 'E-Aadhar'
+                    } Card Number`}
+                    showStarVisible={false}
+                    maxLength={this.state.eaadharcardNo === 'Aadhar' ? 12 : 16}
+                    keyboardType={'numeric'}
+                    onChangeText={value => {
+                      if (String(value).match(/^[0-9]*$/g) !== null) {
+                        this.setState({aadharcardNo: value});
+                      }
+                    }}
+                    value={this.state.aadharcardNo}
+                    changecolor
+                    containerstyle={styles.animatedInputCont}
+                    returnKeyType={'next'}
+                  />
+                ) : null}
+              </>
+            ) : null}
 
-            {title === 'Profile' || title === 'Demat' || !title.includes('Loan') ? <AnimatedInputBox
-              // placeholder={`Aadhar Card Number ${title === 'Auto Loan'
-              // //|| title === 'Home Loan'
-              // || title === 'Business Loan'
-              // //|| title === 'Personal Loan'
-              // ? ' *' : ''}`}
-              placeholder={`Aadhar Card Number`}
-              showStarVisible={false}
-              maxLength={16}
-              keyboardType={'number-pad'}
-              onChangeText={value => {
-                if (String(value).match(/^[0-9]*$/g) !== null) {
-                  this.setState({aadharcardNo: value});
-                }
-              }}
-              value={this.state.aadharcardNo}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-              returnKeyType={'next'}
-            /> : null}
+            {title === 'Profile' ||
+            title === 'Demat' ||
+            !title.includes('Loan') ? (
+              <AnimatedInputBox
+                // placeholder={`Aadhar Card Number ${title === 'Auto Loan'
+                // //|| title === 'Home Loan'
+                // || title === 'Business Loan'
+                // //|| title === 'Personal Loan'
+                // ? ' *' : ''}`}
+                placeholder={`Aadhar Card Number`}
+                showStarVisible={false}
+                maxLength={16}
+                keyboardType={'number-pad'}
+                onChangeText={value => {
+                  if (String(value).match(/^[0-9]*$/g) !== null) {
+                    this.setState({aadharcardNo: value});
+                  }
+                }}
+                value={this.state.aadharcardNo}
+                changecolor
+                containerstyle={styles.animatedInputCont}
+                returnKeyType={'next'}
+              />
+            ) : null}
 
             {/* <AnimatedInputBox
               // placeholder={`Aadhar Card Number ${title === 'Auto Loan'
@@ -1864,7 +1904,7 @@ export default class SpecificForm extends React.PureComponent {
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 {/* {`Smoker *`} */}
-                <Title style={styles.bbstyle}>{`Smoker`}</Title>
+                <Title style={styles.bbstyle}>{`Smoker *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={value => this.setState({lifestyle: value})}
@@ -1900,8 +1940,7 @@ export default class SpecificForm extends React.PureComponent {
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 {/* {`Alcohol Consumption *`} */}
-                <Title style={styles.bbstyle}>{`Alcohol Consumption`}</Title>
-
+                <Title style={styles.bbstyle}>{`Alcohol Consumption *`}</Title>
                 <RadioButton.Group
                   onValueChange={value => this.setState({lifestyle2: value})}
                   value={this.state.lifestyle2}>
@@ -2341,7 +2380,7 @@ export default class SpecificForm extends React.PureComponent {
                 this.setState({diseases: value});
               }}
               value={this.state.diseases}
-              placeholder={'Specify Diseases'}
+              placeholder={'Specify Diseases *'}
               showStarVisible={false}
               changecolor
               containerstyle={styles.animatedInputCont}
@@ -2791,7 +2830,7 @@ export default class SpecificForm extends React.PureComponent {
               <RadioButton.Group
                 onValueChange={value => {
                   this.setState({
-                    fresh_pop:'',
+                    fresh_pop: '',
                     type_loan: value,
                     existingcard: value === 'Fresh' ? 'No' : 'Yes',
                   });
@@ -2841,16 +2880,18 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === `Home Loan` && this.state.type_loan === 'Fresh' ?  <NewDropDown
-                list={freshTypeofLoan}
-                placeholder={'Select Type of Fresh Loan'}
-                value={this.state.fresh_pop}
-                selectedItem={value =>{
-                  this.setState({fresh_pop: value})
-                }}
-                style={styles.newdropdowncontainers}
-                textStyle={styles.newdropdowntextstyle}
-              /> : null } 
+        {title === `Home Loan` && this.state.type_loan === 'Fresh' ? (
+          <NewDropDown
+            list={freshTypeofLoan}
+            placeholder={'Select Type of Fresh Loan'}
+            value={this.state.fresh_pop}
+            selectedItem={value => {
+              this.setState({fresh_pop: value});
+            }}
+            style={styles.newdropdowncontainers}
+            textStyle={styles.newdropdowntextstyle}
+          />
+        ) : null}
 
         {title !== 'Vector Plus' &&
         title !== 'Mutual Fund' &&
@@ -2861,6 +2902,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Health Insurance' &&
         title !== 'Life Cum Invt. Plan' &&
         title !== 'Auto Loan' &&
+        title !== 'Gold Loan' &&
         title !== 'Insure Check' ? (
           <View>
             <View style={styles.radiocont}>
@@ -2874,14 +2916,17 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Existing Card/Loan`}</Title>
 
                 <RadioButton.Group
-                  
                   //onValueChange={value => this.setState({existingcard: value})}
                   value={this.state.existingcard}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="Yes" style={{alignSelf: 'center'}} disabled />
+                      <RadioButton
+                        value="Yes"
+                        style={{alignSelf: 'center'}}
+                        disabled
+                      />
                       <Title
                         styleName="v-center h-center"
                         style={styles.textopen}>{`Yes`}</Title>
@@ -2889,7 +2934,11 @@ export default class SpecificForm extends React.PureComponent {
                     <View
                       styleName="horizontal"
                       style={{alignSelf: 'center', alignItems: 'center'}}>
-                      <RadioButton value="No" style={{alignSelf: 'center'}} disabled />
+                      <RadioButton
+                        value="No"
+                        style={{alignSelf: 'center'}}
+                        disabled
+                      />
                       <Title
                         styleName="v-center h-center"
                         style={styles.textopen}>{`No`}</Title>
@@ -2936,88 +2985,89 @@ export default class SpecificForm extends React.PureComponent {
                         {this.state.showExisitingList ? <DropDown itemCallback={value => this.setState({ showExisitingList: false, existingcard: value })} list={this.state.exisitingList} /> : null}
                     </View> */}
 
-          {loanCheck ? <View>
-            <AnimatedInputBox
-              onChangeText={this.fetchcityCurrentstateCompany}
-              maxLength={6}
-              keyboardType={'number-pad'}
-              value={this.state.cpincode}
-              placeholder={`Company Pincode`}
-              showStarVisible={false}
-              returnKeyType={'next'}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-            />
+            {loanCheck ? (
+              <View>
+                <AnimatedInputBox
+                  onChangeText={this.fetchcityCurrentstateCompany}
+                  maxLength={6}
+                  keyboardType={'number-pad'}
+                  value={this.state.cpincode}
+                  placeholder={`Company Pincode`}
+                  showStarVisible={false}
+                  returnKeyType={'next'}
+                  changecolor
+                  containerstyle={styles.animatedInputCont}
+                />
 
-            <AnimatedInputBox
-              onChangeText={value => this.setState({ccity: value})}
-              value={this.state.ccity}
-              placeholder={`Company City`}
-              editable={false}
-              disabled={true}
-              returnKeyType={'next'}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-            />
+                <AnimatedInputBox
+                  onChangeText={value => this.setState({ccity: value})}
+                  value={this.state.ccity}
+                  placeholder={`Company City`}
+                  editable={false}
+                  disabled={true}
+                  returnKeyType={'next'}
+                  changecolor
+                  containerstyle={styles.animatedInputCont}
+                />
 
-            <AnimatedInputBox
-              onChangeText={value => this.setState({cstate: value})}
-              value={this.state.cstate}
-              placeholder={'Company State'}
-              editable={false}
-              disabled={true}
-              returnKeyType={'next'}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-            />
-          </View>
-                
-            :    <View style={styles.radiocont}>
-            <TouchableWithoutFeedback
-              onPress={() =>
-                this.setState({
-                  showCompanyCityList: !this.state.showCompanyCityList,
-                  showExisitingList: false,
-                  showLoanCityList: false,
-                  showCarList: false,
-                })
-              }>
-              <View style={styles.dropdownbox}>
-                <Title style={styles.boxsubtitle}>
-                  {/* {this.state.companylocation === ''
+                <AnimatedInputBox
+                  onChangeText={value => this.setState({cstate: value})}
+                  value={this.state.cstate}
+                  placeholder={'Company State'}
+                  editable={false}
+                  disabled={true}
+                  returnKeyType={'next'}
+                  changecolor
+                  containerstyle={styles.animatedInputCont}
+                />
+              </View>
+            ) : (
+              <View style={styles.radiocont}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    this.setState({
+                      showCompanyCityList: !this.state.showCompanyCityList,
+                      showExisitingList: false,
+                      showLoanCityList: false,
+                      showCarList: false,
+                    })
+                  }>
+                  <View style={styles.dropdownbox}>
+                    <Title style={styles.boxsubtitle}>
+                      {/* {this.state.companylocation === ''
                       ? `Select Company Location ${title === 'Auto Loan' 
                       //|| title === 'Home Loan' 
                       || title === 'Business Loan' 
                       //|| title === 'Personal Loan' 
                       ? ' *' : ''}`
                       : this.state.companylocation} */}
-                  {this.state.companylocation === ''
-                    ? `Select Company Location`
-                    : this.state.companylocation}
-                </Title>
-                <Icon
-                  name={'chevron-down'}
-                  size={24}
-                  color={'#6d6a57'}
-                  style={styles.downIcon}
-                />
+                      {this.state.companylocation === ''
+                        ? `Select Company Location`
+                        : this.state.companylocation}
+                    </Title>
+                    <Icon
+                      name={'chevron-down'}
+                      size={24}
+                      color={'#6d6a57'}
+                      style={styles.downIcon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                {this.state.showCompanyCityList ? (
+                  <DropDown
+                    itemCallback={value =>
+                      this.setState({
+                        showCompanyCityList: false,
+                        companylocation: value,
+                      })
+                    }
+                    list={this.state.cityList}
+                    isCityList
+                    enableSearch
+                  />
+                ) : null}
               </View>
-            </TouchableWithoutFeedback>
-            {this.state.showCompanyCityList ? (
-              <DropDown
-                itemCallback={value =>
-                  this.setState({
-                    showCompanyCityList: false,
-                    companylocation: value,
-                  })
-                }
-                list={this.state.cityList}
-                isCityList
-                enableSearch
-              />
-            ) : null}
-          </View> }
-                
+            )}
           </View>
         ) : null}
 
@@ -3035,6 +3085,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Auto Loan' &&
         title !== 'Home Loan' &&
         title !== 'Loan Against Property' &&
+        title !== 'Gold Loan' &&
         title !== 'Insure Check' ? (
           <View style={styles.radiocont}>
             <TouchableWithoutFeedback
@@ -3132,7 +3183,7 @@ export default class SpecificForm extends React.PureComponent {
               changecolor
               containerstyle={styles.animatedInputCont}
             />
-          </View>      
+          </View>
         ) : null}
         {title === 'Insure Check' ? (
           <View>
@@ -3482,6 +3533,63 @@ export default class SpecificForm extends React.PureComponent {
           </>
         ) : null} */}
 
+        {title === 'Gold Loan' ? (
+          <>
+            <AnimatedInputBox
+              keyboardType={'number-pad'}
+              onChangeText={value => {
+                if (String(value).match(/^[0-9]*$/g) !== null) {
+                  this.setState({
+                    desired_amount: value,
+                    gold_pledge: findGoldPledge(
+                      this.state.goldDetailList,
+                      this.state.gold_karat,
+                      value,
+                    ),
+                  });
+                }
+              }}
+              value={this.state.desired_amount}
+              placeholder={`Desired Amount`}
+              showStarVisible={false}
+              returnKeyType={'next'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              enableWords
+            />
+
+            <NewDropDown
+              list={this.state.goldDetailList}
+              placeholder={'Gold Karat'}
+              starVisible={false}
+              value={this.state.gold_karat}
+              selectedItem={value =>
+                this.setState({
+                  gold_karat: value,
+                  gold_pledge: findGoldPledge(
+                    this.state.goldDetailList,
+                    value,
+                    this.state.desired_amount,
+                  ),
+                })
+              }
+              style={styles.dropdownnewcontainer}
+              textStyle={styles.dropdownnewtext}
+            />
+
+            <AnimatedInputBox
+              value={this.state.gold_pledge}
+              placeholder={`Required Gold to Pledge in Grams`}
+              showStarVisible={false}
+              returnKeyType={'done'}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+              editable={false}
+              disabled={true}
+            />
+          </>
+        ) : null}
+
         {this.state.showCalendar ? (
           <DateTimePicker
             testID="dateTimePicker"
@@ -3512,6 +3620,20 @@ export default class SpecificForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  dropdownnewtext: {
+    color: '#6d6a57',
+    fontSize: 14,
+    fontFamily: Pref.getFontName(4),
+  },
+  dropdownnewcontainer: {
+    borderRadius: 0,
+    borderBottomColor: '#f2f1e6',
+    borderBottomWidth: 1.3,
+    borderWidth: 0,
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
   newdropdowntextstyle: {
     color: '#6d6a57',
     fontSize: 14,
