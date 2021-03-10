@@ -8,32 +8,29 @@ import * as Pref from './Pref';
  * @param {*} user_role
  */
 export const enableCallModule = (startService = false) => {
-  Pref.getVal(Pref.USERTYPE, type => {
-    if (type === 'team') {
-      Pref.getVal(Pref.userData, value => {
-        const {user_role} = value;
-        if (Helper.nullStringCheck(user_role) !== '' && user_role === '1') {
-          FinproCallModule.askPermission().then(result => {
-            if (result === true) {
-              dialerPermissionAndServiceStart(startService);
-            } else {
-              Alert.alert(
-                'Permission Required',
-                'Call Features enabled for you. For that feature we need overlay permission\nPlease, Grant permission from setting.',
-                [
-                  {
-                    text: 'DECLINE',
-                  },
-                  {
-                    text: 'GRANT',
-                    onPress: () => dialerPermissionAndServiceStart(startService),
-                  },
-                ],
-              );
-            }
-          });
-        }
-      });
+  Pref.getVal(Pref.DIALER_DATA, data => {                 
+    if(Helper.nullCheck(data) === false){
+      if (data.length > 0 && Helper.nullCheck(data[0].tc) === false) {
+        FinproCallModule.askPermission().then(result => {
+          if (result === true) {
+            dialerPermissionAndServiceStart(startService);
+          } else {
+            Alert.alert(
+              'Permission Required',
+              'We need overlay permission\nPlease, Grant permission from setting.',
+              [
+                {
+                  text: 'DECLINE',
+                },
+                {
+                  text: 'GRANT',
+                  onPress: () => dialerPermissionAndServiceStart(startService),
+                },
+              ],
+            );
+          }
+        });
+      }
     }
   });
 };
@@ -74,6 +71,9 @@ export const stopService = () => {
   FinproCallModule.stopService();
 };
 
-export const startService = (enable) =>{
+/**
+ * Start service
+ */
+export const startService = () =>{
   FinproCallModule.startService();
 }

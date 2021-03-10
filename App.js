@@ -30,9 +30,12 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.checkVersionForUpdate();
-    
-    //AppState.addEventListener('change', this._handleAppStateChange);
+    //this.checkVersionForUpdate();
+
+    AppState.addEventListener('change', this._handleAppStateChange);
+    stopService();
+
+    //enableCallModule(false);
     
     //this.syncImmediate();
 
@@ -73,7 +76,6 @@ class App extends React.PureComponent {
     }, error =>{
     })
     
-    //enableCallModule(false);
   }
 
   _handleAppStateChange = nextAppState => {
@@ -83,14 +85,14 @@ class App extends React.PureComponent {
     ) {
       stopService();
     }else{
-      enableCallModule(true);
+      //enableCallModule(true);
     }
     this.setState({appState: nextAppState});
   };
 
 
   componentWillUnmount() {
-    //AppState.removeEventListener('change', this._handleAppStateChange);
+    AppState.removeEventListener('change', this._handleAppStateChange);
     
     if (this.removeOnNotification) {
       this.removeOnNotification();

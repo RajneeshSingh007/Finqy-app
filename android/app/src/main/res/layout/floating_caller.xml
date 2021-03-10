@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal"
+    android:layout_weight="3"
+    android:background="@color/white"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:background="@drawable/circular_drawable"
-        android:layout_width="wrap_content"
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:padding="4dp"
+        android:src="@drawable/logo" />
+
+    <LinearLayout
+        android:id="@+id/actionClick"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/actionClick"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="center"
-            android:src="@drawable/logo"
-            android:tint="@color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@string/app_name"/>
 
-    </FrameLayout>
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#0D47A1"
+            android:textSize="15sp"
+            android:layout_marginTop="4dp"
+            android:text="Add caller to Lead"/>
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/close"
+        android:layout_gravity="right|center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/black"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_baseline_close_24" />
+
+</LinearLayout>

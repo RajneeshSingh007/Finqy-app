@@ -14,6 +14,7 @@ import {Provider} from 'mobx-react';
 import * as Pref from '././src/util/Pref';
 import {StatusBar,Platform} from 'react-native';
 import codePush from "react-native-code-push";
+import NavigationActions from '././src/util/NavigationActions';
 
 const theme = {
   ...DefaultTheme,
@@ -64,7 +65,19 @@ const options = {
     deploymentKey: codepushKey,
 };
 
-//AppRegistry.registerHeadlessTask('ServiceHandler', () => ServiceHandler);
+const serviceHandler = async( data) =>{
+  //console.log(data);
+  const {outside} = data;
+  if(outside){
+    NavigationActions.navigate('DialerCalling', {editEnabled:true,isFollowup:-1,data:{
+      name: '',
+      mobile: '',
+      editable: true,
+    }});
+  }
+}
+
+//AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 

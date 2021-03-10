@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, PermissionsAndroid, Platform} from 'react-native';
+import {StyleSheet, PermissionsAndroid, Platform,TouchableWithoutFeedback, Alert} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
@@ -11,7 +11,9 @@ import NewDropDown from '../../component/NewDropDown';
 import OptionsDialog from '../../component/OptionsDialog';
 import CallLogs from 'react-native-call-log';
 import NavigationActions from '../../../util/NavigationActions';
-import FlashMessage from "react-native-flash-message";
+import FlashMessage from 'react-native-flash-message';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Icon from 'react-native-vector-icons/Feather';
 
 let trackTypeList = [
   {
@@ -29,6 +31,9 @@ let trackTypeDetailContactableList = [
   {
     value: 'Not Interested',
   },
+  {
+    value: 'Follow-up',
+  },
 ];
 
 let trackTypeDetailNonContactableList = [
@@ -43,6 +48,17 @@ let trackTypeDetailNonContactableList = [
 export default class CallerForm extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.productSelection = this.productSelection.bind(this);
+    this.onChange = this.onChange.bind(this);
+    const currentdate = moment().toDate();
+    const obj = moment().toObject();
+
+    currentdate.setDate(Number(obj.date + 1));
+
+    const maxDate = moment().toDate();
+    maxDate.setDate(Number(currentdate.getDate()));
+    maxDate.setMonth(Number(currentdate.getMonth() + 1));
+
     this.flashMessage = React.createRef();
     this.formSubmit = this.formSubmit.bind(this);
     this.contactDialogClicked = this.contactDialogClicked.bind(this);
@@ -59,29 +75,71 @@ export default class CallerForm extends React.PureComponent {
       clickedBtn: 0,
       callLogs: [],
       callDur: 0,
+      showCalendar: false,
+      currentDate: currentdate,
+      showdatesx: currentdate,
+      maxDates: maxDate,
+      mode: 'date',
+      currentTime: '',
+      followup_date_time:'',
+      editable:false
     };
   }
 
+  onChange = (event, selectedDate) => {
+    if (selectedDate !== undefined && selectedDate !== null) {
+      if (this.state.mode == 'date') {
+        const current = moment(selectedDate).format('DD-MM-YYYY');
+        this.setState({
+          currentDate: selectedDate,
+          showdatesx: selectedDate,
+          mode: 'time',
+          intervaltime: 30,
+          followup_date_time: current,
+          //showCalendar: false,
+        });
+      } else {
+        const hours = selectedDate.getHours();
+        const time = selectedDate.getMinutes();
+        //if (hours >= 10 && hours <= 18) {
+          this.state.showdatesx.setHours(hours, time, 0, 0);
+          const current = moment(this.state.showdatesx).format(
+            'DD-MM-YYYY hh:mm A',
+          );
+          this.setState({followup_date_time: current, mode: 'date', showCalendar: false});
+        // } else {
+        //   alert('Please, select time between 10AM - 7PM');
+        //   this.setState({showCalendar: false, mode: 'date'});
+        // }
+      }
+    } else {
+      this.setState({showCalendar: false, mode: 'date'});
+    }
+  };
+
   componentDidMount() {
-    const {editItemRestore,editEnabled = false,customerItem} = this.props;
+    const {editItemRestore, editEnabled = false, customerItem} = this.props;
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
     }
-    
-    //console.log('customerItem',customerItem)
-    
-    const {mobile = '', name = ''} = customerItem;
+
+    console.log('customerItem',customerItem)
+
+    const {mobile = '', name = '', editable = false} = customerItem;
 
     //ask permissions
-    if(editEnabled === false){
-      this.setState({name: name, mobile: mobile});
+    if (editEnabled === false) {
+      this.setState({name: name, mobile: mobile,editable:editable});
       if (Platform.OS === 'android') {
-        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
-          title: 'Permission Required',
-          message: 'We required to access your call logs',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }).then(result => {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+          {
+            title: 'Permission Required',
+            message: 'We required to access your call logs',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        ).then(result => {
           if (result === 'granted') {
             let numberArray = [];
             if (Helper.nullStringCheck(mobile) === false) {
@@ -121,28 +179,39 @@ export default class CallerForm extends React.PureComponent {
           }
         });
       }
-    }else{
+    } else {
       let trackingType = '';
       let trackingDetail = '';
       let product = '';
       let remarks = '';
-      if(Helper.nullStringCheck(customerItem.tracking_type_detail) === false){
+      if (Helper.nullStringCheck(customerItem.tracking_type_detail) === false) {
         trackingDetail = customerItem.tracking_type_detail;
       }
 
-      if(Helper.nullStringCheck(customerItem.tracking_type) === false){
-        trackingType = customerItem.tracking_type === "0" ? 'Contactable' : 'Non-Contactable';
+      if (Helper.nullStringCheck(customerItem.tracking_type) === false) {
+        trackingType =
+          customerItem.tracking_type === '0'
+            ? 'Contactable'
+            : 'Non-Contactable';
       }
 
-      if(Helper.nullStringCheck(customerItem.product) === false){
+      if (Helper.nullStringCheck(customerItem.product) === false) {
         product = customerItem.product;
       }
 
-      if(Helper.nullStringCheck(customerItem.remarks) === false){
+      if (Helper.nullStringCheck(customerItem.remarks) === false) {
         remarks = customerItem.remarks;
       }
 
-      this.setState({name: name, mobile: mobile,trackingType:trackingType,trackingDetail:trackingDetail,product:product,remarks:remarks});
+      this.setState({
+        name: name,
+        mobile: mobile,
+        editable:editable,
+        trackingType: trackingType,
+        trackingDetail: trackingDetail,
+        product: product,
+        remarks: remarks,
+      });
     }
   }
 
@@ -161,23 +230,23 @@ export default class CallerForm extends React.PureComponent {
     this.setState({trackingDetail: value, showNonContactDialog: false});
   };
 
-  showalertMessage = (msg) =>{
-    if(this.flashMessage.current && this.flashMessage.current.showMessage){
+  showalertMessage = msg => {
+    if (this.flashMessage.current && this.flashMessage.current.showMessage) {
       this.flashMessage.current.showMessage({
         message: msg,
-        type: "danger",
-        icon:'danger',
+        type: 'danger',
+        icon: 'danger',
         duration: 7000,
-        animated:true,
-        floating:true,    
-      })
+        animated: true,
+        floating: true,
+      });
     }
-  }
+  };
 
   formSubmit = () => {
-    const {customerItem, token, userData, editEnabled = false} = this.props;
+    const {customerItem, token, userData, editEnabled = false,teamName=''} = this.props;
     if ((customerItem === null || token == null, userData == null)) {
-      this.showalertMessage('Something went wrong!')
+      this.showalertMessage('Something went wrong!');
       return false;
     }
     let id = '',
@@ -202,33 +271,36 @@ export default class CallerForm extends React.PureComponent {
       callDur,
       name,
       mobile,
+      followup_date_time
     } = this.state;
 
     let checkData = true;
     if (name === '') {
       checkData = false;
-      this.showalertMessage('Name empty')
+      this.showalertMessage('Name empty');
       //alert('Name empty');
     } else if (mobile === '') {
       checkData = false;
-      this.showalertMessage('Mobile empty')
+      this.showalertMessage('Mobile empty');
     } else if (
-      mobile.length < 10 
+      mobile.length < 10
       //|| mobile === '9876543210' ||
       //mobile === '0000000000' ||
       //mobile === '1234567890'
     ) {
       errorData = false;
-      this.showalertMessage('Invalid mobile number')
-    }
-     else if (trackingType === '') {
+      this.showalertMessage('Invalid mobile number');
+    } else if (trackingType === '') {
       checkData = false;
-      this.showalertMessage('Please, Select Status')
+      this.showalertMessage('Please, Select Status');
     }
     //trackingType == 'Contactable' && trackingDetail === 'Interested' &&
     else if (product === '') {
       checkData = false;
-      this.showalertMessage('Please, Select Product')
+      this.showalertMessage('Please, Select Product');
+    }else if (trackingType == 'Contactable' && trackingDetail === 'Follow-up' && followup_date_time === '') {
+      checkData = false;
+      this.showalertMessage('Please, Enter Appointment Date & Time');
     }
     // else if (remarks === '') {
     //   checkData = false;
@@ -241,6 +313,12 @@ export default class CallerForm extends React.PureComponent {
       let body = JSON.parse(JSON.stringify(this.state));
       delete body.showContactDialog;
       delete body.showNonContactDialog;
+      delete body.showCalendar;
+      delete body.currentDate;
+      delete body.showdatesx;
+      delete body.maxDates;
+      delete body.mode;
+      delete body.currentTime;
 
       const dates = new Date();
       const dateFormat = moment(dates).format('DD-MM-YYYY HH:mm:ss');
@@ -269,7 +347,9 @@ export default class CallerForm extends React.PureComponent {
       body.callDur = callDur;
       body.name = name;
       body.mobile = mobile;
-      body.editmode = editEnabled === true ? "1" : "0";
+      body.editmode = editEnabled === true ? '1' : '0';
+      body.followup_date_time = followup_date_time;
+      body.tname = teamName;
 
       let formName = product
         .trim()
@@ -291,7 +371,7 @@ export default class CallerForm extends React.PureComponent {
 
       //console.log('formData', formData, formUrls);
 
-      console.log(body, token);
+      console.log(body);
 
       Helper.networkHelperTokenPost(
         Pref.DIALER_LEAD_UPDATE,
@@ -303,40 +383,52 @@ export default class CallerForm extends React.PureComponent {
           const {status, message} = result;
           if (status == true) {
             if (leadConfirm === 1) {
-              Helper.networkHelperTokenContentType(
-                formUrls,
-                formData,
-                Pref.methodPost,
-                token,
-                result => {
-                  console.log('results', result);
-                  const {response_header} = result;
-                  const {res_type} = response_header;
-                  if (res_type === 'success') {
-                    this.props.startLoader(false, 0);
-                    NavigationActions.navigate('Finish', {
-                      top: editEnabled === true ? 'Edit Details' : 'Customer Details',
-                      red: 'Success',
-                      grey: `Lead ${editEnabled === true ?'updated' : 'uploaded'} successfully`,
-                      blue: 'Go back',
-                      back: editEnabled === true ? 'DialerRecords' : 'DialerCalling',
-                      options: editEnabled === true ? {active:-1} : {}
-                    });
-                  } else {
-                    this.props.startLoader(false, -1);
-                    this.props.formResult(false, 'Failed to submit form');
-                  }
-                },
-                e => {
-                  console.log(e);
-                  this.props.startLoader(false, -1);
-                  this.props.formResult(false, 'Something went wrong!');
-                },
-              );
+                NavigationActions.navigate('FinorbitForm',{title:product,dialerMobile:mobile, dialerName:name})
+              // Helper.networkHelperTokenContentType(
+              //   formUrls,
+              //   formData,
+              //   Pref.methodPost,
+              //   token,
+              //   result => {
+              //     console.log('results', result);
+              //     const {response_header} = result;
+              //     const {res_type} = response_header;
+              //     if (res_type === 'success') {
+              //       this.props.startLoader(false, 0);
+              //       NavigationActions.navigate('Finish', {
+              //         top:
+              //           editEnabled === true
+              //             ? 'Edit Details'
+              //             : 'Customer Details',
+              //         red: 'Success',
+              //         grey: `Lead ${
+              //           editEnabled === true ? 'updated' : 'uploaded'
+              //         } successfully`,
+              //         blue: 'Go back',
+              //         back:
+              //           editEnabled === true
+              //             ? 'DialerRecords'
+              //             : 'DialerCalling',
+              //         options: editEnabled === true ? {active: -1} : {},
+              //       });
+              //     } else {
+              //       this.props.startLoader(false, -1);
+              //       this.props.formResult(false, 'Failed to submit form');
+              //     }
+              //   },
+              //   e => {
+              //     console.log(e);
+              //     this.props.startLoader(false, -1);
+              //     this.props.formResult(false, 'Something went wrong!');
+              //   },
+              // );
             } else {
               this.props.startLoader(false, -1);
               this.props.formResult(status, message);
             }
+
+            // this.props.startLoader(false, -1);
+            // this.props.formResult(status, message);
           } else {
             this.props.startLoader(false, -1);
             this.props.formResult(status, message);
@@ -351,8 +443,27 @@ export default class CallerForm extends React.PureComponent {
     }
   };
 
+  productSelection = (value) =>{
+    const {trackingDetail} = this.state;
+    if(trackingDetail === 'Interested'){
+      Alert.alert('Confirm', '', [{
+        text:'Yes',
+        onPress:() => {
+          this.setState({product: value}, () =>{
+            this.formSubmit()
+          });
+        }
+      },{
+        text:'No',
+        onPress:() => this.setState({product:'', trackingDetail:'',trackingType:''})
+      }])  
+    }else{
+      this.setState({product: value});
+    }
+  }
+
   render() {
-    const {remarks, name, mobile} = this.state;
+    const {remarks, name, mobile,editable} = this.state;
     const {customerItem, productList} = this.props;
     return (
       <>
@@ -363,8 +474,8 @@ export default class CallerForm extends React.PureComponent {
             value={name}
             placeholder={'Name'}
             returnKeyType={'next'}
-            // editable={false}
-            // disabled={true}
+            editable={editable}
+            disabled={!editable}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
@@ -378,8 +489,8 @@ export default class CallerForm extends React.PureComponent {
             value={mobile}
             placeholder={'Mobile'}
             returnKeyType={'next'}
-            // editable={false}
-            // disabled={true}
+            editable={editable}
+            disabled={!editable}
             maxLength={10}
             keyboardType={'number-pad'}
             changecolor
@@ -389,7 +500,7 @@ export default class CallerForm extends React.PureComponent {
             list={trackTypeList}
             placeholder={`Select Status`}
             starVisible
-            value={this.state.trackingType}
+            value={this.state.trackingDetail}
             selectedItem={value => {
               let val = false;
               if (value === 'Contactable') {
@@ -409,7 +520,7 @@ export default class CallerForm extends React.PureComponent {
             placeholder={`Select Product`}
             starVisible
             value={this.state.product}
-            selectedItem={value => this.setState({product: value})}
+            selectedItem={this.productSelection}
             style={styles.dropdowncontainers}
             textStyle={styles.dropdowntextstyle}
           />
@@ -438,6 +549,54 @@ export default class CallerForm extends React.PureComponent {
             onClicked={this.noncontactDialogClicked}
           />
 
+          {this.state.trackingDetail === 'Follow-up' ? (
+            <View>
+              <View style={styles.radiocont}>
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    this.setState({
+                      showCalendar: true,
+                    })
+                  }>
+                  <View style={styles.dropdownbox}>
+                    <Title
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '700',
+                        lineHeight: 20,
+                        alignSelf: 'center',
+                        color: this.state.followup_date_time === `` ? '#6d6a57' : `#555555`,
+                        alignSelf: 'center',
+                      }}>
+                      {this.state.followup_date_time === '' ? `Schedule an Appointment *` : this.state.followup_date_time}
+                    </Title>
+                    <Icon
+                      name={'calendar'}
+                      size={24}
+                      color={'#6d6a57'}
+                      style={{
+                        alignSelf: 'center',
+                      }}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </View>
+          ) : null}
+
+          {this.state.showCalendar ? (
+            <DateTimePicker
+              value={this.state.currentDate}
+              onChange={this.onChange}
+              maximumDate={this.state.maxDates}
+              minimumDate={this.state.currentDate}
+              mode={this.state.mode}
+              is24Hour={false}
+              //minimumDate={date}
+              display={'spinner'}
+            />
+          ) : null}
+
           <View
             styleName={`horizontal space-between md-gutter v-center h-center`}>
             <Button
@@ -451,9 +610,13 @@ export default class CallerForm extends React.PureComponent {
             </Button>
           </View>
         </View>
-      
+
         <Portal>
-        <FlashMessage  position='bottom' ref={this.flashMessage} duration={5000}/>
+          <FlashMessage
+            position="bottom"
+            ref={this.flashMessage}
+            duration={5000}
+          />
         </Portal>
       </>
     );

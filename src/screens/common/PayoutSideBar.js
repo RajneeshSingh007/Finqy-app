@@ -25,7 +25,7 @@ export default class PayoutSideBar extends React.PureComponent {
   }
 
   itemClick = (title) => {
-    const { backClicked, ogData } = this.props;
+    const { backClicked, ogData, screenName = 'PayoutForm',refercode = null } = this.props;
     const parsetitle = String(title)
       .toLowerCase()
       .replace(/ /g, '_')
@@ -35,7 +35,7 @@ export default class PayoutSideBar extends React.PureComponent {
       const { available } = ogData[parsetitle];
       if (available) {
         const { data, length, tc, head,pn,ex,width } = ogData[parsetitle];
-        NavigationActions.navigate('PayoutForm', {
+        NavigationActions.navigate(screenName, {
           title: title,
           data: data,
           length: length,
@@ -43,7 +43,10 @@ export default class PayoutSideBar extends React.PureComponent {
           head: head,
           pn: pn,
           ex:ex,
-          width:width
+          width:width,
+          editable: Helper.nullCheck(ogData[parsetitle].editable) === false ? true : false,
+          refercode:refercode,
+          payout:Helper.nullCheck(ogData.payout) === false ? ogData.payout : null
         });
       } else {
         Helper.showToastMessage('No data found', 0);

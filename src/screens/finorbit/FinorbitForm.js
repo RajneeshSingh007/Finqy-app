@@ -54,6 +54,8 @@ export default class FinorbitForm extends React.PureComponent {
       editFour: null,
       editLeadData: null,
       disableClick: 0,
+      dialerName:'',
+      dialerMobile:''
     };
   }
 
@@ -64,12 +66,16 @@ export default class FinorbitForm extends React.PureComponent {
     const title = navigation.getParam('title', '');
     const editMode = navigation.getParam('edit', false);
     const editLeadData = navigation.getParam('leadData', null);
+    const dialerName = navigation.getParam('dialerName', '');
+    const dialerMobile = navigation.getParam('dialerMobile', '');
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, value => {
         this.setState({token: value}, () => {
           Pref.getVal(Pref.userData, userData => {
             const checknullEdit = Helper.nullCheck(editLeadData);
             this.setState({
+              dialerName:dialerName,
+              dialerMobile:dialerMobile,
               userData: userData,
               imageUrl: url,
               title: title,
@@ -604,6 +610,8 @@ export default class FinorbitForm extends React.PureComponent {
                       }
                       editItemRestore={editFirst}
                       title={this.state.title}
+                      dialerName={this.state.dialerName}
+                      dialerMobile={this.state.dialerMobile}
                     />
                   ) : this.state.currentPosition === 1 ? (
                     <>

@@ -48,7 +48,8 @@ public class FloatingWidgetService extends Service {
     float initialTouchY;
     private View mFloatingWidgetView;
     private WindowManager.LayoutParams params;
-    private ImageView actionClick;
+    private LinearLayout actionClick, rootContainer;
+    private ImageView close;
     private int mWidth;
 
 
@@ -92,14 +93,22 @@ public class FloatingWidgetService extends Service {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         addFloatingWidgetView(inflater);
-        implementTouchListenerToFloatingWidgetView();
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void addFloatingWidgetView(LayoutInflater inflater) {
         if(mFloatingWidgetView == null){
             mFloatingWidgetView = inflater.inflate(R.layout.floating_caller, null);
         }
+        rootContainer = mFloatingWidgetView.findViewById(R.id.rootContainer);
+        close = mFloatingWidgetView.findViewById(R.id.close);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopCurrentService();
+            }
+        });
         actionClick = mFloatingWidgetView.findViewById(R.id.actionClick);
         actionClick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +117,7 @@ public class FloatingWidgetService extends Service {
             }
         });
         params = setViewManagerParams();
-        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.gravity = Gravity.TOP;
         params.x = 0;
         params.y = 100;
         mWindowManager.addView(mFloatingWidgetView, params);
@@ -116,40 +125,16 @@ public class FloatingWidgetService extends Service {
         Point size = new Point();
         display.getSize(size);
 
-        final RelativeLayout layout = (RelativeLayout) mFloatingWidgetView.findViewById(R.id.rootContainer);
-        ViewTreeObserver vto = layout.getViewTreeObserver();
+        ViewTreeObserver vto = rootContainer.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int width = layout.getMeasuredWidth();
+                rootContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int width = rootContainer.getMeasuredWidth();
                 mWidth = size.x - width;
             }
         });
-    }
-
-    private WindowManager.LayoutParams setViewManagerParams() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-            return params;
-        } else {
-            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-            return params;
-        }
-    }
-
-    private void implementTouchListenerToFloatingWidgetView() {
-        mFloatingWidgetView.findViewById(R.id.rootContainer).setOnTouchListener(new View.OnTouchListener() {
+        rootContainer.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 switch (event.getAction()) {
@@ -159,27 +144,40 @@ public class FloatingWidgetService extends Service {
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
                         lastAction = event.getAction();
-                        return true;
+                        break;
                     case MotionEvent.ACTION_UP:
-//                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
-//                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
-//                        mWindowManager.updateViewLayout(mFloatingWidgetView, params);
-//                        lastAction = event.getAction();
-                        return true;
+                        break;
                     case MotionEvent.ACTION_MOVE:
-                        //Calculate the X and Y coordinates of the view.
                         params.x = initialX + (int) (event.getRawX() - initialTouchX);
                         params.y = initialY + (int) (event.getRawY() - initialTouchY);
                         mWindowManager.updateViewLayout(mFloatingWidgetView, params);
                         lastAction = event.getAction();
                         return true;
                 }
-
                 return false;
             }
         });
     }
 
+    private WindowManager.LayoutParams setViewManagerParams() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+            return params;
+        } else {
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+            return params;
+        }
+    }
 
     public void gotoInsideApp() {
         ReactApplicationContext reactContext = FinproCallModule.getReactContext();
@@ -196,7 +194,6 @@ public class FloatingWidgetService extends Service {
             stopCurrentService();
         } catch (Exception e) {
             e.printStackTrace();
-            return;
         }
     }
 
@@ -209,16 +206,12 @@ public class FloatingWidgetService extends Service {
             String packageName = reactContext.getPackageName();
             Intent launchIntent = reactContext.getPackageManager().getLaunchIntentForPackage(packageName);
             String className = launchIntent.getComponent().getClassName();
-
             Class<?> activityClass = Class.forName(className);
-
             activityIntent = new Intent(reactContext, activityClass);
 
             activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         } catch (Exception e) {
             stopCurrentService();
-
         }
         return activityIntent;
     }
@@ -226,11 +219,10 @@ public class FloatingWidgetService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopForeground(true);
         if (mFloatingWidgetView != null)
             mWindowManager.removeView(mFloatingWidgetView);
     }
-
-
     private void stopCurrentService() {
         stopSelf();
     }

@@ -82,6 +82,18 @@ import DialerCalling from '../screens/dialer/calling/DialerCalling';
 import DialerRecords from '../screens/dialer/leads/DialerRecords';
 import AllMembers from '../screens/dialer/leader/AllMembers';
 import MemberReport from '../screens/dialer/leader/MemberReport';
+import Followup from '../screens/dialer/leads/Followup';
+import SwitchUser from '../screens/dialer/SwitchUser';
+import TcDashboard from '../screens/dialer/telecallers/TcDashboard';
+import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
+import TcPerformance from '../screens/dialer/telecallers/TcPerformance';
+import CallLogs from '../screens/dialer/telecallers/CallLogs';
+
+//Payin Payout
+import PayinProducts from '../screens/sales/PayinProducts';
+import DefaultPayin from '../screens/sales/DefaultPayin';
+import PartnerSelect from '../screens/sales/PartnerSelect';
+import PayoutUpdate from '../screens/sales/PayoutUpdate';
 
 
 import {
@@ -254,6 +266,50 @@ const TicketNav = createSwitchNavigator(
   },
 );
 
+//dialer nav
+const DialerNav = createStackNavigator({
+  SwitchUser:{screen:SwitchUser},
+  DialerCalling:{screen:DialerCalling},
+  DialerRecords:{screen:DialerRecords},
+  TcDashboard:{screen:TcDashboard},
+  TcPerformance:{screen:TcPerformance},
+  TlDashboard:{screen:TlDashboard},
+  Followup:{screen:Followup},
+  AllMembers:{screen:AllMembers},
+  MemberReport:{screen:MemberReport},
+  CallLogs:{screen:CallLogs}
+},
+{
+  headerMode: 'none',
+  resetOnBlur:true,
+  initialRouteName:'SwitchUser',
+  transitionConfig: (nav) => handleCustomTransition(nav),
+})
+
+
+
+const PayInPayout = createStackNavigator({
+  DefaultPayin:{screen:DefaultPayin},
+  PartnerSelect:{screen:PartnerSelect},
+  PayoutUpdate:{screen:PayoutUpdate},
+},
+{
+  headerMode: 'none',
+  resetOnBlur:true,
+  transitionConfig: (nav) => handleCustomTransition(nav),
+})
+
+const SalesNav = createSwitchNavigator({
+  PayinProducts:{screen:PayinProducts},
+  PayInPayout:{screen:PayInPayout}
+},
+{
+  headerMode: 'none',
+  resetOnBlur:true,
+  transitionConfig: (nav) => handleCustomTransition(nav),
+})
+
+
 const OtherNav = createDrawerNavigator(
   {
     Home: { screen: HomeScreen },
@@ -285,9 +341,9 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     
-    // TicketNav:{screen:TicketNav},
-    // DialerCalling:{screen:DialerCalling},
-    // DialerRecords:{screen:DialerRecords},
+    DialerNav:{screen: DialerNav},
+    TicketNav:{screen:TicketNav},
+    SalesNav:{screen:SalesNav}
     // AllMembers:{screen:AllMembers},
     // MemberReport:{screen:MemberReport}  
   },

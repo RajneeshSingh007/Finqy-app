@@ -13,6 +13,7 @@ const OfferItem = (prop) => {
     navigate = () => {},
     download = () => {},
     sharing = () => {},
+    mailSharing = () =>{},
   } = prop;
   if (Helper.nullCheck(item)) {
     return null;
@@ -43,7 +44,7 @@ const OfferItem = (prop) => {
                 separator: '...',
               })}
             </Title>
-            <Title
+            {/* <Title
               style={StyleSheet.flatten([
                 styles.itemtext,
                 {
@@ -55,9 +56,23 @@ const OfferItem = (prop) => {
                   marginBottom: 0,
                   paddingBottom: 0,
                 },
-              ])}>{formatDates}</Title>
+              ])}>{formatDates}</Title> */}
           </View>
           <View styleName="horizontal v-center h-center space-between">
+            <TouchableWithoutFeedback onPress={mailSharing}>
+              <View style={StyleSheet.flatten([styles.circle, {
+                backgroundColor:Pref.RED
+              }])}>
+                <IconChooser
+                  name="mail"
+                  size={20}
+                  color={'white'}
+                  iconType={1}
+                  style={styles.icon}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.gap}></View>
             <TouchableWithoutFeedback onPress={sharing}>
               <View style={styles.circle}>
                 <IconChooser

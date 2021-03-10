@@ -16,8 +16,573 @@ import Lodash from 'lodash';
 import * as Pref from './Pref';
 import DrawerTop from '../screens/component/DrawerTop';
 import * as Helper from './Helper';
+import {firebase} from '@react-native-firebase/firestore';
 
 const COLOR = '#f9f8f1';
+
+const ConnectorMenuList = [
+  {
+    name: `My Profile`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon1.png'),
+    icontype: 0,
+    sub: [
+      {
+        name: `Edit Profile`,
+        expand: false,
+        click: 'ProfileScreen',
+        options: {},
+      },
+      {
+        name: `My Agreement`,
+        click: 'Agreement',
+        expand: false,
+        options: {},
+      },
+      {
+        name: `My Certificate`,
+        expand: false,
+        click: 'Certificate',
+        options: {},
+      },
+      {
+        name: `Change Password`,
+        expand: false,
+        click: 'ChangePass',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My Wallet`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon4.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Payout Structure`,
+        expand: false,
+        click: 'Payout',
+        options: {},
+      },
+      {
+        name: `Earning History`,
+        expand: false,
+        click: 'MyWallet',
+        options: {},
+      },
+      {
+        name: `My Invoice`,
+        expand: false,
+        click: 'Invoice',
+        options: {},
+      },
+      {
+        name: `My 26AS`,
+        expand: false,
+        click: 'As26',
+        options: {},
+      },
+      {
+        name: `Payout Policy`,
+        expand: false,
+        click: 'PayoutPolicy',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My Offers`,
+    expand: false,
+    click: `MyOffers`,
+    options: {},
+    iconname: require('../res/images/menuicon5.png'),
+    icontype: 2,
+  },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../res/images/menuicon8.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
+    name: `Helpdesk`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon10.png'),
+    icontype: 2,
+
+    sub: [
+      {
+        name: `Relation Manager`,
+        expand: false,
+        click: 'Manager',
+        options: {},
+      },
+      {
+        name: `Raise A Query`,
+        expand: false,
+        click: 'RaiseQueryForm',
+        options: {},
+      },
+      {
+        name: `Track My Query`,
+        expand: false,
+        click: 'TrackQuery',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+];
+
+const MainMenuList = [
+  {
+    name: `My Profile`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon1.png'),
+    icontype: 0,
+    sub: [
+      {
+        name: `Edit Profile`,
+        expand: false,
+        click: 'ProfileScreen',
+        options: {},
+      },
+      {
+        name: `My Agreement`,
+        click: 'Agreement',
+        expand: false,
+        options: {},
+      },
+      {
+        name: `My Certificate`,
+        expand: false,
+        click: 'Certificate',
+        options: {},
+      },
+      {
+        name: `Change Password`,
+        expand: false,
+        click: 'ChangePass',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../res/images/menuicon8.png'),
+    icontype: 2,
+  },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Offers`,
+    expand: false,
+    click: `MyOffers`,
+    options: {},
+    iconname: require('../res/images/menuicon5.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Wallet`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon4.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Payout Structure`,
+        expand: false,
+        click: 'Payout',
+        options: {},
+      },
+      {
+        name: `Earning History`,
+        expand: false,
+        click: 'MyWallet',
+        options: {},
+      },
+      {
+        name: `My Invoice`,
+        expand: false,
+        click: 'Invoice',
+        options: {},
+      },
+      {
+        name: `My 26AS`,
+        expand: false,
+        click: 'As26',
+        options: {},
+      },
+      {
+        name: `Payout Policy`,
+        expand: false,
+        click: 'PayoutPolicy',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `FinTeam Manager`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon3.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Connector`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Connector`,
+            expand: false,
+            click: `AddConnector`,
+            options: {},
+          },
+          {
+            name: `View Connector`,
+            expand: false,
+            click: `ViewConnector`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Team`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Team`,
+            expand: false,
+            click: `AddTeam`,
+            options: {},
+          },
+          {
+            name: `View Team`,
+            expand: false,
+            click: `ViewTeam`,
+            options: {},
+          },
+        ],
+      },
+    ],
+    click: '',
+  },
+
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
+    name: `Helpdesk`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon10.png'),
+    icontype: 2,
+
+    sub: [
+      {
+        name: `Relation Manager`,
+        expand: false,
+        click: 'Manager',
+        options: {},
+      },
+      {
+        name: `Raise A Query`,
+        expand: false,
+        click: 'RaiseQueryForm',
+        options: {},
+      },
+      {
+        name: `Track My Query`,
+        expand: false,
+        click: 'TrackQuery',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+];
+
+const TeamMenuList = [
+  {
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  // {
+  //   name: `My Offers`,
+  //   expand: false,
+  //   click: `MyOffers`,
+  //   options: {},
+  //   iconname: require('../res/images/menuicon5.png'),
+  //   icontype: 2,
+  // },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../res/images/menuicon8.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+
+  {
+    name: `Helpdesk`,
+    expand: false,
+    heading: true,
+    iconname: require('../res/images/menuicon10.png'),
+    icontype: 2,
+
+    sub: [
+      {
+        name: `Relation Manager`,
+        expand: false,
+        click: 'Manager',
+        options: {},
+      },
+      {
+        name: `Raise A Query`,
+        expand: false,
+        click: 'RaiseQueryForm',
+        options: {},
+      },
+      {
+        name: `Track My Query`,
+        expand: false,
+        click: 'TrackQuery',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+];
+
+
+const salesMarketing =   {
+  name: `Sales Marketing`,
+  expand: false,
+  heading: true,
+  iconname: require('../res/images/menuicon7.png'),
+  icontype: 2,
+
+  sub: [
+    {
+      name: `Payout Structure`,
+      expand: false,
+      click: 'PayinProducts',
+      options: {},
+    },
+    {
+      name: `Partner Payout`,
+      expand: false,
+      click: 'PartnerSelect',
+      options: {},
+    },
+  ],
+  click: '',
+};
 
 export default class Sidebar extends React.Component {
   constructor(props) {
@@ -25,7 +590,6 @@ export default class Sidebar extends React.Component {
     changeNavigationBarColor(COLOR, true, true);
     StatusBar.setBackgroundColor(COLOR, false);
     StatusBar.setBarStyle('dark-content');
-
     this.menuheaderClick = this.menuheaderClick.bind(this);
     this.menuSubHeaderClick = this.menuSubHeaderClick.bind(this);
     this.state = {
@@ -34,243 +598,7 @@ export default class Sidebar extends React.Component {
       pic: '',
       name: ``,
       type: '',
-      menuList: [
-        {
-          name: `My Profile`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon1.png'),
-          icontype: 0,
-          sub: [
-            {
-              name: `Edit Profile`,
-              expand: false,
-              click: 'ProfileScreen',
-              options: {},
-            },
-            {
-              name: `My Agreement`,
-              click: 'Agreement',
-              expand: false,
-              options: {},
-            },
-            {
-              name: `My Certificate`,
-              expand: false,
-              click: 'Certificate',
-              options: {},
-            },
-            {
-              name: `Change Password`,
-              expand: false,
-              click: 'ChangePass',
-              options: {},
-            },
-          ],
-          click: '',
-        },
-        {
-          name: `My FinPro`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon2.png'),
-          icontype: 2,
-          sub: [
-            // {
-            //     name: `Dashboard`,
-            //     expand: false,
-            //     click: ''
-            // },
-            {
-              name: `My New Lead`,
-              expand: false,
-              click: '',
-              heading: true,
-              sub: [
-                {
-                  name: `Add Single Lead`,
-                  expand: false,
-                  click: `FinorbitScreen`,
-                  options: {},
-                },
-                {
-                  name: `Link Sharing Option`,
-                  expand: false,
-                  click: `LinkSharingOption`,
-                  options: {},
-                },
-              ],
-            },
-            {
-              name: `My Lead Record`,
-              expand: false,
-              click: 'LeadList',
-              options: {},
-            },
-          ],
-          click: '',
-        },
-        {
-          name: `My Marketing Tool`,
-          expand: false,
-          click: 'MarketingTool',
-          options: {},
-          iconname: require('../res/images/menuicon7.png'),
-          icontype: 2,
-        },
-        {
-          name: `FinTrain Learning`,
-          expand: false,
-          click: 'Training',
-          options: {},
-          iconname: require('../res/images/menuicon8.png'),
-          icontype: 2,
-        },
-        {
-          name: `ERB Popular Plan`,
-          expand: false,
-          click: 'PopularPlan',
-          options: {},
-          iconname: require('../res/images/menuicon6.png'),
-          icontype: 2,
-        },
-        {
-          name: `My Offers`,
-          expand: false,
-          click: `MyOffers`,
-          options: {},
-          iconname: require('../res/images/menuicon5.png'),
-          icontype: 2,
-        },
-        {
-          name: `My Wallet`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon4.png'),
-          icontype: 2,
-          sub: [
-            {
-              name: `My Payout Structure`,
-              expand: false,
-              click: 'Payout',
-              options: {},
-            },
-            {
-              name: `Earning History`,
-              expand: false,
-              click: 'MyWallet',
-              options: {},
-            },
-            {
-              name: `My Invoice`,
-              expand: false,
-              click: 'Invoice',
-              options: {},
-            },
-            {
-              name: `My 26AS`,
-              expand: false,
-              click: 'As26',
-              options: {},
-            },
-            {
-              name: `Payout Policy`,
-              expand: false,
-              click: 'PayoutPolicy',
-              options: {},
-            },
-          ],
-          click: '',
-        },
-        {
-          name: `FinTeam Manager`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon3.png'),
-          icontype: 2,
-          sub: [
-            {
-              name: `My Connector`,
-              expand: false,
-              click: '',
-              heading: true,
-              sub: [
-                {
-                  name: `Add Connector`,
-                  expand: false,
-                  click: `AddConnector`,
-                  options: {},
-                },
-                {
-                  name: `View Connector`,
-                  expand: false,
-                  click: `ViewConnector`,
-                  options: {},
-                },
-              ],
-            },
-            {
-              name: `My Team`,
-              expand: false,
-              click: '',
-              heading: true,
-              sub: [
-                {
-                  name: `Add Team`,
-                  expand: false,
-                  click: `AddTeam`,
-                  options: {},
-                },
-                {
-                  name: `View Team`,
-                  expand: false,
-                  click: `ViewTeam`,
-                  options: {},
-                },
-              ],
-            },
-          ],
-          click: '',
-        },
-
-        {
-          name: `FinNews`,
-          expand: false,
-          click: 'Blogs',
-          options: {},
-          iconname: require('../res/images/menuicon9.png'),
-          icontype: 2,
-        },
-        {
-          name: `Helpdesk`,
-          expand: false,
-          heading: true,
-          iconname: require('../res/images/menuicon10.png'),
-          icontype: 2,
-
-          sub: [
-            {
-              name: `Relation Manager`,
-              expand: false,
-              click: 'Manager',
-              options: {},
-            },
-            // {
-            //   name: `Raise A Query`,
-            //   expand: false,
-            //   click: 'RaiseQueryForm',
-            //   options: {},
-            // },
-            // {
-            //   name: `Track My Query`,
-            //   expand: false,
-            //   click: 'TrackQuery',
-            //   options: {},
-            // },
-          ],
-          click: '',
-        },
-      ],
+      menuList: [],
     };
   }
 
@@ -298,383 +626,131 @@ export default class Sidebar extends React.Component {
             //console.log(v);
             this.setState({type: v});
             if (v === `connector`) {
-              const filter = [
-                {
-                  name: `My Profile`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon1.png'),
-                  icontype: 0,
-                  sub: [
-                    {
-                      name: `Edit Profile`,
-                      expand: false,
-                      click: 'ProfileScreen',
-                      options: {},
-                    },
-                    {
-                      name: `My Agreement`,
-                      click: 'Agreement',
-                      expand: false,
-                      options: {},
-                    },
-                    {
-                      name: `My Certificate`,
-                      expand: false,
-                      click: 'Certificate',
-                      options: {},
-                    },
-                    {
-                      name: `Change Password`,
-                      expand: false,
-                      click: 'ChangePass',
-                      options: {},
-                    },
-                  ],
-                  click: '',
-                },
-                {
-                  name: `My FinPro`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon2.png'),
-                  icontype: 2,
-                  sub: [
-                    // {
-                    //     name: `Dashboard`,
-                    //     expand: false,
-                    //     click: ''
-                    // },
-                    {
-                      name: `My New Lead`,
-                      expand: false,
-                      click: '',
-                      heading: true,
-                      sub: [
-                        {
-                          name: `Add Single Lead`,
-                          expand: false,
-                          click: `FinorbitScreen`,
-                          options: {},
-                        },
-                        {
-                          name: `Link Sharing Option`,
-                          expand: false,
-                          click: `LinkSharingOption`,
-                          options: {},
-                        },
-                      ],
-                    },
-                    {
-                      name: `My Lead Record`,
-                      expand: false,
-                      click: 'LeadList',
-                      options: {},
-                    },
-                  ],
-                  click: '',
-                },
-                {
-                  name: `My Wallet`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon4.png'),
-                  icontype: 2,
-                  sub: [
-                    {
-                      name: `My Payout Structure`,
-                      expand: false,
-                      click: 'Payout',
-                      options: {},
-                    },
-                    {
-                      name: `Earning History`,
-                      expand: false,
-                      click: 'MyWallet',
-                      options: {},
-                    },
-                    {
-                      name: `My Invoice`,
-                      expand: false,
-                      click: 'Invoice',
-                      options: {},
-                    },
-                    {
-                      name: `My 26AS`,
-                      expand: false,
-                      click: 'As26',
-                      options: {},
-                    },
-                    {
-                      name: `Payout Policy`,
-                      expand: false,
-                      click: 'PayoutPolicy',
-                      options: {},
-                    },
-                  ],
-                  click: '',
-                },
-                {
-                  name: `My Offers`,
-                  expand: false,
-                  click: `MyOffers`,
-                  options: {},
-                  iconname: require('../res/images/menuicon5.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `ERB Popular Plan`,
-                  expand: false,
-                  click: 'PopularPlan',
-                  options: {},
-                  iconname: require('../res/images/menuicon6.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `My Marketing Tool`,
-                  expand: false,
-                  click: 'MarketingTool',
-                  options: {},
-                  iconname: require('../res/images/menuicon7.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `FinTrain Learning`,
-                  expand: false,
-                  click: 'Training',
-                  options: {},
-                  iconname: require('../res/images/menuicon8.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `FinNews`,
-                  expand: false,
-                  click: 'Blogs',
-                  options: {},
-                  iconname: require('../res/images/menuicon9.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `Helpdesk`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon10.png'),
-                  icontype: 2,
-
-                  sub: [
-                    {
-                      name: `Relation Manager`,
-                      expand: false,
-                      click: 'Manager',
-                      options: {},
-                    },
-                    // {
-                    //   name: `Raise A Query`,
-                    //   expand: false,
-                    //   click: 'RaiseQueryForm',
-                    //   options: {},
-                    // },
-                    // {
-                    //   name: `Track My Query`,
-                    //   expand: false,
-                    //   click: 'TrackQuery',
-                    //   options: {},
-                    // },
-                  ],
-                  click: '',
-                },
-              ];
-              this.setState({menuList: filter});
+              this.setState({menuList: ConnectorMenuList});
             } else if (v === 'team') {
-              const filter = [
-                {
-                  name: `My FinPro`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon2.png'),
-                  icontype: 2,
-                  sub: [
-                    // {
-                    //     name: `Dashboard`,
-                    //     expand: false,
-                    //     click: ''
-                    // },
-                    {
-                      name: `My New Lead`,
-                      expand: false,
-                      click: '',
-                      heading: true,
-                      sub: [
-                        {
-                          name: `Add Single Lead`,
-                          expand: false,
-                          click: `FinorbitScreen`,
-                          options: {},
-                        },
-                        {
-                          name: `Link Sharing Option`,
-                          expand: false,
-                          click: `LinkSharingOption`,
-                          options: {},
-                        },
-                      ],
-                    },
-                    {
-                      name: `My Lead Record`,
-                      expand: false,
-                      click: 'LeadList',
-                      options: {},
-                    },
-                  ],
-                  click: '',
-                },
-                // {
-                //   name: `My Offers`,
-                //   expand: false,
-                //   click: `MyOffers`,
-                //   options: {},
-                //   iconname: require('../res/images/menuicon5.png'),
-                //   icontype: 2,
-                // },
-                {
-                  name: `ERB Popular Plan`,
-                  expand: false,
-                  click: 'PopularPlan',
-                  options: {},
-                  iconname: require('../res/images/menuicon6.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `My Marketing Tool`,
-                  expand: false,
-                  click: 'MarketingTool',
-                  options: {},
-                  iconname: require('../res/images/menuicon7.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `FinTrain Learning`,
-                  expand: false,
-                  click: 'Training',
-                  options: {},
-                  iconname: require('../res/images/menuicon8.png'),
-                  icontype: 2,
-                },
-                {
-                  name: `FinNews`,
-                  expand: false,
-                  click: 'Blogs',
-                  options: {},
-                  iconname: require('../res/images/menuicon9.png'),
-                  icontype: 2,
-                },
+              var filter = TeamMenuList;
 
-                {
-                  name: `Helpdesk`,
-                  expand: false,
-                  heading: true,
-                  iconname: require('../res/images/menuicon10.png'),
-                  icontype: 2,
+              const leader = Helper.nullCheck(parse.leader) === false ? parse.leader : [];
+              
+              if(leader.length > 0){
+                const leaderData = leader[0];
+                const {id} = leaderData; 
+                const loggedMemberId = parse.id;
+                this.firebaseListerner =  firebase.firestore()
+                .collection(Pref.COLLECTION_PARENT)
+                .doc(id)
+                .onSnapshot(documentSnapshot =>{
+                  if(documentSnapshot.exists){
+                    const {role, teamlist} = documentSnapshot.data();
+                    if(role === 0){      
+                      let existence = false;  
+                      const dialerData = [];             
+                      for(let j=0; j <teamlist.length; j++){
+                        const {memberlist, tllist,name} = teamlist[j];
+                        
+                        let membererlist = '';
+                        
+                        //console.log(memberlist, tllist);
+                        
+                        let find = undefined;
+                        
+                        if(memberlist){
+                          Lodash.map(memberlist, io =>{
+                              if(io.enabled === 0 && io.id === Number(loggedMemberId)){
+                                find = io;
+                                membererlist += `${io.id},`;
+                              }else if(io.enabled === 0){
+                                membererlist += `${io.id},`;
+                              }
+                          })
+                        }
+                        
+                        //find = memberlist ? Lodash.find(memberlist, io => ) : undefined;
+                        
+                        if(membererlist !== ''){
+                        
+                          const lastpos = membererlist[membererlist.length-1];
+                        
+                          if(lastpos === ','){
+                            membererlist = membererlist.substr(0, membererlist.length-1);
+                          }
+                        
+                        }
 
-                  sub: [
-                    {
-                      name: `Relation Manager`,
-                      expand: false,
-                      click: 'Manager',
-                      options: {},
-                    },
-                    // {
-                    //   name: `Raise A Query`,
-                    //   expand: false,
-                    //   click: 'RaiseQueryForm',
-                    //   options: {},
-                    // },
-                    // {
-                    //   name: `Track My Query`,
-                    //   expand: false,
-                    //   click: 'TrackQuery',
-                    //   options: {},
-                    // },
-                  ],
-                  click: '',
-                },
-              ];
-
-              //tele caller role module => userRole = 1
-              //team leader module => userRole = 2
-              //dialer features
-
-              const {userRole} = this.state;
-
-              // if(Helper.nullStringCheck(userRole) === false && userRole === '1'){
-              //   const firstpos = filter.splice(1,filter.length);
-              //   filter.push(
-              //     {
-              //       name: `Dialer`,
-              //       expand: false,
-              //       heading: true,
-              //       iconname: require('../res/images/dialercalls.png'),
-              //       icontype: 2,
-              //       sub: [
-              //         {
-              //           name: `Start Calling`,
-              //           expand: false,
-              //           click: 'DialerCalling',
-              //           options: {},
-              //         },
-              //         {
-              //           name: `My Calls Records`,
-              //           expand: false,
-              //           click: 'DialerRecords',
-              //           options: {},
-              //         },
-              //       ],
-              //       click: '',
-              //   });
-              //   firstpos.map(item => filter.push(item));
-
-              // }else if(Helper.nullStringCheck(userRole) === false && userRole === '2'){
-              //   const firstpos = filter.splice(1,filter.length);
-              //   filter.push(
-              //     {
-              //       name: `Dialer`,
-              //       expand: false,
-              //       heading: true,
-              //       iconname: require('../res/images/dialercalls.png'),
-              //       icontype: 2,
-              //       sub: [
-              //         {
-              //           name: `Team Lead Records`,
-              //           expand: false,
-              //           click: 'DialerRecords',
-              //           options: {active:-1},
-              //         },
-              //         {
-              //           name: `My Team Members`,
-              //           expand: false,
-              //           click: 'AllMembers',
-              //           options: {reportenabled:false},
-              //         },
-              //         {
-              //           name: `Performance Review`,
-              //           expand: false,
-              //           click: 'AllMembers',
-              //           options: {reportenabled:true},
-              //         },
-              //       ],
-              //       click: '',
-              //   });
-              //   firstpos.map(item => filter.push(item));
-              // }
-
-              this.setState({menuList: filter});
+                        //console.log('tc', find, membererlist);
+                       
+                        const tlfind = tllist ? Lodash.find(tllist, io => io.enabled === 0 && io.id === Number(loggedMemberId)) : undefined; 
+                       
+                        //console.log('tl', tlfind);
+                       
+                        if(find || tlfind){
+                          existence = true;
+                          if(Helper.nullCheck(find) === false){
+                            find.tlid = tllist.length > 0 ? tllist[0].id : {}
+                            find.pname = tllist.length > 0 ? `${tllist[0].id}&${name}&${membererlist}` : ''
+                          }
+                          //console.log('find', find);
+                          dialerData.push({
+                            tl:tlfind,
+                            tc:find
+                          })
+                        } 
+                      }
+                      const finalFilterList = [];
+                      if(existence){
+                        Pref.setVal(Pref.DIALER_DATA, dialerData);
+                        const cloneobject = JSON.parse(JSON.stringify(filter));
+                        finalFilterList.push(cloneobject[0]);
+                        finalFilterList.push(
+                          {
+                            name: `Dialer`,
+                            expand: false,
+                            click: 'SwitchUser',
+                            options: {},
+                            iconname: require('../res/images/dialercalls.png'),
+                            icontype: 2,
+                          });
+                        const lastpos = cloneobject.splice(1,cloneobject.length);
+                        lastpos.map(item => finalFilterList.push(item));  
+                      }else{
+                        finalFilterList = filter
+                      }  
+                      this.teamMenuSet(finalFilterList, parse);
+                    }else{                      
+                      this.teamMenuSet(filter, parse);
+                    }
+                  }else{
+                    this.teamMenuSet(filter, parse);
+                  }
+                }).catch(e =>{
+                  this.teamMenuSet(filter, parse);
+                })  
+              }else{    
+                this.teamMenuSet(filter, parse);
+              }
+            }else{
+              this.setState({menuList:MainMenuList})
             }
           });
         },
       );
+
     });
   }
 
+  teamMenuSet = (menuList, userdata) =>{
+    if(Number(userdata.user_role) === 3){
+      menuList.push(salesMarketing);
+    }
+    this.setState({menuList: menuList});
+  }
+
+  componentWillUnmount(){
+    if(this.firebaseListerner !== undefined && this.firebaseListerner != null){
+      this.firebaseListerner.remove();
+    }
+  }
+  
   menuheaderClick = item => {
     const menuList = this.state.menuList;
     const fill = Lodash.map(menuList, ele => {

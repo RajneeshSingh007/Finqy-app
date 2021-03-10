@@ -71,14 +71,19 @@ export default class CommonForm extends React.PureComponent {
       nomineename: '',
       emailTypeCd: '',
       contactTypeCd: '',
-      state: ''
+      state: '',
+      dialerEditable:false,
     };
   }
 
   componentDidMount() {
-    const {editItemRestore} = this.props;
+    const {editItemRestore,dialerName='',dialerMobile=''} = this.props;
+
     if(Helper.nullCheck(editItemRestore) === false){
       this.restoreData(editItemRestore);
+    }
+    if(dialerName !== '' && dialerMobile  !== ''){
+      this.setState({name:dialerName, mobile:dialerMobile,dialerEditable:true});
     }
     //BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
@@ -242,6 +247,7 @@ export default class CommonForm extends React.PureComponent {
           title.includes('Asaan'))
         ? true
         : false;
+    
     return (
       <View>
         <AnimatedInputBox
@@ -258,8 +264,8 @@ export default class CommonForm extends React.PureComponent {
                 ? `First Name ${returnAsterik()}`
                 : `Full Name ${returnAsterik()}`
           }
-          editable={title === 'Profile' ? false : editable}
-          disabled={title === 'Profile' ? true : disabled}
+          editable={title === 'Profile' || this.state.dialerEditable ? false : editable}
+          disabled={title === 'Profile' || this.state.dialerEditable ? true : disabled}
           returnKeyType={'next'}
           changecolor
           containerstyle={styles.animatedInputCont}
@@ -289,8 +295,8 @@ export default class CommonForm extends React.PureComponent {
             }
           }}
           value={this.state.mobile}
-          editable={title === 'Profile' ? false : editable}
-          disabled={title === 'Profile' ? true : disabled}
+          editable={title === 'Profile' || this.state.dialerEditable ? false : editable}
+          disabled={title === 'Profile' || this.state.dialerEditable ? true : disabled}
           returnKeyType={'next'}
         />
 

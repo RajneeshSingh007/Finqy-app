@@ -12,6 +12,8 @@ export const introDone = 'introDone';
 export const saveToken = 'token';
 export const USERTYPE = 'type';
 export const DIALER_TEAM_LEADER = 'dialer_team_leader';
+export const DIALER_DATA = "dialer_data";
+export const salespayoutUpdate = "salespayoutUpdate";
 
 //network
 export const methodPost = 'POST';
@@ -2527,6 +2529,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
+  {
+    name: 'Gold Loan',
+    url: require('./../res/images/autoloan.png'),
+  },
   //   {
   //   name: 'Vector Plus',
   //   url: require('./../res/images/vectorplus.png'),
@@ -2890,8 +2896,8 @@ export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 
+//forms directory
 export const FinURL = `${MainUrl}erbfinorbit/`;
-
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
 
 export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
@@ -2999,6 +3005,9 @@ export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
 export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
 export const DIALER_USER_DASHBOARD = `${DialerDirUrl}dashboard.php`;
 export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
+export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
+export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
+export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
 
 ///update dialog show
 export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
@@ -3011,6 +3020,17 @@ export const LIMIT_FILE_SIZE = 10485760;
 
 //max file pick in finorbit forms
 export const MAX_FILE_PICK_LIMIT = 5;
+
+
+///////firestore ///////////
+export const COLLECTION_PARENT = 'parent';
+export const COLLECTION_PRODUCT = 'productlist';
+
+//////Sales API /////////
+export const PAYIN_URL = `${ApiDirUrl}sales/payin-default.php`;
+export const PARTNER_LIST = `${ApiDirUrl}sales/partner-data.php`;
+export const PARTNER_PAYOUT_URL = `${ApiDirUrl}sales/current-payout.php`;
+export const UPDATE_PAYOUT = `${ApiDirUrl}sales/update-payout.php`;
 
 /**
  * Set Val

@@ -2,24 +2,23 @@ import React from 'react';
 import {
   StyleSheet,
   FlatList,
+  TouchableWithoutFeedback,
+  ScrollView,
 } from 'react-native';
-import {
-  Title,
-  View,
-} from '@shoutem/ui';
+import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {
-  ActivityIndicator,
-} from 'react-native-paper';
+import {ActivityIndicator} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import { sizeWidth } from '../../util/Size';
+import {sizeWidth, sizeHeight} from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
 import Share from 'react-native-share';
 import Loader from '../../util/Loader';
 import OfferItem from '../component/OfferItem';
 import CScreen from '../component/CScreen';
+import IconChooser from '../common/IconChooser';
+import Lodash from 'lodash';
 
 export default class MyOffers extends React.PureComponent {
   constructor(props) {
@@ -27,18 +26,41 @@ export default class MyOffers extends React.PureComponent {
     this.state = {
       loading: true,
       bannerList: [],
+      cloneList: [],
       token: '',
       type: -1,
       fullLoader: false,
       utype: '',
+      showFilter: false,
+      height: 0,
+      productList: [
+        {value: 'Auto Loan', url: `${Pref.FinURL}alform.php`},
+        {value: 'Business Loan', url: `${Pref.FinURL}blform.php`},
+        {value: 'Credit Card', url: `${Pref.FinURL}ccf.php`},
+        {value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php`},
+        {value: 'Home Loan', url: `${Pref.FinURL}hlform.php`},
+        {value: 'Health Insurance', url: `${Pref.FinURL}hiform.php`},
+        {value: 'Insurance Samadhan', url: `${Pref.FinURL}isform.php`},
+        {value: 'Insure Check', url: `${Pref.FinURL}ic.php`},
+        {value: 'Loan Against Property', url: `${Pref.FinURL}lapform.php`},
+        {value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php`},
+        {value: 'Motor Insurance', url: `${Pref.FinURL}mi.php`},
+        {value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php`},
+        {value: 'Personal Loan', url: `${Pref.FinURL}plform.php`},
+        {value: 'Term Insurance', url: `${Pref.FinURL}tiform.php`},
+        // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
+        // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
+        // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
+        // { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
+      ],
     };
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, (parseda) => {
-        Pref.getVal(Pref.saveToken, (value) => {
+      Pref.getVal(Pref.userData, parseda => {
+        Pref.getVal(Pref.saveToken, value => {
           this.setState({
             token: value,
             userdata: parseda,
@@ -49,8 +71,8 @@ export default class MyOffers extends React.PureComponent {
           }
         });
       });
-      Pref.getVal(Pref.USERTYPE, (v) => {
-        this.setState({ utype: v });
+      Pref.getVal(Pref.USERTYPE, v => {
+        this.setState({utype: v});
       });
     });
   }
@@ -61,91 +83,130 @@ export default class MyOffers extends React.PureComponent {
   }
 
   fetchData = (type, parseda) => {
-    this.setState({ loading: true });
-    const { rname, rcontact, id, username, mobile } = parseda;
-    const { utype } = this.state;
+    this.setState({loading: true, showFilter: false});
+    const {rname, rcontact, id, username, mobile} = parseda;
+    const {utype} = this.state;
     const body = JSON.stringify({
       offer_type: `${type}`,
       rname: utype === 'team' ? `${username}` : `${rname}`,
       rcontact: utype === 'team' ? `${mobile}` : `${rcontact}`,
       id: `${id}`,
-      type: utype
+      type: utype,
     });
 
+    //console.log('body', Pref.OffersUrl, body, this.state.token);
     Helper.networkHelperTokenPost(
       Pref.OffersUrl,
       body,
       Pref.methodPost,
       this.state.token,
-      (result) => {
-        const { data, response_header } = result;
-        const { res_type } = response_header;
+      result => {
+        const {data, response_header} = result;
+        const {res_type} = response_header;
         if (res_type === 'success') {
+          const productFilter = [];
+          productFilter.push('All');
+          Lodash.map(data, io => {
+            const trimlowercase = String(io.header)
+              .trim()
+              .toLowerCase();
+            if (Lodash.filter(productFilter, trimlowercase).length === 0) {
+              productFilter.push(trimlowercase);
+            }
+          });
+          //console.log(productFilter);
           this.setState({
+            productFilter: Lodash.uniq(productFilter),
             loading: false,
             bannerList: data,
+            cloneList: data,
             type: type,
+            userData: parseda,
           });
         } else {
-          this.setState({ loading: false,userData:parseda});
+          this.setState({loading: false, userData: parseda});
         }
       },
-      (e) => {
-        this.setState({ loading: false,userData:parseda});
+      error => {
+        //console.log('error', error);
+        this.setState({loading: false, userData: parseda});
       },
     );
   };
 
-  shareOffer = (id, image) => {
-    this.setState({ fullLoader: true });
+  shareOffer = (id, image, index, item) => {
+    this.setState({fullLoader: true});
+    const {userData, productList} = this.state;
+    const find = Lodash.find(
+      productList,
+      io =>
+        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
+    );
+    const {refercode} = userData;
+    const finalUrl = `${find.url}?ref=${refercode}`;
+    const username =
+      Helper.nullCheck(userData.rname) === false
+        ? userData.rname
+        : userData.username;
+    const mobile =
+      Helper.nullCheck(userData.rcontact) === false
+        ? userData.rcontact
+        : userData.mobile;
+    const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
     Helper.networkHelperGet(
       `${Pref.BASEImageUrl}?url=${image}`,
-      (result) => {
-        this.setState({ fullLoader: false });
-        this.shareofers(id, result);
+      result => {
+        this.setState({fullLoader: false});
+        this.shareofers(id, result, '', msg);
       },
       () => {
-        this.setState({ fullLoader: false });
-        this.shareofers(id, '');
+        this.setState({fullLoader: false});
+        this.shareofers(id, '', msg);
       },
     );
   };
 
-  shareofers = (id, result) => {
+  mailShareOffer = (id, image, index, item) => {
+    const {userData, productList} = this.state;
+    const find = Lodash.find(
+      productList,
+      io =>
+        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
+    );
+    const {refercode} = userData;
+    const finalUrl = `${find.url}?ref=${refercode}`;
+    const username =
+      Helper.nullCheck(userData.rname) === false
+        ? userData.rname
+        : userData.username;
+    const mobile =
+      Helper.nullCheck(userData.rcontact) === false
+        ? userData.rcontact
+        : userData.mobile;
+    const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+    this.shareofers(id, '', msg);
+  };
+
+  shareofers = (id, result, message = '') => {
     const url = `${result}`;
     const title = '';
-    //const message = `https://erb.ai/corporate_tool/refer_offer.php?offer_id=${id}`;
-    const message = ``;
     const options = Platform.select({
       ios: {
         activityItemSources: [
           {
-            placeholderItem: {
-              type: 'url',
-              content: url,
-            },
+            placeholderItem: {type: 'url', content: url},
             item: {
-              default: { type: 'url', content: url },
+              default: {type: 'url', content: url},
             },
             subject: {
               default: title,
             },
-            linkMetadata: {
-              originalUrl: url,
-              url,
-              title,
-            },
+            linkMetadata: {originalUrl: url, url, title},
           },
           {
-            placeholderItem: {
-              type: 'text',
-              content: message,
-            },
+            placeholderItem: {type: 'text', content: message},
             item: {
-              default: {
-                type: 'text',
-                content: message,
-              },
+              default: {type: 'text', content: message},
               message: null, // Specify no text to share via Messages app.
             },
           },
@@ -161,10 +222,52 @@ export default class MyOffers extends React.PureComponent {
     Share.open(options);
   };
 
+  onLayout = event => {
+    const {width, height} = event.nativeEvent.layout;
+    this.setState({height: height});
+  };
+
+  filterSelect = title => {
+    const {bannerList, cloneList} = this.state;
+    if (title === 'All') {
+      this.setState({bannerList: cloneList, showFilter: false});
+    } else {
+      const filter = Lodash.filter(
+        cloneList,
+        io => String(io.header).toLowerCase() === title,
+      );
+      this.setState({bannerList: filter, showFilter: false});
+    }
+  };
+
+  renderFilterItem = title => {
+    return (
+      <View style={{justifyContent: 'center'}}>
+        <TouchableWithoutFeedback onPress={() => this.filterSelect(title)}>
+          <Title
+            style={StyleSheet.flatten([
+              styles.passText,
+              {
+                color: '#555',
+                fontSize: 14,
+                paddingVertical: 0,
+                alignSelf: 'center',
+                fontWeight: '400',
+                lineHeight: 20,
+              },
+            ])}>
+            {Lodash.capitalize(title)}
+          </Title>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  };
+
   render() {
+    const {showFilter} = this.state;
     return (
       <CScreen
-      refresh={() => this.fetchData(2, this.state.userData)}
+        refresh={() => this.fetchData(2, this.state.userData)}
         absolute={<Loader isShow={this.state.fullLoader} />}
         body={
           <>
@@ -173,8 +276,8 @@ export default class MyOffers extends React.PureComponent {
               title={'My Offers'}
               // bottomtext={
               //   <>
-              //     {`My `}
-              //     <Title style={styles.passText}>{`Offers`}</Title>
+              //     {`FinAds `}
+              //     <Title style={styles.passText}>{`Marketing`}</Title>
               //   </>
               // }
               bottomtextStyle={{
@@ -183,29 +286,101 @@ export default class MyOffers extends React.PureComponent {
               }}
             />
 
+            <View styleName="horizontal v-end h-end md-gutter">
+              <TouchableWithoutFeedback
+                onPress={() => this.setState({showFilter: !showFilter})}
+                onLayout={this.onLayout}>
+                <Title
+                  style={StyleSheet.flatten([
+                    styles.passText,
+                    {
+                      color: '#82b9f4',
+                      fontSize: 16,
+                      lineHeight: 20,
+                      paddingVertical: 0,
+                    },
+                  ])}>
+                  {`Filter by `}
+                  <IconChooser
+                    name={showFilter ? 'chevron-up' : 'chevron-down'}
+                    size={20}
+                    color={'#82b9f4'}
+                    style={{
+                      alignSelf: 'center',
+                      justifyContent: 'center',
+                    }}
+                  />
+                </Title>
+              </TouchableWithoutFeedback>
+            </View>
+
+            {showFilter ? (
+              <View
+                styleName="vertical md-gutter"
+                style={StyleSheet.flatten([
+                  styles.filtercont,
+                  {
+                    top: sizeHeight(14) + this.state.height,
+                  },
+                ])}>
+                <FlatList
+                  data={this.state.productFilter}
+                  renderItem={({item, index}) => this.renderFilterItem(item)}
+                  keyExtractor={(_item, index) => `${index}`}
+                  showsVerticalScrollIndicator={true}
+                  showsHorizontalScrollIndicator={false}
+                  extraData={this.state}
+                  style={{maxHeight: 200}}
+                  nestedScrollEnabled
+                  ItemSeparatorComponent={() => (
+                    <View
+                      style={{
+                        marginVertical: 6,
+                        height: 1,
+                        width: '100%',
+                        backgroundColor: '#e4cbcb',
+                      }}></View>
+                  )}
+                />
+              </View>
+            ) : null}
+
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
             ) : this.state.bannerList.length > 0 ? (
               <FlatList
-                style={{ marginHorizontal: sizeWidth(2) }}
+                style={{marginHorizontal: sizeWidth(2)}}
                 data={this.state.bannerList}
-                renderItem={({ item, index }) => (
+                renderItem={({item, index}) => (
                   <OfferItem
                     item={item}
-                    navigate={() =>
-                      NavigationActions.navigate('OffersDetails', {
-                        item: item,
-                        type: this.state.type,
-                      })
-                    }
+                    navigate={() => {
+                      //                       NavigationActions.navigate('OffersDetails', {
+                      //   item: item,
+                      //   type: this.state.type,
+                      // })
+                    }}
                     sharing={() =>
-                      this.shareOffer(item.user_id, `${item.image}`, index)
+                      this.shareOffer(
+                        item.user_id,
+                        `${item.image}`,
+                        index,
+                        item,
+                      )
                     }
                     download={() =>
                       Helper.downloadFile(`${item.image}`, item.header)
                     }
+                    mailSharing={() => {
+                      this.mailShareOffer(
+                        item.user_id,
+                        `${item.image}`,
+                        index,
+                        item,
+                      );
+                    }}
                   />
                 )}
                 keyExtractor={(_item, index) => `${index}`}
@@ -214,17 +389,16 @@ export default class MyOffers extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No offers found...'} url={''} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No offers found...'} url={''} />
+              </View>
+            )}
           </>
         }
       />
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   footerCon: {
@@ -311,5 +485,39 @@ const styles = StyleSheet.create({
     //borderStyle: 'solid',
     //borderWidth: 3,
     backgroundColor: '#1bd741',
+  },
+  topfilterIcon: {
+    position: 'absolute',
+    top: 0,
+    zIndex: 99,
+    right: sizeWidth(13),
+    top: sizeHeight(30.2),
+    backgroundColor: 'white',
+  },
+  filtercont: {
+    position: 'absolute',
+    zIndex: 99,
+    borderColor: '#dbdacd',
+    borderWidth: 0.8,
+    backgroundColor: Pref.WHITE,
+    width: '36%',
+    //top:56,
+    right: sizeWidth(4),
+    borderRadius: 8,
+    //top: sizeHeight(17),
+    ...Platform.select({
+      android: {
+        elevation: 4,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
   },
 });

@@ -6,8 +6,9 @@ import {
   Platform,
   Linking,
   AppState,
+  FlatList,
 } from 'react-native';
-import {Title, View} from '@shoutem/ui';
+import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
 import {ActivityIndicator, Colors, Portal, Searchbar} from 'react-native-paper';
@@ -23,18 +24,22 @@ import Loader from '../../../util/Loader';
 import NavigationActions from '../../../util/NavigationActions';
 import SendIntentAndroid from 'react-native-send-intent';
 import PaginationNumbers from './../../component/PaginationNumbers';
+import {firebase} from '@react-native-firebase/firestore';
+import CallDetectorManager from 'react-native-call-detection';
 
 const ITEM_LIMIT = 10;
 
 const dummyJSON = {
   name: '',
   mobile: '',
+  editable: false,
 };
 
 export default class DialerCalling extends React.PureComponent {
   constructor(props) {
     super(props);
-    this._handleAppStateChange = this._handleAppStateChange.bind(this);
+    this.renderData = this.renderData.bind(this);
+    //this._handleAppStateChange = this._handleAppStateChange.bind(this);
     this.backClick = this.backClick.bind(this);
     this.startCalling = this.startCalling.bind(this);
     this.state = {
@@ -43,8 +48,8 @@ export default class DialerCalling extends React.PureComponent {
       loading: false,
       token: '',
       userData: '',
-      tableHead: ['Sr. No.', 'Call', 'Whatsapp', 'Data'],
-      widthArr: [60, 60, 80, 150],
+      tableHead: ['Sr.No.', 'Call', 'Whatsapp', 'Name', 'Number'],
+      widthArr: [60, 60, 100, 150, 100],
       cloneList: [],
       type: '',
       itemSize: ITEM_LIMIT,
@@ -59,6 +64,8 @@ export default class DialerCalling extends React.PureComponent {
       productList: '',
       progressLoader: false,
       editEnabled: false,
+      teamName: '',
+      whatsappMode: false,
     };
   }
 
@@ -69,6 +76,7 @@ export default class DialerCalling extends React.PureComponent {
     const {navigation} = this.props;
     const activeCallerItem = navigation.getParam('data', dummyJSON);
     const editEnabled = navigation.getParam('editEnabled', false);
+    const isFollowup = navigation.getParam('isFollowup', -1);
 
     //console.log(editEnabled)
 
@@ -88,28 +96,76 @@ export default class DialerCalling extends React.PureComponent {
     });
 
     //this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
-        this.setState({
-          userData: userData,
-          editEnabled: editEnabled,
-          activeCallerItem: activeCallerItem,
-          progressLoader: false,
-          callTrack: editEnabled ? 1 : -1
-        });
-        Pref.getVal(Pref.USERTYPE, v => {
-          this.getProducts();
-          this.setState({type: v}, () => {
-            Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                if (editEnabled === false) {
-                  this.fetchData();
-                }
-              });
+    Pref.getVal(Pref.userData, userData => {
+      this.setState({
+        userData: userData,
+        editEnabled: editEnabled,
+        activeCallerItem: activeCallerItem,
+        progressLoader: false,
+        callTrack: editEnabled ? 1 : -1,
+        isFollowup: isFollowup,
+        whatsappMode: false,
+      });
+      Pref.getVal(Pref.USERTYPE, v => {
+        this.setState({type: v}, () => {
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({token: value}, () => {
+              if (editEnabled === false) {
+                this.fetchData();
+              }
             });
           });
         });
       });
+    });
     //});
+
+    this.firebaseListerner = firebase
+      .firestore()
+      .collection(Pref.COLLECTION_PRODUCT)
+      .onSnapshot(querySnapshot => {
+        const productList = [];
+        querySnapshot.forEach(documentSnapshot => {
+          const {enabled, name} = documentSnapshot.data();
+          if (Number(enabled) === 0) {
+            documentSnapshot.data().value = name;
+            productList.push(documentSnapshot.data());
+          }
+        });
+        //console.log('productList', productList);
+        if (productList.length > 0) {
+          const sorting = productList.sort((a, b) => {
+            return String(a.value).localeCompare(b.value);
+          });
+          this.setState({productList: sorting});
+        }
+        // if (documentSnapshot.exists) {
+        //   this.getProducts();
+        // }
+      });
+
+    this.callDetection = new CallDetectorManager(
+      (event, phoneNumber) => {
+        const {callTrack, activeCallerItem} = this.state;
+        if (Helper.nullCheck(activeCallerItem) === false) {
+          const {mobile} = activeCallerItem;
+          if (
+            callTrack === 0 &&
+            (event === 'Disconnected' || event === 'Connected') &&
+            String(phoneNumber).toLowerCase() === String(mobile).toLowerCase()
+          ) {
+            this.setState({callTrack: 1});
+          }
+        }
+      },
+      true,
+      () => {},
+      {
+        title: 'Phone Permission',
+        message:
+          'This app needs access to your phone state in order to use this feature',
+      },
+    );
   }
 
   componentWillUnMount() {
@@ -117,6 +173,8 @@ export default class DialerCalling extends React.PureComponent {
     AppState.removeEventListener('change', this._handleAppStateChange);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+    if (this.firebaseListerner !== undefined) this.firebaseListerner.remove();
+    if(this.callDetection !== undefined) this.callDetection.remove();
   }
 
   _handleAppStateChange = nextAppState => {
@@ -124,8 +182,8 @@ export default class DialerCalling extends React.PureComponent {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      const {callTrack} = this.state;
-      if (callTrack === 0) {
+      const {callTrack, whatsappMode} = this.state;
+      if (callTrack === 0 && whatsappMode) {
         this.setState({callTrack: 1});
       }
     }
@@ -134,45 +192,69 @@ export default class DialerCalling extends React.PureComponent {
 
   fetchData = () => {
     this.setState({loading: true});
-    const {team_id, id} = this.state.userData;
-    const body = JSON.stringify({
-      teamid: team_id,
-      userid: id,
-      active: 0,
-    });
-    //console.log('body', body)
-    Helper.networkHelperTokenPost(
-      Pref.DIALER_LEAD_RECORD,
-      body,
-      Pref.methodPost,
-      this.state.token,
-      result => {
-        const {data, status} = result;
-        if (status === true) {
-          if (data.length > 0) {
-            const {itemSize} = this.state;
-            this.setState({
-              cloneList: data,
-              dataList: this.returnData(data, 0, data.length).slice(
-                0,
-                itemSize,
-              ),
-              loading: false,
-              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
-            });
+    const {isFollowup} = this.state;
+    //const {team_id, id} = this.state.userData;
+    Pref.getVal(Pref.DIALER_DATA, userdatas => {
+      const {id, tlid, pname} = userdatas[0].tc;
+      //console.log('userdatas', id, tlid);
+      const body = JSON.stringify({
+        teamid: tlid,
+        userid: id,
+        active: 0,
+        tname: pname,
+        follow: isFollowup,
+      });
+      console.log('body', body)
+      Helper.networkHelperTokenPost(
+        Pref.DIALER_LEAD_RECORD,
+        body,
+        Pref.methodPost,
+        this.state.token,
+        result => {
+          //console.log('result', result);
+          const {data, status} = result;
+          if (status === true) {
+            if (data.length > 0) {
+              const {itemSize} = this.state;
+              // const tableHead = [
+              //   'Sr.No.',
+              //   'Call',
+              //   'Whatsapp',
+              //   'Name',
+              //   'Number',
+              // ];
+              // const widthArr = [60, 60, 100, 150, 100];
+              // if (isFollowup) {
+              //   tableHead.push('Appointment Date');
+              //   widthArr.push(140);
+              // }
+              this.setState({
+                teamName: pname,
+                //tableHead: tableHead,
+                //widthArr: widthArr,
+                cloneList: data,
+                dataList: data,
+                // this.returnData(data, 0, data.length).slice(
+                //   0,
+                //   itemSize,
+                // ),
+                loading: false,
+                itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
+              });
+            } else {
+              this.setState({
+                loading: false,
+              });
+            }
           } else {
-            this.setState({
-              loading: false,
-            });
+            this.setState({loading: false});
           }
-        } else {
+        },
+        e => {
           this.setState({loading: false});
-        }
-      },
-      () => {
-        this.setState({loading: false});
-      },
-    );
+        },
+      );
+    });
   };
 
   getProducts = () => {
@@ -180,6 +262,7 @@ export default class DialerCalling extends React.PureComponent {
       Pref.DIALER_GET_PRODUCTS,
       result => {
         const parse = JSON.parse(result);
+        //console.log('parse', parse);
         const sorting = parse.sort((a, b) => {
           return String(a.value).localeCompare(b.value);
         });
@@ -190,53 +273,78 @@ export default class DialerCalling extends React.PureComponent {
   };
 
   backClick = () => {
-    const {callTrack, editEnabled} = this.state;
-    if (callTrack === 1) {
-      if (editEnabled) {
-        NavigationActions.navigate('DialerRecords', {active: -1});
-        if (this.focusListener !== undefined) this.focusListener.remove();
-        if (this.willfocusListener !== undefined) this.willfocusListener.remove();    
-        BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-      } else {
-        if (this.focusListener !== undefined) this.focusListener.remove();
-        if (this.willfocusListener !== undefined) this.willfocusListener.remove();    
-        BackHandler.removeEventListener('hardwareBackPress', this.backClick);
-        return true;
-      }
-    } else {
-      NavigationActions.goBack();
-      if (this.focusListener !== undefined) this.focusListener.remove();
-      if (this.willfocusListener !== undefined) this.willfocusListener.remove();  
-      BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    const {callTrack, editEnabled, whatsappMode} = this.state;
+    if (editEnabled) {
+      this.clearback();
     }
-    this.setState({callTrack: -1});
-    if (this.focusListener !== undefined) this.focusListener.remove();
-    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    if (callTrack === 1 || whatsappMode) {
+      return true;
+    }
+    this.clearback();
     return true;
   };
 
+  clearback = () => {
+    NavigationActions.goBack();
+    if (this.focusListener !== undefined) this.focusListener.remove();
+    if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  };
+
+  // backClick = () => {
+  //   const {callTrack, editEnabled} = this.state;
+  //   if (callTrack === 1) {
+  //     if (editEnabled) {
+  //       NavigationActions.navigate('DialerRecords', {active: -1});
+  //       if (this.focusListener !== undefined) this.focusListener.remove();
+  //       if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+  //       BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  //     } else {
+  //       if (this.focusListener !== undefined) this.focusListener.remove();
+  //       if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+  //       BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  //       return true;
+  //     }
+  //   } else {
+  //     NavigationActions.goBack();
+  //     if (this.focusListener !== undefined) this.focusListener.remove();
+  //     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+  //     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  //   }
+  //   this.setState({callTrack: -1});
+  //   if (this.focusListener !== undefined) this.focusListener.remove();
+  //   if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+  //   BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+  //   return true;
+  // };
+
   startCalling = (item, isWhatsapp = false, videocall = false) => {
     const {mobile} = item;
+    //const mobile = '7208828396'
+    if (mobile === '' && item.name === '') {
+      item.editable = true;
+    }
     if (Platform.OS === 'android') {
       try {
         if (isWhatsapp === true) {
           SendIntentAndroid.whatsappPhone({
             isvideo: videocall,
-            phone: '7208828396',
-            //mobile
+            phone: mobile,
           }).then(result => {
             if (result === 'no permission granted') {
-              Helper.requestPermissionsDialer();
               Helper.showToastMessage(
-                'Please, Grant Phone Call, Contact Permissions',
+                'Please, Grant Phone Call, Contact And Call Log Permissions',
                 2,
               );
+              try {
+                Helper.requestPermissionsDialer();
+              } catch (error) {}
             } else if (result === 'success') {
               this.setState({
                 activeCallerItem: item,
                 callTrack: 0,
                 progressLoader: false,
+                whatsappMode: true,
               });
             } else {
               Helper.showToastMessage(result, 0);
@@ -247,22 +355,24 @@ export default class DialerCalling extends React.PureComponent {
             activeCallerItem: item,
             callTrack: 0,
             progressLoader: false,
+            whatsappMode: false,
           });
           SendIntentAndroid.sendPhoneCall(mobile, false);
         }
       } catch (error) {
         //console.log(error);
-        Helper.requestPermissionsDialer();
         Helper.showToastMessage(
-          'Please, Grant Phone Call, Contact Permissions',
+          'Please, Grant Phone Call, Contact And Call Log Permissions',
           2,
         );
+        Helper.requestPermissionsDialer();
       }
     } else {
       this.setState({
         activeCallerItem: item,
         callTrack: 0,
         progressLoader: false,
+        whatsappMode: false,
       });
       Linking.openURL(`tel:${mobile}`);
     }
@@ -273,6 +383,7 @@ export default class DialerCalling extends React.PureComponent {
    * @param {*} data
    */
   returnData = (sort, start = 0, end) => {
+    const {isFollowup} = this.state;
     const dataList = [];
     if (sort.length > 0) {
       if (start >= 0) {
@@ -321,7 +432,7 @@ export default class DialerCalling extends React.PureComponent {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-                <View style={{marginHorizontal: 8}}></View>
+                <View style={{marginHorizontal: 16}}></View>
                 <TouchableWithoutFeedback
                   onPress={() => this.startCalling(value, true, true)}>
                   <View>
@@ -336,8 +447,16 @@ export default class DialerCalling extends React.PureComponent {
               </View>
             );
             rowData.push(callCustomerWhatsappView(item));
-            rowData.push(`${item.name}\n${item.mobile}`);
-            //rowData.push(item.mobile);
+            rowData.push(
+              Lodash.truncate(item.name, {
+                separator: '...',
+                length: 40,
+              }),
+            );
+            rowData.push(item.mobile);
+            if (isFollowup) {
+              rowData.push(item.followup_datetime);
+            }
             dataList.push(rowData);
           }
         }
@@ -398,7 +517,7 @@ export default class DialerCalling extends React.PureComponent {
 
   formResult = (status, message) => {
     const {editEnabled} = this.state;
-    console.log('editEnabled', editEnabled)
+    //console.log('editEnabled', editEnabled)
     if (editEnabled === true) {
       //NavigationActions.navigate('DialerRecords', {active: -1});
       Helper.showToastMessage(message, status === true ? 1 : 0);
@@ -420,6 +539,73 @@ export default class DialerCalling extends React.PureComponent {
     });
   };
 
+  /**
+   *
+   * @param {*} rowData
+   * @param {*} sectionID
+   * @param {*} rowID
+   */
+  renderData = (rowData, index) => {
+    return (
+      <View styleName="horizontal v-center" style={styles.mainTcontainer}>
+        <View style={styles.callcircle}>
+          <Title style={styles.firstWord}>
+            {rowData.name !== '' ? Lodash.capitalize(rowData.name[0]) : '#'}
+          </Title>
+        </View>
+        <View styleName="horizontal space-between v-center h-center">
+          <View style={{flex: 0.45}}>
+            {rowData.name !== '' ? (
+              <Title style={styles.timelinetitle}>{rowData.name}</Title>
+            ) : null}
+            <Title style={styles.tlphone}>{rowData.mobile}</Title>
+            {this.state.isFollowup == 1 ? (
+              <Subtitle style={{fontSize: 12, color: 'grey'}}>
+                {`${rowData.followup_datetime}`}
+              </Subtitle>
+            ) : null}
+          </View>
+          <View styleName="horizontal v-center" style={{flex: 0.5}}>
+            <TouchableWithoutFeedback
+              onPress={() => this.startCalling(rowData, false, false)}>
+              <View>
+                <IconChooser
+                  name={`phone-outgoing`}
+                  size={24}
+                  color={Colors.lightBlue500}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.spacer}></View>
+            <TouchableWithoutFeedback
+              onPress={() => this.startCalling(rowData, true, false)}>
+              <View>
+                <IconChooser
+                  name={`whatsapp`}
+                  size={24}
+                  iconType={2}
+                  color={Colors.green400}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.spacer}></View>
+            <TouchableWithoutFeedback
+              onPress={() => this.startCalling(rowData, true, true)}>
+              <View>
+                <IconChooser
+                  name={`video`}
+                  size={24}
+                  iconType={2}
+                  color={Colors.amber500}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   render() {
     const {
       searchQuery,
@@ -428,6 +614,7 @@ export default class DialerCalling extends React.PureComponent {
       callTrack,
       token,
       editEnabled,
+      isFollowup,
     } = this.state;
     return (
       <CScreen
@@ -450,7 +637,7 @@ export default class DialerCalling extends React.PureComponent {
                             ? 'Edit Details'
                             : 'Customer Details'
                         }
-                        backClicked={() => this.backClick()}
+                        backClicked={this.backClick}
                         bottomBody={
                           <>
                             {/* <View styleName="md-gutter">
@@ -465,6 +652,7 @@ export default class DialerCalling extends React.PureComponent {
                       />
 
                       <CallerForm
+                        teamName={this.state.teamName}
                         editEnabled={this.state.editEnabled}
                         userData={this.state.userData}
                         productList={productList}
@@ -498,8 +686,18 @@ export default class DialerCalling extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={editEnabled === true ? '' : 'Start Calling'}
-              backClicked={() => NavigationActions.goBack()}
+              title={
+                this.state.loading
+                  ? ''
+                  : isFollowup === 1
+                  ? 'Follow-up'
+                  : isFollowup === 2
+                  ? 'Extras'
+                  : editEnabled === true
+                  ? ''
+                  : 'Start Calling'
+              }
+              backClicked={this.backClick}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">
@@ -513,7 +711,7 @@ export default class DialerCalling extends React.PureComponent {
               }
             />
 
-            <View styleName="horizontal md-gutter space-between">
+            {/* <View styleName="horizontal md-gutter space-between">
               <PaginationNumbers
                 dataSize={this.state.cloneList.length}
                 itemSize={this.state.itemSize}
@@ -546,31 +744,40 @@ export default class DialerCalling extends React.PureComponent {
                   clearIcon={() => null}
                 />
               </View>
-            ) : null}
+            ) : null} */}
 
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
             ) : this.state.dataList.length > 0 ? (
-              <CommonTable
+              <>
+                <FlatList
+                  data={this.state.dataList}
+                  renderItem={({item, index}) => this.renderData(item, index)}
+                  keyExtractor={(item, index) => `${index}`}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                />
+                {/* <CommonTable
                 enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
-              />
+              /> */}
+              </>
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'No Callers Found...'} />
+                <ListError subtitle={'No Callers Data Found...'} />
               </View>
             )}
-            {this.state.dataList.length > 0 ? (
+            {/* {this.state.dataList.length > 0 ? (
               <>
                 <Title style={styles.itemtext}>{`Showing ${
                   this.state.itemSize
                 }/${Number(this.state.cloneList.length)} entries`}</Title>
               </>
-            ) : null}
+            ) : null} */}
           </>
         }
       />
@@ -579,12 +786,39 @@ export default class DialerCalling extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  spacer: {marginHorizontal: 14},
+  firstWord: {
+    alignSelf: 'center',
+    color: 'white',
+    fontSize: 14,
+  },
+  callcircle: {
+    width: 48,
+    height: 48,
+    backgroundColor: Pref.RED,
+    borderRadius: 48,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginStart: 6,
+  },
+  mainTcontainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 10,
+    marginVertical: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
+    marginHorizontal: 16,
+  },
   button: {
     color: 'white',
     paddingVertical: sizeHeight(0.5),
     marginTop: 24,
     marginHorizontal: 24,
-    backgroundColor: '#e21226',
+    backgroundColor: Pref.RED,
     textAlign: 'center',
     elevation: 0,
     borderRadius: 0,
@@ -626,5 +860,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0270e3',
     fontSize: 16,
+  },
+  timelinetitle: {
+    color: '#292929',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  tlphone: {
+    color: '#555',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

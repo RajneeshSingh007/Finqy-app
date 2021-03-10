@@ -90,6 +90,7 @@ export default class CScreen extends React.Component {
       absolute = null,
       showfooter = true,
       bgColor = Pref.WHITE,
+      showScrollToTop = true
     } = this.props;
     return (
       <SafeAreaView
@@ -135,7 +136,7 @@ export default class CScreen extends React.Component {
               {body}
               {showfooter === true ? (
                 <View>
-                  <ScrollTop onPress={this.scrollToTop} />
+                  {showScrollToTop ? <ScrollTop onPress={this.scrollToTop} /> : null}
                   <Footer />
                 </View>
               ) : null}
