@@ -4,6 +4,7 @@ import NavigationAction from './../util/NavigationActions';
 import { showMessage, hideMessage } from 'react-native-flash-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import Lodash from 'lodash';
+import * as Pref from './Pref';
 
 /**
  *
@@ -975,4 +976,31 @@ export const separatorReg = (data) =>{
  */
 export const lowercaseWithDashWord = (word) =>{
   return word.toLowerCase().replace(/\s/g, '_');
+}
+ 
+/**
+ * product Share List
+ */
+export const productShareList = () =>{
+  const list = [
+    { value: 'Auto Loan', url: `${Pref.FinURL}alform.php` },
+    { value: 'Business Loan', url: `${Pref.FinURL}blform.php` },
+    { value: 'Credit Card', url: `${Pref.FinURL}ccf.php` },
+    { value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php` },
+    { value: 'Home Loan', url: `${Pref.FinURL}hlform.php` },
+    { value: 'Health Insurance', url: `${Pref.FinURL}hiform.php` },
+    { value: 'Insurance Samadhan', url: `${Pref.FinURL}isform.php` },
+    { value: 'Insure Check', url: `${Pref.FinURL}ic.php` },
+    { value: 'Loan Against Property', url: `${Pref.FinURL}lapform.php` },
+    { value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php` },
+    { value: 'Motor Insurance', url: `${Pref.FinURL}mi.php` },
+    { value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php` },
+    { value: 'Personal Loan', url: `${Pref.FinURL}plform.php` },
+    { value: 'Term Insurance', url: `${Pref.FinURL}tiform.php` },
+    // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
+    // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
+    // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
+    // { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
+  ];
+  return list;
 }

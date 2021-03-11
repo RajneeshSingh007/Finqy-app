@@ -31,7 +31,7 @@ import FileUploadForm from '../finorbit/FileUploadForm';
 import PaginationNumbers from '../component/PaginationNumbers';
 import moment from 'moment';
 
-let HEADER = `Sr. No.,Date,Modified Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,Quote,Cif,Remark,Backend Remark\n`;
+let HEADER = `Sr. No.,Date,Modified Date,Lead No,Source,Customer Name,Mobile No,Product,Company,Status,CIF,Remark,Backend Remark\n`;
 let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 const ITEM_LIMIT = 10;
@@ -46,6 +46,7 @@ export default class LeadList extends React.PureComponent {
     this.cifClick = this.cifClick.bind(this);
     this.quotesClick = this.quotesClick.bind(this);
     this.emailSubmit = this.emailSubmit.bind(this);
+    this.quoteEmailClicked = this.quoteEmailClicked.bind(this);
     this.headerchange = false;
     this.state = {
       dataList: [],
@@ -66,8 +67,8 @@ export default class LeadList extends React.PureComponent {
         'Product',
         'Company',
         'Status',
-        'Email Quote',
-        'Cif',
+        //'Email Quote',
+        'CIF',
         //'Policy',
         'Remark',
         'Backend Remark',
@@ -85,7 +86,7 @@ export default class LeadList extends React.PureComponent {
         140,
         100,
         140,
-        80,
+        //80,
         100,
         //100,
         140,
@@ -114,6 +115,7 @@ export default class LeadList extends React.PureComponent {
       flag: 2,
       backScreen: null,
       editSecond:null,
+      activeRowData:null
     };
   }
 
@@ -318,7 +320,8 @@ export default class LeadList extends React.PureComponent {
       editThird: getAll.third,
       editSecond:getAll.second,
       quotes:quotes,
-      policy:policy
+      policy:policy,
+      activeRowData:item
     });
   };
 
@@ -336,7 +339,7 @@ export default class LeadList extends React.PureComponent {
             const {quotes, mail, sharewhatsapp, sharemail, policy,modified_date} = item;
             const {alldata}  = item;
             const {event_descrip} = alldata;
-            const parsedate = moment(modified_date).format('DD-MM-YYYY hh:mm a');
+            const parsedate = moment(modified_date).format('DD-MM-YYYY');
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
             rowData.push(item.date);
@@ -350,43 +353,43 @@ export default class LeadList extends React.PureComponent {
               item.bank === 'null' || item.bank === '' ? '' : item.bank,
             );
             rowData.push(item.status);
-            const quotesView = (value, mail) => (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                {/* {value !== '' ? (
-                  <TouchableWithoutFeedback
-                    onPress={() => this.quotesClick(value, 'Quote')}>
-                    <View>
-                      <IconChooser
-                        name={value.includes('png') ? `download` : `file-pdf`}
-                        size={20}
-                        iconType={value.includes('png') ? 0 : 5}
-                        color={`#9f9880`}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                ) : null} */}
-                {mail !== '' ? (
-                  <TouchableWithoutFeedback
-                    onPress={() => this.quotesClick(mail, 'Mail')}>
-                    <View style={{marginStart: 8}}>
-                      <IconChooser
-                        name={'mail'}
-                        size={20}
-                        iconType={0}
-                        color={`#9f9880`}
-                      />
-                    </View>
-                  </TouchableWithoutFeedback>
-                ) : null}
-              </View>
-            );
-            rowData.push(quotesView(quotes, mail));
+            // const quotesView = (value, mail) => (
+            //   <View
+            //     style={{
+            //       flexDirection: 'row',
+            //       alignSelf: 'center',
+            //       alignItems: 'center',
+            //       justifyContent: 'center',
+            //     }}>
+            //     {value !== '' ? (
+            //       <TouchableWithoutFeedback
+            //         onPress={() => this.quotesClick(value, 'Quote')}>
+            //         <View>
+            //           <IconChooser
+            //             name={value.includes('png') ? `download` : `file-pdf`}
+            //             size={20}
+            //             iconType={value.includes('png') ? 0 : 5}
+            //             color={`#9f9880`}
+            //           />
+            //         </View>
+            //       </TouchableWithoutFeedback>
+            //     ) : null}
+            //     {mail !== '' ? (
+            //       <TouchableWithoutFeedback
+            //         onPress={() => this.quotesClick(mail, 'Mail')}>
+            //         <View style={{marginStart: 8}}>
+            //           <IconChooser
+            //             name={'mail'}
+            //             size={20}
+            //             iconType={0}
+            //             color={`#9f9880`}
+            //           />
+            //         </View>
+            //       </TouchableWithoutFeedback>
+            //     ) : null}
+            //   </View>
+            // );
+            // rowData.push(quotesView(quotes, mail));
 
             const shareView = (value, mail) => (
               <View
@@ -396,7 +399,7 @@ export default class LeadList extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                {value !== '' ? (
+                {/* {value !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.cifClick(value, false)}>
                     <View>
@@ -408,7 +411,7 @@ export default class LeadList extends React.PureComponent {
                       />
                     </View>
                   </TouchableWithoutFeedback>
-                ) : null}
+                ) : null} */}
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.cifClick(value, true)}>
@@ -638,6 +641,19 @@ export default class LeadList extends React.PureComponent {
       Share.open(options);
     }
   };
+
+  quoteEmailClicked = () =>{
+    const {activeRowData} = this.state;
+    const {mail} = activeRowData;
+    console.log('mail', mail);
+    const sp = mail.split('@');
+    this.setState({
+      downloadModal:false,
+      quotemodalVis: true,
+      quotemailData: mail,
+      quotemail: sp[0].includes('@') ? sp[0] : '',
+    });
+  }
 
   quotesClick = (value, title) => {
     if (title === `Mail`) {
@@ -921,6 +937,7 @@ export default class LeadList extends React.PureComponent {
                         quotes={this.state.quotes}
                         policy={this.state.policy}
                         popitemList={editThird && editThird.popitemList}
+                        quoteEmailClicked={() => this.quoteEmailClicked()}
                       />
                     </View>
                   }

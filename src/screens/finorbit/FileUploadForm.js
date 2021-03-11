@@ -1829,6 +1829,7 @@ export default class FileUploadForm extends React.PureComponent {
       card_statement = null,
       quotes = null,
       policy = null,
+      quoteEmailClicked = () =>{}
     } = this.props;
 
     const {
@@ -1860,6 +1861,8 @@ export default class FileUploadForm extends React.PureComponent {
             type={2}
             enableDownloads={this.checkurl(0, quotes)}
             downloadUrl={this.checkurl(1, quotes)}
+            email
+            emailClicked={quoteEmailClicked}
           />
         ) : null}
         {truDownloadEnable !== -1 && policy !== null ? (

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   StyleSheet,
@@ -34,26 +33,7 @@ export default class PopularPlan extends React.PureComponent {
       utype: '',
       showFilter: false,
       height: 0,
-      productList: [
-        {value: 'Auto Loan', url: `${Pref.FinURL}alform.php`},
-        {value: 'Business Loan', url: `${Pref.FinURL}blform.php`},
-        {value: 'Credit Card', url: `${Pref.FinURL}ccf.php`},
-        {value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php`},
-        {value: 'Home Loan', url: `${Pref.FinURL}hlform.php`},
-        {value: 'Health Insurance', url: `${Pref.FinURL}hiform.php`},
-        {value: 'Insurance Samadhan', url: `${Pref.FinURL}isform.php`},
-        {value: 'Insure Check', url: `${Pref.FinURL}ic.php`},
-        {value: 'Loan Against Property', url: `${Pref.FinURL}lapform.php`},
-        {value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php`},
-        {value: 'Motor Insurance', url: `${Pref.FinURL}mi.php`},
-        {value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php`},
-        {value: 'Personal Loan', url: `${Pref.FinURL}plform.php`},
-        {value: 'Term Insurance', url: `${Pref.FinURL}tiform.php`},
-        // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
-        // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
-        // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
-        // { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
-      ],
+      productList: Helper.productShareList(),
     };
   }
 
@@ -143,28 +123,30 @@ export default class PopularPlan extends React.PureComponent {
       io =>
         String(io.value).toLowerCase() === String(item.header).toLowerCase(),
     );
-    const {refercode} = userData;
-    const finalUrl = `${find.url}?ref=${refercode}`;
-    const username =
-      Helper.nullCheck(userData.rname) === false
-        ? userData.rname
-        : userData.username;
-    const mobile =
-      Helper.nullCheck(userData.rcontact) === false
-        ? userData.rcontact
-        : userData.mobile;
-    const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-    Helper.networkHelperGet(
-      `${Pref.BASEImageUrl}?url=${image}`,
-      result => {
-        this.setState({fullLoader: false});
-        this.shareofers(id, result, '', msg);
-      },
-      () => {
-        this.setState({fullLoader: false});
-        this.shareofers(id, '', msg);
-      },
-    );
+    if (find) {
+      const {refercode} = userData;
+      const finalUrl = `${find.url}?ref=${refercode}`;
+      const username =
+        Helper.nullCheck(userData.rname) === false
+          ? userData.rname
+          : userData.username;
+      const mobile =
+        Helper.nullCheck(userData.rcontact) === false
+          ? userData.rcontact
+          : userData.mobile;
+      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+      Helper.networkHelperGet(
+        `${Pref.BASEImageUrl}?url=${image}`,
+        result => {
+          this.setState({fullLoader: false});
+          this.shareofers(id, result, msg);
+        },
+        () => {
+          this.setState({fullLoader: false});
+          this.shareofers(id, '', msg);
+        },
+      );
+    }
   };
 
   mailShareOffer = (id, image, index, item) => {
@@ -174,18 +156,20 @@ export default class PopularPlan extends React.PureComponent {
       io =>
         String(io.value).toLowerCase() === String(item.header).toLowerCase(),
     );
-    const {refercode} = userData;
-    const finalUrl = `${find.url}?ref=${refercode}`;
-    const username =
-      Helper.nullCheck(userData.rname) === false
-        ? userData.rname
-        : userData.username;
-    const mobile =
-      Helper.nullCheck(userData.rcontact) === false
-        ? userData.rcontact
-        : userData.mobile;
-    const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-    this.shareofers(id, '', msg);
+    if (find) {
+      const {refercode} = userData;
+      const finalUrl = `${find.url}?ref=${refercode}`;
+      const username =
+        Helper.nullCheck(userData.rname) === false
+          ? userData.rname
+          : userData.username;
+      const mobile =
+        Helper.nullCheck(userData.rcontact) === false
+          ? userData.rcontact
+          : userData.mobile;
+      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+      this.shareofers(id, '', msg);
+    }
   };
 
   shareofers = (id, result, message = '') => {

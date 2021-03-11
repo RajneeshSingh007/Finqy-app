@@ -62,15 +62,12 @@ export default class PayinProducts extends React.PureComponent {
             screenName: screenName,
             showUpdateButton: showUpdateButton,
             refercode: refercode,
-            loading: this.state.dataList.length > 0 ? false : true
           },
           () => {
-            if(this.state.dataList.length === 0){
-              Pref.getVal(Pref.userData, udata => {
-                this.setState({userData: udata});
-                this.fetchData(udata, this.state.token);
-              });  
-            }
+            Pref.getVal(Pref.userData, udata => {
+              this.setState({userData: udata});
+              this.fetchData(udata, this.state.token);
+            });
           },
         ),
       );
@@ -78,11 +75,10 @@ export default class PayinProducts extends React.PureComponent {
   }
 
   fetchData = udata => {
-    const {showUpdateButton} = this.state;
-    const {leader} = udata;
-    const {id} = leader[0];
-    const body = JSON.stringify({userid: id});
-    //console.log('body',body,showUpdateButton)
+    const {showUpdateButton, refercode} = this.state;
+    // const {leader} = udata;
+    // const {id} = leader[0];
+    const body = JSON.stringify({userid: refercode});
     Helper.networkHelperTokenPost(
       showUpdateButton ? Pref.PARTNER_PAYOUT_URL : Pref.PAYIN_URL,
       body,
@@ -233,7 +229,7 @@ export default class PayinProducts extends React.PureComponent {
   };
 
   updatepayout = () => {
-    this.setState({progressLoader: true,showModal:false});
+    this.setState({progressLoader: true, showModal: false});
     const {userData, remark} = this.state;
     const {id} = userData;
     Pref.getVal(Pref.salespayoutUpdate, payout => {
@@ -265,21 +261,21 @@ export default class PayinProducts extends React.PureComponent {
             this.setState({progressLoader: false});
           },
         );
-      }else{
+      } else {
         this.setState({progressLoader: false});
       }
     });
   };
 
-  fabClick = () =>{
+  fabClick = () => {
     Pref.getVal(Pref.salespayoutUpdate, payout => {
       if (Helper.nullCheck(payout) === false) {
-        this.setState({showModal: true})
-      }else{
+        this.setState({showModal: true});
+      } else {
         Helper.showToastMessage('No data found...', 0);
       }
     });
-  }
+  };
 
   render() {
     const {
@@ -312,11 +308,7 @@ export default class PayinProducts extends React.PureComponent {
             ) : null}
 
             {showUpdateButton && selectedText === '' ? (
-              <FAB
-                style={styles.fab}
-                icon="check"
-                onPress={this.fabClick}
-              />
+              <FAB style={styles.fab} icon="check" onPress={this.fabClick} />
             ) : null}
 
             <Modal

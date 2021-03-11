@@ -187,7 +187,9 @@ class CommonFileUpload extends React.PureComponent {
       downloadTitles = '',
       downloadUrl = '',
       truDownloadEnable = -1,
-      editMode = false
+      editMode = false,
+      email = false,
+      emailClicked = () =>{}
     } = this.props;
     return truDownloadEnable === 1 &&
       Helper.nullStringCheck(downloadUrl) === false ? (
@@ -215,8 +217,9 @@ class CommonFileUpload extends React.PureComponent {
           </View>
         </View>
         {enableDownloads === true ? (
+          <>
           <TouchableWithoutFeedback onPress={this.download}>
-            <View style={{flex: 0.1}}>
+            <View style={{flex: 0.1,marginEnd: email ? 8 : 0}}>
               <View style={styles.circle}>
                 <IconChooser
                   name={'download'}
@@ -229,6 +232,21 @@ class CommonFileUpload extends React.PureComponent {
               </View>
             </View>
           </TouchableWithoutFeedback>
+          {email ? <TouchableWithoutFeedback onPress={emailClicked}>
+            <View style={{flex: 0.1, marginEnd:8}}>
+              <View style={styles.circle}>
+                <IconChooser
+                  name={'mail'}
+                  size={20}
+                  color={'white'}
+                  style={{
+                    alignSelf: 'center',
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback> : null}
+          </>
         ) : null}
       </View>
     ) : null;
