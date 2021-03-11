@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Image, Subtitle, View} from '@shoutem/ui';
+import {View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
-import {Avatar} from 'react-native-paper';
 import * as Pref from '../../util/Pref';
 import * as Helper from '../../util/Helper';
 
@@ -16,7 +15,7 @@ const Download = (prop) => {
 
   const rightClicked = () =>{
     try {
-      Helper.requestPermissions().then(op =>{
+      Helper.requestPermissions().then(() =>{
         rightIconClick();
       });
     } catch (error) {

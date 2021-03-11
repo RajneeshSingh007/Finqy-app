@@ -1,7 +1,7 @@
 /** @format */
 
 import React, {Component} from 'react';
-import {AppRegistry, YellowBox} from 'react-native';
+import {AppRegistry, YellowBox, LogBox} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {
@@ -27,10 +27,7 @@ const theme = {
   },
 };
 
-console.disableYellowBox = true;
-YellowBox.ignoreWarnings(['Animated: `useNativeDriver`']);
-YellowBox.ignoreWarnings(['VirtualizedList:']);
-YellowBox.ignoreWarnings(['Require cycle:']);
+LogBox.ignoreAllLogs(true)
 
 StatusBar.setBackgroundColor('white', false);
 StatusBar.setBarStyle('dark-content');
@@ -66,10 +63,9 @@ const options = {
 };
 
 const serviceHandler = async( data) =>{
-  //console.log(data);
   const {outside} = data;
   if(outside){
-    NavigationActions.navigate('DialerCalling', {editEnabled:true,isFollowup:-1,data:{
+    NavigationActions.navigate('DialerCalling', {outside:true,editEnabled:true,isFollowup:-1,data:{
       name: '',
       mobile: '',
       editable: true,
@@ -77,7 +73,7 @@ const serviceHandler = async( data) =>{
   }
 }
 
-//AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
+AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 

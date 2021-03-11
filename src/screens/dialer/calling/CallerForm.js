@@ -123,7 +123,7 @@ export default class CallerForm extends React.PureComponent {
       this.restoreData(editItemRestore);
     }
 
-    console.log('customerItem',customerItem)
+    //console.log('customerItem',customerItem)
 
     const {mobile = '', name = '', editable = false} = customerItem;
 
@@ -446,7 +446,7 @@ export default class CallerForm extends React.PureComponent {
   productSelection = (value) =>{
     const {trackingDetail} = this.state;
     if(trackingDetail === 'Interested'){
-      Alert.alert('Confirm', '', [{
+      Alert.alert('Confirm', 'Please, Confirm before proceeding', [{
         text:'Yes',
         onPress:() => {
           this.setState({product: value}, () =>{

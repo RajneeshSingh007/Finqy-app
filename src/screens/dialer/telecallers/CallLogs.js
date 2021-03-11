@@ -44,11 +44,11 @@ export default class CallLogs extends React.PureComponent {
       detailShow: false,
       threadList: [],
       threadLoader: true,
-      filterMode: 'Today',
+      filterMode: 'All',
       callLogData: [],
       userref: '',
       findUsername: null,
-      exportEnabled: false,
+      exportEnabled: true,
     };
   }
 
@@ -57,22 +57,22 @@ export default class CallLogs extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
-        this.setState({
-          userData: userData,
-        });
-        Pref.getVal(Pref.USERTYPE, v => {
-          this.setState({type: v}, () => {
-            Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                this.fetchData();
-              });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, userData => {
+      this.setState({
+        userData: userData,
+      });
+      Pref.getVal(Pref.USERTYPE, v => {
+        this.setState({type: v}, () => {
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({token: value}, () => {
+              this.fetchData();
             });
           });
         });
       });
     });
+    //});
   }
 
   componentWillUnMount() {
@@ -97,67 +97,72 @@ export default class CallLogs extends React.PureComponent {
         this.state.token,
         result => {
           const {data, status} = result;
-          if (status) {
-            if (data.length > 0) {
-              this.setState({
-                cloneList: data,
+          if (status === true) {
+            const callLogData = Lodash.map(data, io => {
+              io.time = io.dateTime;
+              if (io.duration === 0) {
+                io.duration = '0';
+              } else {
+                const callDur = Number(io.duration / 60).toPrecision(3);
+                io.duration = `${callDur}`;
+              }
+              return io;
+            });
+            this.setState(
+              {
+                cloneList: callLogData,
                 threadList: data,
                 threadLoader: false,
-              }, () =>{
-                this.filterCallHistory('Today');
-              });
-            } else {
-              this.setState({
-                threadLoader: false,
-              });
-            }
+              },
+              () => {
+                this.filterCallHistory('All');
+              },
+            );
           } else {
             this.setState({threadLoader: false});
           }
         },
-        () => {
+        e => {
           this.setState({threadLoader: false});
         },
       );
     });
   };
 
-  filterCallHistory = (filterMode = 'Today') => {
-    const {threadList} = this.state;
-    const callLogData = threadList.map(io => {
-        io.time = io.dateTime;
-        if (io.duration === 0) {
-          io.duration = '0';
-        } else {
-          const callDur = Number(io.duration / 60).toPrecision(3);
-          io.duration = callDur;
-        }
-        return io;
-    });
-    const momnt = moment();
-    const today = momnt.format('DD-MM-YYYY');
-    const splits = today.split('-');
-    const filter = Lodash.filter(callLogData, io => {
-      const parse = moment(io.dateTime).format('DD-MM-YYYY');
-      const innersplits = parse.split('-');
+  filterCallHistory = (filterMode = 'All') => {
+    const dateFormator = 'DD-MM-YYYY';
+    const {cloneList} = this.state;
+    //today
+    const today = moment().format(dateFormator);
+    //yesterday
+    const yesterday = moment()
+      .subtract(1, 'days')
+      .format(dateFormator);
+    //this month
+    const startOfMonth = moment()
+      .startOf('month')
+      .format(dateFormator);
+
+    const splitStartOfMonth = startOfMonth.split('-');
+
+    const filter = Lodash.filter(cloneList, io => {
+      const parse = moment(io.dateTime).format(dateFormator);
+      const parseSplit = parse.split('-');
       if (filterMode === 'Today' && today === parse) {
         return io;
-      } else if (
-        filterMode === 'Yesterday' &&
-        Number(Number(splits[0]) - 1) === Number(Number(innersplits[0])) &&
-        Number(splits[2]) === Number(innersplits[2])
-      ) {
+      } else if (filterMode === 'Yesterday' && yesterday === parse) {
         return io;
       } else if (
         filterMode === 'This Month' &&
-        Number(splits[1]) === Number(innersplits[1]) &&
-        Number(splits[2]) === Number(innersplits[2])
+        Number(splitStartOfMonth[1]) === Number(parseSplit[1]) &&
+          Number(splitStartOfMonth[2]) === Number(parseSplit[2])
       ) {
         return io;
       } else if (filterMode === 'All') {
         return io;
       }
     });
+
     this.setState({
       threadList: filter,
       threadLoader: false,
@@ -171,7 +176,7 @@ export default class CallLogs extends React.PureComponent {
    * @param {*} sectionID
    * @param {*} rowID
    */
-  renderDetail = (rowData) => {
+  renderDetail = rowData => {
     return (
       <View styleName="horizontal v-center" style={styles.mainTcontainer}>
         <View style={styles.callcircle}>
@@ -247,7 +252,7 @@ export default class CallLogs extends React.PureComponent {
   exportCallLogs = () => {
     const {callLogData} = this.state;
     if (callLogData.length > 0) {
-      const parse = Lodash.map(callLogData, (io) => {
+      const parse = Lodash.map(callLogData, io => {
         if (io.duration === 0) {
           io.duration = '0';
         } else {
@@ -301,64 +306,46 @@ export default class CallLogs extends React.PureComponent {
               }
             />
 
-            <View style={{flex: 1, backgroundColor: 'white'}}>
-              <LeftHeaders
-                showBack
-                title={'Call History'}
-                backClicked={this.backClick}
-              />
+            <View style={{flex: 1}}>
+              <View
+                style={{
+                  marginTop: 8,
+                }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {this.renderFilterView('Today')}
+                  {this.renderFilterView('Yesterday')}
+                  {this.renderFilterView('This Month')}
+                  {this.renderFilterView('All')}
+                </ScrollView>
+              </View>
+
               {this.state.threadLoader ? (
                 <View style={styles.loader}>
                   <ActivityIndicator />
                 </View>
               ) : this.state.threadList.length > 0 ? (
-                <View style={{flex: 1}}>
-                  <View
-                    style={{
-                      marginTop: 8,
-                    }}>
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}>
-                      {this.renderFilterView('Today')}
-                      {this.renderFilterView('Yesterday')}
-                      {this.renderFilterView('This Month')}
-                      {this.renderFilterView('All')}
-                    </ScrollView>
-                  </View>
-                  <Timeline
-                    style={{
-                      flex: 1,
-                      marginHorizontal: 8,
-                      marginTop: 16,
-                    }}
-                    data={this.state.threadList}
-                    circleSize={16}
-                    circleColor="#555"
-                    lineColor="#ecebec"
-                    timeContainerStyle={{minWidth: 24}}
-                    timeStyle={{
-                      textAlign: 'center',
-                      backgroundColor: '#555',
-                      padding: 8,
-                      borderRadius: 16,
-                      overflow: 'hidden',
-                      color: 'white',
-                      fontSize: 13,
-                    }}
-                    showTime={false}
-                    renderDetail={this.renderDetail}
-                    separator={false}
-                  />
-                  {this.state.exportEnabled ? (
-                    <Download rightIconClick={this.exportCallLogs} />
-                  ) : null}
-                </View>
+                <Timeline
+                  style={{
+                    flex:1,
+                    marginHorizontal: 8,
+                    marginTop: 16,
+                  }}
+                  data={this.state.threadList}
+                  circleSize={16}
+                  circleColor="#555"
+                  lineColor="#ecebec"
+                  showTime={false}
+                  renderDetail={this.renderDetail}
+                  separator={false}
+                />
               ) : (
                 <View style={styles.emptycont}>
                   <ListError subtitle={'No call logs Found...'} />
                 </View>
               )}
+              {/* {this.state.exportEnabled ? (
+                <Download rightIconClick={this.exportCallLogs} />
+              ) : null} */}
             </View>
           </>
         }

@@ -11,7 +11,7 @@ import {
 import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {ActivityIndicator, Colors, Portal, Searchbar} from 'react-native-paper';
+import {ActivityIndicator, Colors, Portal, Searchbar, FAB} from 'react-native-paper';
 import {sizeHeight} from '../../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
@@ -39,7 +39,7 @@ export default class DialerCalling extends React.PureComponent {
   constructor(props) {
     super(props);
     this.renderData = this.renderData.bind(this);
-    //this._handleAppStateChange = this._handleAppStateChange.bind(this);
+    this._handleAppStateChange = this._handleAppStateChange.bind(this);
     this.backClick = this.backClick.bind(this);
     this.startCalling = this.startCalling.bind(this);
     this.state = {
@@ -70,6 +70,10 @@ export default class DialerCalling extends React.PureComponent {
   }
 
   componentDidMount() {
+    try {
+      Helper.requestPermissionsDialer();
+    } catch (error) {}
+
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     AppState.addEventListener('change', this._handleAppStateChange);
 
@@ -77,14 +81,7 @@ export default class DialerCalling extends React.PureComponent {
     const activeCallerItem = navigation.getParam('data', dummyJSON);
     const editEnabled = navigation.getParam('editEnabled', false);
     const isFollowup = navigation.getParam('isFollowup', -1);
-
-    //console.log(editEnabled)
-
-    if (editEnabled === false) {
-      try {
-        Helper.requestPermissionsDialer();
-      } catch (error) {}
-    }
+    const outside = navigation.getParam('outside', false);
 
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({
@@ -96,28 +93,29 @@ export default class DialerCalling extends React.PureComponent {
     });
 
     //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, userData => {
-      this.setState({
-        userData: userData,
-        editEnabled: editEnabled,
-        activeCallerItem: activeCallerItem,
-        progressLoader: false,
-        callTrack: editEnabled ? 1 : -1,
-        isFollowup: isFollowup,
-        whatsappMode: false,
-      });
-      Pref.getVal(Pref.USERTYPE, v => {
-        this.setState({type: v}, () => {
-          Pref.getVal(Pref.saveToken, value => {
-            this.setState({token: value}, () => {
-              if (editEnabled === false) {
-                this.fetchData();
-              }
+      Pref.getVal(Pref.userData, userData => {
+        this.setState({
+          outside: outside,
+          userData: userData,
+          editEnabled: editEnabled,
+          activeCallerItem: activeCallerItem,
+          progressLoader: false,
+          callTrack: editEnabled ? 1 : -1,
+          isFollowup: isFollowup,
+          whatsappMode: false,
+        });
+        Pref.getVal(Pref.USERTYPE, v => {
+          this.setState({type: v}, () => {
+            Pref.getVal(Pref.saveToken, value => {
+              this.setState({token: value}, () => {
+                if (editEnabled === false) {
+                  this.fetchData();
+                }
+              });
             });
           });
         });
       });
-    });
     //});
 
     this.firebaseListerner = firebase
@@ -132,16 +130,12 @@ export default class DialerCalling extends React.PureComponent {
             productList.push(documentSnapshot.data());
           }
         });
-        //console.log('productList', productList);
         if (productList.length > 0) {
           const sorting = productList.sort((a, b) => {
             return String(a.value).localeCompare(b.value);
           });
           this.setState({productList: sorting});
         }
-        // if (documentSnapshot.exists) {
-        //   this.getProducts();
-        // }
       });
 
     this.callDetection = new CallDetectorManager(
@@ -174,7 +168,7 @@ export default class DialerCalling extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
     if (this.firebaseListerner !== undefined) this.firebaseListerner.remove();
-    if(this.callDetection !== undefined) this.callDetection.remove();
+    if (this.callDetection !== undefined) this.callDetection.dispose();
   }
 
   _handleAppStateChange = nextAppState => {
@@ -204,7 +198,7 @@ export default class DialerCalling extends React.PureComponent {
         tname: pname,
         follow: isFollowup,
       });
-      console.log('body', body)
+      console.log('body', body);
       Helper.networkHelperTokenPost(
         Pref.DIALER_LEAD_RECORD,
         body,
@@ -606,6 +600,10 @@ export default class DialerCalling extends React.PureComponent {
     );
   };
 
+  fabClick = () =>{
+
+  }
+
   render() {
     const {
       searchQuery,
@@ -615,6 +613,7 @@ export default class DialerCalling extends React.PureComponent {
       token,
       editEnabled,
       isFollowup,
+      outside,
     } = this.state;
     return (
       <CScreen
@@ -633,7 +632,9 @@ export default class DialerCalling extends React.PureComponent {
                       <LeftHeaders
                         showBack
                         title={
-                          editEnabled === true
+                          outside
+                            ? 'Add Customer Details'
+                            : editEnabled === true
                             ? 'Edit Details'
                             : 'Customer Details'
                         }
@@ -680,6 +681,9 @@ export default class DialerCalling extends React.PureComponent {
               isShow={this.state.progressLoader}
               bottomText={'Please do not press back button'}
             />
+
+            {/* <FAB style={styles.fab} icon="check" onPress={this.fabClick} /> */}
+
           </>
         }
         body={
@@ -692,7 +696,7 @@ export default class DialerCalling extends React.PureComponent {
                   : isFollowup === 1
                   ? 'Follow-up'
                   : isFollowup === 2
-                  ? 'Extras'
+                  ? 'Need Name'
                   : editEnabled === true
                   ? ''
                   : 'Start Calling'
@@ -786,6 +790,13 @@ export default class DialerCalling extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: Pref.RED,
+  },
   spacer: {marginHorizontal: 14},
   firstWord: {
     alignSelf: 'center',

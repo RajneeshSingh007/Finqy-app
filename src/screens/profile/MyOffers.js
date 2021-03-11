@@ -40,20 +40,20 @@ export default class MyOffers extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, parseda => {
-        Pref.getVal(Pref.saveToken, value => {
-          this.setState({
-            token: value,
-            userdata: parseda,
-            type: 2,
-          });
-          if (this.state.bannerList.length === 0) {
-            this.fetchData(2, parseda);
-          }
-        });
-      });
       Pref.getVal(Pref.USERTYPE, v => {
         this.setState({utype: v});
+        Pref.getVal(Pref.userData, parseda => {
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({
+              token: value,
+              userdata: parseda,
+              type: 2,
+            });
+            if (this.state.bannerList.length === 0) {
+              this.fetchData(2, parseda);
+            }
+          });
+        });  
       });
     });
   }
@@ -88,7 +88,7 @@ export default class MyOffers extends React.PureComponent {
           const productFilter = [];
           productFilter.push('All');
           Lodash.map(data, io => {
-            const trimlowercase = String(io.header)
+            const trimlowercase = String(io.product)
               .trim()
               .toLowerCase();
             if (Lodash.filter(productFilter, trimlowercase).length === 0) {
@@ -219,7 +219,7 @@ export default class MyOffers extends React.PureComponent {
     } else {
       const filter = Lodash.filter(
         cloneList,
-        io => String(io.header).toLowerCase() === title,
+        io => String(io.product).toLowerCase() === title,
       );
       this.setState({bannerList: filter, showFilter: false});
     }
@@ -241,7 +241,7 @@ export default class MyOffers extends React.PureComponent {
                 lineHeight: 20,
               },
             ])}>
-            {Lodash.capitalize(title)}
+            {Helper.replacetext(title)}
           </Title>
         </TouchableWithoutFeedback>
       </View>

@@ -233,31 +233,40 @@ export default class DialerRecords extends React.PureComponent {
   };
 
   filterCallHistory = (filterMode = 'Today') => {
+    const dateFormator = 'DD-MM-YYYY';
     const {callLogData} = this.state;
-    const momnt = moment();
-    const today = momnt.format('DD-MM-YYYY');
-    const splits = today.split('-');
+
+    //today
+    const today = moment().format(dateFormator);
+    //yesterday
+    const yesterday = moment()
+      .subtract(1, 'days')
+      .format(dateFormator);
+    //this month
+    const startOfMonth = moment()
+      .startOf('month')
+      .format(dateFormator);
+
+    const splitStartOfMonth = startOfMonth.split('-');
+
     const filter = Lodash.filter(callLogData, io => {
-      const parse = moment(io.dateTime).format('DD-MM-YYYY');
-      const innersplits = parse.split('-');
+      const parse = moment(io.dateTime).format(dateFormator);
+      const parseSplit = parse.split('-');
       if (filterMode === 'Today' && today === parse) {
         return io;
-      } else if (
-        filterMode === 'Yesterday' &&
-        Number(Number(splits[0]) - 1) === Number(Number(innersplits[0])) &&
-        Number(splits[2]) === Number(innersplits[2])
-      ) {
+      } else if (filterMode === 'Yesterday' && yesterday === parse) {
         return io;
       } else if (
         filterMode === 'This Month' &&
-        Number(splits[1]) === Number(innersplits[1]) &&
-        Number(splits[2]) === Number(innersplits[2])
+        Number(splitStartOfMonth[1]) === Number(parseSplit[1]) &&
+        Number(splitStartOfMonth[2]) === Number(parseSplit[2])
       ) {
         return io;
       } else if (filterMode === 'All') {
         return io;
       }
     });
+
     this.setState({
       threadList: filter,
       threadLoader: false,
@@ -616,25 +625,26 @@ export default class DialerRecords extends React.PureComponent {
                     title={'Call History'}
                     backClicked={this.backClick}
                   />
-                  {this.state.threadLoader ? (
-                    <View style={styles.loader}>
-                      <ActivityIndicator />
+                  <View style={{flex: 1}}>
+                    <View
+                      style={{
+                        marginTop: 8,
+                      }}>
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}>
+                        {this.renderFilterView('Today')}
+                        {this.renderFilterView('Yesterday')}
+                        {this.renderFilterView('This Month')}
+                        {this.renderFilterView('All')}
+                      </ScrollView>
                     </View>
-                  ) : this.state.threadList.length > 0 ? (
-                    <View style={{flex: 1}}>
-                      <View
-                        style={{
-                          marginTop: 8,
-                        }}>
-                        <ScrollView
-                          horizontal
-                          showsHorizontalScrollIndicator={false}>
-                          {this.renderFilterView('Today')}
-                          {this.renderFilterView('Yesterday')}
-                          {this.renderFilterView('This Month')}
-                          {this.renderFilterView('All')}
-                        </ScrollView>
+
+                    {this.state.threadLoader ? (
+                      <View style={styles.loader}>
+                        <ActivityIndicator />
                       </View>
+                    ) : this.state.threadList.length > 0 ? (
                       <Timeline
                         style={{
                           flex: 1,
@@ -659,15 +669,15 @@ export default class DialerRecords extends React.PureComponent {
                         renderDetail={this.renderDetail}
                         separator={false}
                       />
-                      {this.state.exportEnabled ? (
-                        <Download rightIconClick={this.exportCallLogs} />
-                      ) : null}
-                    </View>
-                  ) : (
-                    <View style={styles.emptycont}>
-                      <ListError subtitle={'No call logs Found...'} />
-                    </View>
-                  )}
+                    ) : (
+                      <View style={styles.emptycont}>
+                        <ListError subtitle={'No call history Found...'} />
+                      </View>
+                    )}
+                    {this.state.exportEnabled ? (
+                      <Download rightIconClick={this.exportCallLogs} />
+                    ) : null}
+                  </View>
                 </View>
               </Portal>
             ) : null}

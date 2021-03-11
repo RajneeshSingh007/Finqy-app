@@ -74,7 +74,7 @@ export default class ApptForm extends React.PureComponent {
       if (this.state.mode == 'date') {
         const current = moment(selectedDate).format('DD-MM-YYYY');
         this.setState({
-          currentDate: selectedDate,
+          //currentDate: selectedDate,
           showdatesx: selectedDate,
           mode: 'date',
           intervaltime: 30,

@@ -74,7 +74,7 @@ export default class Training extends React.PureComponent {
         //console.log('resultx', result);
         const {res_type} = response_header;
         if (res_type === `success`) {
-          const {categoryList} = this.state;
+          const categoryList = [];
           categoryList.push({name: `All`, selected: true});
           categoryList.push({name: `PDF`, selected: false});
           categoryList.push({name: `Videos`, selected: false});
@@ -317,10 +317,6 @@ export default class Training extends React.PureComponent {
     this.setState({height: height});
   };
 
-  replacetext = title => {
-    return Lodash.upperFirst(title.replace(/_/g, ' '));
-  };
-
   renderFilterItem = item => {
     return (
       <View style={{justifyContent: 'center'}}>
@@ -343,7 +339,7 @@ export default class Training extends React.PureComponent {
                 lineHeight: 20,
               },
             ])}>
-            {this.replacetext(item.name)}
+            {Helper.replacetext(title)}
           </Title>
         </TouchableWithoutFeedback>
       </View>

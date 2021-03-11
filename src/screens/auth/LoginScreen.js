@@ -49,6 +49,10 @@ export default class LoginScreen extends React.PureComponent {
       token: '',
       loginType:''
     };
+    Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
+    Pref.setVal(Pref.DIALER_DATA, null);
+    Pref.setVal(Pref.DIALER_SERVICE_ENABLED, null);
+    Pref.setVal(Pref.salespayoutUpdate, null);
     Pref.setVal(Pref.userData, null);
     Pref.setVal(Pref.userID, null);
     Pref.setVal(Pref.USERTYPE, '');

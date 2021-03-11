@@ -62,7 +62,8 @@ export default class TrackQuery extends React.PureComponent {
         'Sr. No.',
         'Date',
         'Ticket Number',
-        'Ticket Issue',
+        'Ticket Type',
+        'Product',
         'Priority',
         'Status',
         'Remark',
@@ -70,7 +71,7 @@ export default class TrackQuery extends React.PureComponent {
         'Edit',
         'Reopen'
       ],
-      widthArr: [60, 100, 120, 120, 70, 70, 200, 60,60,60],
+      widthArr: [60, 100, 120, 120,120, 70, 70, 200, 60,60,60],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -251,6 +252,7 @@ export default class TrackQuery extends React.PureComponent {
             rowData.push(format);
             rowData.push(item.ticket_id);
             rowData.push(Lodash.capitalize(item.TCode));
+            rowData.push(Lodash.capitalize(item.product));
             const statusText = (value, color) => (
               <View
                 style={{

@@ -88,6 +88,9 @@ import TcDashboard from '../screens/dialer/telecallers/TcDashboard';
 import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
 import TcPerformance from '../screens/dialer/telecallers/TcPerformance';
 import CallLogs from '../screens/dialer/telecallers/CallLogs';
+import TcTemplates from '../screens/dialer/telecallers/TcTemplates';
+import TlTeam from '../screens/dialer/teleleaders/TlTeam';
+import TlMemberList from '../screens/dialer/teleleaders/TlMemberList';
 
 //Payin Payout
 import PayinProducts from '../screens/sales/PayinProducts';
@@ -277,7 +280,10 @@ const DialerNav = createStackNavigator({
   Followup:{screen:Followup},
   AllMembers:{screen:AllMembers},
   MemberReport:{screen:MemberReport},
-  CallLogs:{screen:CallLogs}
+  CallLogs:{screen:CallLogs},
+  TcTemplates:{screen:TcTemplates},
+  TlTeam:{screen:TlTeam},
+  TlMemberList:{screen:TlMemberList}
 },
 {
   headerMode: 'none',

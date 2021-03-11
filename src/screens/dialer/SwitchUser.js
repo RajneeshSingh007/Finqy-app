@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {View, FlatList, Alert,ActivityIndicator, StyleSheet} from 'react-native';
+import {
+  View,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import * as Pref from '../../util/Pref';
 import * as Helper from '../../util/Helper';
 import CScreen from './../component/CScreen';
@@ -23,9 +29,9 @@ const TLDashboard = [
     option: {},
   },
   {
-    name: 'My Team Members',
-    image: require('../../res/images/dialer/dashboard.png'),
-    click: 'AllMembers',
+    name: 'My Team',
+    image: require('../../res/images/dialer/team.png'),
+    click: 'TlTeam',
     option: {},
   },
 ];
@@ -47,15 +53,15 @@ const TCDashboard = [
     name: 'Follow-up',
     image: require('../../res/images/dialer/phonecall.png'),
     //click: 'Followup',
-    click:'DialerCalling',
-    option: {editEnabled:false,isFollowup:1},
+    click: 'DialerCalling',
+    option: {editEnabled: false, isFollowup: 1},
   },
   {
-    name: 'Extras',
+    name: 'Need Name',
     image: require('../../res/images/dialer/emergency_call.png'),
     //click: 'Followup',
-    click:'DialerCalling',
-    option: {editEnabled:false,isFollowup:2},
+    click: 'DialerCalling',
+    option: {editEnabled: false, isFollowup: 2},
   },
   {
     name: 'Call Records',
@@ -75,6 +81,12 @@ const TCDashboard = [
     click: 'TcPerformance',
     option: {},
   },
+  {
+    name: 'Call Logs',
+    image: require('../../res/images/dialer/report.png'),
+    click: 'CallLogs',
+    option: {},
+  },
 ];
 
 /**
@@ -88,8 +100,8 @@ export default class SwitchUser extends React.PureComponent {
       userData: null,
       dialerData: null,
       dataList: [],
-      loading:true,
-      appoint:false
+      loading: true,
+      appoint: false,
     };
   }
 
@@ -99,56 +111,46 @@ export default class SwitchUser extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.USERTYPE, type => {
-        Pref.getVal(Pref.userData, data => {
-          if (type === 'team') {
-            Pref.getVal(Pref.DIALER_DATA, value => {
-              let result = [];
+    Pref.getVal(Pref.USERTYPE, type => {
+      Pref.getVal(Pref.userData, data => {
+        if (type === 'team') {
+          Pref.getVal(Pref.DIALER_DATA, value => {
+            //console.log('value', value);
+            let result = [];
+            if (value.length > 0 && Helper.nullCheck(value[0].tc) === false) {
+              result = TCDashboard;
               const {id, tlid, pname} = value[0].tc;
-                            
-              if (value.length > 0 && Helper.nullCheck(value[0].tc) === false) {
-                result = TCDashboard;
-              } else if (
-                value.length > 0 &&
-                Helper.nullCheck(value[0].tl) === false
-              ) {
-                result = TLDashboard;
-              }
+              this.setState(
+                {
+                  userData: data,
+                  dialerData: value,
+                  dataList: result,
+                  loading: false,
+                },
+                () => {
+                  this.followupAvailableCheck(tlid, id, pname);
+                },
+              );
+            } else if (
+              value.length > 0 &&
+              Helper.nullCheck(value[0].tl) === false
+            ) {
+              result = TLDashboard;
               this.setState({
                 userData: data,
                 dialerData: value,
                 dataList: result,
-                loading:false
-              }, () =>{
-                this.followupAvailableCheck(tlid, id, pname);
+                loading: false,
               });
-
-              // Alert.alert('Check-In', '', [
-              //   {
-              //     text: 'Ok',
-              //     onPress: () => {
-              //       this.setState({
-              //         userData: data,
-              //         dialerData: value,
-              //         dataList: result,
-              //       });
-              //     },
-              //   },
-              //   {
-              //     text: 'Cancel',
-              //     onPress: () => {
-              //       NavigationActions.goBack();
-              //     },
-              //   },
-              // ]);
-            });
-          }
-        });
+            }
+          });
+        }
       });
+    });
     //});
   }
 
-  followupAvailableCheck = (tlid,id, tname) => {
+  followupAvailableCheck = (tlid, id, tname) => {
     Pref.getVal(Pref.saveToken, value => {
       const body = JSON.stringify({
         teamid: tlid,
@@ -157,19 +159,18 @@ export default class SwitchUser extends React.PureComponent {
       });
       //console.log(body);
       Helper.networkHelperTokenPost(
-      Pref.DIALER_TC_Follow,
-      body,
-      Pref.methodPost,
-      value,
-      result => {
-        const {appoint} = result;
-        //console.log('appoint', appoint);
-        this.setState({appoint:appoint})
-        //console.log(result);
-      },
-      (e) => {
-
-      });
+        Pref.DIALER_TC_Follow,
+        body,
+        Pref.methodPost,
+        value,
+        result => {
+          const {appoint} = result;
+          //console.log('appoint', appoint);
+          this.setState({appoint: appoint});
+          //console.log(result);
+        },
+        e => {},
+      );
     });
   };
 
@@ -178,7 +179,7 @@ export default class SwitchUser extends React.PureComponent {
   };
 
   render() {
-    const {dataList,appoint} = this.state;
+    const {dataList, appoint} = this.state;
     return (
       <CScreen
         showScrollToTop={false}
@@ -212,7 +213,7 @@ export default class SwitchUser extends React.PureComponent {
                 extraData={this.state}
                 numColumns={2}
               />
-            ): (
+            ) : (
               <View style={styles.emptycont}>
                 <ListError subtitle={'No data found...'} />
               </View>

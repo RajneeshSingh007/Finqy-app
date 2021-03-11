@@ -40,20 +40,20 @@ export default class MarketingTool extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, parseda => {
-        Pref.getVal(Pref.saveToken, value => {
-          this.setState({
-            token: value,
-            userdata: parseda,
-            type: 1,
-          });
-          if (this.state.bannerList.length === 0) {
-            this.fetchData(1, parseda);
-          }
-        });
-      });
       Pref.getVal(Pref.USERTYPE, v => {
         this.setState({utype: v});
+        Pref.getVal(Pref.userData, parseda => {
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({
+              token: value,
+              userdata: parseda,
+              type: 1,
+            });
+            if (this.state.bannerList.length === 0) {
+              this.fetchData(1, parseda);
+            }
+          });
+        });  
       });
     });
   }
@@ -75,7 +75,7 @@ export default class MarketingTool extends React.PureComponent {
       type: utype,
     });
 
-    //console.log('body', Pref.OffersUrl, body, this.state.token);
+    console.log('body', Pref.OffersUrl, body, this.state.token);
     Helper.networkHelperTokenPost(
       Pref.OffersUrl,
       body,
@@ -88,7 +88,7 @@ export default class MarketingTool extends React.PureComponent {
           const productFilter = [];
           productFilter.push('All');
           Lodash.map(data, io => {
-            const trimlowercase = String(io.header)
+            const trimlowercase = String(io.product)
               .trim()
               .toLowerCase();
             const find = Lodash.find(productFilter, trimlowercase);
@@ -220,11 +220,12 @@ export default class MarketingTool extends React.PureComponent {
     } else {
       const filter = Lodash.filter(
         cloneList,
-        io => String(io.header).toLowerCase() === title,
+        io => String(io.product).toLowerCase() === title,
       );
       this.setState({bannerList: filter, showFilter: false});
     }
   };
+
 
   renderFilterItem = title => {
     return (
@@ -242,7 +243,7 @@ export default class MarketingTool extends React.PureComponent {
                 lineHeight: 20,
               },
             ])}>
-            {Lodash.capitalize(title)}
+            {Helper.replacetext(title)}
           </Title>
         </TouchableWithoutFeedback>
       </View>

@@ -2849,8 +2849,7 @@ export default class FileUploadForm extends React.PureComponent {
                   : this.mandatoryName(`Other`, title)
               }
               type={2}
-              fileType={-1}
-              pickedTitle={this.findFileName(`Other`)}
+              pickedTitle={this.findFileName(`other`)}
               pickedCallback={(selected, res) =>
                 this.fileselected(res, 'other', -1, false, -1)
               }
@@ -2878,7 +2877,6 @@ export default class FileUploadForm extends React.PureComponent {
                     mode={mode}
                     title={`Other ${index + 2}`}
                     type={2}
-                    fileType={-1}
                     pickedTitle={namesList[index]}
                     pickedCallback={(selected, res) =>
                       this.fileselected(res, 'other', index, true, 9)
@@ -2901,8 +2899,7 @@ export default class FileUploadForm extends React.PureComponent {
                       : this.mandatoryName(`Existing`, title)
                   }
                   type={2}
-                  fileType={-1}
-                  pickedTitle={this.findFileName(`Existing`)}
+                  pickedTitle={this.findFileName(`existing`)}
                   pickedCallback={(selected, res) =>
                     this.fileselected(res, 'existing', -1, false, -1)
                   }
@@ -2929,7 +2926,6 @@ export default class FileUploadForm extends React.PureComponent {
                         mode={mode}
                         title={`Existing ${index + 2}`}
                         type={2}
-                        fileType={-1}
                         pickedTitle={namesList[index]}
                         pickedCallback={(selected, res) =>
                           this.fileselected(res, 'existing', index, true, 8)

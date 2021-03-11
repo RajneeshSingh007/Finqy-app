@@ -40,10 +40,9 @@ export const enableCallModule = (startService = false) => {
  */
 export const dialerPermissionAndServiceStart = (enableService) => {
   FinproCallModule.requestCallsPermission().then(op => {
+    console.log('op', op);
     if (op === 'success') {
-      if(enableService){
-        startService();
-      }
+      Pref.setVal(Pref.DIALER_SERVICE_ENABLED, true);  
     } else {
       Alert.alert(
         'Permission Required',
@@ -76,4 +75,16 @@ export const stopService = () => {
  */
 export const startService = () =>{
   FinproCallModule.startService();
+}
+
+/**
+ * 
+ */
+export const enableService = () =>{
+  Pref.getVal(Pref.DIALER_SERVICE_ENABLED, val =>{
+    console.log('val', val);
+    if(Helper.nullCheck(val) === false){
+      startService();
+    }
+  })
 }

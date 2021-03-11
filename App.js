@@ -17,7 +17,8 @@ import {
 } from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
-import { enableCallModule,startService, stopService } from './src/util/DialerFeature';
+import { enableCallModule,enableService, stopService } from './src/util/DialerFeature';
+import CallDetectorManager from 'react-native-call-detection';
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -30,12 +31,13 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
+    //stop calling service
+    stopService();
+    enableCallModule(true);
+
     //this.checkVersionForUpdate();
 
     AppState.addEventListener('change', this._handleAppStateChange);
-    stopService();
-
-    //enableCallModule(false);
     
     //this.syncImmediate();
 
@@ -44,14 +46,36 @@ class App extends React.PureComponent {
     crashlytics().setCrashlyticsCollectionEnabled(true);
 
     this.onNotificationListener();
+
+    this.callDetectionListerner();
+
   }
 
+  /**
+   * 
+   */
   onNotificationListener = () => {
     this.removeOnNotification = notifications.onNotification(
       notification => {
       },
     );
   }
+
+  callDetectionListerner = () =>{
+    this.callDetection = new CallDetectorManager(
+      (event, phoneNumber) => {
+        console.log('event', event);
+        enableService();
+      },
+      true,
+      () => {},
+      {
+        title: 'Phone Permission Required For Dialer',
+        message:'This app needs access to your phone state in order to use this feature',
+      },
+    );
+  }
+
 
   /**
    * check app version for update dialog
@@ -85,7 +109,7 @@ class App extends React.PureComponent {
     ) {
       stopService();
     }else{
-      //enableCallModule(true);
+      stopService();
     }
     this.setState({appState: nextAppState});
   };
@@ -97,6 +121,9 @@ class App extends React.PureComponent {
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }
+
+    if(this.callDetection !== undefined) this.callDetection.dispose();
+
   }
 
   codePushStatusDidChange(syncStatus) {

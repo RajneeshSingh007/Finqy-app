@@ -13,6 +13,7 @@ export const saveToken = 'token';
 export const USERTYPE = 'type';
 export const DIALER_TEAM_LEADER = 'dialer_team_leader';
 export const DIALER_DATA = "dialer_data";
+export const DIALER_SERVICE_ENABLED = "dialer_service_enabled";
 export const salespayoutUpdate = "salespayoutUpdate";
 
 //network
@@ -3008,6 +3009,7 @@ export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
 export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
 export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
 export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
+export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
 
 ///update dialog show
 export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
