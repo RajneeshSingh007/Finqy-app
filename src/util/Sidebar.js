@@ -604,7 +604,7 @@ export default class Sidebar extends React.Component {
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, parse => {
         const pp = parse.user_prof;
         const url = {
@@ -738,12 +738,15 @@ export default class Sidebar extends React.Component {
         );
 
       });
-    });
+    //});
   }
 
   teamMenuSet = (menuList, userdata) =>{
     if(Number(userdata.user_role) === 3){
-      menuList.push(salesMarketing);
+      //const checkexistence = Lodash.find(menuList, io => io.name === 'Sales Marketing');
+      //if(Helper.nullCheck(checkexistence)){
+        menuList.push(salesMarketing);
+      //}
     }
     this.setState({menuList: menuList});
   }

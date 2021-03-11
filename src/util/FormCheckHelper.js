@@ -398,10 +398,10 @@ export const secondFormCheck = (title, specificForms) => {
   ) {
     result = false;
     Helper.showToastMessage('Invalid aadhar card number', 0);
-  } else if (    title === `Health Insurance` &&  specificForms.lifestyle === '') {
+  } else if (title === `Health Insurance` && specificForms.lifestyle === '') {
     result = false;
     Helper.showToastMessage('Please, Select Smoker Type', 0);
-  } else if (    title === `Health Insurance` &&  specificForms.lifestyle2 === '') {
+  } else if (title === `Health Insurance` && specificForms.lifestyle2 === '') {
     result = false;
     Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
   } else if (
@@ -410,7 +410,14 @@ export const secondFormCheck = (title, specificForms) => {
   ) {
     result = false;
     Helper.showToastMessage('Select Any Pre Existing Disease', 0);
-  }else if (title === `Health Insurance` && specificForms.claim_type === '') {
+  } else if (
+    title === `Health Insurance` &&
+    specificForms.existing_diseases === 'YES' &&
+    specificForms.diseases === ''
+  ) {
+    result = false;
+    Helper.showToastMessage('Please, Specify diseases', 0);
+  } else if (title === `Health Insurance` && specificForms.claim_type === '') {
     result = false;
     Helper.showToastMessage('Please, Select Type Of Insurance', 0);
   } else if (
@@ -460,10 +467,7 @@ export const secondFormCheck = (title, specificForms) => {
         }
       }
     }
-  }else if ( title === `Health Insurance` && specificForms.existing_diseases === 'YES' && specificForms.diseases === '') {
-    result = false;
-    Helper.showToastMessage('Please, Specify diseases', 0);
-  }  
+  }
   return result;
   if (
     title !== `Personal Loan` &&
@@ -2674,7 +2678,7 @@ export const constructObjEditLead = item => {
       pucCopy: PucyCopy,
       policycopy: Policycopy,
       multipleFilesList: multipleFilesList,
-      existing:Existing
+      existing: Existing,
     },
     // third: {
     //     panCard: Helper.nullCheck(pan_card) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/pancard/${pan_card}` : null,
@@ -3024,25 +3028,25 @@ export const mapData = (popitemList, item, index, value) => {
 };
 
 /**
- * 
- * @param {*} goldList 
- * @param {*} karat 
- * @param {*} desiredAmt 
+ *
+ * @param {*} goldList
+ * @param {*} karat
+ * @param {*} desiredAmt
  */
-export const findGoldPledge = (goldList,karat,desiredAmt) =>{
-  if(Helper.nullCheck(goldList) === false){
+export const findGoldPledge = (goldList, karat, desiredAmt) => {
+  if (Helper.nullCheck(goldList) === false) {
     const find = Lodash.find(goldList, io => io.gk === karat);
-    if(find){
-      if(Helper.nullStringCheck(desiredAmt) ){
+    if (find) {
+      if (Helper.nullStringCheck(desiredAmt)) {
         return '';
       }
       const {dm} = find;
-      const cal = Number(desiredAmt/dm).toPrecision(3);
+      const cal = Number(desiredAmt / dm).toPrecision(3);
       return `${cal}`;
-    }else{
-      return ''
+    } else {
+      return '';
     }
-  }else {
+  } else {
     return '';
   }
-}
+};

@@ -2358,7 +2358,7 @@ export default class FileUploadForm extends React.PureComponent {
           </>
         ) : null}
 
-        {title !== 'Motor Insurance' && title === 'Health Insurance' ? (
+        {title !== 'Motor Insurance' || title === 'Health Insurance' ? (
           <>
             <CommonFileUpload
               //showPlusIcon={title !== 'Profile'}

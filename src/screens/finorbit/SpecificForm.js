@@ -2005,7 +2005,27 @@ export default class SpecificForm extends React.PureComponent {
               </View>
             </View>
 
-            <View style={styles.radiocont}>
+          </View>
+        ) : null}
+
+        {title === 'Term Insurance' || title === 'Health Insurance' ? (
+          this.state.existing_diseases === 'YES' ? (
+            <AnimatedInputBox
+              onChangeText={value => {
+                this.setState({diseases: value});
+              }}
+              value={this.state.diseases}
+              placeholder={'Specify Diseases *'}
+              showStarVisible={false}
+              changecolor
+              containerstyle={styles.animatedInputCont}
+            />
+          ) : null
+        ) : null}
+
+        {title === 'Term Insurance' ? (
+          <View>
+                        <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 {/* {`Preferred Payment Mode ${title === 'Term Insurance' ? '*' : ''
                   }`} */}
@@ -2052,10 +2072,7 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
-          </View>
-        ) : null}
-        {title === 'Term Insurance' ? (
-          <View>
+
             <View style={styles.radiocont}>
               <View
                 style={StyleSheet.flatten([
@@ -2290,6 +2307,7 @@ export default class SpecificForm extends React.PureComponent {
           */}
           </View>
         ) : null}
+      
         {title === 'Health Insurance' || title === 'Vector Plus' ? (
           <View>
             <View style={styles.radiocont}>
@@ -2373,20 +2391,6 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === 'Term Insurance' || title === 'Health Insurance' ? (
-          this.state.existing_diseases === 'YES' ? (
-            <AnimatedInputBox
-              onChangeText={value => {
-                this.setState({diseases: value});
-              }}
-              value={this.state.diseases}
-              placeholder={'Specify Diseases *'}
-              showStarVisible={false}
-              changecolor
-              containerstyle={styles.animatedInputCont}
-            />
-          ) : null
-        ) : null}
 
         {title === 'Vector Plus' ? (
           <View>
