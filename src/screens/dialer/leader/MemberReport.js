@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, BackHandler} from 'react-native';
+import {StyleSheet, BackHandler,TouchableWithoutFeedback} from 'react-native';
 import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
@@ -12,13 +12,19 @@ import CScreen from './../../component/CScreen';
 import NavigationActions from '../../../util/NavigationActions';
 import moment from 'moment';
 import DateRangePicker from 'react-native-daterange-picker';
-let DATE_FORMAT = 'DD-MM-YYYY';
 import Modal from '../../../util/Modal';
 import AnimatedWithoutInputBox from '../../component/AnimatedWithoutInputBox';
+import Download from '../../component/Download';
+import RNFetchBlob from 'rn-fetch-blob';
+import IconChooser from '../../common/IconChooser';
+
+let DATE_FORMAT = 'DD-MM-YYYY';
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 export default class MemberReport extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.export = this.export.bind(this);
     this.backClick = this.backClick.bind(this);
     this.filterItemClick = this.filterItemClick.bind(this);
     this.state = {
@@ -40,48 +46,58 @@ export default class MemberReport extends React.PureComponent {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const {navigation} = this.props;
     const dialerUserData = navigation.getParam('data', []);
+    const tlID = navigation.getParam('tlID', null);
+    const currentId = navigation.getParam('currentId',  null);
+    const tname = navigation.getParam('tname', null);
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
-        const pastStartDate = moment().format(DATE_FORMAT);
-        const pastEndDate = moment()
-          .subtract(7, 'd')
-          .format(DATE_FORMAT);
-        const efStartDate = moment().format(DATE_FORMAT);
-        const plStartDate = moment().format(DATE_FORMAT);
-        const plEndDate = moment()
-          .subtract(1, 'M')
-          .format(DATE_FORMAT);
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, userData => {
+      const pastStartDate = moment().format(DATE_FORMAT);
+      const pastEndDate = moment()
+        .subtract(7, 'd')
+        .format(DATE_FORMAT);
+      // const efStartDate = moment().format(DATE_FORMAT);
+      // const efEndDate = moment()
+      // .subtract(1, 'M')
+      // .format(DATE_FORMAT);
+      // const plStartDate = moment().format(DATE_FORMAT);
+      // const plEndDate = moment()
+      //   .subtract(1, 'M')
+      //   .format(DATE_FORMAT);
 
-        this.setState({
-          userData: userData,
-          dialerUserData: dialerUserData,
-          pastStartDate: pastStartDate,
-          pastEndDate: pastEndDate,
-          efStartDate: efStartDate,
-          plStartDate: plStartDate,
-          plEndDate: plEndDate,
-        });
-        Pref.getVal(Pref.USERTYPE, v => {
-          this.setState({type: v}, () => {
-            Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                this.fetchData();
-              });
+      this.setState({
+        tname:tname,
+        currentId:currentId,
+        tlID: tlID,
+        userData: userData,
+        dialerUserData: dialerUserData,
+        pastStartDate: pastStartDate,
+        pastEndDate: pastEndDate,
+        efStartDate: '',
+        efEndDate:'',
+        plStartDate: '',
+        plEndDate: '',
+      });
+      Pref.getVal(Pref.USERTYPE, v => {
+        this.setState({type: v}, () => {
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({token: value}, () => {
+              this.fetchData();
             });
           });
         });
       });
     });
+    //});
   }
 
   componentWillUnMount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
@@ -102,13 +118,20 @@ export default class MemberReport extends React.PureComponent {
       plEndDate,
       userData,
       dialerUserData,
+      tlID,
+      currentId,
+      tname
     } = this.state;
     this.setState({loading: true});
-    const {id} = userData;
+    //const {id} = userData;
     const userid = dialerUserData[dialerUserData.length - 1];
+    const members = dialerUserData[0];
     const todaysDate = moment().format(DATE_FORMAT);
     const body = JSON.stringify({
-      teamid: id,
+      tname:tname,
+      currentuser:currentId,
+      members: members,
+      teamid: tlID,
       userid: userid,
       flag: 1,
       todaydate: todaysDate,
@@ -119,7 +142,7 @@ export default class MemberReport extends React.PureComponent {
       plstartDate: plStartDate,
       plendDate: plEndDate,
     });
-    //console.log('body', body)
+    console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.DIALER_GET_MEMBERS,
       body,
@@ -238,9 +261,17 @@ export default class MemberReport extends React.PureComponent {
     );
   };
 
+  callLogClicked = () =>{
+    const {currentId, tlID, tname} = this.state;
+    const finalDataProcess = {id:currentId,tlid:tlID,tname:tname,exportEnabled:true};
+    NavigationActions.navigate('CallLogs', finalDataProcess);
+  }
+
   userView = dialerUserData => {
     return (
-      <View styleName="sm-gutter vertical" style={styles.itemContainer}>
+      <View styleName="sm-gutter vertical" style={StyleSheet.flatten([styles.accordStyle, {
+        paddingVertical:8
+      }])}>
         <Title
           styleName="v-start h-start"
           numberOfLines={1}
@@ -261,6 +292,7 @@ export default class MemberReport extends React.PureComponent {
             styles.usertopText,
             {
               fontSize: 14,
+              color:'#555555'
             },
           ])}>
           {`Mobile: ${dialerUserData[2]}`}
@@ -272,7 +304,7 @@ export default class MemberReport extends React.PureComponent {
               {
                 paddingVertical: 0,
                 fontSize: 13,
-                color: '#848486',
+                color: '#353535',
                 fontWeight: '400',
                 marginTop: 0,
                 marginBottom: 0,
@@ -288,7 +320,7 @@ export default class MemberReport extends React.PureComponent {
               {
                 paddingVertical: 0,
                 fontSize: 13,
-                color: '#848486',
+                color: '#353535',
                 fontWeight: '400',
                 marginTop: 0,
                 marginBottom: 0,
@@ -298,9 +330,44 @@ export default class MemberReport extends React.PureComponent {
             {`Ref: ${dialerUserData[dialerUserData.length - 2]}`}
           </Title>
         </View>
+        <View styleName="horizontal v-start h-start" style={{marginTop:4}}>
+          <TouchableWithoutFeedback onPress={this.callLogClicked}>
+            <View styleName="horizontal v-start h-center" style={{marginTop:8,paddingVertical:4}}>
+              <IconChooser name={'phone-outgoing'} size={24} color={'green'} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
     );
   };
+
+  export = (data, head, title) =>{
+    const date = moment().format('DD_MM_YYYY');
+    let headers = '';
+    for(let z=0; z<head.length; z++){
+      if(z === Number(head.length -1)){
+        headers += `${head[z]}\n`
+      }else{
+        headers += `${head[z]},`;
+      }
+    }
+    const replace = title.replace(/\s/g, '_');
+    const name = `${date}_${replace}`;
+    const finalFilePath = `${FILEPATH}${name}.csv`;
+    Helper.writeCSV(headers, data, finalFilePath, result => {
+      if (result) {
+        RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
+          RNFetchBlob.android.addCompleteDownload({
+            title: name,
+            description: 'Record exported successfully',
+            mime: 'text/comma-separated-values',
+            path: finalFilePath,
+            showNotification: true,
+          }),
+          Helper.showToastMessage('Download Complete', 1);
+      }
+    });
+  }
 
   /**
    * report accordation view
@@ -313,25 +380,18 @@ export default class MemberReport extends React.PureComponent {
     return (
       <List.Accordion
         title={title}
-        style={{
-          borderColor: '#f2f1e6',
-          borderBottomWidth: 1.3,
-          marginVertical: 4,
-        }}
-        titleStyle={StyleSheet.flatten([
-          styles.accordTitle,
-          {
-            color: '#292929',
-            fontWeight: '400',
-            fontSize: 14,
-          },
-        ])}>
-        <CommonTable
-          enableHeight={false}
-          dataList={data}
-          widthArr={width}
-          tableHead={head}
-        />
+        style={styles.accordStyle}
+        titleStyle={styles.accordTitle}>
+        <View>
+          <CommonTable
+            enableHeight={false}
+            dataList={data}
+            widthArr={width}
+            tableHead={head}
+          />
+
+          <Download rightIconClick={() => this.export(data, head, title)} />
+        </View>
       </List.Accordion>
     );
   };
@@ -464,9 +524,27 @@ export default class MemberReport extends React.PureComponent {
             <LeftHeaders
               showBack
               title={'Performance Report'}
-              backClicked={() => this.backClick()}
+              //backClicked={() => this.backClick()}
               bottomBody={<></>}
             />
+
+              <View styleName="horizontal sm-gutter v-center h-center">
+                  {this.renderCircleItem(
+                    data && data.today && data.today.data.length > 0
+                      ? data.today.data.length
+                      : 0,
+                    'Total Today Call',
+                  )}
+
+                  {this.renderCircleItem(
+                   data &&  data.past && data.past.data.length > 0
+                      ? data.past.data.length
+                      : 0,
+                    'Last 7 Days Call',
+                  )}
+              </View>
+
+            {dialerUserData.length > 0 ? this.userView(dialerUserData) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
@@ -474,27 +552,8 @@ export default class MemberReport extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <View>
-                <View styleName="horizontal sm-gutter v-center h-center">
-                  {this.renderCircleItem(
-                    data.today && data.today.data.length > 0
-                      ? data.today.data.length
-                      : 0,
-                    'Total Today Call',
-                  )}
 
-                  {this.renderCircleItem(
-                    data.past && data.past.data.length > 0
-                      ? data.past.data.length
-                      : 0,
-                    'Last 7 Days Call',
-                  )}
-                </View>
-
-                {dialerUserData.length > 0
-                  ? this.userView(dialerUserData)
-                  : null}
-
-                <View style={styles.newItemContainer}>
+                {/* <View style={styles.newItemContainer}>
                   <Title
                     style={StyleSheet.flatten([
                       styles.accordTitle,
@@ -508,7 +567,7 @@ export default class MemberReport extends React.PureComponent {
                     ])}>
                     {`Report`}
                   </Title>
-                </View>
+                </View> */}
 
                 {data.today && data.today.data.length > 0
                   ? this.accordationView(
@@ -783,4 +842,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontWeight: '700',
   },
+  accordStyle: {
+    backgroundColor: '#fff',
+    borderColor: '#bcbaa1',
+    borderWidth: 0.8,
+    borderRadius: 10,
+    marginVertical: 10,
+    marginHorizontal: 16,
+  },
+  accordTitle: {
+    color: '#292929',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+
 });

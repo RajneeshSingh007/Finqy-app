@@ -48,31 +48,26 @@ export default class CallLogs extends React.PureComponent {
       callLogData: [],
       userref: '',
       findUsername: null,
-      exportEnabled: true,
+      exportEnabled: false,
     };
   }
 
   componentDidMount() {
     const {navigation} = this.props;
+    const id = navigation.getParam('id', -1);
+    const tlid = navigation.getParam('tlid', -1);
+    const tname = navigation.getParam('tname', '');
+    const exportEnabled = navigation.getParam('exportEnabled', false);
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, userData => {
-      this.setState({
-        userData: userData,
-      });
-      Pref.getVal(Pref.USERTYPE, v => {
-        this.setState({type: v}, () => {
-          Pref.getVal(Pref.saveToken, value => {
-            this.setState({token: value}, () => {
-              this.fetchData();
-            });
-          });
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.saveToken, value => {
+        this.setState({token: value,id:id,tlid:tlid,tname:tname,exportEnabled:exportEnabled}, () => {
+          this.fetchData();
         });
       });
     });
-    //});
   }
 
   componentWillUnMount() {
@@ -82,51 +77,49 @@ export default class CallLogs extends React.PureComponent {
   }
 
   fetchData = () => {
+    const {id,tlid,tname} = this.state;
     this.setState({threadLoader: true});
-    Pref.getVal(Pref.DIALER_DATA, userdatas => {
-      const {id, tlid, pname} = userdatas[0].tc;
-      const body = JSON.stringify({
-        teamid: tlid,
-        userid: id,
-        tname: pname,
-      });
-      Helper.networkHelperTokenPost(
-        Pref.DIALER_TC_CallLogs,
-        body,
-        Pref.methodPost,
-        this.state.token,
-        result => {
-          const {data, status} = result;
-          if (status === true) {
-            const callLogData = Lodash.map(data, io => {
-              io.time = io.dateTime;
-              if (io.duration === 0) {
-                io.duration = '0';
-              } else {
-                const callDur = Number(io.duration / 60).toPrecision(3);
-                io.duration = `${callDur}`;
-              }
-              return io;
-            });
-            this.setState(
-              {
-                cloneList: callLogData,
-                threadList: data,
-                threadLoader: false,
-              },
-              () => {
-                this.filterCallHistory('All');
-              },
-            );
-          } else {
-            this.setState({threadLoader: false});
-          }
-        },
-        e => {
-          this.setState({threadLoader: false});
-        },
-      );
+    const body = JSON.stringify({
+      teamid: tlid,
+      userid: id,
+      tname: tname,
     });
+    Helper.networkHelperTokenPost(
+      Pref.DIALER_TC_CallLogs,
+      body,
+      Pref.methodPost,
+      this.state.token,
+      result => {
+        const {data, status} = result;
+        if (status === true) {
+          const callLogData = Lodash.map(data, io => {
+            io.time = io.dateTime;
+            if (io.duration === 0) {
+              io.duration = '0';
+            } else {
+              const callDur = Number(io.duration / 60).toPrecision(3);
+              io.duration = `${callDur}`;
+            }
+            return io;
+          });
+          this.setState(
+            {
+              cloneList: callLogData,
+              threadList: data,
+              threadLoader: false,
+            },
+            () => {
+              this.filterCallHistory('All');
+            },
+          );
+        } else {
+          this.setState({threadLoader: false});
+        }
+      },
+      e => {
+        this.setState({threadLoader: false});
+      },
+    );
   };
 
   filterCallHistory = (filterMode = 'All') => {
@@ -155,7 +148,7 @@ export default class CallLogs extends React.PureComponent {
       } else if (
         filterMode === 'This Month' &&
         Number(splitStartOfMonth[1]) === Number(parseSplit[1]) &&
-          Number(splitStartOfMonth[2]) === Number(parseSplit[2])
+        Number(splitStartOfMonth[2]) === Number(parseSplit[2])
       ) {
         return io;
       } else if (filterMode === 'All') {
@@ -250,15 +243,9 @@ export default class CallLogs extends React.PureComponent {
   };
 
   exportCallLogs = () => {
-    const {callLogData} = this.state;
-    if (callLogData.length > 0) {
-      const parse = Lodash.map(callLogData, io => {
-        if (io.duration === 0) {
-          io.duration = '0';
-        } else {
-          const callDur = Number(io.duration / 60).toPrecision(3);
-          io.duration = callDur;
-        }
+    const {cloneList} = this.state;
+    if (cloneList.length > 0) {
+      const parse = Lodash.map(cloneList, io => {
         io.type = Lodash.capitalize(io.type);
         delete io.rawType;
         delete io.timestamp;
@@ -326,7 +313,7 @@ export default class CallLogs extends React.PureComponent {
               ) : this.state.threadList.length > 0 ? (
                 <Timeline
                   style={{
-                    flex:1,
+                    flex: 1,
                     marginHorizontal: 8,
                     marginTop: 16,
                   }}
@@ -343,9 +330,9 @@ export default class CallLogs extends React.PureComponent {
                   <ListError subtitle={'No call logs Found...'} />
                 </View>
               )}
-              {/* {this.state.exportEnabled ? (
+              {this.state.exportEnabled ? (
                 <Download rightIconClick={this.exportCallLogs} />
-              ) : null} */}
+              ) : null}
             </View>
           </>
         }

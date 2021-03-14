@@ -5,12 +5,12 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
   Platform,
-  Linking
+  Linking,
 } from 'react-native';
-import { Image, Title, View } from '@shoutem/ui';
+import {Image, Title, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import { Colors, ActivityIndicator, Chip } from 'react-native-paper';
+import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
@@ -21,6 +21,7 @@ import analytics from '@react-native-firebase/analytics';
 export default class Blogs extends React.PureComponent {
   constructor(props) {
     super(props);
+    //this.headerFlatListRef = React.createRef();
     this.back = this.back.bind(this);
     this.renderItems = this.renderItems.bind(this);
     this.renderCatItems = this.renderCatItems.bind(this);
@@ -33,20 +34,21 @@ export default class Blogs extends React.PureComponent {
       userData: '',
       categoryList: [],
       cloneList: [],
+      selected: 'All',
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.back);
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({ loading: true });
+      this.setState({loading: true});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        this.setState({ userData: userData });
+        this.setState({userData: userData});
         Pref.getVal(Pref.saveToken, (value) => {
-          this.setState({ token: value }, () => {
+          this.setState({token: value}, () => {
             this.fetchData();
           });
         });
@@ -66,41 +68,42 @@ export default class Blogs extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({ loading: true });
+    this.setState({loading: true});
     Helper.networkHelperToken(
       Pref.BlogsUrl,
       Pref.methodGet,
       this.state.token,
       (result) => {
-        const { data, response_header } = result;
-        const { res_type } = response_header;
+        const {data, response_header} = result;
+        const {res_type} = response_header;
         if (res_type === `success`) {
-          let categoryList = this.state.categoryList;
-          categoryList = [];
-          categoryList.push({ name: `All`, selected: true });
+          let categoryList = [];
+          categoryList.push('All');
           const catlist = Lodash.map(data, (io) => {
-            const { category } = io;
+            const {category} = io;
             const find = Lodash.find(
               categoryList,
-              (ui) => String(ui.name).toLowerCase() === String(category).toLowerCase(),
+              (ui) =>
+                String(ui.name).toLowerCase() ===
+                String(category).toLowerCase(),
             );
             if (find === undefined) {
-              categoryList.push({ name: category, selected: false });
+              categoryList.push(category);
             }
             return io;
           });
           this.setState({
             cloneList: catlist,
             dataList: catlist,
-            categoryList: categoryList,
+            categoryList: Lodash.uniq(categoryList),
             loading: false,
           });
         } else {
-          this.setState({ loading: false });
+          this.setState({loading: false});
         }
       },
       (e) => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
       },
     );
   };
@@ -119,16 +122,16 @@ export default class Blogs extends React.PureComponent {
     return (
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
-          onPress={() =>{
-            if(item.post.includes('https') || item.post.includes('http')){
-              Linking.openURL(item.post)
-            }else {
-              NavigationActions.navigate(`BlogDetails`, { item: item });
+          onPress={() => {
+            if (item.post.includes('https') || item.post.includes('http')) {
+              Linking.openURL(item.post);
+            } else {
+              NavigationActions.navigate(`BlogDetails`, {item: item});
             }
           }}>
           <View styleName="vertical" style={styles.itemContainer}>
             <Image
-              source={{ uri: `${encodeURI(url)}` }}
+              source={{uri: `${encodeURI(url)}`}}
               styleName="large"
               style={styles.itemimage}
             />
@@ -149,59 +152,53 @@ export default class Blogs extends React.PureComponent {
     );
   }
 
-  chipclick = (item) => {
-    const { categoryList, cloneList } = this.state;
-    const sel = item.selected;
-    const ok = Lodash.map(categoryList, (io) => {
-      if (io.name === item.name) {
-        io.selected = !sel;
-      } else {
-        io.selected = false;
-      }
-      return io;
-    });
-    const clo = JSON.parse(JSON.stringify(cloneList));
-    const fil = Lodash.filter(clo, (kok) => kok.category === item.name);
+  /**
+   * chip click
+   * @param {*} catName
+   */
+  chipclick = (catName, index) => {
+    const {cloneList} = this.state;
+    const filter = Lodash.filter(
+      cloneList,
+      (item) =>
+        String(item.category).toLowerCase() === String(catName).toLowerCase(),
+    );
     this.setState({
-      categoryList: ok,
-      dataList: item.name === `All` ? cloneList : fil,
+      dataList: catName === `All` ? cloneList : filter,
+      selected: catName,
     });
+    // if(this.headerFlatListRef && this.headerFlatListRef.current){
+    //   if(this.headerFlatListRef.current.scrollToIndex){
+    //     this.headerFlatListRef.current.scrollToIndex({animated:true,index:index})
+    //   }
+    // }
   };
 
   renderCatItems(item, index) {
-    const name = item.name.replace('_', ' ');
     return (
       <Chip
         selected={false}
-        style={{
-          backgroundColor: item.selected ? Colors.blueGrey900 : `white`,
-          marginHorizontal: 8,
-          marginVertical: 4,
-          ...Platform.select({
-            android: {
-              elevation: 2,
-            },
-            ios: {
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-            },
-          }),
+        style={[
+          styles.chipcontainer,
+          {
+            backgroundColor:
+              this.state.selected === item ? Colors.blueGrey900 : `white`,
+          },
+        ]}
+        textStyle={{
+          color: this.state.selected === item ? `white` : `black`,
+          fontSize: 14,
         }}
-        textStyle={{ color: item.selected ? `white` : `black`, fontSize: 14 }}
-        onPress={() => this.chipclick(item, index)}>{`${item.name === `All` ? `    All    ` : Lodash.capitalize(name)
-          }`}</Chip>
+        onPress={() => this.chipclick(item, index)}>
+        {item === 'All' ? '  All  ' : Helper.replacetext(item)}
+      </Chip>
     );
   }
 
   render() {
     return (
       <CScreen
-      refresh={() => this.fetchData()}
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders
@@ -226,7 +223,7 @@ export default class Blogs extends React.PureComponent {
             ) : this.state.dataList.length > 0 ? (
               <FlatList
                 data={this.state.dataList}
-                renderItem={({ item, index }) => this.renderItems(item)}
+                renderItem={({item, index}) => this.renderItems(item)}
                 nestedScrollEnabled={true}
                 keyExtractor={(item, index) => `${index}`}
                 showsVerticalScrollIndicator={true}
@@ -234,10 +231,11 @@ export default class Blogs extends React.PureComponent {
                 extraData={this.state}
                 ListHeaderComponent={() => (
                   <FlatList
+                    //ref={this.headerFlatListRef}
                     horizontal
                     data={this.state.categoryList}
-                    style={{ marginVertical: 16, marginStart: 8 }}
-                    renderItem={({ item, index }) =>
+                    style={{marginVertical: 16, marginStart: 8}}
+                    renderItem={({item, index}) =>
                       this.renderCatItems(item, index)
                     }
                     nestedScrollEnabled={true}
@@ -249,10 +247,10 @@ export default class Blogs extends React.PureComponent {
                 )}
               />
             ) : (
-                  <View style={styles.emptycont}>
-                    <ListError subtitle={'No FinNews found...'} />
-                  </View>
-                )}
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No FinNews found...'} />
+              </View>
+            )}
           </>
         }
       />
@@ -261,6 +259,24 @@ export default class Blogs extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  chipcontainer: {
+    marginHorizontal: 8,
+    marginVertical: 4,
+    ...Platform.select({
+      android: {
+        elevation: 2,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+    }),
+  },
   itemimage: {
     justifyContent: 'center',
     alignSelf: 'center',

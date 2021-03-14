@@ -20,7 +20,7 @@ import CScreen from '../component/CScreen';
 import IconChooser from '../common/IconChooser';
 import Lodash from 'lodash';
 
-export default class MyOffers extends React.PureComponent {
+export default class MarketingTool extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,20 +40,18 @@ export default class MyOffers extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.USERTYPE, v => {
+      Pref.getVal(Pref.USERTYPE, (v) => {
         this.setState({utype: v});
-        Pref.getVal(Pref.userData, parseda => {
-          Pref.getVal(Pref.saveToken, value => {
+        Pref.getVal(Pref.userData, (parseda) => {
+          Pref.getVal(Pref.saveToken, (value) => {
             this.setState({
               token: value,
               userdata: parseda,
-              type: 2,
+              type: 1,
             });
-            if (this.state.bannerList.length === 0) {
-              this.fetchData(2, parseda);
-            }
+            this.fetchData(1, parseda);
           });
-        });  
+        });
       });
     });
   }
@@ -81,23 +79,26 @@ export default class MyOffers extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         const {data, response_header} = result;
         const {res_type} = response_header;
         if (res_type === 'success') {
           const productFilter = [];
           productFilter.push('All');
-          Lodash.map(data, io => {
-            const trimlowercase = String(io.product)
-              .trim()
-              .toLowerCase();
-            if (Lodash.filter(productFilter, trimlowercase).length === 0) {
-              productFilter.push(trimlowercase);
+          Lodash.map(data, (io) => {
+            if (io.product) {
+              const trimlowercase = String(io.product).trim().toLowerCase();
+              const find = Lodash.find(productFilter, trimlowercase);
+              if (find === undefined) {
+                productFilter.push(trimlowercase);
+              }
             }
           });
           //console.log(productFilter);
+          const filterUniq =
+            productFilter.length > 0 ? Lodash.uniq(productFilter) : [];
           this.setState({
-            productFilter: Lodash.uniq(productFilter),
+            productFilter: filterUniq,
             loading: false,
             bannerList: data,
             cloneList: data,
@@ -108,71 +109,56 @@ export default class MyOffers extends React.PureComponent {
           this.setState({loading: false, userData: parseda});
         }
       },
-      error => {
+      (error) => {
         //console.log('error', error);
         this.setState({loading: false, userData: parseda});
       },
     );
   };
 
-  shareOffer = (id, image, index, item) => {
-    this.setState({fullLoader: true});
+  /**
+   * 
+   * @param {*} item 
+   * @returns 
+   */
+  getMessageFromProduct = (item) =>{
     const {userData, productList} = this.state;
-    const find = Lodash.find(
-      productList,
-      io =>
-        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
-    );
     const {refercode} = userData;
+    const find = Lodash.find(productList,(io) =>{
+      if(item.product){
+        const parseText = String(io.value).toLowerCase().replace(/\s/g, '_');
+        return parseText === String(item.product).toLowerCase().replace(/\s/g, '_');
+      }
+      return undefined;
+    });
     if (find) {
       const finalUrl = `${find.url}?ref=${refercode}`;
-      const username =
-        Helper.nullCheck(userData.rname) === false
-          ? userData.rname
-          : userData.username;
-      const mobile =
-        Helper.nullCheck(userData.rcontact) === false
-          ? userData.rcontact
-          : userData.mobile;
-      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-      Helper.networkHelperGet(
-        `${Pref.BASEImageUrl}?url=${image}`,
-        result => {
-          this.setState({fullLoader: false});
-          this.shareofers(id, result, msg);
-        },
-        () => {
-          this.setState({fullLoader: false});
-          this.shareofers(id, '', msg);
-        },
-      );
+      const username = Helper.nullCheck(userData.rname) === false ? userData.rname : userData.username;
+      const mobile = Helper.nullCheck(userData.rcontact) === false ? userData.rcontact : userData.mobile;
+      const message = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+      return message;
     }
+    return '';
+  }
+
+  shareOffer = (id, image, index, item) => {
+    this.setState({fullLoader: true});
+    Helper.networkHelperGet(`${Pref.BASEImageUrl}?url=${image}`,(result) => {
+        this.setState({fullLoader: false});
+        this.startSharingApp(item, result);
+    },(e) => {
+        this.setState({fullLoader: false});
+        this.startSharingApp(item, '');
+      },
+    );
   };
 
   mailShareOffer = (id, image, index, item) => {
-    const {userData, productList} = this.state;
-    const find = Lodash.find(
-      productList,
-      io =>
-        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
-    );
-    if (find) {
-      const {refercode} = userData;
-      const finalUrl = `${find.url}?ref=${refercode}`;
-      const username =
-        Helper.nullCheck(userData.rname) === false
-          ? userData.rname
-          : userData.username;
-      const mobile =
-        Helper.nullCheck(userData.rcontact) === false
-          ? userData.rcontact
-          : userData.mobile;
-      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-      this.shareofers(id, '', msg);
-    }
+    this.startSharingApp(item, '');
   };
 
-  shareofers = (id, result, message = '') => {
+  startSharingApp = (item, result) => {
+    const message = this.getMessageFromProduct(item);
     const url = `${result}`;
     const title = '';
     const options = Platform.select({
@@ -192,7 +178,7 @@ export default class MyOffers extends React.PureComponent {
             placeholderItem: {type: 'text', content: message},
             item: {
               default: {type: 'text', content: message},
-              message: null, // Specify no text to share via Messages app.
+              message: null,
             },
           },
         ],
@@ -201,31 +187,31 @@ export default class MyOffers extends React.PureComponent {
         title,
         subject: title,
         url: url,
-        message: `${message}`,
+        message: message,
       },
     });
     Share.open(options);
   };
 
-  onLayout = event => {
+  onLayout = (event) => {
     const {width, height} = event.nativeEvent.layout;
     this.setState({height: height});
   };
 
-  filterSelect = title => {
+  filterSelect = (title) => {
     const {bannerList, cloneList} = this.state;
     if (title === 'All') {
       this.setState({bannerList: cloneList, showFilter: false});
     } else {
       const filter = Lodash.filter(
         cloneList,
-        io => String(io.product).toLowerCase() === title,
+        (io) => String(io.product).toLowerCase() === title,
       );
       this.setState({bannerList: filter, showFilter: false});
     }
   };
 
-  renderFilterItem = title => {
+  renderFilterItem = (title) => {
     return (
       <View style={{justifyContent: 'center'}}>
         <TouchableWithoutFeedback onPress={() => this.filterSelect(title)}>
@@ -252,13 +238,13 @@ export default class MyOffers extends React.PureComponent {
     const {showFilter} = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchData(2, this.state.userData)}
+        refresh={() => this.fetchData(1, this.state.userData)}
         absolute={<Loader isShow={this.state.fullLoader} />}
         body={
           <>
             <LeftHeaders
               showBack
-              title={'My Offers'}
+              title={'My Marketing Tool'}
               // bottomtext={
               //   <>
               //     {`FinAds `}
@@ -375,7 +361,7 @@ export default class MyOffers extends React.PureComponent {
               />
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'No offers found...'} url={''} />
+                <ListError subtitle={'No marketing tool found...'} url={''} />
               </View>
             )}
           </>

@@ -27,6 +27,8 @@ const theme = {
   },
 };
 
+console.disableYellowBox = true;
+YellowBox.ignoreWarnings(['VirtualizedList:','Animated: `useNativeDriver`','Require cycle:','Warning:','createStackNavigator']);
 LogBox.ignoreAllLogs(true)
 
 StatusBar.setBackgroundColor('white', false);
@@ -73,7 +75,7 @@ const serviceHandler = async( data) =>{
   }
 }
 
-AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
+//AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 

@@ -176,35 +176,35 @@ const ConnectorMenuList = [
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
-  {
-    name: `Helpdesk`,
-    expand: false,
-    heading: true,
-    iconname: require('../res/images/menuicon10.png'),
-    icontype: 2,
+  // {
+  //   name: `Helpdesk`,
+  //   expand: false,
+  //   heading: true,
+  //   iconname: require('../res/images/menuicon10.png'),
+  //   icontype: 2,
 
-    sub: [
-      {
-        name: `Relation Manager`,
-        expand: false,
-        click: 'Manager',
-        options: {},
-      },
-      {
-        name: `Raise A Query`,
-        expand: false,
-        click: 'RaiseQueryForm',
-        options: {},
-      },
-      {
-        name: `Track My Query`,
-        expand: false,
-        click: 'TrackQuery',
-        options: {},
-      },
-    ],
-    click: '',
-  },
+  //   sub: [
+  //     {
+  //       name: `Relation Manager`,
+  //       expand: false,
+  //       click: 'Manager',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Raise A Query`,
+  //       expand: false,
+  //       click: 'RaiseQueryForm',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Track My Query`,
+  //       expand: false,
+  //       click: 'TrackQuery',
+  //       options: {},
+  //     },
+  //   ],
+  //   click: '',
+  // },
 ];
 
 const MainMenuList = [
@@ -414,35 +414,35 @@ const MainMenuList = [
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
-  {
-    name: `Helpdesk`,
-    expand: false,
-    heading: true,
-    iconname: require('../res/images/menuicon10.png'),
-    icontype: 2,
+  // {
+  //   name: `Helpdesk`,
+  //   expand: false,
+  //   heading: true,
+  //   iconname: require('../res/images/menuicon10.png'),
+  //   icontype: 2,
 
-    sub: [
-      {
-        name: `Relation Manager`,
-        expand: false,
-        click: 'Manager',
-        options: {},
-      },
-      {
-        name: `Raise A Query`,
-        expand: false,
-        click: 'RaiseQueryForm',
-        options: {},
-      },
-      {
-        name: `Track My Query`,
-        expand: false,
-        click: 'TrackQuery',
-        options: {},
-      },
-    ],
-    click: '',
-  },
+  //   sub: [
+  //     {
+  //       name: `Relation Manager`,
+  //       expand: false,
+  //       click: 'Manager',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Raise A Query`,
+  //       expand: false,
+  //       click: 'RaiseQueryForm',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Track My Query`,
+  //       expand: false,
+  //       click: 'TrackQuery',
+  //       options: {},
+  //     },
+  //   ],
+  //   click: '',
+  // },
 ];
 
 const TeamMenuList = [
@@ -528,35 +528,35 @@ const TeamMenuList = [
     icontype: 2,
   },
 
-  {
-    name: `Helpdesk`,
-    expand: false,
-    heading: true,
-    iconname: require('../res/images/menuicon10.png'),
-    icontype: 2,
+  // {
+  //   name: `Helpdesk`,
+  //   expand: false,
+  //   heading: true,
+  //   iconname: require('../res/images/menuicon10.png'),
+  //   icontype: 2,
 
-    sub: [
-      {
-        name: `Relation Manager`,
-        expand: false,
-        click: 'Manager',
-        options: {},
-      },
-      {
-        name: `Raise A Query`,
-        expand: false,
-        click: 'RaiseQueryForm',
-        options: {},
-      },
-      {
-        name: `Track My Query`,
-        expand: false,
-        click: 'TrackQuery',
-        options: {},
-      },
-    ],
-    click: '',
-  },
+  //   sub: [
+  //     {
+  //       name: `Relation Manager`,
+  //       expand: false,
+  //       click: 'Manager',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Raise A Query`,
+  //       expand: false,
+  //       click: 'RaiseQueryForm',
+  //       options: {},
+  //     },
+  //     {
+  //       name: `Track My Query`,
+  //       expand: false,
+  //       click: 'TrackQuery',
+  //       options: {},
+  //     },
+  //   ],
+  //   click: '',
+  // },
 ];
 
 
@@ -687,9 +687,10 @@ export default class Sidebar extends React.Component {
                         
                           if(find || tlfind){
                             existence = true;
-                            if(Helper.nullCheck(find) === false){
-                              find.tlid = tllist.length > 0 ? tllist[0].id : {}
-                              find.pname = tllist.length > 0 ? `${tllist[0].id}&${name}&${membererlist}` : ''
+                            if(Helper.nullCheck(find) === false && tllist){
+                              let tLfind = Lodash.find(tllist, io => io.enabled === 0);
+                              find.tlid = tllist.length > 0 ? tLfind.id : {}
+                              find.pname = tllist.length > 0 ? `${tLfind.id}&${name}&${membererlist}` : ''
                             }
                             //console.log('find', find);
                             dialerData.push({
@@ -698,7 +699,7 @@ export default class Sidebar extends React.Component {
                             })
                           } 
                         }
-                        const finalFilterList = [];
+                        let finalFilterList = [];
                         if(existence){
                           Pref.setVal(Pref.DIALER_DATA, dialerData);
                           const cloneobject = JSON.parse(JSON.stringify(filter));
@@ -742,12 +743,9 @@ export default class Sidebar extends React.Component {
   }
 
   teamMenuSet = (menuList, userdata) =>{
-    if(Number(userdata.user_role) === 3){
-      //const checkexistence = Lodash.find(menuList, io => io.name === 'Sales Marketing');
-      //if(Helper.nullCheck(checkexistence)){
-        menuList.push(salesMarketing);
-      //}
-    }
+    // if(Number(userdata.user_role) === 3){
+    //   menuList.push(salesMarketing);
+    // }
     this.setState({menuList: menuList});
   }
 

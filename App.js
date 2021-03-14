@@ -31,23 +31,25 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
-    //stop calling service
-    stopService();
-    enableCallModule(true);
-
-    //this.checkVersionForUpdate();
-
-    AppState.addEventListener('change', this._handleAppStateChange);
-    
-    //this.syncImmediate();
+   
+    this.checkVersionForUpdate(); 
 
     Crashes.setEnabled(true);
+    
     analytics().setAnalyticsCollectionEnabled(true);
+    
     crashlytics().setCrashlyticsCollectionEnabled(true);
 
+    //this.syncImmediate();
+
+    //stopService();
+    //enableCallModule(true);
+
+    //AppState.addEventListener('change', this._handleAppStateChange);
+  
     this.onNotificationListener();
 
-    this.callDetectionListerner();
+    //this.callDetectionListerner();
 
   }
 
@@ -116,13 +118,13 @@ class App extends React.PureComponent {
 
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
+    //AppState.removeEventListener('change', this._handleAppStateChange);
     
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }
 
-    if(this.callDetection !== undefined) this.callDetection.dispose();
+    //if(this.callDetection !== undefined) this.callDetection.dispose();
 
   }
 

@@ -79,6 +79,7 @@ export default class PayinProducts extends React.PureComponent {
     // const {leader} = udata;
     // const {id} = leader[0];
     const body = JSON.stringify({userid: refercode});
+    console.log(body);
     Helper.networkHelperTokenPost(
       showUpdateButton ? Pref.PARTNER_PAYOUT_URL : Pref.PAYIN_URL,
       body,

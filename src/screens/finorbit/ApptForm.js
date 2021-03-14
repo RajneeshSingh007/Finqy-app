@@ -14,20 +14,20 @@ export default class ApptForm extends React.PureComponent {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
-    const currentdate = moment().toDate();
-    const obj = moment().toObject();
+    const currentdate = moment().add(1, 'days').toDate();
+    //const obj = moment().toObject();
 
-    currentdate.setDate(Number(obj.date + 1));
+    //currentdate.setDate(Number(obj.date + 1));
 
-    const maxDate = moment().toDate();
-    maxDate.setDate(Number(currentdate.getDate()));
-    maxDate.setMonth(Number(currentdate.getMonth() + 1));
+    const maxDate = moment().add(1, 'months').add(1, 'days').toDate();
+    //maxDate.setDate(Number(currentdate.getDate()));
+    //maxDate.setMonth(Number(currentdate.getMonth() + 1));
 
-    //console.log('date', date.getDay(),currentdate,maxDate);
+    //console.log('date', currentdate,maxDate);
     this.state = {
       showCalendar: false,
       currentDate: currentdate,
-      showdatesx: currentdate,
+      //showdatesx: currentdate,
       maxDates: maxDate,
       mode: 'date',
       currentTime: '',
@@ -45,14 +45,21 @@ export default class ApptForm extends React.PureComponent {
 
   restoreData(obj) {
     if (Helper.nullCheck(obj) === false) {
-      const currentdate = moment().toDate();
-      const dateObj = moment().toObject();
+      const currentdate = moment().add(1, 'days').toDate();
+      //const obj = moment().toObject();
   
-      currentdate.setDate(Number(dateObj.date + 1));
+      //currentdate.setDate(Number(obj.date + 1));
   
-      const maxDate = moment().toDate();
-      maxDate.setDate(Number(currentdate.getDate()));
-      maxDate.setMonth(Number(currentdate.getMonth() + 1));
+      const maxDate = moment().add(1, 'months').add(1, 'days').toDate();
+  
+      // const currentdate = moment().toDate();
+      // const dateObj = moment().toObject();
+  
+      // currentdate.setDate(Number(dateObj.date + 1));
+  
+      // const maxDate = moment().toDate();
+      // maxDate.setDate(Number(currentdate.getDate()));
+      // maxDate.setMonth(Number(currentdate.getMonth() + 1));
   
       if(Helper.nullStringCheck(obj.baa) === false){
         // const split = obj.baa.split(' ');
@@ -61,7 +68,7 @@ export default class ApptForm extends React.PureComponent {
         // obj.currentDate = currentdate;
       }else{
         obj.currentDate = currentdate;
-        obj.showdatesx = currentdate;
+        //obj.showdatesx = currentdate;
       }
       obj.maxDates = maxDate;
       obj.showCalendar=false;
@@ -75,7 +82,7 @@ export default class ApptForm extends React.PureComponent {
         const current = moment(selectedDate).format('DD-MM-YYYY');
         this.setState({
           //currentDate: selectedDate,
-          showdatesx: selectedDate,
+          //showdatesx: selectedDate,
           mode: 'date',
           intervaltime: 30,
           baa:current,

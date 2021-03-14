@@ -425,7 +425,7 @@ export default class FinorbitForm extends React.PureComponent {
               })
             }
             //console.log('popItemList1', popItemList);
-            console.log('property', property);
+            //console.log('property', property);
             //console.log('popItemList', popItemList);
 
             // let property = `${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property1)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property2)}`;
@@ -605,12 +605,12 @@ export default class FinorbitForm extends React.PureComponent {
               activeCounter={this.state.currentPosition}
               stepCount={this.state.title === 'Insure Check' ? 2 : 4}
               positionClicked={(pos) =>{
-                const {currentPosition} = this.state;
-                if(pos > currentPosition){
-                  this.formSubmit(true, pos);
-                }else{
-                  this.backNav(true, pos);
-                }
+                // const {currentPosition} = this.state;
+                // if(pos > currentPosition){
+                //   this.formSubmit(true, pos);
+                // }else{
+                //   this.backNav(true, pos);
+                // }
               }}
             />
             {title === '' ? (

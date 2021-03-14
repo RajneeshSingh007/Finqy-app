@@ -22,12 +22,12 @@ const TLDashboard = [
     click: 'TlDashboard',
     option: {},
   },
-  {
-    name: 'Report',
-    image: require('../../res/images/dialer/report.png'),
-    click: 'MemberReport',
-    option: {},
-  },
+  // {
+  //   name: 'Report',
+  //   image: require('../../res/images/dialer/report.png'),
+  //   click: 'MemberReport',
+  //   option: {},
+  // },
   {
     name: 'My Team',
     image: require('../../res/images/dialer/team.png'),
@@ -37,6 +37,12 @@ const TLDashboard = [
 ];
 
 const TCDashboard = [
+  {
+    name: 'Check-In',
+    image: require('../../res/images/dialer/dashboard.png'),
+    click: 'TcDashboard',
+    option: {},
+  },
   {
     name: 'Dashboard',
     image: require('../../res/images/dialer/dashboard.png'),
@@ -57,7 +63,7 @@ const TCDashboard = [
     option: {editEnabled: false, isFollowup: 1},
   },
   {
-    name: 'Need Name',
+    name: '...',
     image: require('../../res/images/dialer/emergency_call.png'),
     //click: 'Followup',
     click: 'DialerCalling',
@@ -69,22 +75,34 @@ const TCDashboard = [
     click: 'DialerRecords',
     option: {},
   },
-  {
-    name: 'Performance',
-    image: require('../../res/images/dialer/growth.png'),
-    click: 'TcPerformance',
-    option: {},
-  },
-  {
-    name: 'Templates',
-    image: require('../../res/images/dialer/template.png'),
-    click: 'TcPerformance',
-    option: {},
-  },
+  // {
+  //   name: 'Performance',
+  //   image: require('../../res/images/dialer/growth.png'),
+  //   click: 'TcPerformance',
+  //   option: {},
+  // },
+  // {
+  //   name: 'Templates',
+  //   image: require('../../res/images/dialer/template.png'),
+  //   click: 'TcPerformance',
+  //   option: {},
+  // },
   {
     name: 'Call Logs',
     image: require('../../res/images/dialer/report.png'),
     click: 'CallLogs',
+    option: {},
+  },
+  {
+    name: 'Break',
+    image: require('../../res/images/dialer/dashboard.png'),
+    click: 'TcDashboard',
+    option: {},
+  },
+  {
+    name: 'Check-Out',
+    image: require('../../res/images/dialer/dashboard.png'),
+    click: 'TcDashboard',
     option: {},
   },
 ];
@@ -97,11 +115,11 @@ export default class SwitchUser extends React.PureComponent {
     super(props);
     this.itemClicked = this.itemClicked.bind(this);
     this.state = {
-      userData: null,
       dialerData: null,
       dataList: [],
       loading: true,
       appoint: false,
+      tc:false
     };
   }
 
@@ -110,9 +128,8 @@ export default class SwitchUser extends React.PureComponent {
    */
   componentDidMount() {
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.USERTYPE, type => {
-      Pref.getVal(Pref.userData, data => {
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.USERTYPE, type => {
         if (type === 'team') {
           Pref.getVal(Pref.DIALER_DATA, value => {
             //console.log('value', value);
@@ -122,7 +139,7 @@ export default class SwitchUser extends React.PureComponent {
               const {id, tlid, pname} = value[0].tc;
               this.setState(
                 {
-                  userData: data,
+                  tc:true,
                   dialerData: value,
                   dataList: result,
                   loading: false,
@@ -137,7 +154,7 @@ export default class SwitchUser extends React.PureComponent {
             ) {
               result = TLDashboard;
               this.setState({
-                userData: data,
+                tc:false,
                 dialerData: value,
                 dataList: result,
                 loading: false,
@@ -147,9 +164,14 @@ export default class SwitchUser extends React.PureComponent {
         }
       });
     });
-    //});
   }
 
+  /**
+   * follow check
+   * @param {} tlid 
+   * @param {*} id 
+   * @param {*} tname 
+   */
   followupAvailableCheck = (tlid, id, tname) => {
     Pref.getVal(Pref.saveToken, value => {
       const body = JSON.stringify({
@@ -157,7 +179,6 @@ export default class SwitchUser extends React.PureComponent {
         userid: id,
         tname: tname,
       });
-      //console.log(body);
       Helper.networkHelperTokenPost(
         Pref.DIALER_TC_Follow,
         body,
@@ -165,9 +186,7 @@ export default class SwitchUser extends React.PureComponent {
         value,
         result => {
           const {appoint} = result;
-          //console.log('appoint', appoint);
           this.setState({appoint: appoint});
-          //console.log(result);
         },
         e => {},
       );
@@ -175,7 +194,13 @@ export default class SwitchUser extends React.PureComponent {
   };
 
   itemClicked = ({name, click, option}) => {
-    NavigationActions.navigate(click, option);
+    const {tc,dialerData } = this.state;
+    let finalDataProcess = option;
+    if(tc && name === 'Call Logs'){
+      const {id, tlid, pname} = dialerData[0].tc;
+      finalDataProcess = {id:id,tlid:tlid,tname:pname};
+    }
+    NavigationActions.navigate(click, finalDataProcess);
   };
 
   render() {

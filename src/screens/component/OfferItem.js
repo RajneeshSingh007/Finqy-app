@@ -7,21 +7,21 @@ import Lodash from 'lodash';
 import moment from 'moment';
 import IconChooser from '../common/IconChooser';
 
-const OfferItem = (prop) => {
+const OfferItem = prop => {
   const {
     item,
     navigate = () => {},
     download = () => {},
     sharing = () => {},
-    mailSharing = () =>{},
+    mailSharing = () => {},
   } = prop;
   if (Helper.nullCheck(item)) {
     return null;
   }
-  const formatDates = `Valid till ${moment(
-    Helper.dateObj(item.valid_date, '-'),
-  ).format('DD MMM YYYY')}`;
-  
+  // const formatDates = `Valid till ${moment(
+  //   Helper.dateObj(item.valid_date, '-'),
+  // ).format('DD MMM YYYY')}`;
+
   return (
     <View styleName="sm-gutter">
       <View styleName="vertical" style={styles.itemContainer}>
@@ -33,11 +33,11 @@ const OfferItem = (prop) => {
           />
         </TouchableWithoutFeedback>
 
-        <View styleName="horizontal space-between" style={styles.footerCon}>
-          <View>
+        <View styleName="horizontal" style={styles.footerCon}>
+          <View style={{flex: 0.55}}>
             <Title
               styleName="v-start h-start"
-              numberOfLines={1}
+              numberOfLines={2}
               style={styles.itemtext}>
               {Lodash.truncate(`${item.header}`, {
                 length: 36,
@@ -58,50 +58,62 @@ const OfferItem = (prop) => {
                 },
               ])}>{formatDates}</Title> */}
           </View>
-          <View styleName="horizontal v-center h-center space-between">
-            <TouchableWithoutFeedback onPress={mailSharing}>
-              <View style={StyleSheet.flatten([styles.circle, {
-                backgroundColor:Pref.RED
-              }])}>
-                <IconChooser
-                  name="mail"
-                  size={20}
-                  color={'white'}
-                  iconType={1}
-                  style={styles.icon}
-                />
+          <View style={{flex: 0.45}}>
+            <View styleName="horizontal v-center" style={{flex: 12}}>
+              <View style={styles.roundtouch}>
+                <TouchableWithoutFeedback onPress={mailSharing}>
+                  <View
+                    style={StyleSheet.flatten([
+                      styles.circle,
+                      {
+                        backgroundColor: Pref.RED,
+                      },
+                    ])}>
+                    <IconChooser
+                      name="mail"
+                      size={18}
+                      color={'white'}
+                      iconType={1}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
-            </TouchableWithoutFeedback>
-            <View style={styles.gap}></View>
-            <TouchableWithoutFeedback onPress={sharing}>
-              <View style={styles.circle}>
-                <IconChooser
-                  name="whatsapp"
-                  size={20}
-                  color={'white'}
-                  iconType={2}
-                  style={styles.icon}
-                />
+              <View style={styles.gap}></View>
+              <View style={styles.roundtouch}>
+                <TouchableWithoutFeedback onPress={sharing}>
+                  <View style={styles.circle}>
+                    <IconChooser
+                      name="whatsapp"
+                      size={18}
+                      color={'white'}
+                      iconType={2}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
-            </TouchableWithoutFeedback>
-            <View style={styles.gap}></View>
-            <TouchableWithoutFeedback onPress={download}>
-              <View
-                style={StyleSheet.flatten([
-                  styles.circle,
-                  {
-                    backgroundColor: '#e8e5d7',
-                  },
-                ])}>
-                <IconChooser
-                  name="download"
-                  size={20}
-                  color={'#97948c'}
-                  iconType={1}
-                  style={styles.icon}
-                />
+              <View style={styles.gap}></View>
+              <View style={styles.roundtouch}>
+                <TouchableWithoutFeedback onPress={download}>
+                  <View
+                    style={StyleSheet.flatten([
+                      styles.circle,
+                      {
+                        backgroundColor: '#e8e5d7',
+                      },
+                    ])}>
+                    <IconChooser
+                      name="download"
+                      size={18}
+                      color={'#97948c'}
+                      iconType={1}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
-            </TouchableWithoutFeedback>
+            </View>
           </View>
         </View>
       </View>
@@ -112,20 +124,23 @@ const OfferItem = (prop) => {
 export default OfferItem;
 
 const styles = StyleSheet.create({
+  roundtouch: {flex: 3},
   gap: {
-    marginHorizontal: 8,
+    flex: 0.15,
   },
   image: {
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 8,
-    width: '90%',
+    marginTop: 12,
+    width: '94%',
     height: 250,
     resizeMode: 'contain',
   },
   footerCon: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
+    paddingTop:12,
+    paddingBottom: 16,
+    paddingHorizontal: 4,
+    flex: 1,
   },
   icon: {
     alignSelf: 'center',
@@ -160,7 +175,7 @@ const styles = StyleSheet.create({
     marginStart: 16,
     marginEnd: 16,
     marginTop: 12,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   emptycont: {
     flex: 0.7,
@@ -202,7 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 4,
-    borderRadius: 16,
+    borderRadius: 36/2,
     //borderColor: '#000',
     //borderStyle: 'solid',
     //borderWidth: 3,

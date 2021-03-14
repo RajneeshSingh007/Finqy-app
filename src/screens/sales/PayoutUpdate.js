@@ -54,6 +54,7 @@ export default class PayoutUpdate extends React.PureComponent {
       selectedRowData: [],
       ogValue: '',
       ogPortValue: '',
+      showHealthPort:false,
     };
   }
 
@@ -62,18 +63,21 @@ export default class PayoutUpdate extends React.PureComponent {
     //console.log('lastitem', lastitem);
     const parse = Helper.lowercaseWithDashWord(title);
     let payoutport = '';
+    let showHealthPort = false;
     if (parse === 'health_insurance') {
       lastitem = data[data.length - 3];
-      payoutport = data[data.length - 2];
+      //payoutport = data[data.length - 2];
+      if (Helper.nullStringCheck(data[data.length - 2]) === false) {
+        payoutport = data[data.length - 2].replace(/\%/g, '');
+        showHealthPort = true;
+      }
     } else {
       lastitem = data[data.length - 2];
     }
-    if(lastitem !== ''){
+    if (lastitem !== '') {
       lastitem = lastitem.replace(/\%/g, '');
     }
-    if(payoutport !== ''){
-      payoutport = payoutport.replace(/\%/g, '');
-    }
+
     this.setState({
       currentRowPos: position,
       ogValue: lastitem,
@@ -82,6 +86,7 @@ export default class PayoutUpdate extends React.PureComponent {
       payoutValue: lastitem,
       payoutPort: payoutport,
       showModal: true,
+      showHealthPort:showHealthPort
     });
   };
 
@@ -186,9 +191,11 @@ export default class PayoutUpdate extends React.PureComponent {
   }
 
   backClick = () => {
+    const {refercode} = this.state;
     NavigationActions.navigate('PayinProducts', {
       screenName: 'PayoutUpdate',
       showUpdateButton: true,
+      refercode:refercode
     });
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return true;
@@ -196,14 +203,29 @@ export default class PayoutUpdate extends React.PureComponent {
 
   updatePayoutPerRow = () => {
     const {payoutValue, title, payoutPort} = this.state;
-    if (Number(payoutValue) <= 0) {
+    const parseTitle = Helper.lowercaseWithDashWord(title);
+    if (Helper.nullStringCheck(payoutValue)) {
+      alert('Payout empty');
+    } else if (
+      Helper.nullStringCheck(payoutValue) === false &&
+      Number(payoutValue) <= 0
+    ) {
       alert('Please, Enter value greater than zero');
-    } else if (Helper.lowercaseWithDashWord(title) === 'health_insurance' && Number(payoutPort) <= 0) {
+    } else if (
+      Helper.nullStringCheck(payoutPort) &&
+      parseTitle === 'health_insurance'
+    ) {
+      alert('Port value empty');
+    } else if (
+      Helper.nullStringCheck(payoutPort) === false &&
+      parseTitle === 'health_insurance' &&
+      Number(payoutPort) <= 0
+    ) {
       alert('Please, Enter value greater than zero');
     } else {
-      this.setState({showModal:false}, () =>{
+      this.setState({showModal: false}, () => {
         this.updateData();
-      })
+      });
     }
   };
 
@@ -239,16 +261,16 @@ export default class PayoutUpdate extends React.PureComponent {
     payout.refercode = refercode;
 
     //console.log('filterOnlyDatas',filterOnlyDatas1);
-    
+
     //save payout data
-    Pref.getVal(Pref.salespayoutUpdate, vlpayout =>{
-      if(Helper.nullCheck(vlpayout) === false){
+    Pref.getVal(Pref.salespayoutUpdate, vlpayout => {
+      if (Helper.nullCheck(vlpayout) === false) {
         //console.log('vlpayoutolder', filterOnlyDatas1);
         vlpayout[parsetitle].data = filterOnlyDatas1;
         vlpayout.refercode = refercode;
         Pref.setVal(Pref.salespayoutUpdate, vlpayout);
         //console.log('vlpayout', vlpayout);
-      }else{
+      } else {
         Pref.setVal(Pref.salespayoutUpdate, payout);
       }
       //console.log('payout', payout);
@@ -263,10 +285,11 @@ export default class PayoutUpdate extends React.PureComponent {
       ogPortValue: '',
       payoutPort: '',
       selectedRowData: [],
+      showHealthPort:false
     });
   };
 
-  filterPayoutDatas = (dataList) =>{
+  filterPayoutDatas = dataList => {
     const resultList = Lodash.map(dataList, io => {
       const filterReactElement = Lodash.filter(io, it => {
         if (React.isValidElement(it) === false) {
@@ -274,16 +297,16 @@ export default class PayoutUpdate extends React.PureComponent {
         }
       });
       let result = '';
-      filterReactElement.map(item =>{
-        result+=`${item}#`;
-      })
+      filterReactElement.map(item => {
+        result += `${item}#`;
+      });
       return result;
     });
     return resultList;
-  }
+  };
 
   render() {
-    const {title, tc, payoutPort} = this.state;
+    const {title, tc} = this.state;
     const split =
       title && title !== ''
         ? title.includes(' ')
@@ -303,7 +326,7 @@ export default class PayoutUpdate extends React.PureComponent {
                   selectedRowData: [],
                 })
               }
-              ratioHeight={0.6}
+              ratioHeight={0.65}
               backgroundColor={`white`}
               topCenterElement={
                 <Subtitle
@@ -328,23 +351,23 @@ export default class PayoutUpdate extends React.PureComponent {
                     placeholder={`Enter your value`}
                     value={this.state.payoutValue}
                     onChange={value => {
-                      if (String(value).match(/^[0-9]*$/g) !== null) {
+                      if (String(value).match(/^[0-9,.]*$/g) !== null) {
                         this.setState({payoutValue: value});
                       }
                     }}
                     keyboardType={'numeric'}
                     style={{
                       marginHorizontal: 12,
-                      marginVertical: payoutPort !== '' ? 8 : 16,
+                      marginVertical: this.state.showHealthPort ? 8 : 16,
                     }}
                   />
-                  {payoutPort !== '' ? (
+                  {this.state.showHealthPort ? (
                     <CustomForm
                       label={`Payout Port *`}
                       placeholder={`Enter your value`}
                       value={this.state.payoutPort}
                       onChange={value => {
-                        if (String(value).match(/^[0-9]*$/g) !== null) {
+                        if (String(value).match(/^[0-9,.]*$/g) !== null) {
                           this.setState({payoutPort: value});
                         }
                       }}
@@ -379,9 +402,11 @@ export default class PayoutUpdate extends React.PureComponent {
             <LeftHeaders
               title={'Payout'}
               backClicked={() => {
+                const {refercode} = this.state;
                 NavigationActions.navigate('PayinProducts', {
                   screenName: 'PayoutUpdate',
                   showUpdateButton: true,
+                  refercode:refercode
                 });
               }}
               showBack

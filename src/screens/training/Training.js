@@ -339,7 +339,7 @@ export default class Training extends React.PureComponent {
                 lineHeight: 20,
               },
             ])}>
-            {Helper.replacetext(title)}
+            {Helper.replacetext(item.name)}
           </Title>
         </TouchableWithoutFeedback>
       </View>

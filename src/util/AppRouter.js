@@ -30,10 +30,6 @@ import GetQuotesView from './../screens/finorbit/GetQuotesView';
 
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
-import MyOffers from './../screens/profile/MyOffers';
-import PopularPlan from './../screens/profile/PopularPlan';
-import MarketingTool from './../screens/profile/MarketingTool';
-import OffersDetails from './../screens/profile/OffersDetails';
 import MyWallet from './../screens/profile/MyWallet';
 import Redeem from './../screens/profile/Redeem';
 import ReferEarn from './../screens/profile/ReferEarn';
@@ -41,6 +37,13 @@ import Certificate from './../screens/profile/Certificate';
 import ChangePass from './../screens/profile/ChangePass';
 import Agreement from './../screens/profile/Agreement';
 import Term from './../screens/profile/Term';
+
+//marketing
+import MyOffers from './../screens/marketing/MyOffers';
+import PopularPlan from './../screens/marketing/PopularPlan';
+import MarketingTool from './../screens/marketing/MarketingTool';
+import OffersDetails from './../screens/marketing/OffersDetails';
+
 
 //TicketSystem
 import RaiseQueryForm from './../screens/ticketsystem/RaiseQueryForm';
@@ -69,12 +72,15 @@ import PayoutPolicy from './../screens/wallets/PayoutPolicy';
 import Blogs from './../screens/blogs/Blogs';
 import BlogDetails from './../screens/blogs/BlogDetails';
 
+//training
 import Training from './../screens/training/Training';
 
 import Manager from './../screens/relmanager/Manager';
 import Qrc from './../screens/helpdesk/Qrc';
+//term condition
 import TCondition from './../screens/auth/TCondition';
 import WebComp from '../screens/component/WebComp';
+//finish screen
 import FinishScreen from '../screens/common/FinishScreen';
 
 /// Dialer Screens
@@ -278,7 +284,7 @@ const DialerNav = createStackNavigator({
   TcPerformance:{screen:TcPerformance},
   TlDashboard:{screen:TlDashboard},
   Followup:{screen:Followup},
-  AllMembers:{screen:AllMembers},
+  //AllMembers:{screen:AllMembers},
   MemberReport:{screen:MemberReport},
   CallLogs:{screen:CallLogs},
   TcTemplates:{screen:TcTemplates},
@@ -347,11 +353,9 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     
-    DialerNav:{screen: DialerNav},
-    TicketNav:{screen:TicketNav},
-    SalesNav:{screen:SalesNav}
-    // AllMembers:{screen:AllMembers},
-    // MemberReport:{screen:MemberReport}  
+    // DialerNav:{screen: DialerNav},
+    // TicketNav:{screen:TicketNav},
+    // SalesNav:{screen:SalesNav}
   },
   {
     initialRouteName: 'Home',
@@ -360,10 +364,6 @@ const OtherNav = createDrawerNavigator(
     drawerType: 'front',
     statusBarAnimation: 'fade',
     resetOnBlur: true,
-    // defaultNavigationOptions: {
-    // 	drawerLockMode: 'unlocked',
-    // },
-    // edgeWidth: 0,
     minSwipeDistance: width,
     drawerWidth: WIDTH_DRAWER,
     contentComponent: (props) => <Sidebar {...props} />,
