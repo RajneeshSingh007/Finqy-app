@@ -118,11 +118,13 @@ export default class Blogs extends React.PureComponent {
     // if (url.includes('newspaper')){
     //     url = url.replace('/images', '');
     // }
+    //console.log(item);
     let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
     return (
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
           onPress={() => {
+            //console.log(item.post);
             //if (item.post.includes('https') || item.post.includes('http')) {
               Linking.openURL(item.post);
             //} else {

@@ -49,9 +49,8 @@ class App extends React.PureComponent {
   
     this.onNotificationListener();
 
-    //dialer features
+    //dialer
     //stopService();
-    
     //this.dialerCheckCheckin();
     //this.callDetectionListerner();
 

@@ -1,9 +1,6 @@
 import React from 'react';
-import {
-  StyleSheet,
-  FlatList,
-} from 'react-native';
-import {View} from '@shoutem/ui';
+import {StyleSheet, FlatList} from 'react-native';
+import {View, Title, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
 import {ActivityIndicator} from 'react-native-paper';
@@ -14,6 +11,7 @@ import Share from 'react-native-share';
 import DialerTemplate from '../../component/DialerTemplate';
 import CScreen from '../../component/CScreen';
 import {firebase} from '@react-native-firebase/firestore';
+import Modal from '../../../util/Modal';
 
 export default class TcTemplates extends React.PureComponent {
   constructor(props) {
@@ -29,14 +27,20 @@ export default class TcTemplates extends React.PureComponent {
       showFilter: false,
       height: 0,
       productList: Helper.productShareList(),
+      userListModal: true,
+      callRecordList:[],
+      userLoader:true,
     };
   }
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.saveToken, (token) => {
+      this.setState({token: token});
       this.fetchData();
     });
+    //});
   }
 
   componentWillUnMount() {
@@ -65,9 +69,58 @@ export default class TcTemplates extends React.PureComponent {
       });
   };
 
+  fetchCustomerData = () => {
+    Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
+      const {id, tlid, pname} = userdatas[0].tc;
+      const body = JSON.stringify({
+        teamid: tlid,
+        userid: id,
+        active: 1,
+        tname: pname,
+      });
+      Helper.networkHelperTokenPost(
+        Pref.DIALER_LEAD_RECORD,
+        body,
+        Pref.methodPost,
+        this.state.token,
+        (result) => {
+          const {data, status} = result;
+          if (status) {
+            if (data.length > 0) {
+              const sorting = data.sort((a, b) => {
+                const splita = a.updated_at.split(/\s/g);
+                const splitb = b.updated_at.split(/\s/g);
+                const sp = splita[0].split('-');
+                const spz = splitb[0].split('-');
+                return (
+                  Number(sp[2]) - Number(spz[2]) ||
+                  Number(sp[1]) - Number(spz[1]) ||
+                  Number(sp[0]) - Number(spz[0])
+                );
+              });
+              this.setState({
+                callRecordList: sorting.reverse(),
+                userLoader:false
+              });
+            } else {
+              this.setState({
+                userLoader: false,
+              });
+            }
+          } else {
+            this.setState({userLoader: false});
+          }
+        },
+        (e) => {
+          this.setState({userLoader: false});
+        },
+      );
+    });
+  };
+
   /**
    * share whatsapp
-   * @param {*} param0 
+   * @param {*} param0
    */
   shareOffer = ({title, content}) => {
     const shareOptions = {
@@ -75,14 +128,14 @@ export default class TcTemplates extends React.PureComponent {
       message: content,
       url: '',
       social: Share.Social.WHATSAPP,
-      whatsAppNumber: '',  // country code + phone number
-    };  
+      whatsAppNumber: '', // country code + phone number
+    };
     Share.shareSingle(shareOptions);
   };
 
   /**
    * share mail
-   * @param {*} param0 
+   * @param {*} param0
    */
   mailShareOffer = ({title, content}) => {
     const shareOptions = {
@@ -90,16 +143,61 @@ export default class TcTemplates extends React.PureComponent {
       message: content,
       url: '',
       social: Share.Social.EMAIL,
-      subject:title
-    };  
+      subject: title,
+    };
     Share.shareSingle(shareOptions);
   };
-
 
   render() {
     return (
       <CScreen
         refresh={() => this.fetchData()}
+        absolute={
+          <>
+            <Modal
+              visible={this.state.userListModal}
+              setModalVisible={() => this.setState({userListModal: false})}
+              ratioHeight={0.8}
+              backgroundColor={`white`}
+              centerFlex={0.8}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                  }}>
+                  {`Select Customer`}
+                </Subtitle>
+              }
+              children={
+                <CScreen
+                  showfooter={false}
+                  body={<View style={{marginStart: 8, marginEnd: 8}}>
+                    <FlatList
+                        style={{marginHorizontal: sizeWidth(2)}}
+                        data={this.state.userListModal}
+                        renderItem={({item, index}) => (
+                          <DialerTemplate
+                            item={item}
+                            sharing={() => this.shareOffer(item)}
+                            mailSharing={() => {
+                              this.mailShareOffer(item);
+                            }}
+                          />
+                        )}
+                        keyExtractor={(_item, index) => `${index}`}
+                        showsVerticalScrollIndicator={true}
+                        showsHorizontalScrollIndicator={false}
+                        nestedScrollEnabled
+                      />  
+                  </View>}
+                />
+              }
+            />
+          </>
+        }
         body={
           <>
             <LeftHeaders

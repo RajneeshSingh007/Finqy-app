@@ -164,6 +164,7 @@ export const networkHelper = (
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
     },
     body: jsonData,
   })
@@ -247,6 +248,7 @@ export const networkHelperContentType = (
     headers: {
       Accept: 'application/json',
       'Content-Type': `multipart/form-data`,
+      'Cache-Control': 'no-cache'
     },
     body: jsonData,
   })
@@ -284,6 +286,7 @@ export const networkHelperTokenContentType = (
       Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-Type': `multipart/form-data`,
+      'Cache-Control': 'no-cache'
     },
     body: jsonData,
   };
@@ -320,6 +323,7 @@ export const networkHelperToken = (
       Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
     },
   })
     .then((response) => {
@@ -356,6 +360,7 @@ export const networkHelperTokenPost = (
       Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
     },
     body: jsonData,
   })
@@ -856,6 +861,7 @@ export const networkHelperHelpDeskTicket = (
       Authorization: 'Basic ' + token,
       Accept: 'application/json',
       'Content-Type': `multipart/form-data`,
+      'Cache-Control': 'no-cache'
     },
     body: jsonData,
   };
@@ -894,6 +900,7 @@ export const networkHelperHelpDeskTicketGet = (
     headers: {
       Authorization: 'Basic ' + token,
       Accept: 'application/json',
+      'Cache-Control': 'no-cache'
     },
   };
   fetch(url, options)
