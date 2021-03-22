@@ -189,7 +189,9 @@ class CommonFileUpload extends React.PureComponent {
       truDownloadEnable = -1,
       editMode = false,
       email = false,
-      emailClicked = () =>{}
+      emailClicked = () =>{},
+      whatsapp = false,
+      whatsppClicked = () => {}
     } = this.props;
     return truDownloadEnable === 1 &&
       Helper.nullStringCheck(downloadUrl) === false ? (
@@ -233,11 +235,28 @@ class CommonFileUpload extends React.PureComponent {
             </View>
           </TouchableWithoutFeedback>
           {email ? <TouchableWithoutFeedback onPress={emailClicked}>
-            <View style={{flex: 0.1, marginEnd:8}}>
+            <View style={{flex: 0.15, marginStart:8, marginEnd:8}}>
               <View style={styles.circle}>
                 <IconChooser
                   name={'mail'}
                   size={20}
+                  color={'white'}
+                  style={{
+                    alignSelf: 'center',
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback> : null}
+          {whatsapp ? <TouchableWithoutFeedback onPress={whatsppClicked}>
+            <View style={{flex: 0.15, marginEnd:8}}>
+              <View style={StyleSheet.flatten([styles.circle,{
+                backgroundColor:'#1bd741'
+              }])}>
+                <IconChooser
+                  name={'whatsapp'}
+                  size={20}
+                  iconType={2}
                   color={'white'}
                   style={{
                     alignSelf: 'center',

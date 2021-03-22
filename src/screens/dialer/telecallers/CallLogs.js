@@ -62,10 +62,19 @@ export default class CallLogs extends React.PureComponent {
       this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.saveToken, value => {
-        this.setState({token: value,id:id,tlid:tlid,tname:tname,exportEnabled:exportEnabled}, () => {
-          this.fetchData();
-        });
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState(
+          {
+            token: value,
+            id: id,
+            tlid: tlid,
+            tname: tname,
+            exportEnabled: exportEnabled,
+          },
+          () => {
+            this.fetchData();
+          },
+        );
       });
     });
   }
@@ -77,7 +86,7 @@ export default class CallLogs extends React.PureComponent {
   }
 
   fetchData = () => {
-    const {id,tlid,tname} = this.state;
+    const {id, tlid, tname} = this.state;
     this.setState({threadLoader: true});
     const body = JSON.stringify({
       teamid: tlid,
@@ -89,16 +98,18 @@ export default class CallLogs extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         const {data, status} = result;
         if (status === true) {
-          const callLogData = Lodash.map(data, io => {
+          const callLogData = Lodash.map(data, (io) => {
             io.time = io.dateTime;
             if (io.duration === 0) {
               io.duration = '0';
             } else {
-              const callDur = Number(io.duration / 60).toPrecision(3);
-              io.duration = `${callDur}`;
+              if (io.duration > 60) {
+                const callDur = Number(io.duration / 60).toPrecision(3);
+                io.duration = `${io.duration}`;
+              }
             }
             return io;
           });
@@ -116,7 +127,7 @@ export default class CallLogs extends React.PureComponent {
           this.setState({threadLoader: false});
         }
       },
-      e => {
+      (e) => {
         this.setState({threadLoader: false});
       },
     );
@@ -128,17 +139,13 @@ export default class CallLogs extends React.PureComponent {
     //today
     const today = moment().format(dateFormator);
     //yesterday
-    const yesterday = moment()
-      .subtract(1, 'days')
-      .format(dateFormator);
+    const yesterday = moment().subtract(1, 'days').format(dateFormator);
     //this month
-    const startOfMonth = moment()
-      .startOf('month')
-      .format(dateFormator);
+    const startOfMonth = moment().startOf('month').format(dateFormator);
 
     const splitStartOfMonth = startOfMonth.split('-');
 
-    const filter = Lodash.filter(cloneList, io => {
+    const filter = Lodash.filter(cloneList, (io) => {
       const parse = moment(io.dateTime).format(dateFormator);
       const parseSplit = parse.split('-');
       if (filterMode === 'Today' && today === parse) {
@@ -169,53 +176,75 @@ export default class CallLogs extends React.PureComponent {
    * @param {*} sectionID
    * @param {*} rowID
    */
-  renderDetail = rowData => {
+  renderDetail = (rowData) => {
     return (
       <View styleName="horizontal v-center" style={styles.mainTcontainer}>
-        <View style={styles.callcircle}>
-          <IconChooser
-            name={
-              rowData.type === 'OUTGOING' ? 'phone-outgoing' : 'phone-incoming'
-            }
-            size={24}
-            color={rowData.type === 'OUTGOING' ? 'green' : Pref.RED}
-            type={1}
-            style={{alignSelf: 'center'}}
-          />
+        <View style={{flex: 0.2}}>
+          <View style={styles.callcircle}>
+            <IconChooser
+              name={
+                rowData.type === 'OUTGOING'
+                  ? 'phone-outgoing'
+                  : 'phone-incoming'
+              }
+              size={22}
+              color={rowData.type === 'OUTGOING' ? 'green' : Pref.RED}
+              type={1}
+              style={{alignSelf: 'center'}}
+            />
+          </View>
         </View>
-        <View styleName="vertical" style={{marginStart: 16}}>
+        <View styleName="vertical" style={{flex: 0.8, flexDirection: 'column'}}>
           <Subtitle style={{fontSize: 13, color: 'grey'}}>
             {rowData.dateTime}
           </Subtitle>
           {rowData.name !== '' ? (
             <Title style={styles.timelinetitle}>{rowData.name}</Title>
           ) : null}
-          <View
-            styleName="horizontal space-between"
-            style={{justifyContent: 'space-between'}}>
-            <Title style={styles.tlphone}>{rowData.phoneNumber}</Title>
-            <Subtitle
+          <View styleName="horizontal" style={{flex: 1, flexDirection: 'row'}}>
+            <View
               style={{
-                fontSize: 13,
-                color: 'grey',
-                marginStart: 16,
-              }}>{`Duration: ${rowData.duration}s`}</Subtitle>
-            <Subtitle
-              style={{
-                fontSize: 13,
-                color: 'grey',
-                marginEnd: 6,
-                marginStart: 16,
+                flex: 0.4,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-              {Lodash.capitalize(rowData.type)}
-            </Subtitle>
+              <Title style={styles.tlphone}>{rowData.phoneNumber}</Title>
+            </View>
+            <View
+              style={{
+                flex: 0.4,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Subtitle
+                style={{
+                  fontSize: 13,
+                  color: 'grey',
+                  alignSelf: 'center',
+                }}>
+                {Lodash.capitalize(rowData.type)}
+              </Subtitle>
+            </View>
+            <View
+              style={{
+                flex: 0.2,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Subtitle
+                style={{
+                  fontSize: 13,
+                  color: 'grey',
+                  alignSelf: 'center',
+                }}>{`${rowData.duration}s`}</Subtitle>
+            </View>
           </View>
         </View>
       </View>
     );
   };
 
-  renderFilterView = title => {
+  renderFilterView = (title) => {
     const {filterMode} = this.state;
     return (
       <TouchableWithoutFeedback onPress={() => this.filterCallHistory(title)}>
@@ -245,7 +274,7 @@ export default class CallLogs extends React.PureComponent {
   exportCallLogs = () => {
     const {cloneList} = this.state;
     if (cloneList.length > 0) {
-      const parse = Lodash.map(cloneList, io => {
+      const parse = Lodash.map(cloneList, (io) => {
         io.type = Lodash.capitalize(io.type);
         delete io.rawType;
         delete io.timestamp;
@@ -255,7 +284,7 @@ export default class CallLogs extends React.PureComponent {
       const date = moment().format('DD_MM_YYYY');
       const name = `${date}_CallLogs`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(csvHeader, parse, finalFilePath, result => {
+      Helper.writeCSV(csvHeader, parse, finalFilePath, (result) => {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
@@ -343,10 +372,10 @@ export default class CallLogs extends React.PureComponent {
 
 const styles = StyleSheet.create({
   callcircle: {
-    width: 48,
-    height: 48,
+    width: 42,
+    height: 42,
     backgroundColor: '#ecebec',
-    borderRadius: 48,
+    borderRadius: 42 / 2,
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',

@@ -52,7 +52,7 @@ export default class AllMembers extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, userData => {
         //console.log('reportenabled', reportenabled)
         let tableHead = ['Sr. No.', 'Name', 'Number', 'Email', 'Refercode'];
@@ -72,7 +72,7 @@ export default class AllMembers extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   componentWillUnMount() {

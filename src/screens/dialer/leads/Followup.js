@@ -51,7 +51,7 @@ export default class Followup extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({ loading: true, dataList: [] });
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
         //console.log('active', active)
         this.setState({ userData: userData,active:2 });
@@ -65,7 +65,7 @@ export default class Followup extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   componentWillUnMount() {

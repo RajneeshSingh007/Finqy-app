@@ -44,7 +44,7 @@ export default class LeadList extends React.PureComponent {
     this.backclick = this.backclick.bind(this);
     this.invoiceViewClick = this.invoiceViewClick.bind(this);
     this.cifClick = this.cifClick.bind(this);
-    this.quotesClick = this.quotesClick.bind(this);
+    //this.quotesClick = this.quotesClick.bind(this);
     this.emailSubmit = this.emailSubmit.bind(this);
     this.quoteEmailClicked = this.quoteEmailClicked.bind(this);
     this.headerchange = false;
@@ -114,8 +114,9 @@ export default class LeadList extends React.PureComponent {
       editThird: null,
       flag: 2,
       backScreen: null,
-      editSecond:null,
-      activeRowData:null
+      editSecond: null,
+      activeRowData: null,
+      quotemailType: -1,
     };
   }
 
@@ -126,9 +127,9 @@ export default class LeadList extends React.PureComponent {
       this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
+      Pref.getVal(Pref.userData, (userData) => {
         this.setState({userData: userData});
-        Pref.getVal(Pref.USERTYPE, v => {
+        Pref.getVal(Pref.USERTYPE, (v) => {
           this.setState({type: v}, () => {
             const {navigation} = this.props;
             const ref = navigation.getParam('ref', null);
@@ -137,7 +138,7 @@ export default class LeadList extends React.PureComponent {
               flag = 1;
             }
             const backScreen = navigation.getParam('backScreen', null);
-            Pref.getVal(Pref.saveToken, value => {
+            Pref.getVal(Pref.saveToken, (value) => {
               this.setState(
                 {
                   type: v,
@@ -192,14 +193,14 @@ export default class LeadList extends React.PureComponent {
       flag: flag,
       type: type,
     });
-    //console.log('body', body);
+    //console.log('body', body,this.state.token);
     //console.log(Pref.LeadRecordUrl, body)
     Helper.networkHelperTokenPost(
       Pref.LeadRecordUrl,
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         const {data, response_header} = result;
         const {res_type} = response_header;
         if (res_type === `success`) {
@@ -245,13 +246,13 @@ export default class LeadList extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      e => {
+      (e) => {
         this.setState({loading: false});
       },
     );
   };
 
-  editLead = item => {
+  editLead = (item) => {
     const {product} = item;
     //console.log('item', item)
     let pname = '';
@@ -281,8 +282,8 @@ export default class LeadList extends React.PureComponent {
     }
   };
 
-  downloadFile = item => {
-    const {product,quotes,policy} = item;
+  downloadFile = (item) => {
+    const {product, quotes, policy, cif_file} = item;
     //policy, quote
     //console.log('item', item)
     let pname = '';
@@ -318,10 +319,11 @@ export default class LeadList extends React.PureComponent {
       downloadFormTitle: pname,
       downloadModal: true,
       editThird: getAll.third,
-      editSecond:getAll.second,
-      quotes:quotes,
-      policy:policy,
-      activeRowData:item
+      editSecond: getAll.second,
+      quotes: quotes,
+      policy: policy,
+      activeRowData: item,
+      cif: cif_file,
     });
   };
 
@@ -336,14 +338,21 @@ export default class LeadList extends React.PureComponent {
         for (let i = start; i < end; i++) {
           const item = sort[i];
           if (item !== undefined && item !== null) {
-            const {quotes, mail, sharewhatsapp, sharemail, policy,modified_date} = item;
-            const {alldata}  = item;
+            const {
+              quotes,
+              mail,
+              sharewhatsapp,
+              sharemail,
+              policy,
+              modified_date,
+            } = item;
+            const {alldata} = item;
             const {event_descrip} = alldata;
             const parsedate = moment(modified_date).format('DD-MM-YYYY');
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
             rowData.push(item.date);
-            rowData.push(parsedate==='Invalid date' ? '' : parsedate);
+            rowData.push(parsedate === 'Invalid date' ? '' : parsedate);
             rowData.push(item.leadno);
             rowData.push(item.source_type);
             rowData.push(item.name);
@@ -399,7 +408,7 @@ export default class LeadList extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                {/* {value !== '' ? (
+                {value !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.cifClick(value, false)}>
                     <View>
@@ -411,7 +420,7 @@ export default class LeadList extends React.PureComponent {
                       />
                     </View>
                   </TouchableWithoutFeedback>
-                ) : null} */}
+                ) : null}
                 {mail !== '' ? (
                   <TouchableWithoutFeedback
                     onPress={() => this.cifClick(value, true)}>
@@ -460,14 +469,12 @@ export default class LeadList extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <Title style={styles.event}>
-                    {value}
-                  </Title>
+                <Title style={styles.event}>{value}</Title>
               </View>
             );
             rowData.push(eventDescView(event_descrip));
 
-            const downloadView = value => (
+            const downloadView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -496,7 +503,7 @@ export default class LeadList extends React.PureComponent {
               rowData.push('');
             }
 
-            const editView = value => (
+            const editView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -583,12 +590,19 @@ export default class LeadList extends React.PureComponent {
    */
   cifClick = (value, mode) => {
     const {userData} = this.state;
-    const {rcontact, rname} = userData;
     const sp = value.split('@');
     const url = ``;
-    const title = '';
+    const title = mode ? 'CIF Details' : '';
+    const username =
+      Helper.nullCheck(userData.rname) === false
+        ? userData.rname
+        : userData.username;
+    const mobile =
+      Helper.nullCheck(userData.rcontact) === false
+        ? userData.rcontact
+        : userData.mobile;
     const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${sp[0]}
-    \n\nFor further details contact:\n\nRP name : ${rname}\n\nMobile no : ${rcontact}\n\nRegards\n\nTeam ERB`;
+    \n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
     const options = Platform.select({
       ios: {
         activityItemSources: [
@@ -627,58 +641,120 @@ export default class LeadList extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         //console.log(`result`, result);
       },
-      e => {
+      (e) => {
         //console.log('e', e);
       },
     );
     if (mode === true) {
       options.social = Share.Social.EMAIL;
-      Share.shareSingle(options);
     } else {
-      Share.open(options);
+      options.social = Share.Social.WHATSAPP;
+      options.whatsAppNumber = '';
     }
+    Share.shareSingle(options);
   };
 
-  quoteEmailClicked = () =>{
+  /**
+   * quotes email sharing
+   * type: if 1 then quotes : cif
+   */
+  quoteEmailClicked = (type) => {
     const {activeRowData} = this.state;
     const {mail} = activeRowData;
-    console.log('mail', mail);
     const sp = mail.split('@');
     this.setState({
-      downloadModal:false,
+      downloadModal: false,
       quotemodalVis: true,
       quotemailData: mail,
-      quotemail: sp[0].includes('@') ? sp[0] : '',
+      quotemail: type == 2 ? '' : sp[0].includes('@') ? sp[0] : '',
+      quotemailType: type,
     });
-  }
-
-  quotesClick = (value, title) => {
-    if (title === `Mail`) {
-      const sp = value.split('@');
-      this.setState({
-        quotemodalVis: true,
-        quotemailData: value,
-        quotemail: sp[0].includes('@') ? sp[0] : '',
-      });
-    } else {
-      const split = value.split('/');
-      const fileName = split[split.length - 1];
-      if (value.includes('pdf')) {
-        this.setState({
-          modalvis: true,
-          pdfurl: value,
-          pdfTitle: title,
-          fileName: fileName,
-        });
-      } else {
-        Helper.downloadFileWithFileName(value, fileName, fileName, '*/*');
-        //Helper.downloadFile(value, title);
-      }
-    }
   };
+
+  /**
+   * quote whatsapp sharing
+   */
+  quoteWhatsappClicked = () => {
+    const {activeRowData, userData} = this.state;
+    const {mail} = activeRowData;
+    const splitmails = mail.split('@');
+    const quoteLink = `${Pref.CORP_USER_QLINK}${splitmails[1]}`;
+    const username =
+      Helper.nullCheck(userData.rname) === false
+        ? userData.rname
+        : userData.username;
+    const mobile =
+      Helper.nullCheck(userData.rcontact) === false
+        ? userData.rcontact
+        : userData.mobile;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the Quotation as desired.\n\n${quoteLink}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
+    const shareOptions = {
+      title: '',
+      message: content,
+      url: '',
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',
+    };
+    Share.shareSingle(shareOptions);
+  };
+
+  /**
+   * cif whatsapp sharing
+   */
+  cifWhatsappClicked = () => {
+    const {activeRowData, userData} = this.state;
+    const {cif_file} = activeRowData;
+    const username =
+      Helper.nullCheck(userData.rname) === false
+        ? userData.rname
+        : userData.username;
+    const mobile =
+      Helper.nullCheck(userData.rcontact) === false
+        ? userData.rcontact
+        : userData.mobile;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${cif_file}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
+    const shareOptions = {
+      title: '',
+      message: content,
+      url: '',
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',
+    };
+    Share.shareSingle(shareOptions);
+  };
+
+  /**
+   * quotes click
+   * @param {} value
+   * @param {*} title
+   */
+  // quotesClick = (value, title) => {
+  //   if (title === `Mail`) {
+  //     const sp = value.split('@');
+  //     this.setState({
+  //       quotemodalVis: true,
+  //       quotemailData: value,
+  //       quotemail: sp[0].includes('@') ? sp[0] : '',
+  //     });
+  //   } else {
+  //     const split = value.split('/');
+  //     const fileName = split[split.length - 1];
+  //     if (value.includes('pdf')) {
+  //       this.setState({
+  //         modalvis: true,
+  //         pdfurl: value,
+  //         pdfTitle: title,
+  //         fileName: fileName,
+  //       });
+  //     } else {
+  //       Helper.downloadFileWithFileName(value, fileName, fileName, '*/*');
+  //       //Helper.downloadFile(value, title);
+  //     }
+  //   }
+  // };
 
   invoiceViewClick = (value, title) => {
     const split = value.split('/');
@@ -691,25 +767,50 @@ export default class LeadList extends React.PureComponent {
     });
   };
 
+  /**
+   * quotes/cif mail send
+   */
   emailSubmit = () => {
-    const {quotemailData, quotemail, userData} = this.state;
-    const {rname, rcontact} = userData;
+    const {quotemailData, quotemail, userData, quotemailType} = this.state;
+    const username =
+    Helper.nullCheck(userData.rname) === false
+      ? userData.rname
+      : userData.username;
+  const mobile =
+    Helper.nullCheck(userData.rcontact) === false
+      ? userData.rcontact
+      : userData.mobile;
     const sp = quotemailData.split('@');
-    const body = JSON.stringify({
-      email: `${quotemail}`,
-      form_name: `${sp[sp.length - 1]}`,
-      form_id: `${sp.length === 4 ? sp[1] : sp[0]}`,
-      username: rname,
-      mobile: rcontact,
-      //quote_file:`${sp.length === 4 ? sp[3] : sp[2]}`
-    });
-    //console.log('body', body);
+    let data = {};
+    if (quotemailType === 1) {
+      data = {
+        email: quotemail,
+        form_name: `${sp[sp.length - 1]}`,
+        form_id: `${sp.length === 4 ? sp[1] : sp[0]}`,
+        username: username,
+        mobile: mobile,
+        //quote_file:`${sp.length === 4 ? sp[3] : sp[2]}`
+      };
+    } else {
+      const {activeRowData} = this.state;
+      const {cif_file} = activeRowData;
+      const spl = cif_file.split(/\//g);
+      const name = spl[spl.length - 1];
+      data = {
+        email_cif: quotemail,
+        cif_ff: name,
+        username: username,
+        mobile: mobile,
+      };
+    }
+    const body = JSON.stringify(data);
+    //console.log('body', quotemailType, body);
     Helper.networkHelperTokenPost(
       Pref.AjaxUrl,
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         //console.log(`result`, result);
         const {response_header} = result;
         const {res_type} = response_header;
@@ -722,21 +823,24 @@ export default class LeadList extends React.PureComponent {
           quotemail: '',
         });
       },
-      e => {
+      (e) => {
         alert(`Failed to send mail`);
         this.setState({quotemodalVis: false, quotemailData: '', quotemail: ''});
       },
     );
   };
 
+  /**
+   * export
+   */
   clickedexport = () => {
     const {cloneList, userData} = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length);
-      const {refercode, username} = userData;
+      const {refercode} = userData;
       const name = `${refercode}_MyLeadRecord`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, result => {
+      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
@@ -752,15 +856,13 @@ export default class LeadList extends React.PureComponent {
     }
   };
 
-  onChangeSearch = query => {
+  onChangeSearch = (query) => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, it => {
+      const result = Lodash.filter(clone, (it) => {
         const {
           date,
           leadno,
@@ -772,46 +874,15 @@ export default class LeadList extends React.PureComponent {
           status,
         } = it;
         return (
-          (date &&
-            date
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (leadno &&
-            leadno
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
+          (date && date.trim().toLowerCase().includes(trimquery)) ||
+          (leadno && leadno.trim().toLowerCase().includes(trimquery)) ||
           (source_type &&
-            source_type
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (name &&
-            name
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (mobile &&
-            mobile
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (product &&
-            product
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (bank &&
-            bank
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (status &&
-            status
-              .trim()
-              .toLowerCase()
-              .includes(trimquery))
+            source_type.trim().toLowerCase().includes(trimquery)) ||
+          (name && name.trim().toLowerCase().includes(trimquery)) ||
+          (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+          (product && product.trim().toLowerCase().includes(trimquery)) ||
+          (bank && bank.trim().toLowerCase().includes(trimquery)) ||
+          (status && status.trim().toLowerCase().includes(trimquery))
         );
       });
       const data =
@@ -847,7 +918,14 @@ export default class LeadList extends React.PureComponent {
   };
 
   render() {
-    const {searchQuery, enableSearch, editThird, editSecond, flag, type} = this.state;
+    const {
+      searchQuery,
+      enableSearch,
+      editThird,
+      editSecond,
+      flag,
+      type,
+    } = this.state;
     return (
       <CScreen
         refresh={() => {
@@ -922,22 +1000,37 @@ export default class LeadList extends React.PureComponent {
                         salarySlip4={editThird && editThird.salarySlip4}
                         salarySlip5={editThird && editThird.salarySlip5}
                         bankState={editThird && editThird.bankState}
-                        multipleFilesList={editThird && editThird.multipleFilesList}
-                        other = {editThird && editThird.other}
-                        existing = {editThird && editThird.existing}
-                        passportPhoto = {editThird && editThird.passportPhoto}
-                        cap_aadhar = {editThird && editThird.cap_aadhar}
-                        pop_electricity = {editThird && editThird.pop_electricity}
-                        current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}  
-                        current_add_proof = {editThird && editThird.current_add_proof}
-                        exisitng_loan_doc = {editThird && editThird.exisitng_loan_doc}
-                        proof_of_property = {editThird && editThird.proof_of_property}
+                        multipleFilesList={
+                          editThird && editThird.multipleFilesList
+                        }
+                        other={editThird && editThird.other}
+                        existing={editThird && editThird.existing}
+                        passportPhoto={editThird && editThird.passportPhoto}
+                        cap_aadhar={editThird && editThird.cap_aadhar}
+                        pop_electricity={editThird && editThird.pop_electricity}
+                        current_loan_repayment_statement={
+                          editThird &&
+                          editThird.current_loan_repayment_statement
+                        }
+                        current_add_proof={
+                          editThird && editThird.current_add_proof
+                        }
+                        exisitng_loan_doc={
+                          editThird && editThird.exisitng_loan_doc
+                        }
+                        proof_of_property={
+                          editThird && editThird.proof_of_property
+                        }
                         existingcard={editSecond && editSecond.existingcard}
                         fresh_pop={editSecond && editSecond.fresh_pop}
                         quotes={this.state.quotes}
                         policy={this.state.policy}
+                        cif={this.state.cif}
                         popitemList={editThird && editThird.popitemList}
-                        quoteEmailClicked={() => this.quoteEmailClicked()}
+                        quoteEmailClicked={() => this.quoteEmailClicked(1)}
+                        quoteWhatsappClicked={() => this.quoteWhatsappClicked()}
+                        cifWhatsappClicked={() => this.cifWhatsappClicked()}
+                        cifEmailClicked={() => this.quoteEmailClicked(2)}
                       />
                     </View>
                   }
@@ -1038,7 +1131,7 @@ export default class LeadList extends React.PureComponent {
                     label={`Email`}
                     placeholder={`Enter email id`}
                     value={this.state.quotemail}
-                    onChange={v => this.setState({quotemail: v})}
+                    onChange={(v) => this.setState({quotemail: v})}
                     keyboardType={'email-address'}
                     style={{marginHorizontal: 12}}
                   />
@@ -1180,6 +1273,6 @@ const styles = StyleSheet.create({
   event: {
     fontWeight: '700',
     fontSize: 15,
-    color:Pref.RED
+    color: Pref.RED,
   },
 });

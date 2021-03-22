@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, BackHandler,TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
 import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
@@ -50,50 +50,48 @@ export default class MemberReport extends React.PureComponent {
     const {navigation} = this.props;
     const dialerUserData = navigation.getParam('data', []);
     const tlID = navigation.getParam('tlID', null);
-    const currentId = navigation.getParam('currentId',  null);
+    const currentId = navigation.getParam('currentId', null);
     const tname = navigation.getParam('tname', null);
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.userData, userData => {
-      const pastStartDate = moment().format(DATE_FORMAT);
-      const pastEndDate = moment()
-        .subtract(7, 'd')
-        .format(DATE_FORMAT);
-      // const efStartDate = moment().format(DATE_FORMAT);
-      // const efEndDate = moment()
-      // .subtract(1, 'M')
-      // .format(DATE_FORMAT);
-      // const plStartDate = moment().format(DATE_FORMAT);
-      // const plEndDate = moment()
-      //   .subtract(1, 'M')
-      //   .format(DATE_FORMAT);
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.userData, (userData) => {
+        const pastStartDate = moment().format(DATE_FORMAT);
+        const pastEndDate = moment().subtract(7, 'd').format(DATE_FORMAT);
+        const efStartDate = moment().format(DATE_FORMAT);
+        const efEndDate = moment()
+          ///.subtract(1, 'M')
+          .format(DATE_FORMAT);
+        const plStartDate = moment().format(DATE_FORMAT);
+        const plEndDate = moment()
+          //.subtract(1, 'M')
+          .format(DATE_FORMAT);
 
-      this.setState({
-        tname:tname,
-        currentId:currentId,
-        tlID: tlID,
-        userData: userData,
-        dialerUserData: dialerUserData,
-        pastStartDate: pastStartDate,
-        pastEndDate: pastEndDate,
-        efStartDate: '',
-        efEndDate:'',
-        plStartDate: '',
-        plEndDate: '',
-      });
-      Pref.getVal(Pref.USERTYPE, v => {
-        this.setState({type: v}, () => {
-          Pref.getVal(Pref.saveToken, value => {
-            this.setState({token: value}, () => {
-              this.fetchData();
+        this.setState({
+          tname: tname,
+          currentId: currentId,
+          tlID: tlID,
+          userData: userData,
+          dialerUserData: dialerUserData,
+          pastStartDate: pastStartDate,
+          pastEndDate: pastEndDate,
+          efStartDate: efStartDate,
+          efEndDate: efEndDate,
+          plStartDate: plStartDate,
+          plEndDate: plEndDate,
+        });
+        Pref.getVal(Pref.USERTYPE, (v) => {
+          this.setState({type: v}, () => {
+            Pref.getVal(Pref.saveToken, (value) => {
+              this.setState({token: value}, () => {
+                this.fetchData();
+              });
             });
           });
         });
       });
     });
-    //});
   }
 
   componentWillUnMount() {
@@ -120,7 +118,7 @@ export default class MemberReport extends React.PureComponent {
       dialerUserData,
       tlID,
       currentId,
-      tname
+      tname,
     } = this.state;
     this.setState({loading: true});
     //const {id} = userData;
@@ -128,8 +126,8 @@ export default class MemberReport extends React.PureComponent {
     const members = dialerUserData[0];
     const todaysDate = moment().format(DATE_FORMAT);
     const body = JSON.stringify({
-      tname:tname,
-      currentuser:currentId,
+      tname: tname,
+      currentuser: currentId,
       members: members,
       teamid: tlID,
       userid: userid,
@@ -142,13 +140,13 @@ export default class MemberReport extends React.PureComponent {
       plstartDate: plStartDate,
       plendDate: plEndDate,
     });
-    console.log('body', body);
+    //console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.DIALER_GET_MEMBERS,
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         //console.log('result', result);
         const {data, status} = result;
         if (status) {
@@ -167,7 +165,7 @@ export default class MemberReport extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      e => {
+      (e) => {
         this.setState({loading: false});
       },
     );
@@ -261,17 +259,27 @@ export default class MemberReport extends React.PureComponent {
     );
   };
 
-  callLogClicked = () =>{
+  callLogClicked = () => {
     const {currentId, tlID, tname} = this.state;
-    const finalDataProcess = {id:currentId,tlid:tlID,tname:tname,exportEnabled:true};
+    const finalDataProcess = {
+      id: currentId,
+      tlid: tlID,
+      tname: tname,
+      exportEnabled: true,
+    };
     NavigationActions.navigate('CallLogs', finalDataProcess);
-  }
+  };
 
-  userView = dialerUserData => {
+  userView = (dialerUserData) => {
     return (
-      <View styleName="sm-gutter vertical" style={StyleSheet.flatten([styles.accordStyle, {
-        paddingVertical:8
-      }])}>
+      <View
+        styleName="sm-gutter vertical"
+        style={StyleSheet.flatten([
+          styles.accordStyle,
+          {
+            paddingVertical: 8,
+          },
+        ])}>
         <Title
           styleName="v-start h-start"
           numberOfLines={1}
@@ -292,7 +300,7 @@ export default class MemberReport extends React.PureComponent {
             styles.usertopText,
             {
               fontSize: 14,
-              color:'#555555'
+              color: '#555555',
             },
           ])}>
           {`Mobile: ${dialerUserData[2]}`}
@@ -330,9 +338,11 @@ export default class MemberReport extends React.PureComponent {
             {`Ref: ${dialerUserData[dialerUserData.length - 2]}`}
           </Title>
         </View>
-        <View styleName="horizontal v-start h-start" style={{marginTop:4}}>
+        <View styleName="horizontal v-start h-start" style={{marginTop: 4}}>
           <TouchableWithoutFeedback onPress={this.callLogClicked}>
-            <View styleName="horizontal v-start h-center" style={{marginTop:8,paddingVertical:4}}>
+            <View
+              styleName="horizontal v-start h-center"
+              style={{marginTop: 8, paddingVertical: 4}}>
               <IconChooser name={'phone-outgoing'} size={24} color={'green'} />
             </View>
           </TouchableWithoutFeedback>
@@ -341,20 +351,20 @@ export default class MemberReport extends React.PureComponent {
     );
   };
 
-  export = (data, head, title) =>{
+  export = (data, head, title) => {
     const date = moment().format('DD_MM_YYYY');
     let headers = '';
-    for(let z=0; z<head.length; z++){
-      if(z === Number(head.length -1)){
-        headers += `${head[z]}\n`
-      }else{
+    for (let z = 0; z < head.length; z++) {
+      if (z === Number(head.length - 1)) {
+        headers += `${head[z]}\n`;
+      } else {
         headers += `${head[z]},`;
       }
     }
     const replace = title.replace(/\s/g, '_');
     const name = `${date}_${replace}`;
     const finalFilePath = `${FILEPATH}${name}.csv`;
-    Helper.writeCSV(headers, data, finalFilePath, result => {
+    Helper.writeCSV(headers, data, finalFilePath, (result) => {
       if (result) {
         RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
           RNFetchBlob.android.addCompleteDownload({
@@ -367,7 +377,7 @@ export default class MemberReport extends React.PureComponent {
           Helper.showToastMessage('Download Complete', 1);
       }
     });
-  }
+  };
 
   /**
    * report accordation view
@@ -396,7 +406,7 @@ export default class MemberReport extends React.PureComponent {
     );
   };
 
-  setDates = dates => {
+  setDates = (dates) => {
     this.setState({
       ...dates,
     });
@@ -528,21 +538,21 @@ export default class MemberReport extends React.PureComponent {
               bottomBody={<></>}
             />
 
-              <View styleName="horizontal sm-gutter v-center h-center">
-                  {this.renderCircleItem(
-                    data && data.today && data.today.data.length > 0
-                      ? data.today.data.length
-                      : 0,
-                    'Total Today Call',
-                  )}
+            <View styleName="horizontal sm-gutter v-center h-center">
+              {this.renderCircleItem(
+                data && data.today && data.today.data.length > 0
+                  ? data.today.data.length
+                  : 0,
+                'Total Today Call',
+              )}
 
-                  {this.renderCircleItem(
-                   data &&  data.past && data.past.data.length > 0
-                      ? data.past.data.length
-                      : 0,
-                    'Last 7 Days Call',
-                  )}
-              </View>
+              {this.renderCircleItem(
+                data && data.past && data.past.data.length > 0
+                  ? data.past.data.length
+                  : 0,
+                'Last 7 Days Call',
+              )}
+            </View>
 
             {dialerUserData.length > 0 ? this.userView(dialerUserData) : null}
 
@@ -552,7 +562,6 @@ export default class MemberReport extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <View>
-
                 {/* <View style={styles.newItemContainer}>
                   <Title
                     style={StyleSheet.flatten([
@@ -855,5 +864,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
   },
-
 });

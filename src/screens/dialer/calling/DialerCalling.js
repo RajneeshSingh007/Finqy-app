@@ -11,7 +11,13 @@ import {
 import {Title, View, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {ActivityIndicator, Colors, Portal, Searchbar, FAB} from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Colors,
+  Portal,
+  Searchbar,
+  FAB,
+} from 'react-native-paper';
 import {sizeHeight} from '../../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
@@ -26,18 +32,25 @@ import SendIntentAndroid from 'react-native-send-intent';
 import PaginationNumbers from './../../component/PaginationNumbers';
 import {firebase} from '@react-native-firebase/firestore';
 import CallDetectorManager from 'react-native-call-detection';
+import DateRangePicker from 'react-native-daterange-picker';
+import moment from 'moment';
 
+const DATE_FORMAT = 'DD-MM-YYYY';
 const ITEM_LIMIT = 10;
 
-const dummyJSON = {
+const activeCallerPlaceholderJSON = {
   name: '',
   mobile: '',
   editable: false,
+  dob: '',
+  pincode: '',
+  editable: '',
 };
 
 export default class DialerCalling extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.callerformsubmit = this.callerformsubmit.bind(this);
     this.renderData = this.renderData.bind(this);
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
     this.backClick = this.backClick.bind(this);
@@ -59,13 +72,17 @@ export default class DialerCalling extends React.PureComponent {
       enableSearch: false,
       orderBy: 'asc',
       fileName: '',
-      activeCallerItem: dummyJSON,
+      activeCallerItem: activeCallerPlaceholderJSON,
       callTrack: -1,
       productList: '',
       progressLoader: false,
       editEnabled: false,
       teamName: '',
       whatsappMode: false,
+      dateFilter: -1,
+      startDate: moment(),
+      endDate: null,
+      displayedDate: moment(),
     };
   }
 
@@ -78,7 +95,7 @@ export default class DialerCalling extends React.PureComponent {
     AppState.addEventListener('change', this._handleAppStateChange);
 
     const {navigation} = this.props;
-    const activeCallerItem = navigation.getParam('data', dummyJSON);
+    const activeCallerItem = navigation.getParam('data',activeCallerPlaceholderJSON);
     const editEnabled = navigation.getParam('editEnabled', false);
     const isFollowup = navigation.getParam('isFollowup', -1);
     const outside = navigation.getParam('outside', false);
@@ -92,38 +109,46 @@ export default class DialerCalling extends React.PureComponent {
       });
     });
 
-    //this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
-        this.setState({
-          outside: outside,
-          userData: userData,
-          editEnabled: editEnabled,
-          activeCallerItem: activeCallerItem,
-          progressLoader: false,
-          callTrack: editEnabled ? 1 : -1,
-          isFollowup: isFollowup,
-          whatsappMode: false,
-        });
-        Pref.getVal(Pref.USERTYPE, v => {
-          this.setState({type: v}, () => {
-            Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                if (editEnabled === false) {
-                  this.fetchData();
-                }
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
+        const {id, tlid, pname} = userdatas[0].tc;
+        activeCallerItem.team_id = tlid;
+        activeCallerItem.user_id = id;
+        Pref.getVal(Pref.userData, (userData) => {
+          this.setState({
+            userid: id,
+            teamName: pname,
+            teamid: tlid,
+            outside: outside,
+            userData: userData,
+            editEnabled: editEnabled,
+            activeCallerItem: activeCallerItem,
+            progressLoader: false,
+            callTrack: editEnabled ? 1 : -1,
+            isFollowup: isFollowup,
+            whatsappMode: false,
+          });
+          Pref.getVal(Pref.USERTYPE, (v) => {
+            this.setState({type: v}, () => {
+              Pref.getVal(Pref.saveToken, (value) => {
+                this.setState({token: value}, () => {
+                  if (editEnabled === false) {
+                    this.fetchData();
+                  }
+                });
               });
             });
           });
         });
       });
-    //});
+    });
 
     this.firebaseListerner = firebase
       .firestore()
       .collection(Pref.COLLECTION_PRODUCT)
-      .onSnapshot(querySnapshot => {
+      .onSnapshot((querySnapshot) => {
         const productList = [];
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot.forEach((documentSnapshot) => {
           const {enabled, name} = documentSnapshot.data();
           if (Number(enabled) === 0) {
             documentSnapshot.data().value = name;
@@ -140,15 +165,16 @@ export default class DialerCalling extends React.PureComponent {
 
     this.callDetection = new CallDetectorManager(
       (event, phoneNumber) => {
+        //console.log(event, phoneNumber);
         const {callTrack, activeCallerItem} = this.state;
         if (Helper.nullCheck(activeCallerItem) === false) {
           const {mobile} = activeCallerItem;
           if (
             callTrack === 0 &&
-            (event === 'Disconnected' || event === 'Connected') &&
+            //(event === 'Disconnected' || event === 'Connected') &&
             String(phoneNumber).toLowerCase() === String(mobile).toLowerCase()
           ) {
-            this.setState({callTrack: 1});
+            this.setState({callTrack: 1, progressLoader: false});
           }
         }
       },
@@ -171,7 +197,7 @@ export default class DialerCalling extends React.PureComponent {
     if (this.callDetection !== undefined) this.callDetection.dispose();
   }
 
-  _handleAppStateChange = nextAppState => {
+  _handleAppStateChange = (nextAppState) => {
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -186,75 +212,87 @@ export default class DialerCalling extends React.PureComponent {
 
   fetchData = () => {
     this.setState({loading: true});
-    const {isFollowup} = this.state;
+    const {isFollowup, teamName, teamid, userid} = this.state;
     //const {team_id, id} = this.state.userData;
-    Pref.getVal(Pref.DIALER_DATA, userdatas => {
-      const {id, tlid, pname} = userdatas[0].tc;
-      //console.log('userdatas', id, tlid);
-      const body = JSON.stringify({
-        teamid: tlid,
-        userid: id,
-        active: 0,
-        tname: pname,
-        follow: isFollowup,
-      });
-      console.log('body', body);
-      Helper.networkHelperTokenPost(
-        Pref.DIALER_LEAD_RECORD,
-        body,
-        Pref.methodPost,
-        this.state.token,
-        result => {
-          //console.log('result', result);
-          const {data, status} = result;
-          if (status === true) {
-            if (data.length > 0) {
-              const {itemSize} = this.state;
-              // const tableHead = [
-              //   'Sr.No.',
-              //   'Call',
-              //   'Whatsapp',
-              //   'Name',
-              //   'Number',
-              // ];
-              // const widthArr = [60, 60, 100, 150, 100];
-              // if (isFollowup) {
-              //   tableHead.push('Appointment Date');
-              //   widthArr.push(140);
-              // }
-              this.setState({
-                teamName: pname,
-                //tableHead: tableHead,
-                //widthArr: widthArr,
-                cloneList: data,
-                dataList: data,
-                // this.returnData(data, 0, data.length).slice(
-                //   0,
-                //   itemSize,
-                // ),
-                loading: false,
-                itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
-              });
-            } else {
-              this.setState({
-                loading: false,
-              });
-            }
-          } else {
-            this.setState({loading: false});
-          }
-        },
-        e => {
-          this.setState({loading: false});
-        },
-      );
+    const body = JSON.stringify({
+      teamid: teamid,
+      userid: userid,
+      active: 0,
+      tname: teamName,
+      follow: isFollowup,
     });
+    console.log('body', body);
+    Helper.networkHelperTokenPost(
+      Pref.DIALER_LEAD_RECORD,
+      body,
+      Pref.methodPost,
+      this.state.token,
+      (result) => {
+        //console.log('result', result);
+        const {data, status} = result;
+        if (status === true) {
+          if (data.length > 0) {
+            //const {itemSize} = this.state;
+            // const tableHead = [
+            //   'Sr.No.',
+            //   'Call',
+            //   'Whatsapp',
+            //   'Name',
+            //   'Number',
+            // ];
+            // const widthArr = [60, 60, 100, 150, 100];
+            // if (isFollowup) {
+            //   tableHead.push('Appointment Date');
+            //   widthArr.push(140);
+            // }
+            let itemList = [];
+            // if (isFollowup == 1) {
+            //   const currentDate = moment().format(DATE_FORMAT);
+            //   itemList = Lodash.filter(data, (io) => {
+            //     const {followup_datetime} = io;
+            //     const spli = followup_datetime.split(/\s/g, '');
+            //     if (
+            //       followup_datetime &&
+            //       Helper.nullStringCheck(followup_datetime) === false &&
+            //       String(spli[0]) === String(currentDate)
+            //     ) {
+            //       return io;
+            //     }
+            //   });
+            // } else {
+            itemList = data;
+            //}
+            this.setState({
+              //tableHead: tableHead,
+              //widthArr: widthArr,
+              cloneList: data,
+              dataList: itemList,
+              // this.returnData(data, 0, data.length).slice(
+              //   0,
+              //   itemSize,
+              // ),
+              loading: false,
+              //itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
+            });
+          } else {
+            this.setState({
+              loading: false,
+            });
+          }
+        } else {
+          this.setState({loading: false});
+        }
+      },
+      (e) => {
+        this.setState({loading: false});
+      },
+    );
   };
 
   getProducts = () => {
     Helper.networkHelperGet(
       Pref.DIALER_GET_PRODUCTS,
-      result => {
+      (result) => {
         const parse = JSON.parse(result);
         //console.log('parse', parse);
         const sorting = parse.sort((a, b) => {
@@ -312,19 +350,25 @@ export default class DialerCalling extends React.PureComponent {
   //   return true;
   // };
 
+  /**
+   * start calling
+   * @param {} item
+   * @param {*} isWhatsapp
+   * @param {*} videocall
+   */
   startCalling = (item, isWhatsapp = false, videocall = false) => {
     const {mobile} = item;
-    //const mobile = '7208828396'
     if (mobile === '' && item.name === '') {
       item.editable = true;
     }
     if (Platform.OS === 'android') {
       try {
         if (isWhatsapp === true) {
+          //check number and permission then whatsapp call
           SendIntentAndroid.whatsappPhone({
             isvideo: videocall,
             phone: mobile,
-          }).then(result => {
+          }).then((result) => {
             if (result === 'no permission granted') {
               Helper.showToastMessage(
                 'Please, Grant Phone Call, Contact And Call Log Permissions',
@@ -335,9 +379,9 @@ export default class DialerCalling extends React.PureComponent {
               } catch (error) {}
             } else if (result === 'success') {
               this.setState({
+                progressLoader: true,
                 activeCallerItem: item,
                 callTrack: 0,
-                progressLoader: false,
                 whatsappMode: true,
               });
             } else {
@@ -345,13 +389,13 @@ export default class DialerCalling extends React.PureComponent {
             }
           });
         } else {
+          SendIntentAndroid.sendPhoneCall(mobile, false);
           this.setState({
+            progressLoader: true,
             activeCallerItem: item,
             callTrack: 0,
-            progressLoader: false,
             whatsappMode: false,
           });
-          SendIntentAndroid.sendPhoneCall(mobile, false);
         }
       } catch (error) {
         //console.log(error);
@@ -363,9 +407,9 @@ export default class DialerCalling extends React.PureComponent {
       }
     } else {
       this.setState({
+        progressLoader: true,
         activeCallerItem: item,
         callTrack: 0,
-        progressLoader: false,
         whatsappMode: false,
       });
       Linking.openURL(`tel:${mobile}`);
@@ -386,7 +430,7 @@ export default class DialerCalling extends React.PureComponent {
           if (Helper.nullCheck(item) === false) {
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
-            const callCustomerView = value => (
+            const callCustomerView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -407,7 +451,7 @@ export default class DialerCalling extends React.PureComponent {
               </View>
             );
             rowData.push(callCustomerView(item));
-            const callCustomerWhatsappView = value => (
+            const callCustomerWhatsappView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -459,32 +503,18 @@ export default class DialerCalling extends React.PureComponent {
     return dataList;
   };
 
-  onChangeSearch = query => {
+  onChangeSearch = (query) => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, it => {
+      const result = Lodash.filter(clone, (it) => {
         const {name, mobile, product} = it;
         return (
-          (name &&
-            name
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (mobile &&
-            mobile
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (product &&
-            product
-              .trim()
-              .toLowerCase()
-              .includes(trimquery))
+          (name && name.trim().toLowerCase().includes(trimquery)) ||
+          (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+          (product && product.trim().toLowerCase().includes(trimquery))
         );
       });
       const data =
@@ -518,7 +548,10 @@ export default class DialerCalling extends React.PureComponent {
       this.backClick();
     } else {
       Helper.showToastMessage(message, status === true ? 1 : 0);
-      this.setState({callTrack: -1, activeCallerItem: dummyJSON});
+      this.setState({
+        callTrack: -1,
+        activeCallerItem: activeCallerPlaceholderJSON,
+      });
       this.fetchData();
     }
   };
@@ -542,67 +575,165 @@ export default class DialerCalling extends React.PureComponent {
   renderData = (rowData, index) => {
     return (
       <View styleName="horizontal v-center" style={styles.mainTcontainer}>
-        <View style={styles.callcircle}>
-          <Title style={styles.firstWord}>
-            {rowData.name !== '' ? Lodash.capitalize(rowData.name[0]) : '#'}
-          </Title>
-        </View>
-        <View styleName="horizontal space-between v-center h-center">
-          <View style={{flex: 0.45}}>
-            {rowData.name !== '' ? (
-              <Title style={styles.timelinetitle}>{rowData.name}</Title>
-            ) : null}
-            <Title style={styles.tlphone}>{rowData.mobile}</Title>
-            {this.state.isFollowup == 1 ? (
-              <Subtitle style={{fontSize: 12, color: 'grey'}}>
-                {`${rowData.followup_datetime}`}
-              </Subtitle>
-            ) : null}
+        <View style={{flex: 0.2}}>
+          <View style={styles.callcircle}>
+            <Title style={styles.firstWord}>
+              {rowData.name !== '' ? Lodash.capitalize(rowData.name[0]) : '#'}
+            </Title>
           </View>
-          <View styleName="horizontal v-center" style={{flex: 0.5}}>
-            <TouchableWithoutFeedback
-              onPress={() => this.startCalling(rowData, false, false)}>
-              <View>
-                <IconChooser
-                  name={`phone-outgoing`}
-                  size={24}
-                  color={Colors.lightBlue500}
-                />
+        </View>
+        <View
+          styleName="horizontal space-between v-center h-center"
+          style={{flex: 0.8}}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 0.5}}>
+              {rowData.name !== '' ? (
+                <Title style={styles.timelinetitle}>{rowData.name}</Title>
+              ) : null}
+              <Title style={styles.tlphone}>{rowData.mobile}</Title>
+              {this.state.isFollowup == 1 ? (
+                <Subtitle style={{fontSize: 12, color: 'grey'}}>
+                  {`${rowData.followup_datetime}`}
+                </Subtitle>
+              ) : null}
+            </View>
+            <View styleName="horizontal v-center" style={{flex: 0.5}}>
+              <View
+                style={{
+                  flex: 12,
+                  flexDirection: 'row',
+                }}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.startCalling(rowData, false, false)}>
+                  <View style={{flex: 3}}>
+                    <IconChooser
+                      name={`phone-outgoing`}
+                      size={24}
+                      color={Colors.lightBlue500}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                <View style={styles.spacer}></View>
+                <TouchableWithoutFeedback
+                  onPress={() => this.startCalling(rowData, true, false)}>
+                  <View style={{flex: 3}}>
+                    <IconChooser
+                      name={`whatsapp`}
+                      size={24}
+                      iconType={2}
+                      color={Colors.green400}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                <View style={styles.spacer}></View>
+                <TouchableWithoutFeedback
+                  onPress={() => this.startCalling(rowData, true, true)}>
+                  <View style={{flex: 3}}>
+                    <IconChooser
+                      name={`video`}
+                      size={24}
+                      color={Colors.deepOrange400}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
               </View>
-            </TouchableWithoutFeedback>
-            <View style={styles.spacer}></View>
-            <TouchableWithoutFeedback
-              onPress={() => this.startCalling(rowData, true, false)}>
-              <View>
-                <IconChooser
-                  name={`whatsapp`}
-                  size={24}
-                  iconType={2}
-                  color={Colors.green400}
-                />
-              </View>
-            </TouchableWithoutFeedback>
-            <View style={styles.spacer}></View>
-            <TouchableWithoutFeedback
-              onPress={() => this.startCalling(rowData, true, true)}>
-              <View>
-                <IconChooser
-                  name={`video`}
-                  size={24}
-                  iconType={2}
-                  color={Colors.amber500}
-                />
-              </View>
-            </TouchableWithoutFeedback>
+            </View>
           </View>
         </View>
       </View>
     );
   };
 
-  fabClick = () =>{
+  setDates = (dates) => {
+    this.setState({
+      ...dates,
+    });
+  };
 
-  }
+  fabClick = () => {
+    //this.setState({dateFilter: 1});
+  };
+
+  dateFilterSubmit = () => {
+    const {startDate, endDate, cloneList} = this.state;
+    if (startDate != null) {
+      const parse = moment(startDate).format(DATE_FORMAT);
+      let endparse = null;
+      if (endDate != null) {
+        endparse = moment(endDate).format(DATE_FORMAT);
+      } else {
+        endparse = parse;
+      }
+
+      console.log('parse', parse, 'end', endparse);
+
+      //start date//18-03
+      const startParseSp = String(parse).split(/\s/g, '');
+      const startSp = String(startParseSp).split('-');
+
+      const endParseSp = String(endparse).split(/\s/g, '');
+      const endSp = String(endParseSp).split('-');
+
+      //console.log(parse, endparse);
+      const itemList = Lodash.filter(cloneList, (io) => {
+        const {followup_datetime} = io;
+        const spli = followup_datetime.split(/\s/g, '');
+        const datespl = String(spli).split('-');
+
+        const datecheck = Number(datespl[0]) >= Number(startSp[0]);
+        const monthCheck = Number(datespl[1]) >= Number(startSp[1]);
+        const yearCheck = Number(datespl[2]) >= Number(startSp[2]);
+
+        const dateEndcheck = Number(datespl[0]) <= Number(endSp[0]);
+        const monthEndCheck = Number(datespl[1]) <= Number(endSp[1]);
+        const yearEndCheck = Number(datespl[2]) <= Number(endSp[2]);
+
+        console.log(
+          datecheck,
+          monthCheck,
+          yearCheck,
+          dateEndcheck,
+          monthEndCheck,
+          yearEndCheck,
+        );
+        if (
+          datecheck &&
+          monthCheck &&
+          yearCheck &&
+          dateEndcheck &&
+          monthEndCheck &&
+          yearEndCheck
+        ) {
+          return io;
+        }
+      });
+
+      //console.log('itemList', itemList);
+
+      this.setState({
+        //dataList: itemList,
+        dateFilter: -1,
+        endDate: endparse,
+        startDate: parse,
+      });
+    } else {
+      this.setState({
+        dateFilter: -1,
+      });
+    }
+  };
+
+  callerformsubmit = (value, leadConfirm) => {
+    if (leadConfirm === 0) {
+      this.setState({
+        callTrack: -1,
+        activeCallerItem: activeCallerPlaceholderJSON,
+        progressLoader: false,
+      });
+    } else {
+      this.setState({progressLoader: value});
+    }
+  };
 
   render() {
     const {
@@ -614,6 +745,10 @@ export default class DialerCalling extends React.PureComponent {
       editEnabled,
       isFollowup,
       outside,
+      dateFilter,
+      startDate,
+      endDate,
+      displayedDate,
     } = this.state;
     return (
       <CScreen
@@ -660,17 +795,7 @@ export default class DialerCalling extends React.PureComponent {
                         customerItem={this.state.activeCallerItem}
                         token={token}
                         formResult={this.formResult}
-                        startLoader={(value, leadConfirm) => {
-                          if (leadConfirm === 0) {
-                            this.setState({
-                              callTrack: -1,
-                              activeCallerItem: dummyJSON,
-                              progressLoader: false,
-                            });
-                          } else {
-                            this.setState({progressLoader: value});
-                          }
-                        }}
+                        startLoader={this.callerformsubmit}
                       />
                     </>
                   }
@@ -681,9 +806,36 @@ export default class DialerCalling extends React.PureComponent {
               isShow={this.state.progressLoader}
               bottomText={'Please do not press back button'}
             />
+            {/* {isFollowup === 1 ? (
+              <FAB style={styles.fab} icon="filter" onPress={this.fabClick} />
+            ) : null} */}
 
-            {/* <FAB style={styles.fab} icon="check" onPress={this.fabClick} /> */}
-
+            {dateFilter !== -1 ? (
+              <Portal>
+                <DateRangePicker
+                  onChange={this.setDates}
+                  endDate={endDate}
+                  startDate={startDate}
+                  displayedDate={displayedDate}
+                  range
+                  //presetButtons
+                  //buttonStyle={styles.submitbuttonpicker}
+                  buttonTextStyle={{
+                    fontSize: 15,
+                    fontWeight: '700',
+                    color: 'white',
+                  }}
+                  submitClicked={this.dateFilterSubmit}
+                  closeCallback={() =>
+                    this.setState({
+                      startDate: null,
+                      endDate: null,
+                      datefilter: -1,
+                    })
+                  }
+                />
+              </Portal>
+            ) : null}
           </>
         }
         body={
@@ -797,7 +949,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: Pref.RED,
   },
-  spacer: {marginHorizontal: 14},
+  spacer: {
+    flex: 0.15,
+  },
   firstWord: {
     alignSelf: 'center',
     color: 'white',

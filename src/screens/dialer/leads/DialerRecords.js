@@ -154,11 +154,12 @@ export default class DialerRecords extends React.PureComponent {
                   'Number',
                   'Call Date',
                   'Duration',
+                  'Product',
                   'Status',
                   'Remarks',
                   'Call Logs',
                 ];
-                widthArr = [60, 120, 110, 110, 70, 120, 140, 80];
+                widthArr = [60, 120, 110, 110, 70,120, 120, 140, 80];
                 csvHeader = `Sr.No,Name,Number,Call Date,Duration,Status,Remarks\n`;
               } else {
                 tableHead = [
@@ -377,6 +378,7 @@ export default class DialerRecords extends React.PureComponent {
             } else {
               rowData.push(`${item.call_duration}s`);
             }
+            rowData.push(item.product);
             rowData.push(
               Number(item.tracking_type) === 0
                 ? `Contactable\n${item.tracking_type_detail}`

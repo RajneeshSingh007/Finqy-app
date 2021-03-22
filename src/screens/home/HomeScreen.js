@@ -508,7 +508,7 @@ export default class HomeScreen extends React.PureComponent {
           style={StyleSheet.flatten([
             styles.passText,
             {
-              fontSize: 30,
+              fontSize: 26,
               lineHeight: 30,
               color: "#6e6e6e",
               marginBottom: 10,
@@ -519,7 +519,7 @@ export default class HomeScreen extends React.PureComponent {
           style={StyleSheet.flatten([
             styles.passText,
             {
-              fontSize: 18,
+              fontSize: 17,
               lineHeight: 18,
               color: "#6e6e6e",
             },

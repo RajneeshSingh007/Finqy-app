@@ -17,12 +17,15 @@ import {
 } from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
-import { enableCallModule,enableService, stopService } from './src/util/DialerFeature';
+import { enableCallModule,enableService, stopService,serverClientDateCheck,mobileNumberCleanup } from './src/util/DialerFeature';
 import CallDetectorManager from 'react-native-call-detection';
+import {firebase} from '@react-native-firebase/firestore';
+import moment from 'moment';
 
 class App extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.serverDateTime = [];
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
     changeNavigationBarColor('white', true);
     StatusBar.setBackgroundColor('white', false);
@@ -42,13 +45,14 @@ class App extends React.PureComponent {
 
     //this.syncImmediate();
 
-    //stopService();
-    //enableCallModule(true);
-
-    //AppState.addEventListener('change', this._handleAppStateChange);
+    AppState.addEventListener('change', this._handleAppStateChange);
   
     this.onNotificationListener();
 
+    //dialer features
+    //stopService();
+    
+    //this.dialerCheckCheckin();
     //this.callDetectionListerner();
 
   }
@@ -63,18 +67,63 @@ class App extends React.PureComponent {
     );
   }
 
+  /**
+   * call detection
+   */
   callDetectionListerner = () =>{
     this.callDetection = new CallDetectorManager(
       (event, phoneNumber) => {
-        console.log('event', event);
-        enableService();
-      },
+        //console.log('event', event);
+        if(event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
+          if(Helper.nullStringCheck(phoneNumber) === false){
+            Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, mobileNumberCleanup(phoneNumber));
+          }
+          Pref.getVal(Pref.DIALER_DATA, (value) => {
+            if ( Helper.nullCheck(value) == false && value.length > 0 && Helper.nullCheck(value[0].tc) === false) {
+              const {id} = value[0].tc;
+              if(this.serverDateTime.length > 0){
+                firebase
+                  .firestore()
+                  .collection(Pref.COLLECTION_CHECKIN)
+                  .doc(`${id}${this.serverDateTime[2]}`)    
+                  .get()
+                  .then(ret =>{
+                    if(ret){
+                      const {checkin, checkout} = ret.data();
+                      if(Helper.nullStringCheck(checkin) === false && Helper.nullStringCheck(checkout) === false){
+                        stopService();
+                      }else if(Helper.nullStringCheck(checkin) === false && Helper.nullStringCheck(checkout)){
+                        enableService();
+                      }
+                    }
+                  })    
+              }
+            }
+          });
+        }
+    },
       true,
       () => {},
       {
         title: 'Phone Permission Required For Dialer',
         message:'This app needs access to your phone state in order to use this feature',
       },
+    );
+  }
+
+  /**
+   * check server client date and time
+   * and store date in array
+   */
+  dialerCheckCheckin = () =>{
+    Helper.networkHelperGet(
+      Pref.SERVER_DATE_TIME,
+      (datetime) => {
+        const checkClientServer = serverClientDateCheck(datetime,true);
+        if (checkClientServer.length > 0) {
+          this.serverDateTime = checkClientServer;
+        }
+      }
     );
   }
 
@@ -117,15 +166,13 @@ class App extends React.PureComponent {
   };
 
 
-  componentWillUnmount() {
-    //AppState.removeEventListener('change', this._handleAppStateChange);
-    
+  componentWillUnmount() {    
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }
 
-    //if(this.callDetection !== undefined) this.callDetection.dispose();
-
+    AppState.removeEventListener('change', this._handleAppStateChange);
+    if(this.callDetection !== undefined) this.callDetection.dispose();
   }
 
   codePushStatusDidChange(syncStatus) {

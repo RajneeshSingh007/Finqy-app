@@ -55,7 +55,10 @@ export default class FinorbitForm extends React.PureComponent {
       editLeadData: null,
       disableClick: 0,
       dialerName:'',
-      dialerMobile:''
+      dialerMobile:'',
+      dialerEmail:'',
+      dialerPincode:'',
+      dialerDob:''
     };
   }
 
@@ -66,8 +69,12 @@ export default class FinorbitForm extends React.PureComponent {
     const title = navigation.getParam('title', '');
     const editMode = navigation.getParam('edit', false);
     const editLeadData = navigation.getParam('leadData', null);
+    //dialer data
     const dialerName = navigation.getParam('dialerName', '');
     const dialerMobile = navigation.getParam('dialerMobile', '');
+    const dialerEmail = navigation.getParam('dialerEmail', '');
+    const dialerPincode = navigation.getParam('dialerPincode', '');
+    const dialerDob = navigation.getParam('dialerDob', '');
     
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, value => {
@@ -75,6 +82,9 @@ export default class FinorbitForm extends React.PureComponent {
           Pref.getVal(Pref.userData, userData => {
             const checknullEdit = Helper.nullCheck(editLeadData);
             this.setState({
+              dialerDob:dialerDob,
+              dialerEmail:dialerEmail,
+              dialerPincode:dialerPincode,
               dialerName:dialerName,
               dialerMobile:dialerMobile,
               userData: userData,
@@ -123,12 +133,16 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   backClick = () => {
-    const {title, currentPosition, editMode} = this.state;
-    if (editMode === true) {
-      NavigationActions.navigate('LeadList');
-    } else {
-      NavigationActions.goBack();
-    }
+    const {title, currentPosition, editMode,dialerMobile} = this.state;
+    // if(Helper.nullStringCheck(dialerMobile) === false){
+    //   return false;
+    // }else{
+      if (editMode === true) {
+        NavigationActions.navigate('LeadList');
+      } else {
+        NavigationActions.goBack();
+      }
+    //}
     return true;
   };
 
@@ -496,8 +510,17 @@ export default class FinorbitForm extends React.PureComponent {
                   NavigationActions.navigate('GetQuotes', {
                     formId: id,
                     sumin: cov,
+                    editmode:this.state.editMode
                   });
                 } else {
+                  let backScreenName = editMode === false ? 'FinorbitScreen' : 'LeadList';
+                  //for dialer screen
+                  
+                  //if(Helper.nullStringCheck(this.state.dialerMobile) === false){
+                    //backScreenName = 'DialerCalling';
+                  //}
+
+                  //finish screen
                   NavigationActions.navigate('Finish', {
                     top: editMode === false ? 'Add New Lead' : 'Edit Lead',
                     red: 'Success',
@@ -509,7 +532,7 @@ export default class FinorbitForm extends React.PureComponent {
                       editMode === false
                         ? 'Add another lead?'
                         : 'Back to Lead Record',
-                    back: editMode === false ? 'FinorbitScreen' : 'LeadList',
+                    back: backScreenName,
                   });
                 }
               } else {
@@ -637,6 +660,9 @@ export default class FinorbitForm extends React.PureComponent {
                       title={this.state.title}
                       dialerName={this.state.dialerName}
                       dialerMobile={this.state.dialerMobile}
+                      dialerEmail={this.state.dialerEmail}
+                      dialerDob={this.state.dialerDob}
+                      dialerPincode={this.state.dialerPincode}
                     />
                   ) : this.state.currentPosition === 1 ? (
                     <>

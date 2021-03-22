@@ -33,9 +33,12 @@ let itIssueList = [
   {value: 'My Profile'},
   {value: 'My FinPro'},
   {value: 'Marketing Tool'},
+  {value: 'MIS'},
   {value: 'Offers'},
   {value: 'Popular Plan'},
+  {value: 'Product'},
   {value: 'Wallet'},
+  {value: 'Training'},
 ];
 
 let nonitIssueList = [
@@ -81,11 +84,14 @@ let nonitIssueList = [
 ];
 
 let nonitesubIssueList = [
-  {
-    value: 'Bank/Insurance Company related query',
-  },
+  // {
+  //   value: 'Bank/Insurance Company related query',
+  // },
   {
     value: 'Invoice',
+  },
+  {
+    value: 'Lead related Issues',
   },
   {
     value: 'Other',
@@ -94,7 +100,7 @@ let nonitesubIssueList = [
     value: 'Payout',
   },
   {
-    value: 'TDS',
+    value: 'Tax Related',
   },
 ];
 
@@ -302,85 +308,104 @@ export default class RaiseQueryForm extends React.Component {
       let subject = '';
       let type = '';
       let agentUserID = -1;
+      const productSelected = body.nonitissue;
 
       if (body.ticketissue === 'IT/Software/App Issue') {
         subject = `${body.itissue}`;
         type = 'IT Issue';
-        const findTeam = lodash.find(agentList, io => io.supportTeamId === '1');
-        //console.log('findTeamT', findTeam);
-        if (findTeam != undefined) {
-          agentUserID = findTeam.user_id;
-        }
+        // const findTeam = lodash.find(agentList, io => io.supportTeamId === '1');
+        // //console.log('findTeamT', findTeam);
+        // if (findTeam != undefined) {
+        //   agentUserID = findTeam.user_id;
+        // }
       } else if (body.ticketissue === 'Non-IT Issue') {
-        const productSelected = body.nonitissue;
         subject = `${productSelected} | ${body.nonitesubissue}`;
         type = 'Non-IT Issue';
         //console.log('body.nonitesubissue', body.nonitesubissue);
-        if (
-          body.nonitesubissue === 'TDS' ||
-          body.nonitesubissue === 'Payout' ||
-          body.nonitesubissue == 'Invoice'
-        ) {
-          const findTeam = lodash.find(
-            agentList,
-            io => io.supportTeamId === '3',
-          );
-          //console.log('findTeamNT', findTeam);
-          if (findTeam != undefined) {
-            agentUserID = findTeam.user_id;
-          }
-        } else {
-          const findTeam = lodash.find(agentList, io => {
-            //const teamid = io.supportTeamId === '2';
-            const desg = String(io.designation).trim();
-            let designationCheck = '';
-            if (productSelected.includes('Insurance')) {
-              designationCheck = io.supportTeamId === '9';
-              //desg === 'Insurance';
-            } else if (productSelected === 'Home Loan') {
-              designationCheck = io.supportTeamId === '4';
-              //desg === 'Home Loan';
-            } else if (productSelected === 'Business Loan') {
-              designationCheck = io.supportTeamId === '7';
-              //designationCheck = desg === 'Business Loan';
-            } else if (productSelected === 'Credit Card') {
-              //designationCheck = desg === 'Credit Card';
-              designationCheck = io.supportTeamId === '8';
-            } else if (productSelected === 'Loan Against Property') {
-              //designationCheck = desg === 'Loan Against Property';
-              designationCheck = io.supportTeamId === '6';
-            } else if (productSelected === 'Personal Loan') {
-              //designationCheck = desg === 'Personal Loan';
-              designationCheck = io.supportTeamId === '5';
-            } else if (productSelected === 'Investment'){
-              //designationCheck = desg === 'Investment';
-              designationCheck = io.supportTeamId === '10';
-            }
-            //return teamid && designationCheck;
-            return designationCheck;
-          });
-          // if (productSelected.includes('Insurance')) {
-          //   const findTeam = lodash.find(
-          //     agentList,
-          //     io => io.supportTeamId === '2' && io.designation.toLowerCase() === 'insurance',
-          //   );
-          //   //console.log('findTeamNT', findTeam);
-          //   if (findTeam != undefined) {
-          //     agentUserID = findTeam.user_id;
-          //   }
-          // } else {
-          //   const findTeam = lodash.find(
-          //     agentList,
-          //     io =>
-          //       io.supportTeamId === '2' &&
-          //       io.designation.toLowerCase() === productSelected.toLowerCase(),
-          //   );
-          //   //console.log('findTeamNT', findTeam);
-          if (findTeam != undefined) {
-            agentUserID = findTeam.user_id;
-          }
-          // }
+       
+        // if (
+        //   body.nonitesubissue === 'Tax Related' ||
+        //   body.nonitesubissue === 'Payout' ||
+        //   body.nonitesubissue == 'Invoice'
+        // ) {
+        //   const findTeam = lodash.find(
+        //     agentList,
+        //     io => io.supportTeamId === '3',
+        //   );
+        //   //console.log('findTeamNT', findTeam);
+        //   if (findTeam != undefined) {
+        //     agentUserID = findTeam.user_id;
+        //   }
+        // } else {
+        //   const findTeam = lodash.find(agentList, io => {
+        //     //const teamid = io.supportTeamId === '2';
+        //     const desg = String(io.designation).trim();
+        //     let designationCheck = '';
+        //     if (productSelected.includes('Insurance')) {
+        //       designationCheck = io.supportTeamId === '9';
+        //       //desg === 'Insurance';
+        //     } else if (productSelected === 'Home Loan') {
+        //       designationCheck = io.supportTeamId === '4';
+        //       //desg === 'Home Loan';
+        //     } else if (productSelected === 'Business Loan') {
+        //       designationCheck = io.supportTeamId === '7';
+        //       //designationCheck = desg === 'Business Loan';
+        //     } else if (productSelected === 'Credit Card') {
+        //       //designationCheck = desg === 'Credit Card';
+        //       designationCheck = io.supportTeamId === '8';
+        //     } else if (productSelected === 'Loan Against Property') {
+        //       //designationCheck = desg === 'Loan Against Property';
+        //       designationCheck = io.supportTeamId === '6';
+        //     } else if (productSelected === 'Personal Loan') {
+        //       //designationCheck = desg === 'Personal Loan';
+        //       designationCheck = io.supportTeamId === '5';
+        //     } else if (productSelected === 'Investment'){
+        //       //designationCheck = desg === 'Investment';
+        //       designationCheck = io.supportTeamId === '10';
+        //     }
+        //     //return teamid && designationCheck;
+        //     return designationCheck;
+        //   });
+        //   if (findTeam != undefined) {
+        //     agentUserID = findTeam.user_id;
+        //   }
+
+        //   // if (productSelected.includes('Insurance')) {
+        //   //   const findTeam = lodash.find(
+        //   //     agentList,
+        //   //     io => io.supportTeamId === '2' && io.designation.toLowerCase() === 'insurance',
+        //   //   );
+        //   //   //console.log('findTeamNT', findTeam);
+        //   //   if (findTeam != undefined) {
+        //   //     agentUserID = findTeam.user_id;
+        //   //   }
+        //   // } else {
+        //   //   const findTeam = lodash.find(
+        //   //     agentList,
+        //   //     io =>
+        //   //       io.supportTeamId === '2' &&
+        //   //       io.designation.toLowerCase() === productSelected.toLowerCase(),
+        //   //   );
+        //   //   //console.log('findTeamNT', findTeam);
+        //   // }
+        // }
+      }
+
+      const findTeam = lodash.find(agentList,io => {
+        const replace = io.designation.replace(/\s/g, '_');
+        const currentProduct = productSelected.replace(/\s/g, '_');
+        if(type === 'IT Issue'){
+          return io.supportTeamId === '1';
+        }else if(body.nonitesubissue === 'Tax Related' || body.nonitesubissue === 'Payout' || body.nonitesubissue == 'Invoice'){
+          return io.supportTeamId === '3';
+        }else if(String(replace).toLowerCase() === String(currentProduct).toLowerCase()){
+          return io;
         }
+        return undefined;
+      });
+      //console.log('findTeamNT', findTeam);
+      if (findTeam != undefined) {
+        agentUserID = findTeam.user_id;
       }
 
       //console.log('agentUserID', agentUserID)

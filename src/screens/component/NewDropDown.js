@@ -8,6 +8,7 @@ import * as Pref from '../../util/Pref';
 import {sizeWidth} from '../../util/Size';
 import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Lodash from 'lodash';
+import * as Helper from '../../util/Helper';
 
 class NewDropDown extends React.Component {
   constructor(props) {
@@ -37,16 +38,16 @@ class NewDropDown extends React.Component {
 
   closeMenu = () => this.setState({visible: false});
 
-  onLayout = event => {
+  onLayout = (event) => {
     const {width, height} = event.nativeEvent.layout;
     this.setState({width: width, height: height});
   };
 
-  filterData = text => {
+  filterData = (text) => {
     this.setState({query: text});
     if (text !== '') {
       const {finalList} = this.state;
-      const filter = Lodash.filter(finalList, item => {
+      const filter = Lodash.filter(finalList, (item) => {
         const {value} = JSON.parse(JSON.stringify(item));
         return String(value)
           .toLowerCase()
@@ -58,6 +59,48 @@ class NewDropDown extends React.Component {
       const {cloneList} = this.state;
       this.setState({finalList: cloneList});
     }
+  };
+
+  getTitle = () => {
+    const {
+      style,
+      placeholder = '',
+      selectedItem,
+      enableSearch = false,
+      textStyle,
+      value = '',
+      starVisible = false,
+      truncate = false,
+    } = this.props;
+    const {visible, finalList, width, height, displayValue, query} = this.state;
+    if (Helper.nullStringCheck(value) == false) {
+      return truncate
+        ? Lodash.truncate(value, {
+            separator: '...',
+            length: 12,
+          })
+        : value;
+    } else if (Helper.nullStringCheck(displayValue) === false) {
+      return displayValue;
+    } else if (Helper.nullStringCheck(placeholder) === false) {
+      if (starVisible === true) {
+        return `${placeholder} *`;
+      } else {
+        return placeholder;
+      }
+    } else {
+      return '';
+    }
+    // value != null && value !== ''
+    // ?  truncate ?  Lodash.truncate(value,{
+    //   separator:'...',
+    //   length:12
+    // }) : value
+    // : placeholder === ''
+    // ? displayValue
+    // : displayValue !== ''
+    // ? displayValue
+    // : `${placeholder}${starVisible ? ' *' : ''}`
   };
 
   render() {
@@ -99,16 +142,7 @@ class NewDropDown extends React.Component {
                         }
                       : {},
                   ])}>
-                  {value != null && value !== ''
-                    ?  truncate ?  Lodash.truncate(value,{
-                      separator:'...',
-                      length:12
-                    }) : value
-                    : placeholder === ''
-                    ? displayValue
-                    : displayValue !== ''
-                    ? displayValue
-                    : `${placeholder}${starVisible ? ' *' : ''}`}
+                  {this.getTitle()}
                 </Title>
                 <Icon
                   name={'chevron-down'}

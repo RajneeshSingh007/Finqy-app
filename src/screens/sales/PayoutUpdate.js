@@ -54,7 +54,7 @@ export default class PayoutUpdate extends React.PureComponent {
       selectedRowData: [],
       ogValue: '',
       ogPortValue: '',
-      showHealthPort:false,
+      showHealthPort: false,
     };
   }
 
@@ -86,7 +86,7 @@ export default class PayoutUpdate extends React.PureComponent {
       payoutValue: lastitem,
       payoutPort: payoutport,
       showModal: true,
-      showHealthPort:showHealthPort
+      showHealthPort: showHealthPort,
     });
   };
 
@@ -195,7 +195,7 @@ export default class PayoutUpdate extends React.PureComponent {
     NavigationActions.navigate('PayinProducts', {
       screenName: 'PayoutUpdate',
       showUpdateButton: true,
-      refercode:refercode
+      refercode: refercode,
     });
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return true;
@@ -263,7 +263,7 @@ export default class PayoutUpdate extends React.PureComponent {
     //console.log('filterOnlyDatas',filterOnlyDatas1);
 
     //save payout data
-    Pref.getVal(Pref.salespayoutUpdate, vlpayout => {
+    Pref.getVal(Pref.salespayoutUpdate, (vlpayout) => {
       if (Helper.nullCheck(vlpayout) === false) {
         //console.log('vlpayoutolder', filterOnlyDatas1);
         vlpayout[parsetitle].data = filterOnlyDatas1;
@@ -285,19 +285,19 @@ export default class PayoutUpdate extends React.PureComponent {
       ogPortValue: '',
       payoutPort: '',
       selectedRowData: [],
-      showHealthPort:false
+      showHealthPort: false,
     });
   };
 
-  filterPayoutDatas = dataList => {
-    const resultList = Lodash.map(dataList, io => {
-      const filterReactElement = Lodash.filter(io, it => {
+  filterPayoutDatas = (dataList) => {
+    const resultList = Lodash.map(dataList, (io) => {
+      const filterReactElement = Lodash.filter(io, (it) => {
         if (React.isValidElement(it) === false) {
           return io;
         }
       });
       let result = '';
-      filterReactElement.map(item => {
+      filterReactElement.map((item) => {
         result += `${item}#`;
       });
       return result;
@@ -350,7 +350,7 @@ export default class PayoutUpdate extends React.PureComponent {
                     label={`Payout *`}
                     placeholder={`Enter your value`}
                     value={this.state.payoutValue}
-                    onChange={value => {
+                    onChange={(value) => {
                       if (String(value).match(/^[0-9,.]*$/g) !== null) {
                         this.setState({payoutValue: value});
                       }
@@ -366,7 +366,7 @@ export default class PayoutUpdate extends React.PureComponent {
                       label={`Payout Port *`}
                       placeholder={`Enter your value`}
                       value={this.state.payoutPort}
-                      onChange={value => {
+                      onChange={(value) => {
                         if (String(value).match(/^[0-9,.]*$/g) !== null) {
                           this.setState({payoutPort: value});
                         }
@@ -406,7 +406,7 @@ export default class PayoutUpdate extends React.PureComponent {
                 NavigationActions.navigate('PayinProducts', {
                   screenName: 'PayoutUpdate',
                   showUpdateButton: true,
-                  refercode:refercode
+                  refercode: refercode,
                 });
               }}
               showBack

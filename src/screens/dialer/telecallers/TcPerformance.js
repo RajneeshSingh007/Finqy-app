@@ -1,4 +1,4 @@
-import {Title, View} from '@shoutem/ui';
+import {Title, Subtitle, View} from '@shoutem/ui';
 import React from 'react';
 import {StyleSheet, ActivityIndicator, Platform} from 'react-native';
 import * as Helper from '../../../util/Helper';
@@ -6,27 +6,35 @@ import {sizeWidth} from '../../../util/Size';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import * as Pref from '../../../util/Pref';
 import CScreen from '../../component/CScreen';
-import IconChooser from '../../common/IconChooser';
+import Purechart from 'react-native-pure-chart';
+import {Card} from 'react-native-paper';
 
 export default class TcPerformance extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       dashboardData: null,
+      barData: [
+        {x: 'Contactable', y: 0, color: '#87c1fc'},
+        {x: 'Non-Contactable', y: 0, color: '#fe8c8c'},
+        {x: 'Follow up', y: 0, color: '#ffe251'},
+        {x: 'Dialed', y: 0, color: '#77e450'},
+      ],
     };
   }
 
   componentDidMount() {
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, value => {
-      this.setState({token: value});
-      this.fetchDashboard(value, '');
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({token: value});
+        this.fetchDashboard(value, '');
+      });
     });
-    //});
   }
 
-  fetchDashboard = token => {
-    Pref.getVal(Pref.DIALER_DATA, vl => {
+  fetchDashboard = (token) => {
+    Pref.getVal(Pref.DIALER_DATA, (vl) => {
       const {id, tlid, pname} = vl[0].tc;
       const body = JSON.stringify({
         teamid: tlid,
@@ -39,10 +47,15 @@ export default class TcPerformance extends React.PureComponent {
         body,
         Pref.methodPost,
         token,
-        result => {
+        (result) => {
+          const {barData} = this.state;
           let {data, status} = result;
           if (status) {
-            this.setState({dashboardData: data});
+            barData[0].y = Number(data.contactable);
+            barData[1].y = Number(data.notContactable);
+            barData[2].y = Number(data.follwup);
+            barData[3].y = Number(data.dialer);
+            this.setState({dashboardData: data, barData: barData});
           }
         },
         () => {
@@ -72,28 +85,23 @@ export default class TcPerformance extends React.PureComponent {
     type = 1,
   ) => {
     return (
-      <View
-        styleName="md-gutter vertical  v-center h-center"
-        style={styles.leadcircle}>
+      <View styleName="horizontal space-between" style={{marginBottom: 6}}>
         <Title
           style={StyleSheet.flatten([
             styles.passText,
             {
-              fontSize: 30,
-              lineHeight: 30,
+              fontSize: 16,
+            },
+          ])}>{`${title}`}</Title>
+        <Title
+          style={StyleSheet.flatten([
+            styles.passText,
+            {
+              fontSize: 16,
               color: '#0270e3',
               marginBottom: 10,
             },
           ])}>{`${count}`}</Title>
-        <Title
-          style={StyleSheet.flatten([
-            styles.passText,
-            {
-              fontSize: 18,
-              lineHeight: 18,
-              color: '#6e6e6e',
-            },
-          ])}>{`${title}`}</Title>
       </View>
     );
   };
@@ -108,41 +116,67 @@ export default class TcPerformance extends React.PureComponent {
           <View>
             <LeftHeaders showBack title={'Performance'} />
 
-            {dashboardData !== null ? (
-              <View
-                styleName="md-gutter vertical v-center h-center"
-                style={styles.leadercont}>
-                {this.renderCircleItem(
-                  `${dashboardData.contactable}`,
-                  'Contactable',
-                  '',
-                  () => {},
-                  1,
-                )}
-                {this.renderCircleItem(
-                  `${dashboardData.notContactable}`,
-                  'Not-Contactable',
-                  '',
-                  () => {},
-                )}
-                {this.renderCircleItem(
-                  `${dashboardData.follwup}`,
-                  'Follow-up',
-                  '',
-                  () => {},
-                )}
-                {this.renderCircleItem(
-                  `${dashboardData.dialer}`,
-                  'Dialed',
-                  '',
-                  () => {},
-                )}
-              </View>
+            <View style={styles.loader}>
+                <ActivityIndicator color={Pref.RED} />
+            </View>
+
+            {/* {dashboardData !== null ? (
+              <>
+                <Card
+                  style={{
+                    marginHorizontal: 24,
+                    marginVertical: 10,
+                    elevation: 2,
+                  }}>
+                  <Card.Content>
+                    {this.renderCircleItem(
+                      `${0}`,
+                      'Contactable',
+                      '',
+                      () => {},
+                      1,
+                    )}
+                    {this.renderCircleItem(
+                      `${0}`,
+                      'Not-Contactable',
+                      '',
+                      () => {},
+                    )}
+                    {this.renderCircleItem(
+                      `${0}`,
+                      'Follow-up',
+                      '',
+                      () => {},
+                    )}
+                    {this.renderCircleItem(
+                      `${0}`,
+                      'Dialed',
+                      '',
+                      () => {},
+                    )}
+                  </Card.Content>
+                </Card>
+                <View style={{marginTop: 16}}>
+                  <Purechart
+                    data={this.state.barData}
+                    type="bar"
+                    yAxisGridLineColor={'#d5d5d5'}
+                    yAxislabelColor={'#656565'}
+                    labelColor={'#656565'}
+                    showEvenNumberXaxisLabel={false}
+                    backgroundColor={Pref.WHITE}
+                    height={250}
+                    defaultColumnWidth={60}
+                    defaultColumnMargin={12}
+                    highlightColor={'#d5d5d5'}
+                  />
+                </View>
+              </>
             ) : (
               <View style={styles.loader}>
                 <ActivityIndicator color={Pref.RED} />
               </View>
-            )}
+            )} */}
           </View>
         }
       />
@@ -197,8 +231,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#0270e3',
   },
   leadercont: {
-    alignItems: 'center',
-    alignContent: 'center',
+    flex: 1,
+    flexDirection: 'row',
   },
   leadcircle: {
     borderColor: '#dbd9cc',

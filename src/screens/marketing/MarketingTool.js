@@ -62,135 +62,160 @@ export default class MarketingTool extends React.PureComponent {
   }
 
   fetchData = (type, parseda) => {
-    this.setState({loading: true, showFilter: false});
-    const {rname, rcontact, id, username, mobile} = parseda;
-    const {utype} = this.state;
-    const body = JSON.stringify({
-      offer_type: `${type}`,
-      rname: utype === 'team' ? `${username}` : `${rname}`,
-      rcontact: utype === 'team' ? `${mobile}` : `${rcontact}`,
-      id: `${id}`,
-      type: utype,
-    });
+    if (parseda) {
+      this.setState({loading: true, showFilter: false});
+      const {rname, rcontact, id, username, mobile} = parseda;
+      const {utype} = this.state;
+      const body = JSON.stringify({
+        offer_type: `${type}`,
+        rname: utype === 'team' ? `${username}` : `${rname}`,
+        rcontact: utype === 'team' ? `${mobile}` : `${rcontact}`,
+        id: `${id}`,
+        type: utype,
+      });
 
-    //console.log('body', Pref.OffersUrl, body, this.state.token);
-    Helper.networkHelperTokenPost(
-      Pref.OffersUrl,
-      body,
-      Pref.methodPost,
-      this.state.token,
-      (result) => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
-        if (res_type === 'success') {
-          const productFilter = [];
-          productFilter.push('All');
-          Lodash.map(data, (io) => {
-            if (io.product) {
-              const trimlowercase = String(io.product).trim().toLowerCase();
-              const find = Lodash.find(productFilter, trimlowercase);
-              if (find === undefined) {
-                productFilter.push(trimlowercase);
+      //console.log('body', Pref.OffersUrl, body, this.state.token);
+      Helper.networkHelperTokenPost(
+        Pref.OffersUrl,
+        body,
+        Pref.methodPost,
+        this.state.token,
+        (result) => {
+          const {data, response_header} = result;
+          const {res_type} = response_header;
+          if (res_type === 'success') {
+            const productFilter = [];
+            productFilter.push('All');
+            Lodash.map(data, (io) => {
+              if (io.product) {
+                const trimlowercase = String(io.product).trim().toLowerCase();
+                const find = Lodash.find(productFilter, trimlowercase);
+                if (find === undefined) {
+                  productFilter.push(trimlowercase);
+                }
               }
-            }
-          });
-          //console.log(productFilter);
-          const filterUniq =
-            productFilter.length > 0 ? Lodash.uniq(productFilter) : [];
-          this.setState({
-            productFilter: filterUniq,
-            loading: false,
-            bannerList: data,
-            cloneList: data,
-            type: type,
-            userData: parseda,
-          });
-        } else {
+            });
+            //console.log(productFilter);
+            const filterUniq =
+              productFilter.length > 0 ? Lodash.uniq(productFilter) : [];
+            this.setState({
+              productFilter: filterUniq,
+              loading: false,
+              bannerList: data,
+              cloneList: data,
+              type: type,
+              userData: parseda,
+            });
+          } else {
+            this.setState({loading: false, userData: parseda});
+          }
+        },
+        (error) => {
+          //console.log('error', error);
           this.setState({loading: false, userData: parseda});
-        }
+        },
+      );
+    }
+  };
+
+  /**
+   * find product
+   * @param {*} item
+   * @returns
+   */
+  getSelectedItemProduct = (item) => {
+    const {userData, productList} = this.state;
+    const find = Lodash.find(productList, (io) => {
+      if (item.product) {
+        const parseText = String(io.value).toLowerCase().replace(/\s/g, '_');
+        return (
+          parseText === String(item.product).toLowerCase().replace(/\s/g, '_')
+        );
+      }
+      return undefined;
+    });
+    if (find) {
+      return find;
+    }
+    return undefined;
+  };
+
+  /**
+   *
+   * @param {*} item
+   * @returns
+   */
+  getMessageFromProduct = (item) => {
+    const {userData} = this.state;
+    const {refercode} = userData;
+    const find = this.getSelectedItemProduct(item);
+    if (find) {
+      const finalUrl = `${find.url}?ref=${refercode}`;
+      const username =
+        Helper.nullCheck(userData.rname) === false
+          ? userData.rname
+          : userData.username;
+      const mobile =
+        Helper.nullCheck(userData.rcontact) === false
+          ? userData.rcontact
+          : userData.mobile;
+      const message = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+      return message;
+    }
+    return '';
+  };
+
+  /**
+   * share on whatsapp with image
+   * @param {*} id 
+   * @param {*} image 
+   * @param {*} index 
+   * @param {*} item 
+   */
+  shareOffer = (id, image, index, item) => {
+    this.setState({fullLoader: true});
+    Helper.networkHelperGet(
+      `${Pref.BASEImageUrl}?url=${image}`,
+      (result) => {
+        this.setState({fullLoader: false});
+        this.whatsappSharing(item, result);
       },
-      (error) => {
-        //console.log('error', error);
-        this.setState({loading: false, userData: parseda});
+      (e) => {
+        this.setState({fullLoader: false});
+        this.whatsappSharing(item, '');
       },
     );
   };
 
   /**
-   * 
-   * @param {*} item 
-   * @returns 
+   * share whatsapp
+   * @param {*} param0
    */
-  getMessageFromProduct = (item) =>{
-    const {userData, productList} = this.state;
-    const {refercode} = userData;
-    const find = Lodash.find(productList,(io) =>{
-      if(item.product){
-        const parseText = String(io.value).toLowerCase().replace(/\s/g, '_');
-        return parseText === String(item.product).toLowerCase().replace(/\s/g, '_');
-      }
-      return undefined;
-    });
-    if (find) {
-      const finalUrl = `${find.url}?ref=${refercode}`;
-      const username = Helper.nullCheck(userData.rname) === false ? userData.rname : userData.username;
-      const mobile = Helper.nullCheck(userData.rcontact) === false ? userData.rcontact : userData.mobile;
-      const message = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-      return message;
-    }
-    return '';
-  }
-
-  shareOffer = (id, image, index, item) => {
-    this.setState({fullLoader: true});
-    Helper.networkHelperGet(`${Pref.BASEImageUrl}?url=${image}`,(result) => {
-        this.setState({fullLoader: false});
-        this.startSharingApp(item, result);
-    },(e) => {
-        this.setState({fullLoader: false});
-        this.startSharingApp(item, '');
-      },
-    );
+  whatsappSharing = (item, result) => {
+    const message = this.getMessageFromProduct(item);
+    const shareOptions = {
+      title: '',
+      message: message,
+      url: result,
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',
+    };
+    Share.shareSingle(shareOptions);
   };
 
   mailShareOffer = (id, image, index, item) => {
-    this.startSharingApp(item, '');
-  };
-
-  startSharingApp = (item, result) => {
-    const message = this.getMessageFromProduct(item);
-    const url = `${result}`;
-    const title = '';
-    const options = Platform.select({
-      ios: {
-        activityItemSources: [
-          {
-            placeholderItem: {type: 'url', content: url},
-            item: {
-              default: {type: 'url', content: url},
-            },
-            subject: {
-              default: title,
-            },
-            linkMetadata: {originalUrl: url, url, title},
-          },
-          {
-            placeholderItem: {type: 'text', content: message},
-            item: {
-              default: {type: 'text', content: message},
-              message: null,
-            },
-          },
-        ],
-      },
-      default: {
-        title,
-        subject: title,
-        url: url,
+    const find = this.getSelectedItemProduct(item);
+    if (find) {
+      const message = this.getMessageFromProduct(item);
+      const shareOptions = {
+        subject:find.value,
+        title: '',
         message: message,
-      },
-    });
-    Share.open(options);
+        url: '',
+        social: Share.Social.EMAIL,
+      };
+      Share.open(shareOptions);
+    }
   };
 
   onLayout = (event) => {

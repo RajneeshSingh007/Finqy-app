@@ -5,7 +5,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Title, View} from '@shoutem/ui';
+import {Title, Subtitle, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
@@ -34,6 +34,7 @@ export default class Training extends React.PureComponent {
       showFilter: false,
       fileType: 2,
       height: 0,
+      selectedFilterTitle: '',
     };
   }
 
@@ -43,9 +44,9 @@ export default class Training extends React.PureComponent {
       this.setState({loading: true});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
+      Pref.getVal(Pref.userData, (userData) => {
         this.setState({userData: userData});
-        Pref.getVal(Pref.saveToken, value => {
+        Pref.getVal(Pref.saveToken, (value) => {
           this.setState({token: value}, () => {
             this.fetchData();
           });
@@ -69,7 +70,7 @@ export default class Training extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         const {data, response_header} = result;
         //console.log('resultx', result);
         const {res_type} = response_header;
@@ -79,11 +80,11 @@ export default class Training extends React.PureComponent {
           categoryList.push({name: `PDF`, selected: false});
           categoryList.push({name: `Videos`, selected: false});
           //https://www.youtube.com/embed/GegDvKYZ1rA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture
-          const catlist = Lodash.map(data, io => {
+          const catlist = Lodash.map(data, (io) => {
             const {product_name, link} = io;
             const find = Lodash.find(
               categoryList,
-              ui => ui.name === product_name,
+              (ui) => ui.name === product_name,
             );
             if (find === undefined) {
               categoryList.push({
@@ -99,10 +100,7 @@ export default class Training extends React.PureComponent {
                 io.link = `https://www.youtube.com/watch?v=${id.trim()}`;
               } else {
                 let agsp = id.split('frameborder');
-                const idx = agsp[0]
-                  .replace('"/', '')
-                  .replace('"', '')
-                  .trim();
+                const idx = agsp[0].replace('"/', '').replace('"', '').trim();
                 io.link = `https://www.youtube.com/watch?v=${idx}`;
               }
             }
@@ -130,7 +128,7 @@ export default class Training extends React.PureComponent {
     const {categoryList} = this.state;
     const find = Lodash.find(
       categoryList,
-      io => io.name === `Download` && io.selected === true,
+      (io) => io.name === `Download` && io.selected === true,
     );
     return find === undefined ? false : true;
   };
@@ -195,7 +193,7 @@ export default class Training extends React.PureComponent {
       item.link !== undefined && item.link !== '' && item.link.includes('?')
         ? item.link.split('?')[1].replace('v=', '')
         : '';
-    const {fileType} = this.state;
+    const {fileType, selectedFilterTitle} = this.state;
     return item.link !== '' &&
       !item.link.includes('.png') &&
       !item.link.includes('.jpeg') &&
@@ -218,9 +216,20 @@ export default class Training extends React.PureComponent {
               allowWebViewZoom={false}
             />
           </View>
+          {selectedFilterTitle !== '' &&
+          selectedFilterTitle !== 'All' &&
+          selectedFilterTitle !== 'Videos' &&
+          selectedFilterTitle !== 'PDF' ? (
+            <Subtitle
+              styleName="v-start h-start"
+              numberOfLines={1}
+              style={styles.itemtextSubtitle}>
+              {Helper.replacetext(selectedFilterTitle)}
+            </Subtitle>
+          ) : null}
           <Title
             styleName="v-start h-start"
-            numberOfLines={1}
+            numberOfLines={2}
             style={styles.itemtext}>{`${item.header}`}</Title>
           <View
             styleName="horizontal v-center h-center space-between"
@@ -263,9 +272,20 @@ export default class Training extends React.PureComponent {
                   {/* } */}
                 </View>
               </View>
+              {selectedFilterTitle !== '' &&
+              selectedFilterTitle !== 'All' &&
+              selectedFilterTitle !== 'Videos' &&
+              selectedFilterTitle !== 'PDF' ? (
+                <Subtitle
+                  styleName="v-start h-start"
+                  numberOfLines={1}
+                  style={styles.itemtextSubtitle}>
+                  {Helper.replacetext(selectedFilterTitle)}
+                </Subtitle>
+              ) : null}
               <Title
                 styleName="v-start h-start"
-                numberOfLines={1}
+                numberOfLines={2}
                 style={styles.itemtext}>{`${item.header}`}</Title>
               <View
                 styleName="horizontal v-center h-center space-between"
@@ -296,7 +316,7 @@ export default class Training extends React.PureComponent {
     if (title === 'All') {
       sort = cloneList;
     } else {
-      sort = Lodash.filter(cloneList, kok =>
+      sort = Lodash.filter(cloneList, (kok) =>
         fileType === 0
           ? kok.link !== ''
           : fileType === 1
@@ -309,15 +329,16 @@ export default class Training extends React.PureComponent {
       dataList: sort,
       showFilter: false,
       fileType: fileType,
+      selectedFilterTitle: title,
     });
   };
 
-  onLayout = event => {
+  onLayout = (event) => {
     const {width, height} = event.nativeEvent.layout;
     this.setState({height: height});
   };
 
-  renderFilterItem = item => {
+  renderFilterItem = (item) => {
     return (
       <View style={{justifyContent: 'center'}}>
         <TouchableWithoutFeedback
@@ -508,7 +529,7 @@ export default class Training extends React.PureComponent {
               />
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'No training modules found...'} />
+                <ListError subtitle={'No Training modules found...'} />
               </View>
             )}
           </>
@@ -599,13 +620,26 @@ const styles = StyleSheet.create({
     // alignSelf: 'center',
     // justifyContent: 'center',
     // textAlign: 'center',
-    color: '#686868',
+    color: '#292929',
     fontSize: 16,
     marginStart: 16,
     marginEnd: 16,
     marginTop: 12,
     marginBottom: 8,
     paddingBottom: 12,
+  },
+  itemtextSubtitle: {
+    letterSpacing: 0.5,
+    fontWeight: '400',
+    lineHeight: 20,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
+    // textAlign: 'center',
+    color: '#686868',
+    fontSize: 15,
+    marginStart: 16,
+    marginEnd: 16,
+    marginTop: 8,
   },
   subtitle: {
     fontSize: 14,

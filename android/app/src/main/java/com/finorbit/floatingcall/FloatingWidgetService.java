@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -48,9 +50,8 @@ public class FloatingWidgetService extends Service {
     float initialTouchY;
     private View mFloatingWidgetView;
     private WindowManager.LayoutParams params;
-    private LinearLayout actionClick, rootContainer;
-    private ImageView close;
-    private int mWidth;
+    private CardView rootContainer;
+    private AppCompatButton close, leadBtn;
 
 
     public FloatingWidgetService() {
@@ -71,7 +72,7 @@ public class FloatingWidgetService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Caller Active")
+                .setContentText(getString(R.string.caller_active))
                 .setTicker("Floating Caller")
                 .setWhen(System.currentTimeMillis());
         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
@@ -102,20 +103,10 @@ public class FloatingWidgetService extends Service {
             mFloatingWidgetView = inflater.inflate(R.layout.floating_caller, null);
         }
         rootContainer = mFloatingWidgetView.findViewById(R.id.rootContainer);
+        leadBtn = mFloatingWidgetView.findViewById(R.id.leadBtn);
         close = mFloatingWidgetView.findViewById(R.id.close);
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopCurrentService();
-            }
-        });
-        actionClick = mFloatingWidgetView.findViewById(R.id.actionClick);
-        actionClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gotoInsideApp();
-            }
-        });
+        close.setOnClickListener(view -> stopCurrentService());
+        leadBtn.setOnClickListener(view -> gotoInsideApp());
         params = setViewManagerParams();
         params.gravity = Gravity.TOP;
         params.x = 0;
@@ -130,8 +121,6 @@ public class FloatingWidgetService extends Service {
             @Override
             public void onGlobalLayout() {
                 rootContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int width = rootContainer.getMeasuredWidth();
-                mWidth = size.x - width;
             }
         });
         rootContainer.setOnTouchListener(new View.OnTouchListener() {

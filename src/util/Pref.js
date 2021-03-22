@@ -11,10 +11,11 @@ export const userData = 'userData';
 export const introDone = 'introDone';
 export const saveToken = 'token';
 export const USERTYPE = 'type';
+export const salespayoutUpdate = "salespayoutUpdate";
 export const DIALER_TEAM_LEADER = 'dialer_team_leader';
 export const DIALER_DATA = "dialer_data";
 export const DIALER_SERVICE_ENABLED = "dialer_service_enabled";
-export const salespayoutUpdate = "salespayoutUpdate";
+export const DIALER_TEMP_BUBBLE_NUMBER = 'dialer_temp_bubble_number';
 
 //network
 export const methodPost = 'POST';
@@ -2898,6 +2899,9 @@ export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
 // export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 // export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 
+//corporate_user link for quote,cif files
+export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
+
 //forms directory
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
@@ -2938,7 +2942,8 @@ export const TCondition = `${MainUrl}termcondition.php`;
 export const TermOfUse = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 
 //insurance
-export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
+//export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
+export const BuyInsurance = `${FinURL}hicif.php`;
 
 
 
@@ -3005,12 +3010,15 @@ export const DIALER_LOGIN = `${DialerDirUrl}post_login.php`
 export const DIALER_LEAD_RECORD = `${DialerDirUrl}tool_get_leads.php`
 export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
 export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
-export const DIALER_USER_DASHBOARD = `${DialerDirUrl}dashboard.php`;
 export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
 export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
 export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
 export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
 export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
+export const DIALER_TL_DASHBOARD = `${DialerDirUrl}tl_dashboard.php`;
+
+//server date time
+export const SERVER_DATE_TIME = `${DialerDirUrl}servertime.php`;
 
 ///update dialog show
 export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
@@ -3024,11 +3032,6 @@ export const LIMIT_FILE_SIZE = 10485760;
 //max file pick in finorbit forms
 export const MAX_FILE_PICK_LIMIT = 5;
 
-
-///////firestore ///////////
-export const COLLECTION_PARENT = 'parent';
-export const COLLECTION_PRODUCT = 'productlist';
-
 //////Sales API /////////
 export const PAYIN_URL = `${ApiDirUrl}sales/payin-default.php`;
 export const PARTNER_LIST = `${ApiDirUrl}sales/partner-data.php`;
@@ -3037,6 +3040,13 @@ export const UPDATE_PAYOUT = `${ApiDirUrl}sales/update-payout.php`;
 
 //gold loan///
 export const GOLD_LOAN_DETAIL = `${FinorbitFormUrl}gold_detail.php`;
+
+
+///////firestore dialer ///////////
+export const COLLECTION_PARENT = 'parent';
+export const COLLECTION_PRODUCT = 'productlist';
+export const COLLECTION_CHECKIN = 'checkincheckout';
+export const COLLECTION_TEMPLATE = 'templates';
 
 /**
  * Set Val

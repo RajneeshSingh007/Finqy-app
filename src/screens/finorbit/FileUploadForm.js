@@ -1829,7 +1829,11 @@ export default class FileUploadForm extends React.PureComponent {
       card_statement = null,
       quotes = null,
       policy = null,
-      quoteEmailClicked = () =>{}
+      cif = null,
+      quoteEmailClicked = () =>{},
+      quoteWhatsappClicked = () =>{},
+      cifWhatsappClicked = () =>{},
+      cifEmailClicked = () =>{}
     } = this.props;
 
     const {
@@ -1863,6 +1867,23 @@ export default class FileUploadForm extends React.PureComponent {
             downloadUrl={this.checkurl(1, quotes)}
             email
             emailClicked={quoteEmailClicked}
+            whatsapp
+            whatsppClicked={quoteWhatsappClicked}
+          />
+        ) : null}
+      {truDownloadEnable !== -1 && cif !== null ? (
+          <CommonFileUpload
+            truDownloadEnable={truDownloadEnable}
+            downloadTitles={downloadTitles}
+            mode={mode}
+            title={`CIF`}
+            type={2}
+            email
+            emailClicked = {cifEmailClicked}
+            whatsapp
+            whatsppClicked={cifWhatsappClicked}
+            enableDownloads={this.checkurl(0, cif)}
+            downloadUrl={this.checkurl(1, cif)}
           />
         ) : null}
         {truDownloadEnable !== -1 && policy !== null ? (

@@ -4,5 +4,9 @@
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">ALWAYS_SEND</string>
     <string name="appCenterCrashes_whenToSendCrashes" moduleConfig="true" translatable="false">DO_NOT_ASK_JAVASCRIPT</string>
     <string name="draw_other_app_permission_denied">Please, Grant Draw Over Other App Permission</string>
+    <string name="add_caller_to_lead">Add caller to Lead</string>
+    <string name="personal">Personal</string>
+    <string name="add_lead">Add Lead</string>
+    <string name="caller_active">Caller Active</string>
     <color name="accentcolor">#ea343c</color>
 </resources>

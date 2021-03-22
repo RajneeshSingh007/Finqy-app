@@ -2,10 +2,8 @@ import React from 'react';
 import {
   StyleSheet,
   FlatList,
-  TouchableWithoutFeedback,
-  ScrollView,
 } from 'react-native';
-import {Title, View, Subtitle} from '@shoutem/ui';
+import {View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
 import {ActivityIndicator} from 'react-native-paper';
@@ -13,18 +11,16 @@ import {sizeWidth, sizeHeight} from '../../../util/Size';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
 import Share from 'react-native-share';
-import Loader from '../../../util/Loader';
-import OfferItem from '../../component/OfferItem';
+import DialerTemplate from '../../component/DialerTemplate';
 import CScreen from '../../component/CScreen';
-import IconChooser from '../../common/IconChooser';
-import Lodash from 'lodash';
+import {firebase} from '@react-native-firebase/firestore';
 
 export default class TcTemplates extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
-      bannerList: [],
+      templateList: [],
       cloneList: [],
       token: '',
       type: -1,
@@ -39,21 +35,7 @@ export default class TcTemplates extends React.PureComponent {
   componentDidMount() {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, parseda => {
-        Pref.getVal(Pref.saveToken, value => {
-          this.setState({
-            token: value,
-            userdata: parseda,
-            type: 1,
-          });
-          if (this.state.bannerList.length === 0) {
-            this.fetchData(1, parseda);
-          }
-        });
-      });
-      Pref.getVal(Pref.USERTYPE, v => {
-        this.setState({utype: v});
-      });
+      this.fetchData();
     });
   }
 
@@ -62,203 +44,67 @@ export default class TcTemplates extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = (type, parseda) => {
-    this.setState({loading: true, showFilter: false});
-    const {rname, rcontact, id, username, mobile} = parseda;
-    const {utype} = this.state;
-    const body = JSON.stringify({
-      offer_type: `${type}`,
-      rname: utype === 'team' ? `${username}` : `${rname}`,
-      rcontact: utype === 'team' ? `${mobile}` : `${rcontact}`,
-      id: `${id}`,
-      type: utype,
-    });
-
-    //console.log('body', Pref.OffersUrl, body, this.state.token);
-    Helper.networkHelperTokenPost(
-      Pref.OffersUrl,
-      body,
-      Pref.methodPost,
-      this.state.token,
-      result => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
-        if (res_type === 'success') {
-          const productFilter = [];
-          productFilter.push('All');
-          Lodash.map(data, io => {
-            const trimlowercase = String(io.header)
-              .trim()
-              .toLowerCase();
-            const find = Lodash.find(productFilter, trimlowercase);
-            if (find === undefined) {
-              productFilter.push(trimlowercase);
-            }
-          });
-          //console.log(productFilter);
-          this.setState({
-            productFilter: Lodash.uniq(productFilter),
-            loading: false,
-            bannerList: data,
-            cloneList: data,
-            type: type,
-            userData: parseda,
-          });
-        } else {
-          this.setState({loading: false, userData: parseda});
-        }
-      },
-      error => {
-        //console.log('error', error);
-        this.setState({loading: false, userData: parseda});
-      },
-    );
+  fetchData = () => {
+    this.setState({loading: true});
+    firebase
+      .firestore()
+      .collection(Pref.COLLECTION_TEMPLATE)
+      .get()
+      .then((list) => {
+        const finalList = [];
+        list.forEach((item) => {
+          const {enabled} = item.data();
+          if (enabled === 0) {
+            finalList.push(item.data());
+          }
+        });
+        this.setState({templateList: finalList, loading: false});
+      })
+      .catch((e) => {
+        this.setState({loading: false});
+      });
   };
 
-  shareOffer = (id, image, index, item) => {
-    this.setState({fullLoader: true});
-    const {userData, productList} = this.state;
-    const find = Lodash.find(
-      productList,
-      io =>
-        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
-    );
-    const {refercode} = userData;
-    if(find){
-      const finalUrl = `${find.url}?ref=${refercode}`;
-      const username =
-        Helper.nullCheck(userData.rname) === false
-          ? userData.rname
-          : userData.username;
-      const mobile =
-        Helper.nullCheck(userData.rcontact) === false
-          ? userData.rcontact
-          : userData.mobile;
-      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;  
-      Helper.networkHelperGet(
-        `${Pref.BASEImageUrl}?url=${image}`,
-        result => {
-          this.setState({fullLoader: false});
-          this.shareofers(id, result, msg,);
-        },
-        () => {
-          this.setState({fullLoader: false});
-          this.shareofers(id, '', msg);
-        },
-      );  
-    }
+  /**
+   * share whatsapp
+   * @param {*} param0 
+   */
+  shareOffer = ({title, content}) => {
+    const shareOptions = {
+      title: title,
+      message: content,
+      url: '',
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',  // country code + phone number
+    };  
+    Share.shareSingle(shareOptions);
   };
 
-  mailShareOffer = (id, image, index, item) => {
-    const {userData, productList} = this.state;
-    const find = Lodash.find(
-      productList,
-      io =>
-        String(io.value).toLowerCase() === String(item.header).toLowerCase(),
-    );
-    const {refercode} = userData;
-    if(find){
-      const finalUrl = `${find.url}?ref=${refercode}`;
-      const username =
-        Helper.nullCheck(userData.rname) === false
-          ? userData.rname
-          : userData.username;
-      const mobile =
-        Helper.nullCheck(userData.rcontact) === false
-          ? userData.rcontact
-          : userData.mobile;
-      const msg = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
-      this.shareofers(id, '', msg);
-    }
+  /**
+   * share mail
+   * @param {*} param0 
+   */
+  mailShareOffer = ({title, content}) => {
+    const shareOptions = {
+      title: title,
+      message: content,
+      url: '',
+      social: Share.Social.EMAIL,
+      subject:title
+    };  
+    Share.shareSingle(shareOptions);
   };
 
-  shareofers = (id, result, message = '') => {
-    const url = `${result}`;
-    const title = '';
-    const options = Platform.select({
-      ios: {
-        activityItemSources: [
-          {
-            placeholderItem: {type: 'url', content: url},
-            item: {
-              default: {type: 'url', content: url},
-            },
-            subject: {
-              default: title,
-            },
-            linkMetadata: {originalUrl: url, url, title},
-          },
-          {
-            placeholderItem: {type: 'text', content: message},
-            item: {
-              default: {type: 'text', content: message},
-              message: null, // Specify no text to share via Messages app.
-            },
-          },
-        ],
-      },
-      default: {
-        title,
-        subject: title,
-        url: url,
-        message: `${message}`,
-      },
-    });
-    Share.open(options);
-  };
-
-  onLayout = event => {
-    const {width, height} = event.nativeEvent.layout;
-    this.setState({height: height});
-  };
-
-  filterSelect = title => {
-    const {bannerList, cloneList} = this.state;
-    if (title === 'All') {
-      this.setState({bannerList: cloneList, showFilter: false});
-    } else {
-      const filter = Lodash.filter(
-        cloneList,
-        io => String(io.header).toLowerCase() === title,
-      );
-      this.setState({bannerList: filter, showFilter: false});
-    }
-  };
-
-  renderFilterItem = title => {
-    return (
-      <View style={{justifyContent: 'center'}}>
-        <TouchableWithoutFeedback onPress={() => this.filterSelect(title)}>
-          <Title
-            style={StyleSheet.flatten([
-              styles.passText,
-              {
-                color: '#555',
-                fontSize: 14,
-                paddingVertical: 0,
-                alignSelf: 'center',
-                fontWeight: '400',
-                lineHeight: 20,
-              },
-            ])}>
-            {Lodash.capitalize(title)}
-          </Title>
-        </TouchableWithoutFeedback>
-      </View>
-    );
-  };
 
   render() {
-    const {showFilter} = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchData(1, this.state.userData)}
-        absolute={<Loader isShow={this.state.fullLoader} />}
+        refresh={() => this.fetchData()}
         body={
           <>
             <LeftHeaders
               showBack
-              title={'My Marketing Tool'}
+              title={'Templates'}
               // bottomtext={
               //   <>
               //     {`FinAds `}
@@ -271,100 +117,20 @@ export default class TcTemplates extends React.PureComponent {
               }}
             />
 
-            <View styleName="horizontal v-end h-end md-gutter">
-              <TouchableWithoutFeedback
-                onPress={() => this.setState({showFilter: !showFilter})}
-                onLayout={this.onLayout}>
-                <Title
-                  style={StyleSheet.flatten([
-                    styles.passText,
-                    {
-                      color: '#82b9f4',
-                      fontSize: 16,
-                      lineHeight: 20,
-                      paddingVertical: 0,
-                    },
-                  ])}>
-                  {`Filter by `}
-                  <IconChooser
-                    name={showFilter ? 'chevron-up' : 'chevron-down'}
-                    size={20}
-                    color={'#82b9f4'}
-                    style={{
-                      alignSelf: 'center',
-                      justifyContent: 'center',
-                    }}
-                  />
-                </Title>
-              </TouchableWithoutFeedback>
-            </View>
-
-            {showFilter ? (
-              <View
-                styleName="vertical md-gutter"
-                style={StyleSheet.flatten([
-                  styles.filtercont,
-                  {
-                    top: sizeHeight(14) + this.state.height,
-                  },
-                ])}>
-                <FlatList
-                  data={this.state.productFilter}
-                  renderItem={({item, index}) => this.renderFilterItem(item)}
-                  keyExtractor={(_item, index) => `${index}`}
-                  showsVerticalScrollIndicator={true}
-                  showsHorizontalScrollIndicator={false}
-                  extraData={this.state}
-                  style={{maxHeight: 200}}
-                  nestedScrollEnabled
-                  ItemSeparatorComponent={() => (
-                    <View
-                      style={{
-                        marginVertical: 6,
-                        height: 1,
-                        width: '100%',
-                        backgroundColor: '#e4cbcb',
-                      }}></View>
-                  )}
-                />
-              </View>
-            ) : null}
-
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
-            ) : this.state.bannerList.length > 0 ? (
+            ) : this.state.templateList.length > 0 ? (
               <FlatList
                 style={{marginHorizontal: sizeWidth(2)}}
-                data={this.state.bannerList}
+                data={this.state.templateList}
                 renderItem={({item, index}) => (
-                  <OfferItem
+                  <DialerTemplate
                     item={item}
-                    navigate={() => {
-                      //                       NavigationActions.navigate('OffersDetails', {
-                      //   item: item,
-                      //   type: this.state.type,
-                      // })
-                    }}
-                    sharing={() =>
-                      this.shareOffer(
-                        item.user_id,
-                        `${item.image}`,
-                        index,
-                        item,
-                      )
-                    }
-                    download={() =>
-                      Helper.downloadFile(`${item.image}`, item.header)
-                    }
+                    sharing={() => this.shareOffer(item)}
                     mailSharing={() => {
-                      this.mailShareOffer(
-                        item.user_id,
-                        `${item.image}`,
-                        index,
-                        item,
-                      );
+                      this.mailShareOffer(item);
                     }}
                   />
                 )}
@@ -375,7 +141,7 @@ export default class TcTemplates extends React.PureComponent {
               />
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'No marketing tool found...'} url={''} />
+                <ListError subtitle={'No templates found...'} url={''} />
               </View>
             )}
           </>

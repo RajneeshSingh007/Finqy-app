@@ -4,6 +4,7 @@ import {Image, Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
 import Lodash from 'lodash';
+import IconChooser from '../../common/IconChooser';
 
 const DashboardItem = prop => {
   const {item, itemClick = () => {}, index = -1, appoint = false} = prop;
@@ -13,23 +14,41 @@ const DashboardItem = prop => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={itemClick}>
-      <View
-        styleName="vertical sm-gutter"
-        style={StyleSheet.flatten([styles.itemContainer])}>
-        <Image source={item.image} style={styles.image} />
+    <View style={{flex:1}}>
+      <TouchableWithoutFeedback onPress={itemClick}>
+        <View
+          styleName="vertical sm-gutter"
+          style={StyleSheet.flatten([styles.itemContainer])}>
+          <Image source={item.image} style={styles.image} />
 
-        <View styleName="horizontal space-between" style={styles.footerCon}>
-          <Title
-            styleName="v-start h-start"
-            numberOfLines={2}
-            style={styles.itemtext}>
-            {item.name}
-          </Title>
+          <View styleName="horizontal space-between" style={styles.footerCon}>
+            <Title
+              styleName="v-start h-start"
+              numberOfLines={2}
+              style={styles.itemtext}>
+              {item.name}
+            </Title>
+          </View>
+          {appoint && item.name === 'Follow-up' ? <View style={styles.indicator}></View>:null}
         </View>
-        {appoint && item.name === 'Follow-UP' ? <View style={styles.indicator}></View>:null}
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+      {item.enabled === false ? <View
+          styleName="vertical sm-gutter"
+          style={{
+          position:'absolute', 
+          backgroundColor:'rgba(0,0,0,0.6)',   
+          marginVertical: 16,
+          borderColor: 'transparent',
+          borderRadius: 16,
+          marginStart: 8,
+          marginEnd: 8,
+          justifyContent: 'center',
+          width:'92%',
+          height:'82%'
+      }}>
+        <IconChooser name={'lock'} color={'white'} size={24} style={{alignSelf:'center'}} />
+      </View> : null}
+    </View>
   );
 };
 

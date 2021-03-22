@@ -123,11 +123,11 @@ export default class Blogs extends React.PureComponent {
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
           onPress={() => {
-            if (item.post.includes('https') || item.post.includes('http')) {
+            //if (item.post.includes('https') || item.post.includes('http')) {
               Linking.openURL(item.post);
-            } else {
-              NavigationActions.navigate(`BlogDetails`, {item: item});
-            }
+            //} else {
+              //NavigationActions.navigate(`BlogDetails`, {item: item});
+            //}
           }}>
           <View styleName="vertical" style={styles.itemContainer}>
             <Image

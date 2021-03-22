@@ -77,13 +77,13 @@ export default class CommonForm extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {editItemRestore,dialerName='',dialerMobile=''} = this.props;
+    const {editItemRestore,dialerName='',dialerMobile='',dialerEmail='',dialerDob='',dialerPincode=''} = this.props;
 
     if(Helper.nullCheck(editItemRestore) === false){
       this.restoreData(editItemRestore);
     }
     if(dialerName !== '' && dialerMobile  !== ''){
-      this.setState({name:dialerName, mobile:dialerMobile,dialerEditable:true});
+      this.setState({name:dialerName, mobile:dialerMobile,dialerEditable:true,email:dialerEmail, dob:dialerDob,pincode:dialerPincode});
     }
     //BackHandler.addEventListener('hardwareBackPress', this.backClick);
   }
@@ -264,8 +264,10 @@ export default class CommonForm extends React.PureComponent {
                 ? `First Name ${returnAsterik()}`
                 : `Full Name ${returnAsterik()}`
           }
-          editable={title === 'Profile' || this.state.dialerEditable ? false : editable}
-          disabled={title === 'Profile' || this.state.dialerEditable ? true : disabled}
+          editable={title === 'Profile' ? false : editable}
+          disabled={title === 'Profile' ? true : disabled}
+          // editable={title === 'Profile' || this.state.dialerEditable ? false : editable}
+          // disabled={title === 'Profile' || this.state.dialerEditable ? true : disabled}
           returnKeyType={'next'}
           changecolor
           containerstyle={styles.animatedInputCont}

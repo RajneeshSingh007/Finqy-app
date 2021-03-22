@@ -176,35 +176,6 @@ const ConnectorMenuList = [
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
-  // {
-  //   name: `Helpdesk`,
-  //   expand: false,
-  //   heading: true,
-  //   iconname: require('../res/images/menuicon10.png'),
-  //   icontype: 2,
-
-  //   sub: [
-  //     {
-  //       name: `Relation Manager`,
-  //       expand: false,
-  //       click: 'Manager',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Raise A Query`,
-  //       expand: false,
-  //       click: 'RaiseQueryForm',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Track My Query`,
-  //       expand: false,
-  //       click: 'TrackQuery',
-  //       options: {},
-  //     },
-  //   ],
-  //   click: '',
-  // },
 ];
 
 const MainMenuList = [
@@ -414,35 +385,6 @@ const MainMenuList = [
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
-  // {
-  //   name: `Helpdesk`,
-  //   expand: false,
-  //   heading: true,
-  //   iconname: require('../res/images/menuicon10.png'),
-  //   icontype: 2,
-
-  //   sub: [
-  //     {
-  //       name: `Relation Manager`,
-  //       expand: false,
-  //       click: 'Manager',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Raise A Query`,
-  //       expand: false,
-  //       click: 'RaiseQueryForm',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Track My Query`,
-  //       expand: false,
-  //       click: 'TrackQuery',
-  //       options: {},
-  //     },
-  //   ],
-  //   click: '',
-  // },
 ];
 
 const TeamMenuList = [
@@ -527,36 +469,6 @@ const TeamMenuList = [
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
-
-  // {
-  //   name: `Helpdesk`,
-  //   expand: false,
-  //   heading: true,
-  //   iconname: require('../res/images/menuicon10.png'),
-  //   icontype: 2,
-
-  //   sub: [
-  //     {
-  //       name: `Relation Manager`,
-  //       expand: false,
-  //       click: 'Manager',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Raise A Query`,
-  //       expand: false,
-  //       click: 'RaiseQueryForm',
-  //       options: {},
-  //     },
-  //     {
-  //       name: `Track My Query`,
-  //       expand: false,
-  //       click: 'TrackQuery',
-  //       options: {},
-  //     },
-  //   ],
-  //   click: '',
-  // },
 ];
 
 
@@ -584,6 +496,36 @@ const salesMarketing =   {
   click: '',
 };
 
+const helpDeskMenu =   {
+  name: `Helpdesk`,
+  expand: false,
+  heading: true,
+  iconname: require('../res/images/menuicon10.png'),
+  icontype: 2,
+
+  sub: [
+    {
+      name: `Relation Manager`,
+      expand: false,
+      click: 'Manager',
+      options: {},
+    },
+    // {
+    //   name: `Raise A Query`,
+    //   expand: false,
+    //   click: 'RaiseQueryForm',
+    //   options: {},
+    // },
+    // {
+    //   name: `Track My Query`,
+    //   expand: false,
+    //   click: 'TrackQuery',
+    //   options: {},
+    // },
+  ],
+  click: '',
+};
+
 export default class Sidebar extends React.Component {
   constructor(props) {
     super(props);
@@ -606,21 +548,9 @@ export default class Sidebar extends React.Component {
     const {navigation} = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, parse => {
-        const pp = parse.user_prof;
-        const url = {
-          uri:
-            pp === ''
-              ? Pref.profileDefaultPic
-              : pp === undefined
-              ? Pref.profileDefaultPic
-              : pp,
-        };
-        //console.log(`url`, url);
         this.setState(
           {
             userData: parse,
-            pic: url,
-            name: parse.rname === undefined ? parse.username : parse.rname,
             userRole: parse.user_role,
           },
           () => {
@@ -628,7 +558,7 @@ export default class Sidebar extends React.Component {
               //console.log(v);
               this.setState({type: v});
               if (v === `connector`) {
-                this.setState({menuList: ConnectorMenuList});
+                this.teamMenuSet(ConnectorMenuList, null);
               } else if (v === 'team') {
                 var filter = TeamMenuList;
 
@@ -704,15 +634,15 @@ export default class Sidebar extends React.Component {
                           Pref.setVal(Pref.DIALER_DATA, dialerData);
                           const cloneobject = JSON.parse(JSON.stringify(filter));
                           finalFilterList.push(cloneobject[0]);
-                          finalFilterList.push(
-                            {
-                              name: `Dialer`,
-                              expand: false,
-                              click: 'SwitchUser',
-                              options: {},
-                              iconname: require('../res/images/dialercalls.png'),
-                              icontype: 2,
-                            });
+                          // finalFilterList.push(
+                          //   {
+                          //     name: `Dialer`,
+                          //     expand: false,
+                          //     click: 'SwitchUser',
+                          //     options: {},
+                          //     iconname: require('../res/images/dialercalls.png'),
+                          //     icontype: 2,
+                          //   });
                           const lastpos = cloneobject.splice(1,cloneobject.length);
                           lastpos.map(item => finalFilterList.push(item));  
                         }else{
@@ -732,7 +662,7 @@ export default class Sidebar extends React.Component {
                   this.teamMenuSet(filter, parse);
                 }
               }else{
-                this.setState({menuList:MainMenuList})
+                this.teamMenuSet(MainMenuList, null);
               }
             });
           },
@@ -743,9 +673,10 @@ export default class Sidebar extends React.Component {
   }
 
   teamMenuSet = (menuList, userdata) =>{
-    // if(Number(userdata.user_role) === 3){
-    //   menuList.push(salesMarketing);
-    // }
+    if(userdata !== null && Number(userdata.user_role) === 3){
+      //menuList.push(salesMarketing);
+    }
+    menuList.push(helpDeskMenu);
     this.setState({menuList: menuList});
   }
 

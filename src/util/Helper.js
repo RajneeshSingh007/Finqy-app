@@ -1010,5 +1010,5 @@ export const productShareList = () =>{
  * @param {*} title 
  */
 export const replacetext = title => {
-  return Lodash.upperFirst(title.replace(/_/g, ' '));
+  return Lodash.startCase(title.replace(/_/g, ' '));
 };

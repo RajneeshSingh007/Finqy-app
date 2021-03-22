@@ -15,6 +15,7 @@ import * as Pref from '././src/util/Pref';
 import {StatusBar,Platform} from 'react-native';
 import codePush from "react-native-code-push";
 import NavigationActions from '././src/util/NavigationActions';
+import * as Helper from '././src/util/Helper';
 
 const theme = {
   ...DefaultTheme,
@@ -64,20 +65,33 @@ const options = {
     deploymentKey: codepushKey,
 };
 
+/**
+ * Dialer Bubble service handler
+ * @param {*} data 
+ */
 const serviceHandler = async( data) =>{
   const {outside} = data;
   if(outside){
-    NavigationActions.navigate('DialerCalling', {outside:true,editEnabled:true,isFollowup:-1,data:{
-      name: '',
-      mobile: '',
-      editable: true,
-    }});
+    Pref.getVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, phoneNumber =>{
+      let outsideAppNumber = ''
+      if(Helper.nullStringCheck(phoneNumber) === false){
+        outsideAppNumber = phoneNumber;
+      }
+      NavigationActions.navigate('DialerCalling', {outside:true,editEnabled:true,isFollowup:-1,data:{
+        name: '',
+        mobile: outsideAppNumber,
+        editable: true,
+      }});
+    });
   }
 }
-
 //AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
+//firebase
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
+
+
+
 
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));
 
