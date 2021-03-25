@@ -3,6 +3,7 @@ import {Alert} from 'react-native';
 import FinproCallModule from '../../FinproCallModule';
 import * as Pref from './Pref';
 import moment from 'moment';
+import {firebase} from '@react-native-firebase/firestore';
 
 /**
  * ask permission and start Service
@@ -135,4 +136,33 @@ export const totalTimeinMinutes = (date, firstTime, secondTime) =>{
   const firstTimeSp = `${date} ${firstTime}`;
   const secondTimeSp = `${date} ${secondTime}`;
   const minutes = moment(firstTimeSp).getDate();
+}
+
+export const disableOffline = () =>{
+  firebase.firestore()
+    .settings({persistence:false});
+}
+
+/**
+ * start idle Service
+ * @param {*} date 
+ */
+export const enableIdleService = (date = '2922032021') =>{
+  const obj = {date:date};
+  FinproCallModule.startIdleService(obj).then(res =>{
+    console.log(res)
+  }).catch(e =>{
+    console.log(e);
+  })
+}
+
+/**
+ * stop idle Service
+ */
+ export const stopIdleService = () =>{
+  FinproCallModule.stopIdleService().then(res =>{
+    console.log(res)
+  }).catch(e =>{
+    console.log(e);
+  })
 }

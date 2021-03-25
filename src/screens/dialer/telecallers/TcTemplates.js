@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, FlatList} from 'react-native';
+import {StyleSheet, FlatList, TouchableWithoutFeedback} from 'react-native';
 import {View, Title, Subtitle} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {ActivityIndicator} from 'react-native-paper';
+import {ActivityIndicator, Searchbar} from 'react-native-paper';
 import {sizeWidth, sizeHeight} from '../../../util/Size';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
@@ -12,10 +12,17 @@ import DialerTemplate from '../../component/DialerTemplate';
 import CScreen from '../../component/CScreen';
 import {firebase} from '@react-native-firebase/firestore';
 import Modal from '../../../util/Modal';
+import IconChooser from '../../common/IconChooser';
+import PaginationNumbers from './../../component/PaginationNumbers';
+import CommonTable from '../../common/CommonTable';
+import {disableOffline} from '../../../util/DialerFeature';
+
+const ITEM_LIMIT = 10;
 
 export default class TcTemplates extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.rendeCustomerInfo = this.rendeCustomerInfo.bind(this);
     this.state = {
       loading: true,
       templateList: [],
@@ -27,18 +34,24 @@ export default class TcTemplates extends React.PureComponent {
       showFilter: false,
       height: 0,
       productList: Helper.productShareList(),
-      userListModal: true,
-      callRecordList:[],
-      userLoader:true,
+      userListModal: false,
+      dataList: [],
+      userLoader: true,
+      shareData: {},
+      itemSize: ITEM_LIMIT,
     };
   }
 
   componentDidMount() {
     const {navigation} = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.saveToken, (token) => {
-      this.setState({token: token});
-      this.fetchData();
+    Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
+      const {id, tlid, pname} = userdatas[0].tc;
+      Pref.getVal(Pref.saveToken, (token) => {
+        this.setState({token: token, id: id, tlid: tlid, pname: pname});
+        this.fetchData();
+        this.fetchCustomerData();
+      });
     });
     //});
   }
@@ -46,23 +59,37 @@ export default class TcTemplates extends React.PureComponent {
   componentWillUnMount() {
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
+    if (this.firebaseListerner !== undefined) this.firebaseListerner.remove();
   }
 
   fetchData = () => {
+    const pName = this.state.pname;
+    const split = pName.split(/&/g);
+    const userTeam = split[1];
     this.setState({loading: true});
-    firebase
+    disableOffline();
+    this.firebaseListerner = firebase
       .firestore()
       .collection(Pref.COLLECTION_TEMPLATE)
-      .get()
-      .then((list) => {
+      .onSnapshot((list) => {
         const finalList = [];
         list.forEach((item) => {
-          const {enabled} = item.data();
-          if (enabled === 0) {
+          const {enabled, global, teamName} = item.data();
+          if (global === 0 && enabled === 0) {
             finalList.push(item.data());
+          }else if (global === -1 && enabled === 0 && Helper.nullStringCheck(teamName) == false) {
+            const split = teamName.split(/\(/g);
+            if(userTeam === split[1].replace(/\)/g, '')){
+              finalList.push(item.data());
+            }
           }
         });
-        this.setState({templateList: finalList, loading: false});
+        this.setState({
+          templateList: finalList,
+          loading: false,
+          fullLoader: false,
+          userListModal: false,
+        });
       })
       .catch((e) => {
         this.setState({loading: false});
@@ -70,65 +97,202 @@ export default class TcTemplates extends React.PureComponent {
   };
 
   fetchCustomerData = () => {
-    Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
-      const {id, tlid, pname} = userdatas[0].tc;
-      const body = JSON.stringify({
-        teamid: tlid,
-        userid: id,
-        active: 1,
-        tname: pname,
-      });
-      Helper.networkHelperTokenPost(
-        Pref.DIALER_LEAD_RECORD,
-        body,
-        Pref.methodPost,
-        this.state.token,
-        (result) => {
-          const {data, status} = result;
-          if (status) {
-            if (data.length > 0) {
-              const sorting = data.sort((a, b) => {
-                const splita = a.updated_at.split(/\s/g);
-                const splitb = b.updated_at.split(/\s/g);
-                const sp = splita[0].split('-');
-                const spz = splitb[0].split('-');
-                return (
-                  Number(sp[2]) - Number(spz[2]) ||
-                  Number(sp[1]) - Number(spz[1]) ||
-                  Number(sp[0]) - Number(spz[0])
-                );
-              });
-              this.setState({
-                callRecordList: sorting.reverse(),
-                userLoader:false
-              });
-            } else {
-              this.setState({
-                userLoader: false,
-              });
-            }
-          } else {
-            this.setState({userLoader: false});
-          }
-        },
-        (e) => {
-          this.setState({userLoader: false});
-        },
-      );
+    const {id, tlid, pname} = this.state;
+    const body = JSON.stringify({
+      teamid: tlid,
+      userid: id,
+      active: 1,
+      tname: pname,
     });
+    Helper.networkHelperTokenPost(
+      Pref.DIALER_LEAD_RECORD,
+      body,
+      Pref.methodPost,
+      this.state.token,
+      (result) => {
+        const {data, status} = result;
+        if (status) {
+          if (data.length > 0) {
+            const sorting = data.sort((a, b) => {
+              const splita = a.updated_at.split(/\s/g);
+              const splitb = b.updated_at.split(/\s/g);
+              const sp = splita[0].split('-');
+              const spz = splitb[0].split('-');
+              return (
+                Number(sp[2]) - Number(spz[2]) ||
+                Number(sp[1]) - Number(spz[1]) ||
+                Number(sp[0]) - Number(spz[0])
+              );
+            });
+            const tableHead = [
+              'Sr. No.',
+              'Share',
+              'Status',
+              'Name',
+              'Number',
+              'Product',
+            ];
+            const {itemSize} = this.state;
+            const widthArr = [60, 60, 120, 120, 110, 110];
+            const sort = sorting.reverse();
+            this.setState({
+              cloneList: sort,
+              userLoader: false,
+              tableHead: tableHead,
+              widthArr: widthArr,
+              dataList: this.returnData(sort, 0, sort.length).slice(
+                0,
+                itemSize,
+              ),
+              itemSize: sort.length <= ITEM_LIMIT ? sort.length : ITEM_LIMIT,
+            });
+          } else {
+            this.setState({
+              userLoader: false,
+            });
+          }
+        } else {
+          this.setState({userLoader: false});
+        }
+      },
+      (e) => {
+        this.setState({userLoader: false});
+      },
+    );
+  };
+
+  /**
+   *
+   * @param {*} data
+   */
+  returnData = (sort, start = 0, end) => {
+    const dataList = [];
+    if (sort.length > 0) {
+      if (start >= 0) {
+        for (let i = start; i < end; i++) {
+          const item = sort[i];
+          if (Helper.nullCheck(item) === false) {
+            const rowData = [];
+            rowData.push(`${Number(i + 1)}`);
+            const shareView = (value) => (
+              <TouchableWithoutFeedback onPress={() => this.shareItem(value)}>
+                <View>
+                  <IconChooser
+                    name={`share-2`}
+                    size={20}
+                    color={`#9f9880`}
+                    style={{alignSelf: 'center'}}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
+            );
+            rowData.push(shareView(item));
+            rowData.push(
+              Number(item.tracking_type) === 0
+                ? `Contactable\n${item.tracking_type_detail}`
+                : `Non-Contactable\n${item.tracking_type_detail}`,
+            );
+            rowData.push(item.name);
+            rowData.push(item.mobile);
+            rowData.push(item.product);
+            dataList.push(rowData);
+          }
+        }
+      }
+    }
+    return dataList;
+  };
+
+  pageNumberClicked = (start, end) => {
+    const {cloneList} = this.state;
+    const clone = JSON.parse(JSON.stringify(cloneList));
+    const data = this.returnData(clone, start, end);
+    this.setState({
+      dataList: data,
+      itemSize: end,
+    });
+  };
+
+  onChangeSearch = (query) => {
+    this.setState({searchQuery: query});
+    const {cloneList, itemSize} = this.state;
+    if (cloneList.length > 0) {
+      const trimquery = String(query).trim().toLowerCase();
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const result = Lodash.filter(clone, (it) => {
+        const {name, mobile, product} = it;
+        return (
+          (name && name.trim().toLowerCase().includes(trimquery)) ||
+          (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+          (product && product.trim().toLowerCase().includes(trimquery))
+        );
+      });
+      const data =
+        result.length > 0 ? this.returnData(result, 0, result.length) : [];
+      const count = result.length > 0 ? result.length : itemSize;
+      this.setState({dataList: data, itemSize: count});
+    }
+  };
+
+  revertBack = () => {
+    const {enableSearch} = this.state;
+    const {cloneList} = this.state;
+    if (enableSearch === true && cloneList.length > 0) {
+      const clone = JSON.parse(JSON.stringify(cloneList));
+      const data = this.returnData(clone, 0, ITEM_LIMIT);
+      this.setState({dataList: data});
+    }
+    this.setState({
+      searchQuery: '',
+      enableSearch: !enableSearch,
+      itemSize: ITEM_LIMIT,
+    });
+  };
+
+  /**
+   * on share clicked item
+   * @param {*} item
+   * @param {*} type
+   */
+  sharedClicked = (item, type) => {
+    item.type = type;
+    this.setState({shareData: item, userListModal: true});
+  };
+
+  /**
+   * share template to selected customer where type = 0 then whatsapp else mail
+   * @param {*} value
+   */
+  shareItem = (value) => {
+    const {shareData} = this.state;
+    const {type, title, content} = shareData;
+    const {email, mobile} = value;
+    if (type === 0) {
+      this.shareOffer(
+        title,
+        content,
+        Helper.nullStringCheck(email) === false ? mobile : '',
+      );
+    } else {
+      this.mailShareOffer(
+        title,
+        content,
+        Helper.nullStringCheck(email) === false ? email : '',
+      );
+    }
   };
 
   /**
    * share whatsapp
    * @param {*} param0
    */
-  shareOffer = ({title, content}) => {
+  shareOffer = (title, content, mobileNo) => {
     const shareOptions = {
       title: title,
       message: content,
       url: '',
       social: Share.Social.WHATSAPP,
-      whatsAppNumber: '', // country code + phone number
+      whatsAppNumber: `+91${mobileNo}`,
     };
     Share.shareSingle(shareOptions);
   };
@@ -137,18 +301,34 @@ export default class TcTemplates extends React.PureComponent {
    * share mail
    * @param {*} param0
    */
-  mailShareOffer = ({title, content}) => {
+  mailShareOffer = (title, content, email) => {
     const shareOptions = {
       title: title,
       message: content,
       url: '',
       social: Share.Social.EMAIL,
       subject: title,
+      email: email,
     };
     Share.shareSingle(shareOptions);
   };
 
+  rendeCustomerInfo = (item) => {
+    return (
+      <View styleName="horizontal space-between" style={styles.itemContainer}>
+        <Title style={styles.title}>{item.name}</Title>
+        <Subtitle style={styles.subtitle}>{item.mobile}</Subtitle>
+        <TouchableWithoutFeedback>
+          <View>
+            <IconChooser name={'share'} size={20} color={'green'} />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    );
+  };
+
   render() {
+    const {enableSearch} = this.state;
     return (
       <CScreen
         refresh={() => this.fetchData()}
@@ -174,25 +354,69 @@ export default class TcTemplates extends React.PureComponent {
               children={
                 <CScreen
                   showfooter={false}
-                  body={<View style={{marginStart: 8, marginEnd: 8}}>
-                    <FlatList
-                        style={{marginHorizontal: sizeWidth(2)}}
-                        data={this.state.userListModal}
-                        renderItem={({item, index}) => (
-                          <DialerTemplate
-                            item={item}
-                            sharing={() => this.shareOffer(item)}
-                            mailSharing={() => {
-                              this.mailShareOffer(item);
-                            }}
-                          />
-                        )}
-                        keyExtractor={(_item, index) => `${index}`}
-                        showsVerticalScrollIndicator={true}
-                        showsHorizontalScrollIndicator={false}
-                        nestedScrollEnabled
-                      />  
-                  </View>}
+                  body={
+                    <View style={{marginStart: 8, marginEnd: 8}}>
+                      {this.state.userLoader ? (
+                        <View style={styles.loader}>
+                          <ActivityIndicator />
+                        </View>
+                      ) : (
+                        <>
+                          <View styleName="horizontal md-gutter space-between">
+                            <PaginationNumbers
+                              dataSize={this.state.cloneList.length}
+                              itemSize={this.state.itemSize}
+                              itemLimit={ITEM_LIMIT}
+                              pageNumberClicked={this.pageNumberClicked}
+                            />
+
+                            <TouchableWithoutFeedback onPress={this.revertBack}>
+                              <View styleName="horizontal v-center h-center">
+                                <IconChooser
+                                  name={enableSearch ? 'x' : 'search'}
+                                  size={24}
+                                  color={'#555555'}
+                                />
+                              </View>
+                            </TouchableWithoutFeedback>
+                          </View>
+
+                          {enableSearch === true ? (
+                            <View styleName="md-gutter">
+                              <Searchbar
+                                placeholder="Search"
+                                onChangeText={this.onChangeSearch}
+                                value={searchQuery}
+                                style={{
+                                  elevation: 0,
+                                  borderColor: '#dbd9cc',
+                                  borderWidth: 0.5,
+                                  borderRadius: 8,
+                                }}
+                                clearIcon={() => null}
+                              />
+                            </View>
+                          ) : null}
+                          {this.state.userLoader ? (
+                            <View style={styles.loader}>
+                              <ActivityIndicator />
+                            </View>
+                          ) : this.state.dataList.length > 0 ? (
+                            <CommonTable
+                              enableHeight={false}
+                              dataList={this.state.dataList}
+                              widthArr={this.state.widthArr}
+                              tableHead={this.state.tableHead}
+                            />
+                          ) : (
+                            <View style={styles.emptycont}>
+                              <ListError subtitle={'No Records Found...'} />
+                            </View>
+                          )}
+                        </>
+                      )}
+                    </View>
+                  }
                 />
               }
             />
@@ -226,10 +450,8 @@ export default class TcTemplates extends React.PureComponent {
                 renderItem={({item, index}) => (
                   <DialerTemplate
                     item={item}
-                    sharing={() => this.shareOffer(item)}
-                    mailSharing={() => {
-                      this.mailShareOffer(item);
-                    }}
+                    sharing={() => this.sharedClicked(item, 0)}
+                    mailSharing={() => this.sharedClicked(item, 1)}
                   />
                 )}
                 keyExtractor={(_item, index) => `${index}`}

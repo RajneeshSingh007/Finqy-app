@@ -6,6 +6,8 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.finorbit.BuildConfig;
 import com.finorbit.floatingcall.FinproCallAppPackage;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -17,7 +19,9 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final ReactNativeHost mReactNativeHost =
+    private FirebaseFirestore firebaseFirestore;
+
+    private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
@@ -55,6 +59,12 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     //initializeFlipper(this); // Remove this line if you don't want Flipper enabled
+
+      FirebaseFirestoreSettings firebaseFirestoreSetting = new FirebaseFirestoreSettings.Builder()
+              .setPersistenceEnabled(false)
+              .build();
+      firebaseFirestore = FirebaseFirestore.getInstance();
+      firebaseFirestore.setFirestoreSettings(firebaseFirestoreSetting);
   }
 
   /**

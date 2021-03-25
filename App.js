@@ -17,7 +17,7 @@ import {
 } from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
-import { enableCallModule,enableService, stopService,serverClientDateCheck,mobileNumberCleanup } from './src/util/DialerFeature';
+import { enableCallModule,enableService, stopService,serverClientDateCheck,mobileNumberCleanup, enableIdleService,stopIdleService } from './src/util/DialerFeature';
 import CallDetectorManager from 'react-native-call-detection';
 import {firebase} from '@react-native-firebase/firestore';
 import moment from 'moment';
@@ -34,25 +34,26 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
-   
-    this.checkVersionForUpdate(); 
-
+    //this.syncImmediate();
+    
     Crashes.setEnabled(true);
     
     analytics().setAnalyticsCollectionEnabled(true);
     
     crashlytics().setCrashlyticsCollectionEnabled(true);
 
-    //this.syncImmediate();
-
     AppState.addEventListener('change', this._handleAppStateChange);
   
     this.onNotificationListener();
+   
+    this.checkVersionForUpdate(); 
 
     //dialer
     //stopService();
     //this.dialerCheckCheckin();
     //this.callDetectionListerner();
+    //enableIdleService();
+    //stopIdleService();
 
   }
 

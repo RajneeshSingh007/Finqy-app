@@ -34,6 +34,7 @@ import {firebase} from '@react-native-firebase/firestore';
 import CallDetectorManager from 'react-native-call-detection';
 import DateRangePicker from 'react-native-daterange-picker';
 import moment from 'moment';
+import { disableOffline } from '../../../util/DialerFeature';
 
 const DATE_FORMAT = 'DD-MM-YYYY';
 const ITEM_LIMIT = 10;
@@ -142,7 +143,8 @@ export default class DialerCalling extends React.PureComponent {
         });
       });
     });
-
+    
+    disableOffline();
     this.firebaseListerner = firebase
       .firestore()
       .collection(Pref.COLLECTION_PRODUCT)

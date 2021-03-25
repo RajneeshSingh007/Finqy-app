@@ -55,6 +55,11 @@ export default class PayoutUpdate extends React.PureComponent {
       ogValue: '',
       ogPortValue: '',
       showHealthPort: false,
+      isPercentage:false,
+      maxValue:'',
+      minValue:'',
+      portMaxValue:'',
+      portMinValue:''
     };
   }
 
@@ -64,19 +69,38 @@ export default class PayoutUpdate extends React.PureComponent {
     const parse = Helper.lowercaseWithDashWord(title);
     let payoutport = '';
     let showHealthPort = false;
+    let isPercentage = false;
+    let maxValue  = '';
+    let minValue = '';
+    let portMaxValue = '';
+    let portMinValue = '';
     if (parse === 'health_insurance') {
       lastitem = data[data.length - 3];
+      maxValue = data[data.length -4];
+      minValue = data[data.length -5];
       //payoutport = data[data.length - 2];
       if (Helper.nullStringCheck(data[data.length - 2]) === false) {
+        if(data[data.length - 2].includes('%')){
+          isPercentage = true;
+        }
         payoutport = data[data.length - 2].replace(/\%/g, '');
         showHealthPort = true;
+        portMaxValue = data[data.length -3];
+        portMinValue = data[data.length -4];  
       }
     } else {
       lastitem = data[data.length - 2];
+      maxValue = data[data.length -3];
+      minValue = data[data.length -4];
     }
     if (lastitem !== '') {
+      if(lastitem.includes('%')){
+        isPercentage = true;
+      }
       lastitem = lastitem.replace(/\%/g, '');
     }
+
+    console.log(minValue, maxValue, portMinValue, portMaxValue);
 
     this.setState({
       currentRowPos: position,
@@ -87,6 +111,11 @@ export default class PayoutUpdate extends React.PureComponent {
       payoutPort: payoutport,
       showModal: true,
       showHealthPort: showHealthPort,
+      isPercentage:isPercentage,
+      portMaxValue:portMaxValue,
+      minValue:minValue,
+      maxValue:maxValue,
+      portMinValue:portMinValue
     });
   };
 
@@ -202,7 +231,7 @@ export default class PayoutUpdate extends React.PureComponent {
   };
 
   updatePayoutPerRow = () => {
-    const {payoutValue, title, payoutPort} = this.state;
+    const {payoutValue, title, payoutPort,maxValue, minValue, isPercentage} = this.state;
     const parseTitle = Helper.lowercaseWithDashWord(title);
     if (Helper.nullStringCheck(payoutValue)) {
       alert('Payout empty');
@@ -223,9 +252,20 @@ export default class PayoutUpdate extends React.PureComponent {
     ) {
       alert('Please, Enter value greater than zero');
     } else {
-      this.setState({showModal: false}, () => {
-        this.updateData();
-      });
+      if(Helper.nullStringCheck(maxValue) === false && Helper.nullStringCheck(minValue) == false){
+        if(Number(value) >= Number(minValue) && Number(value) <= Number(maxValue)){
+          this.setState({showModal: false}, () => {
+            this.updateData();
+          });
+        }else{
+          const percentText = isPercentage ? '%' :'';
+          alert(`Please, Enter value between ${minValue}${percentText}  and ${maxValue}${percentText}`)  
+        }
+      }else{
+        this.setState({showModal: false}, () => {
+          this.updateData();
+        });
+      }
     }
   };
 
@@ -241,10 +281,15 @@ export default class PayoutUpdate extends React.PureComponent {
       dataList,
       ogPortValue,
       payoutPort,
+      isPercentage
     } = this.state;
     const parsetitle = Helper.lowercaseWithDashWord(title);
     let finalvalue = payoutValue === '' ? ogValue : payoutValue;
     let finalPort = payoutPort === '' ? ogPortValue : payoutPort;
+    if(isPercentage){
+      finalvalue = `${finalvalue}%`;
+      finalPort = `${finalPort}%`;
+    }
     if (parsetitle === 'health_insurance') {
       selectedRowData[selectedRowData.length - 3] = finalvalue;
       selectedRowData[selectedRowData.length - 2] = finalPort;

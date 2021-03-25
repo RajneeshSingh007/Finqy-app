@@ -85,6 +85,7 @@ const serviceHandler = async( data) =>{
     });
   }
 }
+
 //AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
 //firebase

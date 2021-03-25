@@ -108,7 +108,7 @@ export default class CallLogs extends React.PureComponent {
             } else {
               if (io.duration > 60) {
                 const callDur = Number(io.duration / 60).toPrecision(3);
-                io.duration = `${io.duration}`;
+                io.duration = callDur;
               }
             }
             return io;

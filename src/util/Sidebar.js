@@ -17,6 +17,7 @@ import * as Pref from './Pref';
 import DrawerTop from '../screens/component/DrawerTop';
 import * as Helper from './Helper';
 import {firebase} from '@react-native-firebase/firestore';
+import { disableOffline } from './DialerFeature';
 
 const COLOR = '#f9f8f1';
 
@@ -97,6 +98,14 @@ const ConnectorMenuList = [
     click: '',
   },
   {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
     name: `My Wallet`,
     expand: false,
     heading: true,
@@ -166,14 +175,6 @@ const ConnectorMenuList = [
     click: 'Training',
     options: {},
     iconname: require('../res/images/menuicon8.png'),
-    icontype: 2,
-  },
-  {
-    name: `FinNews`,
-    expand: false,
-    click: 'Blogs',
-    options: {},
-    iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
 ];
@@ -253,6 +254,14 @@ const MainMenuList = [
       },
     ],
     click: '',
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
   },
   {
     name: `My Marketing Tool`,
@@ -376,15 +385,6 @@ const MainMenuList = [
     ],
     click: '',
   },
-
-  {
-    name: `FinNews`,
-    expand: false,
-    click: 'Blogs',
-    options: {},
-    iconname: require('../res/images/menuicon9.png'),
-    icontype: 2,
-  },
 ];
 
 const TeamMenuList = [
@@ -446,6 +446,14 @@ const TeamMenuList = [
     icontype: 2,
   },
   {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
     name: `My Marketing Tool`,
     expand: false,
     click: 'MarketingTool',
@@ -459,14 +467,6 @@ const TeamMenuList = [
     click: 'Training',
     options: {},
     iconname: require('../res/images/menuicon8.png'),
-    icontype: 2,
-  },
-  {
-    name: `FinNews`,
-    expand: false,
-    click: 'Blogs',
-    options: {},
-    iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
   },
 ];
@@ -568,6 +568,7 @@ export default class Sidebar extends React.Component {
                   const leaderData = leader[0];
                   const {id} = leaderData; 
                   const loggedMemberId = parse.id;
+                  disableOffline();
                   this.firebaseListerner =  firebase.firestore()
                   .collection(Pref.COLLECTION_PARENT)
                   .doc(id)

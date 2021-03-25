@@ -87,9 +87,17 @@
 <!--            android:name=".floatingcall.FloatingWidgetService"-->
 <!--            android:enabled="true"-->
 <!--            android:exported="false" />-->
+
 <!--        <service android:name=".floatingcall.ServiceHandler" />-->
 
-<!--        <receiver android:name=".floatingcall.PhoneCallReceiver">-->
+<!--        <service-->
+<!--            android:name=".floatingcall.IdleService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false" />-->
+
+<!--        <service android:name=".floatingcall.IdleHandler" />-->
+
+        <!--        <receiver android:name=".floatingcall.PhoneCallReceiver">-->
 <!--            <intent-filter android:priority="1000">-->
 <!--                <action android:name="android.intent.action.PHONE_STATE" />-->
 <!--                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />-->

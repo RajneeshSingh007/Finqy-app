@@ -210,13 +210,15 @@ export default class PopularPlan extends React.PureComponent {
     if (find) {
       const message = this.getMessageFromProduct(item);
       const shareOptions = {
-        subject: find.value,
+        subject:`${find.value} Product`,
         title: '',
         message: message,
         url: '',
         social: Share.Social.EMAIL,
       };
       Share.open(shareOptions);
+    }else{
+      Helper.showToastMessage('Something went wrong!', 0);
     }
   };
 

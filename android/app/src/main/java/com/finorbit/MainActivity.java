@@ -10,6 +10,7 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.finorbit.floatingcall.FloatingWidgetService;
+import com.finorbit.floatingcall.IdleService;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.AppUpdateType;
@@ -24,6 +25,14 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //test
+//        Intent intent = new Intent(IdleService.IDLE_SERVICE_ID);
+//        intent.setClass(this, IdleService.class);
+//        intent.setAction("datesupplied");
+//        intent.putExtra("date","2922032021");
+//        startService(intent);
+
         appUpdateManager = AppUpdateManagerFactory.create(MainActivity.this);
         appUpdateManager
                 .getAppUpdateInfo()

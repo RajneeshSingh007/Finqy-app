@@ -5,7 +5,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Title, Subtitle, View} from '@shoutem/ui';
+import {Title, Subtitle, View, Html} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {Colors, ActivityIndicator, Chip} from 'react-native-paper';
@@ -17,6 +17,10 @@ import IconChooser from '../common/IconChooser';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import CScreen from '../component/CScreen';
 import Share from 'react-native-share';
+import Pdf from 'react-native-pdf';
+import Modal from '../../util/Modal';
+
+const youtubeURL = 'https://www.youtube.com/watch?v=';
 
 export default class Training extends React.PureComponent {
   constructor(props) {
@@ -35,6 +39,8 @@ export default class Training extends React.PureComponent {
       fileType: 2,
       height: 0,
       selectedFilterTitle: '',
+      modalVisible: false,
+      modalPdfUrl: '',
     };
   }
 
@@ -79,7 +85,6 @@ export default class Training extends React.PureComponent {
           categoryList.push({name: `All`, selected: true});
           categoryList.push({name: `PDF`, selected: false});
           categoryList.push({name: `Videos`, selected: false});
-          //https://www.youtube.com/embed/GegDvKYZ1rA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture
           const catlist = Lodash.map(data, (io) => {
             const {product_name, link} = io;
             const find = Lodash.find(
@@ -93,20 +98,18 @@ export default class Training extends React.PureComponent {
               });
             }
             if (link.includes(`embed`)) {
-              //https://www.youtube.com/watch?v=GegDvKYZ1rA
               const sp = link.split('/');
               const id = sp[4];
               if (!id.includes(`frameborder`)) {
-                io.link = `https://www.youtube.com/watch?v=${id.trim()}`;
+                io.link = `${youtubeURL}${id.trim()}`;
               } else {
                 let agsp = id.split('frameborder');
                 const idx = agsp[0].replace('"/', '').replace('"', '').trim();
-                io.link = `https://www.youtube.com/watch?v=${idx}`;
+                io.link = `${youtubeURL}${idx}`;
               }
             }
             return io;
           });
-          //categoryList.push({ name: `Download`, selected: false });
           let sort = Lodash.sortBy(catlist, ['link']).reverse();
           this.setState({
             cloneList: catlist,
@@ -139,47 +142,16 @@ export default class Training extends React.PureComponent {
    * @param {*} mode
    */
   itemshare = (item, mode) => {
-    const videoId =
-      item.link !== undefined && item.link !== '' && item.link.includes('?')
-        ? item.link.split('?')[1].replace('v=', '')
-        : '';
-    const url =
-      mode === 1
-        ? `https://www.youtube.com/watch?v=${videoId}`
-        : `${Pref.MainUrl}/erevbay_admin/${item.product_name}/${item.pdf_file}`;
-    const title = 'Finpro';
-    //const message = `https://erb.ai/corporate_tool/refer_offer.php?offer_id=${id}`;
-    const message = ``;
-    const options = Platform.select({
-      ios: {
-        activityItemSources: [
-          {
-            placeholderItem: {type: 'url', content: url},
-            item: {
-              default: {type: 'url', content: url},
-            },
-            subject: {
-              default: title,
-            },
-            linkMetadata: {originalUrl: url, url, title},
-          },
-          {
-            placeholderItem: {type: 'text', content: message},
-            item: {
-              default: {type: 'text', content: message},
-              message: null, // Specify no text to share via Messages app.
-            },
-          },
-        ],
-      },
-      default: {
-        title,
-        subject: title,
-        url: url,
-        message: message,
-      },
-    });
-    Share.open(options);
+    const videoId = item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', ''): '';
+    const url = mode === 1? `${youtubeURL}${videoId}` : item.pdf_url;
+    const shareOptions = {
+      title: '',
+      message: '',
+      url: url,
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',
+    };
+    Share.shareSingle(shareOptions);
   };
 
   /**
@@ -188,11 +160,7 @@ export default class Training extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-    //console.log('link', item.link)
-    const videoid =
-      item.link !== undefined && item.link !== '' && item.link.includes('?')
-        ? item.link.split('?')[1].replace('v=', '')
-        : '';
+    const videoid = item.link !== undefined && item.link !== '' && item.link.includes('?') ? item.link.split('?')[1].replace('v=', '') : '';
     const {fileType, selectedFilterTitle} = this.state;
     return item.link !== '' &&
       !item.link.includes('.png') &&
@@ -201,14 +169,7 @@ export default class Training extends React.PureComponent {
       (fileType === 0 || fileType === 2) ? (
       <View styleName="sm-gutter">
         <View styleName="vertical" style={styles.itemContainer}>
-          <View
-            style={{
-              justifyContent: 'center',
-              alignSelf: 'center',
-              marginTop: 8,
-              alignItems: 'center',
-              marginHorizontal: 12,
-            }}>
+          <View style={styles.youtubecontainer}>
             <YoutubePlayer
               height={185}
               width={sizeWidth(80)}
@@ -238,7 +199,7 @@ export default class Training extends React.PureComponent {
               <View style={styles.circle1}>
                 <IconChooser
                   name="whatsapp"
-                  size={20}
+                  size={18}
                   color={'white'}
                   iconType={2}
                   style={styles.icon}
@@ -253,25 +214,30 @@ export default class Training extends React.PureComponent {
         <View styleName="vertical" style={styles.itemContainer}>
           <TouchableWithoutFeedback
             onPress={() =>
-              Helper.downloadFile(
-                `${Pref.MainUrl}/erevbay_admin/${item.product_name}/${item.pdf_file}`,
-                '',
-              )
+              this.setState({
+                modalVisible: true,
+                modalPdfUrl: item.pdf_url,
+              })
             }>
             <View>
-              <View style={styles.pdfbg}>
-                <View style={styles.circle}>
-                  {/* {item.link !== '' && item.link.includes('.png') || item.link.includes('.jpeg') || item.link.includes('.jpg') ? <Image source={{ uri: `${item.link}` }} styleName='medium' style={styles.pdf} /> : */}
-                  <IconChooser
-                    name={`file-pdf`}
-                    size={32}
-                    iconType={5}
-                    style={styles.pdf}
-                    color={'#8a8a87'}
-                  />
-                  {/* } */}
-                </View>
-              </View>
+              <Pdf
+                source={{
+                  uri: item.pdf_url,
+                  cache: false,
+                }}
+                style={StyleSheet.flatten([
+                  styles.youtubecontainer,
+                  {
+                    flex: 1,
+                    width: sizeWidth(80),
+                    height: 185,
+                  },
+                ])}
+                fitWidth
+                fitPolicy={0}
+                enablePaging
+                scale={1}
+              />
               {selectedFilterTitle !== '' &&
               selectedFilterTitle !== 'All' &&
               selectedFilterTitle !== 'Videos' &&
@@ -287,16 +253,33 @@ export default class Training extends React.PureComponent {
                 styleName="v-start h-start"
                 numberOfLines={2}
                 style={styles.itemtext}>{`${item.header}`}</Title>
-              <View
-                styleName="horizontal v-center h-center space-between"
-                style={{marginBottom: 8}}>
+              <View styleName="horizontal v-center" style={{marginBottom: 8}}>
                 <TouchableWithoutFeedback
                   onPress={() => this.itemshare(item, 2)}>
                   <View style={styles.circle1}>
                     <IconChooser
                       name="whatsapp"
-                      size={20}
+                      size={18}
                       color={'white'}
+                      iconType={2}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback
+                  onPress={() =>Helper.downloadFile(item.pdf_url,'',)}>
+                  <View
+                    style={StyleSheet.flatten([
+                      styles.circle1,
+                      {
+                        backgroundColor: '#e8e5d7',
+                        marginStart: 12,
+                      },
+                    ])}>
+                    <IconChooser
+                      name="download"
+                      size={18}
+                      color={'#97948c'}
                       iconType={2}
                       style={styles.icon}
                     />
@@ -372,6 +355,54 @@ export default class Training extends React.PureComponent {
     return (
       <CScreen
         refresh={() => this.fetchData()}
+        absolute={
+          <>
+            <Modal
+              visible={this.state.modalVisible}
+              setModalVisible={() =>
+                this.setState({modalPdfUrl: '', modalVisible: false})
+              }
+              ratioHeight={0.87}
+              backgroundColor={`white`}
+              topCenterElement={
+                <Subtitle
+                  style={{
+                    color: '#292929',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                  }}>
+                  {``}
+                </Subtitle>
+              }
+              children={
+                <View
+                  style={{
+                    flex: 1,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'white',
+                  }}>
+                  <Pdf
+                    source={{
+                      uri: this.state.modalPdfUrl,
+                      cache: true,
+                    }}
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    fitWidth
+                    fitPolicy={0}
+                    enablePaging
+                    scale={1}
+                  />
+                </View>
+              }
+            />
+          </>
+        }
         body={
           <>
             <LeftHeaders
@@ -444,74 +475,8 @@ export default class Training extends React.PureComponent {
                       }}></View>
                   )}
                 />
-                {/* <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({ name: 'All' }, 2)}>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        color: '#6e6852',
-                        fontSize: 16,
-                        lineHeight: 20,
-                        paddingVertical: 0,
-                      },
-                    ])}>
-                    {`All`}
-                  </Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    marginTop: 4,
-                    height: 1,
-                    width: '100%',
-                    backgroundColor: '#e4cbcb',
-                  }}></View>
-                <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({ name: 'Video' }, 0)}>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        marginTop: 10,
-                        color: '#6e6852',
-                        fontSize: 16,
-                        lineHeight: 20,
-                        paddingVertical: 0,
-                      },
-                    ])}>
-                    {`Video`}
-                  </Title>
-                </TouchableWithoutFeedback>
-                <View
-                  style={{
-                    marginTop: 4,
-                    height: 1,
-                    width: '100%',
-                    backgroundColor: '#e4cbcb',
-                  }}></View>
-                <TouchableWithoutFeedback
-                  onPress={() => this.chipclick({ name: 'Download' }, 1)}>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.passText,
-                      {
-                        marginTop: 16,
-                        color: '#6e6852',
-                        fontSize: 16,
-                        lineHeight: 20,
-                        paddingVertical: 0,
-                        marginBottom: -2,
-                      },
-                    ])}>
-                    {`PDF`}
-                  </Title>
-                </TouchableWithoutFeedback> */}
               </View>
             ) : null}
-
-            {/* <View style={styles.topfilterIcon}>
-              <IconChooser name={'chevron-up'} size={28} color={'#dbdacd'} />
-            </View> */}
 
             {this.state.loading ? (
               <View style={styles.loader}>
@@ -539,6 +504,13 @@ export default class Training extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  youtubecontainer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 8,
+    alignItems: 'center',
+    marginHorizontal: 12,
+  },
   pdfbg: {
     justifyContent: 'center',
     alignSelf: 'center',
@@ -686,7 +658,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginBottom: 6,
-    borderRadius: 16,
+    borderRadius: 36 / 2,
     //borderColor: '#000',
     //borderStyle: 'solid',
     //borderWidth: 3,

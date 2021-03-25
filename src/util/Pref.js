@@ -3012,6 +3012,7 @@ export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
 export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
 export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
 export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
+export const DIALER_TC_PERFORMANCE = `${DialerDirUrl}tc_performance.php`;
 export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
 export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
 export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;

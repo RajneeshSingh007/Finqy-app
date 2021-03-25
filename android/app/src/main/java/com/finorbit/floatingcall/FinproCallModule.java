@@ -18,6 +18,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 public class FinproCallModule extends ReactContextBaseJavaModule {
 
@@ -123,5 +124,38 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
             return;
         }
         promise.resolve("success");
+    }
+
+    @ReactMethod
+    public void startIdleService(ReadableMap readableMap, Promise promise){
+        String date = readableMap.getString("date");
+        if(TextUtils.isEmpty(date)){
+            promise.reject("Date empty");
+        }else{
+            try {
+                Intent intent = new Intent(IdleService.IDLE_SERVICE_ID);
+                intent.setClass(this.getReactApplicationContext(), IdleService.class);
+                intent.setAction("datesupplied");
+                intent.putExtra("date", date);
+                getReactApplicationContext().startService(intent);
+            } catch (Exception e) {
+                promise.reject(e);
+                return;
+            }
+            promise.resolve(true);
+        }
+    }
+
+    @ReactMethod
+    public void  stopIdleService(Promise promise){
+        try {
+            Intent intent = new Intent(IdleService.IDLE_SERVICE_ID);
+            intent.setClass(this.getReactApplicationContext(), IdleService.class);
+            this.getReactApplicationContext().stopService(intent);
+        } catch (Exception e) {
+            promise.reject(e);
+            return;
+        }
+        promise.resolve(true);
     }
 }

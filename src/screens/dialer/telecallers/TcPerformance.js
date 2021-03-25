@@ -15,10 +15,10 @@ export default class TcPerformance extends React.PureComponent {
     this.state = {
       dashboardData: null,
       barData: [
-        {x: 'Contactable', y: 0, color: '#87c1fc'},
-        {x: 'Non-Contactable', y: 0, color: '#fe8c8c'},
-        {x: 'Follow up', y: 0, color: '#ffe251'},
-        {x: 'Dialed', y: 0, color: '#77e450'},
+        {x: 'Interested', y: 0, color: '#87c1fc'},
+        {x: 'Not-Interested', y: 0, color: '#fe8c8c'},
+        {x: 'Incorrect Number', y: 0, color: '#ffe251'},
+        {x: 'Avg. Talktime', y: 0, color: '#77e450'},
       ],
     };
   }
@@ -43,7 +43,7 @@ export default class TcPerformance extends React.PureComponent {
       });
       //console.log('body', body)
       Helper.networkHelperTokenPost(
-        Pref.DIALER_TC_DASHBOARD,
+        Pref.DIALER_TC_PERFORMANCE,
         body,
         Pref.methodPost,
         token,
@@ -51,10 +51,10 @@ export default class TcPerformance extends React.PureComponent {
           const {barData} = this.state;
           let {data, status} = result;
           if (status) {
-            barData[0].y = Number(data.contactable);
-            barData[1].y = Number(data.notContactable);
-            barData[2].y = Number(data.follwup);
-            barData[3].y = Number(data.dialer);
+            barData[0].y = Number(data.inter);
+            barData[1].y = Number(data.ntinter);
+            barData[2].y = Number(data.wrong);
+            barData[3].y = Number(data.dur);
             this.setState({dashboardData: data, barData: barData});
           }
         },
@@ -116,11 +116,7 @@ export default class TcPerformance extends React.PureComponent {
           <View>
             <LeftHeaders showBack title={'Performance'} />
 
-            <View style={styles.loader}>
-                <ActivityIndicator color={Pref.RED} />
-            </View>
-
-            {/* {dashboardData !== null ? (
+            {dashboardData !== null ? (
               <>
                 <Card
                   style={{
@@ -130,27 +126,27 @@ export default class TcPerformance extends React.PureComponent {
                   }}>
                   <Card.Content>
                     {this.renderCircleItem(
-                      `${0}`,
-                      'Contactable',
+                      `${dashboardData.inter}`,
+                      'Interested',
                       '',
                       () => {},
                       1,
                     )}
                     {this.renderCircleItem(
-                      `${0}`,
-                      'Not-Contactable',
+                      `${dashboardData.ntinter}`,
+                      'Not-Interested',
                       '',
                       () => {},
                     )}
                     {this.renderCircleItem(
-                      `${0}`,
-                      'Follow-up',
+                      `${dashboardData.wrong}`,
+                      'Incorrect Number',
                       '',
                       () => {},
                     )}
                     {this.renderCircleItem(
-                      `${0}`,
-                      'Dialed',
+                      `${dashboardData.dur}`,
+                      'Avg. Talktime',
                       '',
                       () => {},
                     )}
@@ -176,7 +172,7 @@ export default class TcPerformance extends React.PureComponent {
               <View style={styles.loader}>
                 <ActivityIndicator color={Pref.RED} />
               </View>
-            )} */}
+            )}
           </View>
         }
       />

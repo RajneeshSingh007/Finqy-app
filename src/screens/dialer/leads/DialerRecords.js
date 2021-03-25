@@ -223,8 +223,10 @@ export default class DialerRecords extends React.PureComponent {
       if (io.duration === 0) {
         io.duration = '0';
       } else {
-        const callDur = Number(io.duration / 60).toPrecision(3);
-        io.duration = callDur;
+        if (io.duration > 60) {
+          const callDur = Number(io.duration / 60).toPrecision(3);
+          io.duration = callDur;
+        }
       }
       return io;
     });
