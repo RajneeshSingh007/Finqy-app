@@ -34,7 +34,7 @@ import {firebase} from '@react-native-firebase/firestore';
 import CallDetectorManager from 'react-native-call-detection';
 import DateRangePicker from 'react-native-daterange-picker';
 import moment from 'moment';
-import { disableOffline } from '../../../util/DialerFeature';
+import { disableOffline,stopIdleService } from '../../../util/DialerFeature';
 
 const DATE_FORMAT = 'DD-MM-YYYY';
 const ITEM_LIMIT = 10;
@@ -223,7 +223,7 @@ export default class DialerCalling extends React.PureComponent {
       tname: teamName,
       follow: isFollowup,
     });
-    console.log('body', body);
+    //console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.DIALER_LEAD_RECORD,
       body,
@@ -380,6 +380,7 @@ export default class DialerCalling extends React.PureComponent {
                 Helper.requestPermissionsDialer();
               } catch (error) {}
             } else if (result === 'success') {
+              stopIdleService();      
               this.setState({
                 progressLoader: true,
                 activeCallerItem: item,
@@ -391,6 +392,7 @@ export default class DialerCalling extends React.PureComponent {
             }
           });
         } else {
+          stopIdleService();
           SendIntentAndroid.sendPhoneCall(mobile, false);
           this.setState({
             progressLoader: true,
@@ -408,6 +410,7 @@ export default class DialerCalling extends React.PureComponent {
         Helper.requestPermissionsDialer();
       }
     } else {
+      stopIdleService();
       this.setState({
         progressLoader: true,
         activeCallerItem: item,

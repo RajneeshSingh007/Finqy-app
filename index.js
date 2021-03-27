@@ -1,5 +1,3 @@
-/** @format */
-
 import React, {Component} from 'react';
 import {AppRegistry, YellowBox, LogBox} from 'react-native';
 import App from './App';
@@ -85,15 +83,24 @@ const serviceHandler = async( data) =>{
     });
   }
 }
+AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
-//AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
+
+//Idle Service
+const idleServiceHandler = async(data) =>{
+
+}
+AppRegistry.registerHeadlessTask('IdleHandler', () => idleServiceHandler);
+
 
 //firebase
+const firebaseBackgroundMessage = async(data) =>{
+  
+}
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
 
-
-
-
+//codepush
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));
 
+//main
 //AppRegistry.registerComponent(appName, () => Main);

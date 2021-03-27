@@ -76,7 +76,8 @@ export default class FinorbitForm extends React.PureComponent {
     const dialerPincode = navigation.getParam('dialerPincode', '');
     const dialerDob = navigation.getParam('dialerDob', '');
     
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    
       Pref.getVal(Pref.saveToken, value => {
         this.setState({token: value}, () => {
           Pref.getVal(Pref.userData, userData => {
@@ -91,7 +92,7 @@ export default class FinorbitForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition: 0,
+              currentPosition: 2,
               editMode: editMode,
               editLeadData: editLeadData,
               editFirst: checknullEdit === false ? editLeadData.first : null,
@@ -124,7 +125,8 @@ export default class FinorbitForm extends React.PureComponent {
           });
         });
       });
-    });
+    
+    //});
 
     // NavigationActions.navigate("GetQuotes", {
     //   formId: 1420,

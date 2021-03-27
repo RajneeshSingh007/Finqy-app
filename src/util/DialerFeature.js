@@ -147,7 +147,7 @@ export const disableOffline = () =>{
  * start idle Service
  * @param {*} date 
  */
-export const enableIdleService = (date = '2922032021') =>{
+export const enableIdleService = (date) =>{
   const obj = {date:date};
   FinproCallModule.startIdleService(obj).then(res =>{
     console.log(res)

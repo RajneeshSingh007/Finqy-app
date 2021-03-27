@@ -1,4 +1,4 @@
-import {Title, Subtitle, View} from '@shoutem/ui';
+import {Title, View} from '@shoutem/ui';
 import React from 'react';
 import {StyleSheet, ActivityIndicator, Platform} from 'react-native';
 import * as Helper from '../../../util/Helper';
@@ -163,7 +163,7 @@ export default class TcDashboard extends React.PureComponent {
                     backgroundColor={Pref.WHITE}
                     height={250}
                     defaultColumnWidth={60}
-                    defaultColumnMargin={12}
+                    defaultColumnMargin={32}
                     highlightColor={'#d5d5d5'}
                   />
                 </View>

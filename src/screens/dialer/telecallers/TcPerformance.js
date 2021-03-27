@@ -1,4 +1,4 @@
-import {Title, Subtitle, View} from '@shoutem/ui';
+import {Title, View} from '@shoutem/ui';
 import React from 'react';
 import {StyleSheet, ActivityIndicator, Platform} from 'react-native';
 import * as Helper from '../../../util/Helper';
@@ -28,7 +28,7 @@ export default class TcPerformance extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({token: value});
-        this.fetchDashboard(value, '');
+        this.fetchDashboard(value);
       });
     });
   }
@@ -41,20 +41,21 @@ export default class TcPerformance extends React.PureComponent {
         userid: id,
         tname: pname,
       });
-      //console.log('body', body)
+      console.log('body', body)
       Helper.networkHelperTokenPost(
         Pref.DIALER_TC_PERFORMANCE,
         body,
         Pref.methodPost,
         token,
         (result) => {
+          console.log(result);
           const {barData} = this.state;
           let {data, status} = result;
           if (status) {
             barData[0].y = Number(data.inter);
             barData[1].y = Number(data.ntinter);
             barData[2].y = Number(data.wrong);
-            barData[3].y = Number(data.dur);
+            barData[3].y = Number(data.dur.replace(/sec/g, ''));
             this.setState({dashboardData: data, barData: barData});
           }
         },
@@ -110,7 +111,7 @@ export default class TcPerformance extends React.PureComponent {
     const {dashboardData} = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchDashboard(this.state.token, '')}
+        refresh={() => this.fetchDashboard(this.state.token)}
         bgColor={Pref.WHITE}
         body={
           <View>
@@ -163,7 +164,7 @@ export default class TcPerformance extends React.PureComponent {
                     backgroundColor={Pref.WHITE}
                     height={250}
                     defaultColumnWidth={60}
-                    defaultColumnMargin={12}
+                    defaultColumnMargin={38}
                     highlightColor={'#d5d5d5'}
                   />
                 </View>

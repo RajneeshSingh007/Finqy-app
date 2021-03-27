@@ -32,6 +32,7 @@ export default class PayoutUpdate extends React.PureComponent {
     super(props);
     this.backClick = this.backClick.bind(this);
     this.updatePayoutPerRow = this.updatePayoutPerRow.bind(this);
+    this.refercode = null;
     this.state = {
       dataList: [],
       exDataList: [],
@@ -44,7 +45,6 @@ export default class PayoutUpdate extends React.PureComponent {
       tc: '',
       length: -1,
       pleaseNote: null,
-      refercode: null,
       payout: null,
       title: null,
       showModal: false,
@@ -75,9 +75,9 @@ export default class PayoutUpdate extends React.PureComponent {
     let portMaxValue = '';
     let portMinValue = '';
     if (parse === 'health_insurance') {
-      lastitem = data[data.length - 3];
-      maxValue = data[data.length -4];
-      minValue = data[data.length -5];
+      lastitem = data[data.length - 3].replace(/\%/g, '');
+      maxValue = data[data.length -6].replace(/\%/g, '');
+      minValue = data[data.length -7].replace(/\%/g, '');
       //payoutport = data[data.length - 2];
       if (Helper.nullStringCheck(data[data.length - 2]) === false) {
         if(data[data.length - 2].includes('%')){
@@ -85,13 +85,13 @@ export default class PayoutUpdate extends React.PureComponent {
         }
         payoutport = data[data.length - 2].replace(/\%/g, '');
         showHealthPort = true;
-        portMaxValue = data[data.length -3];
-        portMinValue = data[data.length -4];  
+        portMaxValue = data[data.length -4].replace(/\%/g, '');
+        portMinValue = data[data.length -5].replace(/\%/g, '');  
       }
     } else {
       lastitem = data[data.length - 2];
-      maxValue = data[data.length -3];
-      minValue = data[data.length -4];
+      maxValue = data[data.length -3].replace(/\%/g, '');
+      minValue = data[data.length -4].replace(/\%/g, '');
     }
     if (lastitem !== '') {
       if(lastitem.includes('%')){
@@ -100,7 +100,7 @@ export default class PayoutUpdate extends React.PureComponent {
       lastitem = lastitem.replace(/\%/g, '');
     }
 
-    console.log(minValue, maxValue, portMinValue, portMaxValue);
+    //console.log(minValue, maxValue, portMinValue, portMaxValue);
 
     this.setState({
       currentRowPos: position,
@@ -147,11 +147,14 @@ export default class PayoutUpdate extends React.PureComponent {
     const refercode = navigation.getParam('refercode', null);
     const payout = navigation.getParam('payout', null);
 
+    this.refercode = refercode;
+
     //console.log('payout', payout);
 
     //console.log('title', title.toLowerCase().replace(/\s/g, '_'));
 
     this.focusListener = navigation.addListener('didFocus', () => {
+      
       let widthArr = [],
         exWidthArr = [];
       if (Helper.nullCheck(width) === false && width.length > 0) {
@@ -161,7 +164,7 @@ export default class PayoutUpdate extends React.PureComponent {
         }
       }
       if (editable && head.length > 0) {
-        head.push('Edit');
+        head[head.length] = 'Edit';
       }
       let dataList = [],
         exDataList = [];
@@ -193,7 +196,7 @@ export default class PayoutUpdate extends React.PureComponent {
 
       this.setState({
         payout: payout,
-        refercode: refercode,
+        //refercode: refercode,
         loading: false,
         tc: tc,
         length: length,
@@ -210,6 +213,7 @@ export default class PayoutUpdate extends React.PureComponent {
             ? exData.head
             : [],
       });
+    
     });
   }
 
@@ -220,18 +224,19 @@ export default class PayoutUpdate extends React.PureComponent {
   }
 
   backClick = () => {
-    const {refercode} = this.state;
+    //const {refercode} = this.state;
+    console.log('refercode', this.refercode);
     NavigationActions.navigate('PayinProducts', {
       screenName: 'PayoutUpdate',
       showUpdateButton: true,
-      refercode: refercode,
+      refercode: this.refercode,
     });
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return true;
   };
 
   updatePayoutPerRow = () => {
-    const {payoutValue, title, payoutPort,maxValue, minValue, isPercentage} = this.state;
+    const {payoutValue, title, payoutPort,maxValue, minValue, portMaxValue, portMinValue, isPercentage} = this.state;
     const parseTitle = Helper.lowercaseWithDashWord(title);
     if (Helper.nullStringCheck(payoutValue)) {
       alert('Payout empty');
@@ -252,22 +257,44 @@ export default class PayoutUpdate extends React.PureComponent {
     ) {
       alert('Please, Enter value greater than zero');
     } else {
-      if(Helper.nullStringCheck(maxValue) === false && Helper.nullStringCheck(minValue) == false){
-        if(Number(value) >= Number(minValue) && Number(value) <= Number(maxValue)){
-          this.setState({showModal: false}, () => {
-            this.updateData();
-          });
-        }else{
-          const percentText = isPercentage ? '%' :'';
-          alert(`Please, Enter value between ${minValue}${percentText}  and ${maxValue}${percentText}`)  
+      if(parseTitle === 'health_insurance'){
+        let checkMinMax = this.maxMinCheck(payoutValue, maxValue, minValue, isPercentage);
+        if(checkMinMax){
+          let checkMinMaxPort = this.maxMinCheck(payoutPort, portMaxValue, portMinValue, isPercentage, 'Payout Port');
+          if(checkMinMaxPort){
+            this.setState({showModal: false}, () => {
+              this.updateData();
+            });
+          }
         }
       }else{
-        this.setState({showModal: false}, () => {
-          this.updateData();
-        });
+        let checkMinMax = this.maxMinCheck(payoutValue, maxValue, minValue, isPercentage);
+        if(checkMinMax){
+          this.setState({showModal: false}, () => {
+            this.updateData();
+          });  
+        }
       }
     }
   };
+
+  /**
+   * Min Max Check
+   */
+  maxMinCheck = (value, maxValue, minValue, isPercentage, type = 'Payout') =>{
+    console.log(value, maxValue, minValue, isPercentage);
+    if(Helper.nullStringCheck(maxValue) === false && Helper.nullStringCheck(minValue) == false){
+      if(Number(value) >= Number(minValue) && Number(value) <= Number(maxValue)){
+        return true;
+      }else{
+        const percentText = isPercentage ? '%' :'';
+        alert(`Please, Enter ${type} value between ${minValue}${percentText}  and ${maxValue}${percentText}`)  
+        return false;
+      }
+    }else{
+      return true;
+    }
+  }
 
   updateData = () => {
     const {
@@ -275,7 +302,7 @@ export default class PayoutUpdate extends React.PureComponent {
       currentRowPos,
       selectedRowData,
       title,
-      refercode,
+      //refercode,
       payout,
       ogValue,
       dataList,
@@ -303,7 +330,7 @@ export default class PayoutUpdate extends React.PureComponent {
 
     const filterOnlyDatas1 = this.filterPayoutDatas(dataList);
     payout[parsetitle].data = filterOnlyDatas1;
-    payout.refercode = refercode;
+    payout.refercode = this.refercode;
 
     //console.log('filterOnlyDatas',filterOnlyDatas1);
 
@@ -312,7 +339,7 @@ export default class PayoutUpdate extends React.PureComponent {
       if (Helper.nullCheck(vlpayout) === false) {
         //console.log('vlpayoutolder', filterOnlyDatas1);
         vlpayout[parsetitle].data = filterOnlyDatas1;
-        vlpayout.refercode = refercode;
+        vlpayout.refercode = this.refercode;
         Pref.setVal(Pref.salespayoutUpdate, vlpayout);
         //console.log('vlpayout', vlpayout);
       } else {
@@ -447,11 +474,12 @@ export default class PayoutUpdate extends React.PureComponent {
             <LeftHeaders
               title={'Payout'}
               backClicked={() => {
-                const {refercode} = this.state;
+                //const {refercode} = this.state;
+                console.log('refercode1', this.refercode);
                 NavigationActions.navigate('PayinProducts', {
                   screenName: 'PayoutUpdate',
                   showUpdateButton: true,
-                  refercode: refercode,
+                  refercode: this.refercode,
                 });
               }}
               showBack

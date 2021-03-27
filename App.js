@@ -46,12 +46,12 @@ class App extends React.PureComponent {
   
     this.onNotificationListener();
    
-    this.checkVersionForUpdate(); 
+    //this.checkVersionForUpdate(); 
 
     //dialer
     //stopService();
-    //this.dialerCheckCheckin();
-    //this.callDetectionListerner();
+    this.dialerCheckCheckin();
+    this.callDetectionListerner();
     //enableIdleService();
     //stopIdleService();
 

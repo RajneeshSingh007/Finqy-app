@@ -181,19 +181,11 @@ export default class TrackQuery extends React.PureComponent {
         //console.log('result', result)
         if (status === `success`) {
           if (tickets.length > 0) {
-            // const sorting = tickets.sort((a, b) => {
-            //   const sp = a.updated_at.split('-');
-            //   const spz = b.updated_at.split('-');
-            //   return (
-            //     Number(sp[2]) - Number(spz[2]) ||
-            //     Number(sp[1]) - Number(spz[1]) ||
-            //     Number(sp[0]) - Number(spz[0])
-            //   );
-            // });
-            const sort = Lodash.filter(
+            const filter = Lodash.filter(
               tickets,
               io => io.SCode.toLowerCase() === 'open' || io.SCode.toLowerCase() === 'assigned',
             );
+            const sort = Lodash.orderBy(filter,['updated_at'], ['desc']);
             const {itemSize} = this.state;
             this.setState({
               originalList: tickets,
@@ -399,11 +391,13 @@ export default class TrackQuery extends React.PureComponent {
         Pref.methodGet,
         Pref.UVDESK_API,
         result => {
-          const {success, thread} = result;
+          const {success} = result;
+          const thread = result.thread.length > 0 ? result.thread.reverse() : [];
           let threadList = [];
           let priorityList = [];
           let statusList = [];
           if (thread.length > 0) {
+            threadList.push(startObj);
             const {ticket_status, ticket_priority, priority, status} = result;
             priorityList = priority;
             statusList = status;
@@ -448,7 +442,6 @@ export default class TrackQuery extends React.PureComponent {
               });
             });
           }
-          threadList.push(startObj);
           this.setState({
             threadList: threadList,
             detailShow: true,
@@ -1004,7 +997,7 @@ export default class TrackQuery extends React.PureComponent {
                           <View
                             styleName="horizontal"
                             style={{marginBottom: 8}}>
-                            <View
+                            {/* <View
                               styleName="horizontal"
                               style={{
                                 alignSelf: 'center',
@@ -1017,7 +1010,7 @@ export default class TrackQuery extends React.PureComponent {
                               <Title
                                 styleName="v-center h-center"
                                 style={styles.textopen}>{`Pending`}</Title>
-                            </View>
+                            </View> */}
                             <View
                               styleName="horizontal"
                               style={{

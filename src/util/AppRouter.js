@@ -91,12 +91,14 @@ import MemberReport from '../screens/dialer/leader/MemberReport';
 import Followup from '../screens/dialer/leads/Followup';
 import SwitchUser from '../screens/dialer/SwitchUser';
 import TcDashboard from '../screens/dialer/telecallers/TcDashboard';
-import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
 import TcPerformance from '../screens/dialer/telecallers/TcPerformance';
-import CallLogs from '../screens/dialer/telecallers/CallLogs';
 import TcTemplates from '../screens/dialer/telecallers/TcTemplates';
+import CallLogs from '../screens/dialer/telecallers/CallLogs';
+
 import TlTeam from '../screens/dialer/teleleaders/TlTeam';
 import TlMemberList from '../screens/dialer/teleleaders/TlMemberList';
+import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
+import TlLiveTracker from '../screens/dialer/teleleaders/TlLiveTracker';
 
 //Payin Payout
 import PayinProducts from '../screens/sales/PayinProducts';
@@ -289,7 +291,8 @@ const DialerNav = createStackNavigator({
   CallLogs:{screen:CallLogs},
   TcTemplates:{screen:TcTemplates},
   TlTeam:{screen:TlTeam},
-  TlMemberList:{screen:TlMemberList}
+  TlMemberList:{screen:TlMemberList},
+  TlLiveTracker:{screen:TlLiveTracker}
 },
 {
   headerMode: 'none',
@@ -353,9 +356,9 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     
-    // DialerNav:{screen: DialerNav},
-    // TicketNav:{screen:TicketNav},
-    // SalesNav:{screen:SalesNav}
+    DialerNav:{screen: DialerNav},
+    TicketNav:{screen:TicketNav},
+    SalesNav:{screen:SalesNav}
   },
   {
     initialRouteName: 'Home',

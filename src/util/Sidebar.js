@@ -510,18 +510,18 @@ const helpDeskMenu =   {
       click: 'Manager',
       options: {},
     },
-    // {
-    //   name: `Raise A Query`,
-    //   expand: false,
-    //   click: 'RaiseQueryForm',
-    //   options: {},
-    // },
-    // {
-    //   name: `Track My Query`,
-    //   expand: false,
-    //   click: 'TrackQuery',
-    //   options: {},
-    // },
+    {
+      name: `Raise A Query`,
+      expand: false,
+      click: 'RaiseQueryForm',
+      options: {},
+    },
+    {
+      name: `Track My Query`,
+      expand: false,
+      click: 'TrackQuery',
+      options: {},
+    },
   ],
   click: '',
 };
@@ -635,15 +635,15 @@ export default class Sidebar extends React.Component {
                           Pref.setVal(Pref.DIALER_DATA, dialerData);
                           const cloneobject = JSON.parse(JSON.stringify(filter));
                           finalFilterList.push(cloneobject[0]);
-                          // finalFilterList.push(
-                          //   {
-                          //     name: `Dialer`,
-                          //     expand: false,
-                          //     click: 'SwitchUser',
-                          //     options: {},
-                          //     iconname: require('../res/images/dialercalls.png'),
-                          //     icontype: 2,
-                          //   });
+                          finalFilterList.push(
+                            {
+                              name: `Dialer`,
+                              expand: false,
+                              click: 'SwitchUser',
+                              options: {},
+                              iconname: require('../res/images/dialercalls.png'),
+                              icontype: 2,
+                            });
                           const lastpos = cloneobject.splice(1,cloneobject.length);
                           lastpos.map(item => finalFilterList.push(item));  
                         }else{
@@ -675,7 +675,7 @@ export default class Sidebar extends React.Component {
 
   teamMenuSet = (menuList, userdata) =>{
     if(userdata !== null && Number(userdata.user_role) === 3){
-      //menuList.push(salesMarketing);
+      menuList.push(salesMarketing);
     }
     menuList.push(helpDeskMenu);
     this.setState({menuList: menuList});

@@ -20,13 +20,20 @@ import moment from 'moment';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import {firebase} from '@react-native-firebase/firestore';
-import { enableCallModule,serverClientDateCheck} from '../../util/DialerFeature';
+import { enableCallModule,serverClientDateCheck,enableIdleService,stopIdleService } from '../../util/DialerFeature';
 
 const TLDashboard = [
   {
     name: 'Dashboard',
     image: require('../../res/images/dialer/dashboard.png'),
     click: 'TlDashboard',
+    option: {},
+    enabled: true,
+  },
+  {
+    name: 'Live Tracking',
+    image: require('../../res/images/dialer/live_tracking.png'),
+    click: 'TlLiveTracker',
     option: {},
     enabled: true,
   },
@@ -328,7 +335,9 @@ export default class SwitchUser extends React.PureComponent {
               evenoddcheck = Number(breaktime.length) % 2 === 0 ? false : true;
             }
             const enableList = Lodash.map(cloneList, (io) => {
-              if (checkinval === false && checkoutval) {
+              if (checkinval && checkoutval) {
+                io.enabled = io.name !== 'Check In' ? false : true;
+              } else if (checkinval === false && checkoutval) {
                 io.enabled = io.name !== 'Check In' ? true : false;
               } else if (checkoutval === false && checkinval === false) {
                 io.enabled = io.name !== 'Check Out' ? false : true;
@@ -440,6 +449,7 @@ export default class SwitchUser extends React.PureComponent {
                   if (data) {
                     const {checkout} = data;
                     if (Helper.nullStringCheck(checkout) === false) {
+                      stopIdleService();
                       this.setState({progressLoader: false});
                       Helper.showToastMessage(
                         'You have already Checked-out',
@@ -455,6 +465,11 @@ export default class SwitchUser extends React.PureComponent {
                         .doc(`${id}${checkClientServer[2]}`)
                         .set(obj, {merge: true})
                         .then((result) => {
+                          if(docName === 'checkin'){
+                            enableIdleService(`${id}${checkClientServer[2]}`);
+                          }else{
+                            stopIdleService();
+                          }
                           this.setupfirebase(
                             id,
                             checkClientServer[2],
@@ -482,6 +497,11 @@ export default class SwitchUser extends React.PureComponent {
               .doc(`${id}${checkClientServer[2]}`)
               .set(obj, {merge: true})
               .then((result) => {
+                if(docName === 'checkin'){
+                  enableIdleService(`${id}${checkClientServer[2]}`);
+                }else{
+                  stopIdleService();
+                }
                 this.setupfirebase(
                   id,
                   checkClientServer[2],

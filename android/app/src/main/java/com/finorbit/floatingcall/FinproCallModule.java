@@ -147,7 +147,7 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void  stopIdleService(Promise promise){
+    public void stopIdleService(Promise promise){
         try {
             Intent intent = new Intent(IdleService.IDLE_SERVICE_ID);
             intent.setClass(this.getReactApplicationContext(), IdleService.class);
