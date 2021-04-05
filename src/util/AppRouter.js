@@ -356,7 +356,7 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     
-    DialerNav:{screen: DialerNav},
+    //DialerNav:{screen: DialerNav},
     TicketNav:{screen:TicketNav},
     SalesNav:{screen:SalesNav}
   },

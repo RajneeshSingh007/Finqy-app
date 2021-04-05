@@ -17,7 +17,7 @@ import * as Pref from './Pref';
 import DrawerTop from '../screens/component/DrawerTop';
 import * as Helper from './Helper';
 import {firebase} from '@react-native-firebase/firestore';
-import { disableOffline } from './DialerFeature';
+import {disableOffline} from './DialerFeature';
 
 const COLOR = '#f9f8f1';
 
@@ -471,8 +471,7 @@ const TeamMenuList = [
   },
 ];
 
-
-const salesMarketing =   {
+const SalesMarketing = {
   name: `Sales Marketing`,
   expand: false,
   heading: true,
@@ -496,7 +495,7 @@ const salesMarketing =   {
   click: '',
 };
 
-const helpDeskMenu =   {
+const HelpDeskMenu = {
   name: `Helpdesk`,
   expand: false,
   heading: true,
@@ -538,154 +537,196 @@ export default class Sidebar extends React.Component {
       userData: null,
       pic: '',
       name: ``,
-      menuList: [],
+      menuList: MainMenuList,
     };
   }
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, parse => {
-        this.setState(
-          {
-            userData: parse,
-          },
-          () => {
-            Pref.getVal(Pref.USERTYPE, v => {
-              Pref.getVal(Pref.MENU_LIST, filter =>{
-                // if (v === `connector`) {
-                //   this.teamMenuSet(ConnectorMenuList, null);
-                // } else 
-                if (v === 'team') {
-                  const leader = Helper.nullCheck(parse.leader) === false ? parse.leader : [];
-                  
-                  if(leader.length > 0){
-                    const leaderData = leader[0];
-                    const {id} = leaderData; 
-                    const loggedMemberId = parse.id;
-                    disableOffline();
-                    this.firebaseListerner =  firebase.firestore()
-                    .collection(Pref.COLLECTION_PARENT)
-                    .doc(id)
-                    .onSnapshot(documentSnapshot =>{
-                      if(documentSnapshot.exists){
-                        const {role, teamlist} = documentSnapshot.data();
-                        if(role === 0){      
-                          let existence = false;  
-                          const dialerData = [];             
-                          for(let j=0; j <teamlist.length; j++){
-                            const {memberlist, tllist,name} = teamlist[j];
-                            
-                            let membererlist = '';
-                            
-                            //console.log(memberlist, tllist);
-                            
-                            let find = undefined;
-                            
-                            if(memberlist){
-                              Lodash.map(memberlist, io =>{
-                                  if(io.enabled === 0 && io.id === Number(loggedMemberId)){
-                                    find = io;
-                                    membererlist += `${io.id},`;
-                                  }else if(io.enabled === 0){
-                                    membererlist += `${io.id},`;
-                                  }
-                              })
-                            }
-                            
-                            //find = memberlist ? Lodash.find(memberlist, io => ) : undefined;
-                            
-                            if(membererlist !== ''){
-                            
-                              const lastpos = membererlist[membererlist.length-1];
-                            
-                              if(lastpos === ','){
-                                membererlist = membererlist.substr(0, membererlist.length-1);
-                              }
-                            
-                            }
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, (parse) => {
+      this.setState(
+        {
+          userData: parse,
+        },
+        () => {
+          Pref.getVal(Pref.USERTYPE, (v) => {
+            if (v === `connector`) {
+              this.teamMenuSet(ConnectorMenuList, parse);
+            } else if (v === 'team') {
+              var filter = TeamMenuList;
+              const leader =
+                Helper.nullCheck(parse.leader) === false ? parse.leader : [];
+              if (leader.length > 0) {
+                const leaderData = leader[0];
+                const {id} = leaderData;
+                const loggedMemberId = parse.id;
+                disableOffline();
+                this.firebaseListerner = firebase
+                  .firestore()
+                  .collection(Pref.COLLECTION_PARENT)
+                  .doc(id)
+                  .onSnapshot((documentSnapshot) => {
+                    if (documentSnapshot.exists) {
+                      const {role, teamlist} = documentSnapshot.data();
+                      if (role === 0) {
+                        let existence = false;
+                        const dialerData = [];
+                        for (let j = 0; j < teamlist.length; j++) {
+                          const {memberlist, tllist, name} = teamlist[j];
 
-                            //console.log('tc', find, membererlist);
-                          
-                            const tlfind = tllist ? Lodash.find(tllist, io => io.enabled === 0 && io.id === Number(loggedMemberId)) : undefined; 
-                          
-                            //console.log('tl', tlfind);
-                          
-                            if(find || tlfind){
-                              existence = true;
-                              if(Helper.nullCheck(find) === false && tllist){
-                                let tLfind = Lodash.find(tllist, io => io.enabled === 0);
-                                find.tlid = tllist.length > 0 ? tLfind.id : {}
-                                find.pname = tllist.length > 0 ? `${tLfind.id}&${name}&${membererlist}` : ''
+                          let membererlist = '';
+
+                          //console.log(memberlist, tllist);
+
+                          let find = undefined;
+
+                          if (memberlist) {
+                            Lodash.map(memberlist, (io) => {
+                              if (
+                                io.enabled === 0 &&
+                                io.id === Number(loggedMemberId)
+                              ) {
+                                find = io;
+                                membererlist += `${io.id},`;
+                              } else if (io.enabled === 0) {
+                                membererlist += `${io.id},`;
                               }
-                              //console.log('find', find);
-                              dialerData.push({
-                                tl:tlfind,
-                                tc:find
-                              })
-                            } 
+                            });
                           }
-                          let finalFilterList = [];
-                          if(existence){
-                            Pref.setVal(Pref.DIALER_DATA, dialerData);
-                            const cloneobject = JSON.parse(JSON.stringify(filter));
-                            finalFilterList.push(cloneobject[0]);
-                            finalFilterList.push(
-                              {
-                                name: `Dialer`,
-                                expand: false,
-                                click: 'SwitchUser',
-                                options: {},
-                                iconname: require('../res/images/dialercalls.png'),
-                                icontype: 2,
-                              });
-                            const lastpos = cloneobject.splice(1,cloneobject.length);
-                            lastpos.map(item => finalFilterList.push(item));  
-                          }else{
-                            finalFilterList = filter
-                          }  
-                          this.teamMenuSet(finalFilterList, parse);
-                        }else{                      
-                          this.teamMenuSet(filter, parse);
+
+                          //find = memberlist ? Lodash.find(memberlist, io => ) : undefined;
+
+                          if (membererlist !== '') {
+                            const lastpos =
+                              membererlist[membererlist.length - 1];
+
+                            if (lastpos === ',') {
+                              membererlist = membererlist.substr(
+                                0,
+                                membererlist.length - 1,
+                              );
+                            }
+                          }
+
+                          //console.log('tc', find, membererlist);
+
+                          const tlfind = tllist
+                            ? Lodash.find(
+                                tllist,
+                                (io) =>
+                                  io.enabled === 0 &&
+                                  io.id === Number(loggedMemberId),
+                              )
+                            : undefined;
+
+                          //console.log('tl', tlfind);
+
+                          if (find || tlfind) {
+                            existence = true;
+                            if (Helper.nullCheck(find) === false && tllist) {
+                              let tLfind = Lodash.find(
+                                tllist,
+                                (io) => io.enabled === 0,
+                              );
+                              find.tlid = tllist.length > 0 ? tLfind.id : {};
+                              find.pname =
+                                tllist.length > 0
+                                  ? `${tLfind.id}&${name}&${membererlist}`
+                                  : '';
+                            }
+                            //console.log('find', find);
+                            dialerData.push({
+                              tl: tlfind,
+                              tc: find,
+                            });
+                          }
                         }
-                      }else{
+                        let finalFilterList = [];
+                        if (existence) {
+                          Pref.setVal(Pref.DIALER_DATA, dialerData);
+                          const cloneobject = JSON.parse(
+                            JSON.stringify(filter),
+                          );
+                          finalFilterList.push(cloneobject[0]);
+                          // finalFilterList.push(
+                          //   {
+                          //     name: `Dialer`,
+                          //     expand: false,
+                          //     click: 'SwitchUser',
+                          //     options: {},
+                          //     iconname: require('../res/images/dialercalls.png'),
+                          //     icontype: 2,
+                          //   });
+                          const lastpos = cloneobject.splice(
+                            1,
+                            cloneobject.length,
+                          );
+                          lastpos.map((item) => finalFilterList.push(item));
+                        } else {
+                          finalFilterList = filter;
+                        }
+                        this.teamMenuSet(finalFilterList, parse);
+                      } else {
                         this.teamMenuSet(filter, parse);
                       }
-                    }).catch(e =>{
+                    } else {
                       this.teamMenuSet(filter, parse);
-                    })  
-                  }else{    
+                    }
+                  })
+                  .catch((e) => {
                     this.teamMenuSet(filter, parse);
-                  }
-                }else{
-                  this.teamMenuSet(filter, null);
-                }
-              })
-            });
-          },
-        );
-
-      });
+                  });
+              } else {
+                this.teamMenuSet(filter, parse);
+              }
+            } else {
+              this.teamMenuSet(MainMenuList, parse);
+            }
+          });
+        },
+      );
     });
+    //});
   }
 
-  teamMenuSet = (menuList, userdata) =>{
-    // if(userdata !== null && Number(userdata.user_role) === 3){
-    //   menuList.push(salesMarketing);
-    // }
-    // menuList.push(helpDeskMenu);
-    this.setState({menuList: menuList});
-  }
+  teamMenuSet = (menuList, userdata) => {
+    //enable sales marketing
+    if (
+      Helper.nullCheck(userdata) === false &&
+      Helper.nullStringCheck(userdata.sales_enable) === false
+    ) {
+      if (Number(userdata.sales_enable) === 1) {
+        const findSalesMarketing = Lodash.find(
+          menuList,
+          (io) => io.name === 'Sales Marketing',
+        );
+        if (Helper.nullCheck(findSalesMarketing)) {
+          menuList.push(SalesMarketing);
+        }
+      }
+    }
+    //enable helpdesk
+    const findHelpdesk = Lodash.find(menuList, (io) => io.name === 'Helpdesk');
+    if (Helper.nullCheck(findHelpdesk)) {
+      menuList.push(HelpDeskMenu);
+    }
 
-  componentWillUnmount(){
-    if(this.firebaseListerner !== undefined && this.firebaseListerner != null){
+    this.setState({menuList: menuList}, () => this.forceUpdate());
+  };
+
+  componentWillUnmount() {
+    if (
+      this.firebaseListerner !== undefined &&
+      this.firebaseListerner != null
+    ) {
       this.firebaseListerner.remove();
     }
   }
-  
-  menuheaderClick = item => {
+
+  menuheaderClick = (item) => {
     const menuList = this.state.menuList;
-    const fill = Lodash.map(menuList, ele => {
+    const fill = Lodash.map(menuList, (ele) => {
       const oldexp = item.expand;
       if (ele.name === item.name) {
         ele.expand = !oldexp;
@@ -693,7 +734,7 @@ export default class Sidebar extends React.Component {
         ele.expand = false;
       }
       const sub = item.sub;
-      const meh = sub.map(io => {
+      const meh = sub.map((io) => {
         if (io.expand) {
           io.expand = false;
         }
@@ -869,7 +910,7 @@ export default class Sidebar extends React.Component {
                                 </View>
                               </TouchableWithoutFeedback>
                               {s.expand
-                                ? s.sub.map(s => {
+                                ? s.sub.map((s) => {
                                     return (
                                       <View
                                         style={{

@@ -2594,7 +2594,16 @@ export const constructObjEditLead = item => {
     }
   }
 
-  //console.log(proofList);
+  let ccfather = '';
+  let ccmother = '';
+
+  if (Helper.nullCheck(alldata.father_name) === false) {
+    ccfather = alldata.father_name;
+  }
+  if (Helper.nullCheck(alldata.mother_name) === false) {
+    ccmother = alldata.mother_name;
+  }
+
 
   const convertedjsonObj = {
     first: {
@@ -2678,6 +2687,8 @@ export const constructObjEditLead = item => {
       floaterItemList: floaterItemList,
       type_loan: Helper.nullStringCheckWithReturn(loan_type),
       homestate: Helper.nullStringCheckWithReturn(lpstate),
+      ccfather:Helper.nullStringCheckWithReturn(ccfather),
+      ccmother:Helper.nullStringCheckWithReturn(ccmother),
     },
     third: {
       popitemList: popitemList,

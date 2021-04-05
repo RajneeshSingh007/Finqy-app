@@ -85,6 +85,7 @@ const LeftHeaders = props => {
       {
         text: 'Ok',
         onPress: () => {
+          Pref.setVal(Pref.MENU_LIST, null);
           Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
           Pref.setVal(Pref.DIALER_DATA, null);
           Pref.setVal(Pref.DIALER_SERVICE_ENABLED, null);

@@ -46,6 +46,7 @@ export default class TlLiveTracker extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
+          console.log('result', result);
           const {data, status} = result;
           if (status) {
             const teamUserList = [];

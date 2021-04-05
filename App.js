@@ -49,9 +49,10 @@ class App extends React.PureComponent {
     this.checkVersionForUpdate(); 
 
     //dialer
-    //stopService();
     //this.dialerCheckCheckin();
     //this.callDetectionListerner();
+    
+    //stopService();
     //enableIdleService();
     //stopIdleService();
 

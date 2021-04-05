@@ -114,6 +114,7 @@ export default class LeadList extends React.PureComponent {
       editThird: null,
       flag: 2,
       backScreen: null,
+      editFirst:null,
       editSecond: null,
       activeRowData: null,
       quotemailType: -1,
@@ -320,6 +321,7 @@ export default class LeadList extends React.PureComponent {
       downloadModal: true,
       editThird: getAll.third,
       editSecond: getAll.second,
+      editFirst:getAll.first,
       quotes: quotes,
       policy: policy,
       activeRowData: item,
@@ -923,6 +925,7 @@ export default class LeadList extends React.PureComponent {
       enableSearch,
       editThird,
       editSecond,
+      editFirst,
       flag,
       type,
     } = this.state;
@@ -1022,8 +1025,9 @@ export default class LeadList extends React.PureComponent {
                           editThird && editThird.proof_of_property
                         }
                         existingcard={editSecond && editSecond.existingcard}
+                        employ={editFirst && editFirst.employ}
                         fresh_pop={editSecond && editSecond.fresh_pop}
-                        itrdoc={editSecond && editSecond.itrdoc}
+                        itrdoc={editThird && editThird.itrdoc}
                         quotes={this.state.quotes}
                         policy={this.state.policy}
                         cif={this.state.cif}
