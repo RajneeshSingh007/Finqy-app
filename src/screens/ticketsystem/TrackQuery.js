@@ -32,10 +32,12 @@ import CustomForm from '../finorbit/CustomForm';
 import Loader from '../../util/Loader';
 import Timeline from 'react-native-timeline-flatlist';
 import PaginationNumbers from '../component/PaginationNumbers';
+import CommonFileUpload from '../common/CommonFileUpload';
 
 const ITEM_LIMIT = 10;
 
 const regex = /(<([^>]+)>|&nbsp;|\s{2,})/gi;
+let attachmentsList = [];
 
 export default class TrackQuery extends React.PureComponent {
   constructor(props) {
@@ -70,9 +72,9 @@ export default class TrackQuery extends React.PureComponent {
         'Remark',
         'View',
         'Edit',
-        'Reopen'
+        'Reopen',
       ],
-      widthArr: [60, 100, 120,120, 120,120, 70, 70, 200, 60,60,60],
+      widthArr: [60, 100, 120, 120, 120, 120, 100, 100, 200, 80, 80, 80],
       cloneList: [],
       modalvis: false,
       pdfurl: '',
@@ -91,7 +93,7 @@ export default class TrackQuery extends React.PureComponent {
       remark: '',
       status: '',
       showModal: false,
-      modalType:-1,
+      modalType: -1,
       editItem: null,
       threadList: [],
       detailShow: false,
@@ -104,6 +106,7 @@ export default class TrackQuery extends React.PureComponent {
       priorityList: [],
       statusList: [],
       profilePic: null,
+      extraFileUploadArray: [],
     };
   }
 
@@ -120,13 +123,12 @@ export default class TrackQuery extends React.PureComponent {
     });
 
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
+      Pref.getVal(Pref.userData, (userData) => {
         this.fetchData(userData);
       });
     });
 
     // this.detailThread({"PColor": "#1B5E20", "PDesc": "Low", "Pcode": "low", "SCode": "open", "SColor": "#0D47A1", "SDesc": "Open", "TCode": "IT Issue", "TDesc": "IT/Software/App Issue", "agent_viewed_at": null, "attachments": [], "created_at": "2021-02-05 13:38:14", "customer_id": "23", "description": "dhdh", "is_locked": "0", "mailbox_email": "coolalien01@gmail.com", "message": "<p>dggdg</p>", "mobile": "8169186245", "replied": "0", "source": "web", "subject": "FinNews", "threadId": "6", "ticket_id": "2", "umessage": "Testing......", "updated_at": "2021-02-05 15:19:11"})
-    
   }
 
   backclick = () => {
@@ -150,7 +152,7 @@ export default class TrackQuery extends React.PureComponent {
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
   }
 
-  fetchData = userData => {
+  fetchData = (userData) => {
     if (
       Helper.nullCheck(userData) === false &&
       Helper.nullCheck(userData.rcontact) === true
@@ -176,17 +178,19 @@ export default class TrackQuery extends React.PureComponent {
       body,
       Pref.methodPost,
       '',
-      result => {
+      (result) => {
         const {tickets, status} = result;
         //console.log('result', result)
         if (status === `success`) {
           if (tickets.length > 0) {
             const filter = Lodash.filter(
               tickets,
-              io => io.SCode.toLowerCase() === 'open' || io.SCode.toLowerCase() === 'assigned',
+              (io) => io.SCode.toLowerCase() !== 'closed',
             );
-            const sort = Lodash.orderBy(filter,['updated_at'], ['desc']);
+            const sort = Lodash.orderBy(filter, ['updated_at'], ['desc']);
+
             const {itemSize} = this.state;
+
             this.setState({
               originalList: tickets,
               cloneList: sort,
@@ -214,7 +218,7 @@ export default class TrackQuery extends React.PureComponent {
           });
         }
       },
-      e => {
+      (e) => {
         this.setState({
           loading: false,
           userData: userData,
@@ -224,7 +228,7 @@ export default class TrackQuery extends React.PureComponent {
     );
   };
 
-  editQuery = item => {
+  editQuery = (item) => {
     NavigationActions.navigate('RaiseQueryForm', {data: item, editmode: true});
   };
 
@@ -243,7 +247,7 @@ export default class TrackQuery extends React.PureComponent {
             rowData.push(`${Number(i + 1)}`);
             const format = moment(item.updated_at).format('DD-MM-YYYY');
             rowData.push(format);
-            rowData.push(item.ticket_id);
+            rowData.push(`000${item.ticket_id}`);
             rowData.push(Lodash.capitalize(item.TCode));
             rowData.push(Lodash.capitalize(item.issue));
             rowData.push(Lodash.capitalize(item.product));
@@ -274,12 +278,14 @@ export default class TrackQuery extends React.PureComponent {
 
             const finalMsg = item.message.replace(regex, '');
 
-            rowData.push(Lodash.truncate(finalMsg, {
-              length: 120,
-              separator: '...',
-            }));
+            rowData.push(
+              Lodash.truncate(finalMsg, {
+                length: 120,
+                separator: '...',
+              }),
+            );
 
-            const viewThread = value => (
+            const viewThread = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -287,24 +293,25 @@ export default class TrackQuery extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <TouchableWithoutFeedback onPress={() => this.detailThread(value)}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.detailThread(value)}>
                   <View>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.itemtext,
-                      {
-                        color: '#0270e3',
-                      },
-                    ])}>
-                    {"View"}
-                  </Title>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.itemtext,
+                        {
+                          color: '#0270e3',
+                        },
+                      ])}>
+                      {'View'}
+                    </Title>
                   </View>
                 </TouchableWithoutFeedback>
               </View>
             );
             rowData.push(viewThread(item));
 
-            const editView = value => (
+            const editView = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -320,10 +327,12 @@ export default class TrackQuery extends React.PureComponent {
               </View>
             );
 
-            const checkeditmode = Helper.nullStringCheck(finalMsg) === true && (item.SCode == 'open' || item.SCode === 'assigned');
-            rowData.push( checkeditmode ? editView(item) : '');
+            const checkeditmode =
+              Helper.nullStringCheck(finalMsg) === true &&
+              (item.SCode == 'open' || item.SCode === 'assigned');
+            rowData.push(checkeditmode ? editView(item) : '');
 
-            const reopenThread = value => (
+            const reopenThread = (value) => (
               <View
                 style={{
                   flexDirection: 'row',
@@ -331,22 +340,23 @@ export default class TrackQuery extends React.PureComponent {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <TouchableWithoutFeedback onPress={() => this.replybtnClicked(2,value)}>
+                <TouchableWithoutFeedback
+                  onPress={() => this.replybtnClicked(2, value)}>
                   <View>
-                  <Title
-                    style={StyleSheet.flatten([
-                      styles.itemtext,
-                      {
-                        color: '#ab4903',
-                      },
-                    ])}>
-                    {"Reopen"}
-                  </Title>
+                    <Title
+                      style={StyleSheet.flatten([
+                        styles.itemtext,
+                        {
+                          color: '#ab4903',
+                        },
+                      ])}>
+                      {'Reopen'}
+                    </Title>
                   </View>
                 </TouchableWithoutFeedback>
               </View>
             );
-            rowData.push( item.SCode === 'closed' ? reopenThread(item) : '');
+            rowData.push(item.SCode === 'closed' ? reopenThread(item) : '');
             dataList.push(rowData);
           }
         }
@@ -355,105 +365,105 @@ export default class TrackQuery extends React.PureComponent {
     return dataList;
   };
 
-  detailThread = editItem => {
+  detailThread = (editItem) => {
     //console.log(editItem);
     const {profilePic} = this.state;
     const {ticket_id, message} = editItem;
     const finalMsg = message.replace(regex, '');
-    if(Helper.nullStringCheck(finalMsg) === false){
-      editItem.replied =  "1";
+    if (Helper.nullStringCheck(finalMsg) === false) {
+      editItem.replied = '1';
     }
-    //console.log(editItem);
+    console.log(editItem);
 
     this.setState({threadLoader: true, detailShow: true, editItem: editItem});
     const url = `${Pref.UVDESK_THREAD_LIST}?ticketId=${ticket_id}`;
     const parseTime = moment(editItem.created_at).format('lll');
-      const startObj = {
-        circleColor: '#555',
-        //circleColor: editItem.SColor,
-        //lineColor: editItem.PColor,
-        lineColor:'#bcbaa1',
-        time: parseTime,
-        description: editItem.description,
-        umessage : editItem.umessage,
-        userType: 'customer',
-        threadType: 'created',
-        title: 'You',
-        imageUrl:
-          profilePic == null
-            ? require('../../res/images/account.png')
-            : profilePic,
-        fileList: editItem.attachments,
-      };
-      Helper.networkHelperHelpDeskTicketGet(
-        url,
-        null,
-        Pref.methodGet,
-        Pref.UVDESK_API,
-        result => {
-          const {success} = result;
-          const thread = result.thread.length > 0 ? result.thread.reverse() : [];
-          let threadList = [];
-          let priorityList = [];
-          let statusList = [];
-          if (thread.length > 0) {
-            threadList.push(startObj);
-            const {ticket_status, ticket_priority, priority, status} = result;
-            priorityList = priority;
-            statusList = status;
-            const colorCodeStatus = Lodash.find(
-              status,
-              io => io.id === ticket_status,
-            ).colorCode;
-            const colorCodePriority = Lodash.find(
-              priority,
-              io => io.id === ticket_priority,
-            ).colorCode;
-            thread.forEach(element => {
-              const {
-                formatedCreatedAt,
-                userType,
-                reply,
-                threadType,
-                fullname,
-                attachments,
-                timestamp
-              } = element;
-              const {date} = timestamp;
-              const parseTime = moment(date).format('lll');
-              threadList.push({
-                umessage:'',
-                circleColor: '#555',
-                //circleColor:colorCodeStatus,
-                //lineColor: colorCodePriority,
-                lineColor:'#bcbaa1',
-                time: parseTime,
-                description: reply.replace(regex, ''),
-                userType: userType,
-                threadType: threadType,
-                title: userType != 'customer' ? 'Agent' : 'You',
-                imageUrl:
-                  userType != 'customer'
-                    ? require('../../res/images/timelineagent.png')
-                    : profilePic == null
-                    ? require('../../res/images/account.png')
-                    : profilePic,
-                fileList: attachments,
-              });
+    const startObj = {
+      circleColor: '#555',
+      //circleColor: editItem.SColor,
+      //lineColor: editItem.PColor,
+      lineColor: '#bcbaa1',
+      time: parseTime,
+      description: editItem.description,
+      umessage: editItem.umessage,
+      userType: 'customer',
+      threadType: 'created',
+      title: 'You',
+      imageUrl:
+        profilePic == null
+          ? require('../../res/images/account.png')
+          : profilePic,
+      fileList: editItem.attachments,
+    };
+    Helper.networkHelperHelpDeskTicketGet(
+      url,
+      null,
+      Pref.methodGet,
+      Pref.UVDESK_API,
+      (result) => {
+        const {success} = result;
+        const thread = result.thread.length > 0 ? result.thread.reverse() : [];
+        let threadList = [];
+        let priorityList = [];
+        let statusList = [];
+        if (thread.length > 0) {
+          threadList.push(startObj);
+          const {ticket_status, ticket_priority, priority, status} = result;
+          priorityList = priority;
+          statusList = status;
+          const colorCodeStatus = Lodash.find(
+            status,
+            (io) => io.id === ticket_status,
+          ).colorCode;
+          const colorCodePriority = Lodash.find(
+            priority,
+            (io) => io.id === ticket_priority,
+          ).colorCode;
+          thread.forEach((element) => {
+            const {
+              formatedCreatedAt,
+              userType,
+              reply,
+              threadType,
+              fullname,
+              attachments,
+              timestamp,
+            } = element;
+            const {date} = timestamp;
+            const parseTime = moment(date).format('lll');
+            threadList.push({
+              umessage: '',
+              circleColor: '#555',
+              //circleColor:colorCodeStatus,
+              //lineColor: colorCodePriority,
+              lineColor: '#bcbaa1',
+              time: parseTime,
+              description: reply.replace(regex, ''),
+              userType: userType,
+              threadType: threadType,
+              title: userType != 'customer' ? 'Agent' : 'You',
+              imageUrl:
+                userType != 'customer'
+                  ? require('../../res/images/timelineagent.png')
+                  : profilePic == null
+                  ? require('../../res/images/account.png')
+                  : profilePic,
+              fileList: attachments,
             });
-          }
-          this.setState({
-            threadList: threadList,
-            detailShow: true,
-            threadLoader: false,
-            priorityList: priorityList,
-            statusList: statusList,
           });
-        },
-        e => {
-          this.setState({threadList: [], threadLoader: false});
-        },
-      );
+        }
+        this.setState({
+          threadList: threadList,
+          detailShow: true,
+          threadLoader: false,
+          priorityList: priorityList,
+          statusList: statusList,
+        });
+      },
+      (e) => {
+        this.setState({threadList: [], threadLoader: false});
+      },
+    );
   };
 
   revertBack = () => {
@@ -472,7 +482,7 @@ export default class TrackQuery extends React.PureComponent {
   };
 
   submitTicketEdit = () => {
-    const {remark, userData, editItem, modalType } = this.state;
+    const {remark, userData, editItem, modalType} = this.state;
     if (Helper.nullCheck(editItem) === true) {
       alert('Failed to find ticket');
       return false;
@@ -484,40 +494,58 @@ export default class TrackQuery extends React.PureComponent {
     const {email} = userData;
     const {ticket_id} = editItem;
     const ticketID = Number(ticket_id);
-    const body = {
-      message: remark,
-      actAsType: 'customer',
-      actAsEmail: email,
-      threadType: 'reply',
-      source: 'app',
-      createdBy: 'customer',
-    };
-    if(modalType === 2){
-      body.status = 'open';
+    const formData = new FormData();
+    // const body = {
+    //   message: remark,
+    //   actAsType: 'customer',
+    //   actAsEmail: email,
+    //   threadType: 'reply',
+    //   source: 'app',
+    //   createdBy: 'customer',
+    // };
+    if (modalType === 2) {
+      formData.append('status', 'open');
+      //body.status = 'open';
+    }
+    formData.append('threadType', 'reply');
+    formData.append('source', 'app');
+    formData.append('createdBy', 'customer');
+    formData.append('actAsType', 'customer');
+    formData.append('actAsEmail', email);
+    formData.append('message', remark);
+
+    if (attachmentsList.length > 0) {
+      Lodash.map(attachmentsList, (io, index) => {
+        formData.append(`attachments[${index}]`, io);
+      });
     }
 
     Helper.networkHelperHelpDeskTicket(
       `${Pref.UVDESK_ASSIGN_AGENT}${ticketID}/thread`,
-      JSON.stringify(body),
+      // JSON.stringify(body),
+      formData,
       Pref.methodPost,
       Pref.UVDESK_API,
-      result => {
-        this.setState({loader: false, showModal: false, 
+      (result) => {
+        this.setState({
+          loader: false,
+          showModal: false,
           filterModal: false,
           priorityFilter: '',
           statusFilter: '',
-          ticketTypeFilter: '',});
+          ticketTypeFilter: '',
+        });
         if (result.success.includes('success')) {
-          if(modalType === 2){
+          if (modalType === 2) {
             this.fetchData(userData);
-          }else{
+          } else {
             this.detailThread(editItem);
           }
         } else {
           alert('Failed to update ticket');
         }
       },
-      e => {
+      (e) => {
         this.setState({loader: false, showModal: false});
         alert('Something wents wrong...');
       },
@@ -546,16 +574,22 @@ export default class TrackQuery extends React.PureComponent {
           />
           <Title style={styles.timelinetitle}>{rowData.title}</Title>
         </View>
-        {rowData.umessage !== '' ? 
-        <View
-          style={{
-            flexDirection: 'column',
-            flexShrink: 1,
-            marginVertical: 2,
-          }}>
-          <Title style={StyleSheet.flatten([styles.timelinedesc, {color:'black'}])}>{rowData.umessage}</Title>
-        </View>
-        : null}
+        {rowData.umessage !== '' ? (
+          <View
+            style={{
+              flexDirection: 'column',
+              flexShrink: 1,
+              marginVertical: 2,
+            }}>
+            <Title
+              style={StyleSheet.flatten([
+                styles.timelinedesc,
+                {color: 'black'},
+              ])}>
+              {rowData.umessage}
+            </Title>
+          </View>
+        ) : null}
         <View
           style={{
             flexDirection: 'column',
@@ -623,7 +657,9 @@ export default class TrackQuery extends React.PureComponent {
     });
     const filterData = Lodash.filter(
       sorting,
-      io => io.SCode.toLowerCase() === 'open' || io.SCode.toLowerCase() === 'assigned',
+      (io) =>
+        io.SCode.toLowerCase() === 'open' ||
+        io.SCode.toLowerCase() === 'assigned',
     );
     this.setState({
       dataList: this.returnData(filterData, 0, filterData.length).slice(
@@ -633,7 +669,7 @@ export default class TrackQuery extends React.PureComponent {
       loading: false,
       itemSize:
         filterData.length <= ITEM_LIMIT ? filterData.length : ITEM_LIMIT,
-        filterModal: false,
+      filterModal: false,
       priorityFilter: '',
       statusFilter: '',
       ticketTypeFilter: '',
@@ -648,7 +684,7 @@ export default class TrackQuery extends React.PureComponent {
       ticketTypeFilter,
       originalList,
     } = this.state;
-    const filterData = Lodash.filter(originalList, io => {
+    const filterData = Lodash.filter(originalList, (io) => {
       const {TCode, Pcode, SCode} = io;
       if (
         ticketTypeFilter != '' &&
@@ -702,10 +738,12 @@ export default class TrackQuery extends React.PureComponent {
     });
   };
 
-  replybtnClicked = (type, editItem) =>{
+  replybtnClicked = (type, editItem) => {
     console.log(type, editItem);
-    this.setState({showModal:true,modalType:type,editItem:editItem});
-  }
+    //if(editItem){
+    this.setState({showModal: true, modalType: type});
+    //}
+  };
 
   render() {
     const {detailShow, editItem} = this.state;
@@ -758,7 +796,7 @@ export default class TrackQuery extends React.PureComponent {
                         columnFormat="two-column"
                         separator={false}
                       />
-                      {editItem.replied === '0' ? (
+                      {editItem.replied && editItem.replied === '0' ? (
                         <FAB
                           style={styles.fab}
                           icon={'pencil'}
@@ -766,21 +804,26 @@ export default class TrackQuery extends React.PureComponent {
                         />
                       ) : null}
 
-                      {editItem != null && editItem.SCode !== 'closed' ? 
+                      {editItem != null && editItem.SCode !== 'closed' ? (
                         <Button
-                        mode={'flat'}
-                        uppercase={false}
-                        dark={true}
-                        loading={false}
-                        style={StyleSheet.flatten([styles.loginButtonStyle, {
-                          backgroundColor:'#0270e3',
-                          paddingVertical:0,
-                          fontSize:14,
-                          fontWeight:'400'
-                        }])}
-                        onPress={() =>this.replybtnClicked(1,null)}>
-                        <Title style={styles.btntext}>{`Reply`}</Title>
-                      </Button> : null}
+                          mode={'flat'}
+                          uppercase={false}
+                          dark={true}
+                          loading={false}
+                          style={StyleSheet.flatten([
+                            styles.loginButtonStyle,
+                            {
+                              backgroundColor: '#0270e3',
+                              paddingVertical: 0,
+                              fontSize: 14,
+                              fontWeight: '400',
+                              marginBottom: 12,
+                            },
+                          ])}
+                          onPress={() => this.replybtnClicked(1, null)}>
+                          <Title style={styles.btntext}>{`Reply`}</Title>
+                        </Button>
+                      ) : null}
                     </>
                   ) : (
                     <View style={styles.emptycont}>
@@ -798,7 +841,7 @@ export default class TrackQuery extends React.PureComponent {
                   showModal: false,
                 })
               }
-              ratioHeight={0.5}
+              ratioHeight={0.55}
               backgroundColor={`white`}
               topCenterElement={
                 <Subtitle
@@ -819,16 +862,70 @@ export default class TrackQuery extends React.PureComponent {
                     backgroundColor: 'white',
                   }}>
                   <CustomForm
-                    label={`Message *`}
-                    placeholder={`Enter your message`}
+                    label={`Remark`}
+                    placeholder={`Enter your remark`}
                     value={this.state.remark}
-                    onChange={v => this.setState({remark: v})}
+                    onChange={(v) => this.setState({remark: v})}
                     keyboardType={'text'}
                     style={{marginHorizontal: 12}}
                     maxLength={200}
-                    multiLine
+                    multiline
                   />
 
+                  <View style={{flex: 0.8}}>
+                    <CommonFileUpload
+                      showPlusIcon={true}
+                      style={{marginHorizontal: 12}}
+                      plusClicked={() => {
+                        if (this.state.extraFileUploadArray.length < 2) {
+                          this.state.extraFileUploadArray.push(1);
+                          this.setState(
+                            {
+                              extraFileUploadArray: this.state
+                                .extraFileUploadArray,
+                            },
+                            () => this.forceUpdate(),
+                          );
+                        }
+                      }}
+                      title={'Attachment'}
+                      type={2}
+                      pickedCallback={(selected, res) => {
+                        attachmentsList.push(res);
+                      }}
+                    />
+
+                    {this.state.extraFileUploadArray.length > 0 ? (
+                      <>
+                        {this.state.extraFileUploadArray.map((io, index) => {
+                          return (
+                            <CommonFileUpload
+                              style={{marginHorizontal: 12}}
+                              minusClicked={() => {
+                                this.state.extraFileUploadArray.splice(
+                                  index,
+                                  1,
+                                );
+                                this.setState(
+                                  {
+                                    extraFileUploadArray: this.state
+                                      .extraFileUploadArray,
+                                  },
+                                  () => this.forceUpdate(),
+                                );
+                              }}
+                              showMinusIcon
+                              title={`Attachment ${index + 1}`}
+                              type={2}
+                              pickedCallback={(selected, res) => {
+                                attachmentsList.push(res);
+                              }}
+                            />
+                          );
+                        })}
+                      </>
+                    ) : null}
+                  </View>
                   <Button
                     mode={'flat'}
                     uppercase={false}
@@ -895,7 +992,7 @@ export default class TrackQuery extends React.PureComponent {
                       <Title style={styles.bbstyle}>{`Ticket Issue`}</Title>
 
                       <RadioButton.Group
-                        onValueChange={value => {
+                        onValueChange={(value) => {
                           this.setState({ticketTypeFilter: value});
                         }}
                         value={this.state.ticketTypeFilter}>
@@ -942,7 +1039,7 @@ export default class TrackQuery extends React.PureComponent {
                       <Title style={styles.bbstyle}>{`Status`}</Title>
 
                       <RadioButton.Group
-                        onValueChange={value => {
+                        onValueChange={(value) => {
                           this.setState({statusFilter: value});
                         }}
                         value={this.state.statusFilter}>
@@ -992,7 +1089,6 @@ export default class TrackQuery extends React.PureComponent {
                                 styleName="v-center h-center"
                                 style={styles.textopen}>{`Assigned`}</Title>
                             </View>
-
                           </View>
                           <View
                             styleName="horizontal"
@@ -1040,7 +1136,6 @@ export default class TrackQuery extends React.PureComponent {
                                 styleName="v-center h-center"
                                 style={styles.textopen}>{`Answered`}</Title>
                             </View>
-
                           </View>
                         </View>
                       </RadioButton.Group>
@@ -1058,7 +1153,7 @@ export default class TrackQuery extends React.PureComponent {
                       <Title style={styles.bbstyle}>{`Priority`}</Title>
 
                       <RadioButton.Group
-                        onValueChange={value => {
+                        onValueChange={(value) => {
                           this.setState({priorityFilter: value});
                         }}
                         value={this.state.priorityFilter}>
@@ -1306,5 +1401,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: Pref.RED,
+    marginBottom: 12,
   },
 });

@@ -76,7 +76,7 @@ export default class FinorbitForm extends React.PureComponent {
     const dialerPincode = navigation.getParam('dialerPincode', '');
     const dialerDob = navigation.getParam('dialerDob', '');
     
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
     
       Pref.getVal(Pref.saveToken, value => {
         this.setState({token: value}, () => {
@@ -92,7 +92,7 @@ export default class FinorbitForm extends React.PureComponent {
               imageUrl: url,
               title: title,
               isMounted: true,
-              currentPosition: 2,
+              currentPosition: 0,
               editMode: editMode,
               editLeadData: editLeadData,
               editFirst: checknullEdit === false ? editLeadData.first : null,
@@ -126,7 +126,7 @@ export default class FinorbitForm extends React.PureComponent {
         });
       });
     
-    //});
+    });
 
     // NavigationActions.navigate("GetQuotes", {
     //   formId: 1420,
@@ -566,6 +566,22 @@ export default class FinorbitForm extends React.PureComponent {
     return btnText;
   }
 
+  /**
+   * edit mode find Existing
+   * @param {*} editMode 
+   * @param {*} title 
+   * @param {*} editSecond 
+   * @param {*} restoreList 
+   * @returns 
+   */
+  getExistingValue = (editMode, title, editSecond) =>{
+    if(title === 'Home Loan' || title === 'Loan Against Property'){
+    return  editMode ? (editSecond && editSecond.type_loan === 'Fresh' ? 'No' : 'Yes') : (this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh' ? 'No' : 'Yes')  
+    }else{
+      return editMode ? (editSecond && editSecond.existingcard ? editSecond.existingcard : '') : (this.restoreList[1] && this.restoreList[1].existingcard ? this.restoreList[1].existingcard : '')
+    } 
+  }
+
   render() {
     const {
       title,
@@ -715,11 +731,13 @@ export default class FinorbitForm extends React.PureComponent {
                       existing = {editThird && editThird.existing}
                       passportPhoto = {editThird && editThird.passportPhoto}
                       cap_aadhar = {editThird && editThird.cap_aadhar}
+                      itrdoc = {editThird && editThird.itrdoc}
                       pop_electricity = {editThird && editThird.pop_electricity}
                       current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}
-                      existingcard={editMode ? (editSecond && editSecond.type_loan === 'Fresh' ? 'No' : 'Yes') : (this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh' ? 'No' : 'Yes')  }
+                      existingcard={this.getExistingValue(editMode, title, editSecond)}
                       fresh_pop={editMode ? (editSecond && editSecond.fresh_pop !== '' ? editSecond.fresh_pop : '') : (this.restoreList[1] && this.restoreList[1].fresh_pop !== '' ? this.restoreList[1].fresh_pop : '')  }
                       popitemList={editMode ? (editThird && editThird.popitemList) : (this.restoreList[1] && this.restoreList[1].popitemList)}
+                      employ={editMode ? (editFirst && editFirst.employ ? editFirst.employ : '') : (this.restoreList[0] && this.restoreList[0].employ !== '' ? this.restoreList[0].employ : '')}
                     />
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm

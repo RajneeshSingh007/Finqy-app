@@ -1496,7 +1496,6 @@ export default class FileUploadForm extends React.PureComponent {
     popitemList = [],
   ) => {
     const {title} = this.props;
-    console.log(title);
     var filterList = listoffiles;
     var proofOfProprtyList1 = [];
     var proofOfProprtyList2 = [];
@@ -1586,6 +1585,8 @@ export default class FileUploadForm extends React.PureComponent {
     //console.log('newpopitemList', newpopitemList);
 
     //console.log(filterList[18].downloadUrl);
+
+    console.log('existingcard', existingcard);
 
     this.setState(
       {
@@ -1833,7 +1834,9 @@ export default class FileUploadForm extends React.PureComponent {
       quoteEmailClicked = () =>{},
       quoteWhatsappClicked = () =>{},
       cifWhatsappClicked = () =>{},
-      cifEmailClicked = () =>{}
+      cifEmailClicked = () =>{},
+      itrdoc = null,
+      employ = ''
     } = this.props;
 
     const {
@@ -1850,9 +1853,10 @@ export default class FileUploadForm extends React.PureComponent {
         title === 'Home Loan' ||
         title === 'Auto Loan' ||
         title === 'Gold Loan' ||
-        title === 'Health Insurance')
+        title === 'Health Insurance' || title ==='Credit Card')
         ? true
         : false;
+
 
     return (
       <View>
@@ -1899,7 +1903,7 @@ export default class FileUploadForm extends React.PureComponent {
         ) : null}
         {loanCheck ? (
           <>
-            {truDownloadEnable === -1 && title !== 'Health Insurance' ? (
+            {truDownloadEnable === -1 && (title !== 'Health Insurance' && title !== 'Credit Card') ? (
               <NewDropDown
                 list={currentAddressProofList}
                 placeholder={'Select Residence Proof'}
@@ -1923,7 +1927,8 @@ export default class FileUploadForm extends React.PureComponent {
 
             {this.state.existingcard === 'Yes' &&
             title !== 'Gold Loan' &&
-            title !== 'Health Insurance' ? (
+            title !== 'Health Insurance' &&
+            title !== 'Credit Card' ? (
               <>
                 {truDownloadEnable === -1 ? (
                   <NewDropDown
@@ -2360,7 +2365,7 @@ export default class FileUploadForm extends React.PureComponent {
                 )}
               </>
             ) : null}
-            {title !== 'Gold Loan' && title !== 'Health Insurance' ? (
+            {title !== 'Gold Loan' && title !== 'Health Insurance' && title !== 'Credit Card' ? (
               <CommonFileUpload
                 truDownloadEnable={truDownloadEnable}
                 title={'Passport Size Photo'}
@@ -2379,7 +2384,7 @@ export default class FileUploadForm extends React.PureComponent {
           </>
         ) : null}
 
-        {title !== 'Motor Insurance' || title === 'Health Insurance' ? (
+        {title !== 'Motor Insurance' || title === 'Health Insurance' || title === 'Credit Card' ? (
           <>
             <CommonFileUpload
               //showPlusIcon={title !== 'Profile'}
@@ -2743,7 +2748,7 @@ export default class FileUploadForm extends React.PureComponent {
 
         {loanCheck ? (
           <View>
-            {title !== 'Gold Loan' && title !== 'Health Insurance' ? (
+            {title !== 'Gold Loan' && title !== 'Health Insurance'   ? (
               <>
                 <CommonFileUpload
                   showPlusIcon={true}
@@ -2756,7 +2761,7 @@ export default class FileUploadForm extends React.PureComponent {
                             title.includes('Loan')
                               ? `3 Months Salary Slip/3 Year ITR`
                               : title === 'Credit Card'
-                              ? `3 Months Salary Slip`
+                              ? `Salary Slip`
                               : `6 Months Salary Slip`
                           }`,
                           title,
@@ -2811,7 +2816,7 @@ export default class FileUploadForm extends React.PureComponent {
                       : this.mandatoryName(
                           `${
                             title === 'Credit Card'
-                              ? '3 Year Bank Statement'
+                              ? '1 Year Bank Statement'
                               : `6 Month Bank Statement`
                           }`,
                           title,
@@ -2909,7 +2914,7 @@ export default class FileUploadForm extends React.PureComponent {
                 );
               })}
 
-            {title === 'Health Insurance' ? (
+            {title === 'Health Insurance' || (title === 'Credit Card' && this.state.existingcard.includes('Yes')) ? (
               <>
                 <CommonFileUpload
                   showPlusIcon={true}
@@ -2917,7 +2922,7 @@ export default class FileUploadForm extends React.PureComponent {
                   title={
                     truDownloadEnable === 1
                       ? `Existing 1`
-                      : this.mandatoryName(`Existing`, title)
+                      : this.mandatoryName(title === 'Credit Card' ? `Existing Card Documents` : `Existing`, title)
                   }
                   type={2}
                   pickedTitle={this.findFileName(`existing`)}
@@ -2959,10 +2964,62 @@ export default class FileUploadForm extends React.PureComponent {
                   })}
               </>
             ) : null}
+
+            {title === 'Credit Card' &&  employ !== '' && employ === 'Self Employed' ? (
+              <>
+                <CommonFileUpload
+                  showPlusIcon={true}
+                  plusClicked={() => this.insertValueFormultipleFilePick(10)}
+                  title={
+                    truDownloadEnable === 1
+                      ? `ITR 1`
+                      : this.mandatoryName(`ITR`, title)
+                  }
+                  type={2}
+                  pickedTitle={this.findFileName(`itrdoc`)}
+                  pickedCallback={(selected, res) =>
+                    this.fileselected(res, 'itrdoc', -1, false, -1)
+                  }
+                  enableDownloads={this.checkurl(0, itrdoc)}
+                  downloadUrl={this.checkurl(1, itrdoc)}
+                  mode={mode}
+                  downloadTitles={downloadTitles}
+                  truDownloadEnable={truDownloadEnable}
+                  keyName={`itrdoc`}
+                />
+                {this.state.multipleFilesList &&
+                  this.state.multipleFilesList[10].filled.map((e, index) => {
+                    const durl = this.state.multipleFilesList[10].downloadUrl;
+                    const namesList = this.state.multipleFilesList[10].names;
+                    return (
+                      <CommonFileUpload
+                        minusClicked={() =>
+                          this.removeValueFormultipleFilePick(10, index)
+                        }
+                        showMinusIcon={true}
+                        //editMode={editMode}
+                        downloadTitles={downloadTitles}
+                        truDownloadEnable={truDownloadEnable}
+                        mode={mode}
+                        title={`ITR ${index + 2}`}
+                        type={2}
+                        pickedTitle={namesList[index]}
+                        pickedCallback={(selected, res) =>
+                          this.fileselected(res, 'itrdoc', index, true, 10)
+                        }
+                        enableDownloads={this.checkurl(0, durl[index])}
+                        downloadUrl={this.checkurl(1, durl[index])}
+                        keyName={`itrdoc${index + 1}`}
+                      />
+                    );
+                  })}
+              </>
+            ) : null}
+            
           </View>
         ) : null}
 
-        {title === 'Credit Card' && title !== 'Gold Loan' ? (
+        {title !== 'Health Insurance' && title !== 'Credit Card' && title !== 'Gold Loan' ? (
           <View>
             {truDownloadEnable === 1 ? (
               <View
@@ -3145,7 +3202,7 @@ export default class FileUploadForm extends React.PureComponent {
             <CommonFileUpload
               title={this.mandatoryName(
                 `${
-                  title === 'Home Loan'
+                  title === 'Home Loan' || title === 'Credit Card'
                     ? '1 Year Bank Statement'
                     : `3 Month Bank Statement`
                 }`,

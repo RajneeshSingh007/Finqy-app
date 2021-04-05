@@ -57,6 +57,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287073404422:android:f77eb4b4d67c65bc3f6587",
+        "android_client_info": {
+          "package_name": "com.finorbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287073404422-vl08sue8socb2uhnmtpjtodfro31a4up.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.finorbit",
+            "certificate_hash": "352b99a1a8342821b7056ece72252787e98b09ce"
+          }
+        },
+        {
+          "client_id": "287073404422-repl6f250mhiin0bdnnv4h83d8v5shpa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRd1Q8rr0l7iCH2JbZ99N8DeVLvhDkP88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287073404422-repl6f250mhiin0bdnnv4h83d8v5shpa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

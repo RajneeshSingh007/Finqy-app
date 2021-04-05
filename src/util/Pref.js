@@ -4,6 +4,7 @@ import { Colors } from 'react-native-paper';
 /**
  * Pref Key
  */
+export const MENU_LIST = 'menulist';
 export const loggedStatus = 'loggedstatus';
 export const initial = 'initial';
 export const userID = 'userid';

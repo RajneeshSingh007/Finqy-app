@@ -1023,6 +1023,7 @@ export default class LeadList extends React.PureComponent {
                         }
                         existingcard={editSecond && editSecond.existingcard}
                         fresh_pop={editSecond && editSecond.fresh_pop}
+                        itrdoc={editSecond && editSecond.itrdoc}
                         quotes={this.state.quotes}
                         policy={this.state.policy}
                         cif={this.state.cif}

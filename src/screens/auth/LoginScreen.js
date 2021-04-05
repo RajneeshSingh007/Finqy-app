@@ -17,17 +17,511 @@ import IntroHeader from '../intro/IntroHeader';
 import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import RNFetchBlob from 'rn-fetch-blob';
-import NewDropDown from '../component/NewDropDown';
 import { notifications, NotificationMessage, Android } from 'react-native-firebase-push-notifications'
 
-let loginTypeList = [
+const ConnectorMenuList = [
   {
-    value: 'Tele Caller',
+    name: `My Profile`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon1.png'),
+    icontype: 0,
+    sub: [
+      {
+        name: `Edit Profile`,
+        expand: false,
+        click: 'ProfileScreen',
+        options: {},
+      },
+      {
+        name: `My Agreement`,
+        click: 'Agreement',
+        expand: false,
+        options: {},
+      },
+      {
+        name: `My Certificate`,
+        expand: false,
+        click: 'Certificate',
+        options: {},
+      },
+      {
+        name: `Change Password`,
+        expand: false,
+        click: 'ChangePass',
+        options: {},
+      },
+    ],
+    click: '',
   },
   {
-    value: 'Other',
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Wallet`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon4.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Payout Structure`,
+        expand: false,
+        click: 'Payout',
+        options: {},
+      },
+      {
+        name: `Earning History`,
+        expand: false,
+        click: 'MyWallet',
+        options: {},
+      },
+      {
+        name: `My Invoice`,
+        expand: false,
+        click: 'Invoice',
+        options: {},
+      },
+      {
+        name: `My 26AS`,
+        expand: false,
+        click: 'As26',
+        options: {},
+      },
+      {
+        name: `Payout Policy`,
+        expand: false,
+        click: 'PayoutPolicy',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My Offers`,
+    expand: false,
+    click: `MyOffers`,
+    options: {},
+    iconname: require('../../res/images/menuicon5.png'),
+    icontype: 2,
+  },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../../res/images/menuicon8.png'),
+    icontype: 2,
   },
 ];
+
+const MainMenuList = [
+  {
+    name: `My Profile`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon1.png'),
+    icontype: 0,
+    sub: [
+      {
+        name: `Edit Profile`,
+        expand: false,
+        click: 'ProfileScreen',
+        options: {},
+      },
+      {
+        name: `My Agreement`,
+        click: 'Agreement',
+        expand: false,
+        options: {},
+      },
+      {
+        name: `My Certificate`,
+        expand: false,
+        click: 'Certificate',
+        options: {},
+      },
+      {
+        name: `Change Password`,
+        expand: false,
+        click: 'ChangePass',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../../res/images/menuicon8.png'),
+    icontype: 2,
+  },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Offers`,
+    expand: false,
+    click: `MyOffers`,
+    options: {},
+    iconname: require('../../res/images/menuicon5.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Wallet`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon4.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Payout Structure`,
+        expand: false,
+        click: 'Payout',
+        options: {},
+      },
+      {
+        name: `Earning History`,
+        expand: false,
+        click: 'MyWallet',
+        options: {},
+      },
+      {
+        name: `My Invoice`,
+        expand: false,
+        click: 'Invoice',
+        options: {},
+      },
+      {
+        name: `My 26AS`,
+        expand: false,
+        click: 'As26',
+        options: {},
+      },
+      {
+        name: `Payout Policy`,
+        expand: false,
+        click: 'PayoutPolicy',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  {
+    name: `FinTeam Manager`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon3.png'),
+    icontype: 2,
+    sub: [
+      {
+        name: `My Connector`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Connector`,
+            expand: false,
+            click: `AddConnector`,
+            options: {},
+          },
+          {
+            name: `View Connector`,
+            expand: false,
+            click: `ViewConnector`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Team`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Team`,
+            expand: false,
+            click: `AddTeam`,
+            options: {},
+          },
+          {
+            name: `View Team`,
+            expand: false,
+            click: `ViewTeam`,
+            options: {},
+          },
+        ],
+      },
+    ],
+    click: '',
+  },
+];
+
+const TeamMenuList = [
+  {
+    name: `My FinPro`,
+    expand: false,
+    heading: true,
+    iconname: require('../../res/images/menuicon2.png'),
+    icontype: 2,
+    sub: [
+      // {
+      //     name: `Dashboard`,
+      //     expand: false,
+      //     click: ''
+      // },
+      {
+        name: `My New Lead`,
+        expand: false,
+        click: '',
+        heading: true,
+        sub: [
+          {
+            name: `Add Single Lead`,
+            expand: false,
+            click: `FinorbitScreen`,
+            options: {},
+          },
+          {
+            name: `Link Sharing Option`,
+            expand: false,
+            click: `LinkSharingOption`,
+            options: {},
+          },
+        ],
+      },
+      {
+        name: `My Lead Record`,
+        expand: false,
+        click: 'LeadList',
+        options: {},
+      },
+    ],
+    click: '',
+  },
+  // {
+  //   name: `My Offers`,
+  //   expand: false,
+  //   click: `MyOffers`,
+  //   options: {},
+  //   iconname: require('../../res/images/menuicon5.png'),
+  //   icontype: 2,
+  // },
+  {
+    name: `ERB Popular Plan`,
+    expand: false,
+    click: 'PopularPlan',
+    options: {},
+    iconname: require('../../res/images/menuicon6.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinNews`,
+    expand: false,
+    click: 'Blogs',
+    options: {},
+    iconname: require('../../res/images/menuicon9.png'),
+    icontype: 2,
+  },
+  {
+    name: `My Marketing Tool`,
+    expand: false,
+    click: 'MarketingTool',
+    options: {},
+    iconname: require('../../res/images/menuicon7.png'),
+    icontype: 2,
+  },
+  {
+    name: `FinTrain Learning`,
+    expand: false,
+    click: 'Training',
+    options: {},
+    iconname: require('../../res/images/menuicon8.png'),
+    icontype: 2,
+  },
+];
+
+const SalesMarketing =   {
+  name: `Sales Marketing`,
+  expand: false,
+  heading: true,
+  iconname: require('../../res/images/menuicon7.png'),
+  icontype: 2,
+
+  sub: [
+    {
+      name: `Payout Structure`,
+      expand: false,
+      click: 'PayinProducts',
+      options: {},
+    },
+    {
+      name: `Partner Payout`,
+      expand: false,
+      click: 'PartnerSelect',
+      options: {},
+    },
+  ],
+  click: '',
+};
+
+const HelpDeskMenu =   {
+  name: `Helpdesk`,
+  expand: false,
+  heading: true,
+  iconname: require('../../res/images/menuicon10.png'),
+  icontype: 2,
+
+  sub: [
+    {
+      name: `Relation Manager`,
+      expand: false,
+      click: 'Manager',
+      options: {},
+    },
+    {
+      name: `Raise A Query`,
+      expand: false,
+      click: 'RaiseQueryForm',
+      options: {},
+    },
+    {
+      name: `Track My Query`,
+      expand: false,
+      click: 'TrackQuery',
+      options: {},
+    },
+  ],
+  click: '',
+};
 
 export default class LoginScreen extends React.PureComponent {
   constructor(props) {
@@ -37,7 +531,6 @@ export default class LoginScreen extends React.PureComponent {
     StatusBar.setBarStyle('dark-content');
     this.submitBtnClick = this.submitBtnClick.bind(this);
     this.otherLogin = this.otherLogin.bind(this);
-    this.dialerLogin = this.dialerLogin.bind(this);
     this.passunlock = this.passunlock.bind(this);
     this.state = {
       userid: '',
@@ -57,6 +550,7 @@ export default class LoginScreen extends React.PureComponent {
     Pref.setVal(Pref.userID, null);
     Pref.setVal(Pref.USERTYPE, '');
     Pref.setVal(Pref.loggedStatus, false);
+    Pref.setVal(Pref.MENU_LIST, null);
   }
 
   componentDidMount() {
@@ -129,28 +623,59 @@ export default class LoginScreen extends React.PureComponent {
           Pref.methodPost,
           token,
           (result) => {
-            //console.log(`result`, result);
+            
             const { data, response_header } = result;
+            //console.log(`result`, data);
+            
             const { res_type, type } = response_header;
+
             this.setState({ loading: false });
             if (res_type === `error`) {
               const {message} = response_header;
               Helper.showToastMessage(`${message}`, 0);
             } else {
               Pref.setVal(Pref.USERTYPE, type);
+              
+              //silently download agreement,certificate for faster load
               const { id, refercode } = data[0];
+              
               let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
               let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
+              
               this.downloadFile(certPath, () => {
                 const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
                 Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
               })
+              
               this.downloadFile(agreePath, () => {
                 Helper.silentDownloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
               });
+
+              //save userdata
               Pref.setVal(Pref.userID, id);
               Pref.setVal(Pref.userData, data[0]);
               Pref.setVal(Pref.loggedStatus, true);
+              
+              var menuList = [];
+
+              if(type === 'referral'){
+                menuList = MainMenuList;
+              }else if(type === 'team'){
+                menuList = TeamMenuList;
+              }else {
+                menuList = ConnectorMenuList;
+              }
+
+              if(Helper.nullStringCheck(data[0].sales_enable) === false){
+                if(Number(data[0].sales_enable) === 1){
+                  menuList.push(SalesMarketing);
+                }
+              }
+              
+              menuList.push(HelpDeskMenu);
+
+              Pref.setVal(Pref.MENU_LIST, menuList);
+
               NavigationActions.navigate('Home');
             }
           },
@@ -162,42 +687,6 @@ export default class LoginScreen extends React.PureComponent {
       }
     }).catch(e => console.log(e));
   };
-
-  /**
-   * dialer login
-   */
-  dialerLogin = (token) =>{
-    const jsonData = JSON.stringify({
-      mobilenumber: this.state.userid,
-      password: this.state.password,
-    });
-    Helper.networkHelperTokenPost(
-      Pref.DIALER_LOGIN,
-      jsonData,
-      Pref.methodPost,
-      token,
-      (result) => {
-        //console.log('result', result);
-        const { data, message, status } = result;
-        this.setState({ loading: false });
-        if (status) {
-          Pref.setVal(Pref.USERTYPE, "dialer");
-          const { id} = data;
-          Pref.setVal(Pref.userID, id);
-          Pref.setVal(Pref.userData, data);
-          Pref.setVal(Pref.loggedStatus, true);
-          NavigationActions.navigate('DialerHome');
-        } else {
-          Helper.showToastMessage(`${message}`, 0);
-        }
-      },
-      (e) => {
-        //console.log('e', e);
-        this.setState({ loading: false });
-        Helper.showToastMessage('something went wrong', 0);
-      },
-    );
-  }
 
   /**
    * submit button click
@@ -235,11 +724,7 @@ export default class LoginScreen extends React.PureComponent {
       if(Helper.nullStringCheck(token) === true){
         token = Pref.API_TOKEN
       }
-      // if(loginType === 'Tele Caller'){
-      //   this.dialerLogin(token);
-      // }else{
-        this.otherLogin(token);
-      //}
+      this.otherLogin(token);
     }
   }
 
@@ -314,17 +799,7 @@ export default class LoginScreen extends React.PureComponent {
                   leftTextClick={this.passunlock}
                   secureTextEntry={this.state.showpassword}
                   changecolor
-                />
-
-              {/* <NewDropDown
-                list={loginTypeList}
-                placeholder={`Select Account Type`}
-                value={this.state.loginType}
-                selectedItem={value => this.setState({ loginType: value})}
-                style={styles.dropdowncontainers}
-                textStyle={styles.dropdowntextstyle}
-              /> */}
-              
+                />              
               </View>
               <View styleName="horizontal space-between md-gutter">
                 <Button

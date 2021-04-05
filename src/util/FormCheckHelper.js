@@ -2528,6 +2528,25 @@ export const constructObjEditLead = item => {
     }
   }
 
+  let Itrdoc = null;
+  if (Helper.nullCheck(alldata.itrdoc) === false) {
+    if (Helper.separatorReg(alldata.itrdoc)) {
+      const splitPancard = alldata.itrdoc.split(',').map(x => {
+        return `${fileurls}/itrdoc/${x}`;
+      });
+      Itrdoc = splitPancard[0];
+      multipleFilesList[10].downloadUrl = splitPancard;
+      multipleFilesList[10].count = splitPancard.length - 1;
+      multipleFilesList[10].filled = new Array(splitPancard.length - 1).fill(
+        1,
+        0,
+        splitPancard.length - 1,
+      );
+    } else {
+      Itrdoc = `${fileurls}/itrdoc/${alldata.itrdoc}`;
+    }
+  }
+
   let passportPhoto = null;
   if (Helper.nullStringCheck(passport_photo) === false) {
     passportPhoto = `${fileurls}/passport_photo/${passport_photo}`;
@@ -2552,6 +2571,7 @@ export const constructObjEditLead = item => {
 
   var popitemList = [];
   let proofList = [];
+  
   if (product.includes('Against')) {
     if (popitemList.length > 0) {
       popitemList = returneditPop(lapPopList, proofList);
@@ -2595,6 +2615,7 @@ export const constructObjEditLead = item => {
       emailTypeCd: '',
       contactTypeCd: '',
       state: Helper.nullStringCheckWithReturn(state),
+      residence_address: Helper.nullStringCheckWithReturn(alldata.residence_address)
     },
     second: {
       fresh_pop: Helper.nullStringCheckWithReturn(alldata.fresh_pop),
@@ -2679,6 +2700,7 @@ export const constructObjEditLead = item => {
       policycopy: Policycopy,
       multipleFilesList: multipleFilesList,
       existing: Existing,
+      itrdoc:Itrdoc
     },
     // third: {
     //     panCard: Helper.nullCheck(pan_card) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/pancard/${pan_card}` : null,

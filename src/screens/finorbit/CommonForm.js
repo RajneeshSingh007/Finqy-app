@@ -73,6 +73,7 @@ export default class CommonForm extends React.PureComponent {
       contactTypeCd: '',
       state: '',
       dialerEditable:false,
+      residence_address:''
     };
   }
 
@@ -330,6 +331,16 @@ export default class CommonForm extends React.PureComponent {
           disabled={title === 'Profile' ? true : disabled}
           returnKeyType={'next'}
         />
+
+        {title === 'Credit Card' ? <AnimatedInputBox
+          placeholder={`Residence Address`}
+          changecolor
+          containerstyle={styles.animatedInputCont}
+          onChangeText={(value) => this.setState({ residence_address: value })}
+          value={this.state.residence_address}
+          returnKeyType={'next'}
+        /> : null}
+
         {newform === true ? (
           <AnimatedInputBox
             onChangeText={(value) => this.setState({ nomineename: value })}

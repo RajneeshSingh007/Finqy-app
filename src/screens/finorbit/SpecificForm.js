@@ -371,6 +371,8 @@ export default class SpecificForm extends React.PureComponent {
       goldDetailList: [],
       gold_karat: '',
       gold_pledge: '',
+      ccfather: '',
+      ccmother: '',
       // exisitng_loan_doc: '',
       // current_add_proof: '',
       // proof_of_property: '',
@@ -619,7 +621,7 @@ export default class SpecificForm extends React.PureComponent {
           <AnimatedInputBox
             placeholder={'Full Name'}
             showStarVisible={true}
-            onChangeText={value =>
+            onChangeText={(value) =>
               this.onFloatitemChange(value, item, 0, index)
             }
             value={item.name}
@@ -632,7 +634,7 @@ export default class SpecificForm extends React.PureComponent {
             placeholder={'Relation'}
             starVisible={true}
             value={item.relation}
-            selectedItem={value =>
+            selectedItem={(value) =>
               this.onFloatitemChange(value, item, 3, index)
             }
             style={{
@@ -666,7 +668,7 @@ export default class SpecificForm extends React.PureComponent {
               <Title style={styles.bbstyle}>{`Select Gender *`}</Title>
 
               <RadioButton.Group
-                onValueChange={value =>
+                onValueChange={(value) =>
                   this.onFloatitemChange(value, item, 1, index)
                 }
                 value={item.gender}>
@@ -730,7 +732,7 @@ export default class SpecificForm extends React.PureComponent {
               </Title>
 
               <RadioButton.Group
-                onValueChange={value =>
+                onValueChange={(value) =>
                   this.onFloatitemChange(value, item, 4, index)
                 }
                 value={item.existing_diseases}>
@@ -759,7 +761,7 @@ export default class SpecificForm extends React.PureComponent {
             <AnimatedInputBox
               placeholder={'Specify Diseases *'}
               showStarVisible={false}
-              onChangeText={value =>
+              onChangeText={(value) =>
                 this.onFloatitemChange(value, item, 5, index)
               }
               value={item.diseases}
@@ -773,7 +775,7 @@ export default class SpecificForm extends React.PureComponent {
     );
   }
 
-  fetchcityCurrentstate = value => {
+  fetchcityCurrentstate = (value) => {
     const parse = String(value);
     if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
       if (parse.length === 6) {
@@ -783,7 +785,7 @@ export default class SpecificForm extends React.PureComponent {
         Helper.getNetworkHelper(
           url,
           Pref.methodGet,
-          result => {
+          (result) => {
             const {res_type, data} = JSON.parse(result);
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
@@ -796,7 +798,7 @@ export default class SpecificForm extends React.PureComponent {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(
                   data,
-                  io => io.status === 'Active',
+                  (io) => io.status === 'Active',
                 );
                 // //console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
@@ -816,7 +818,7 @@ export default class SpecificForm extends React.PureComponent {
               }
             }
           },
-          error => {
+          (error) => {
             this.setState({
               loan_property_city: '',
               homestate: '',
@@ -842,7 +844,7 @@ export default class SpecificForm extends React.PureComponent {
     }
   };
 
-  fetchcityCurrentstateCompany = value => {
+  fetchcityCurrentstateCompany = (value) => {
     const parse = String(value);
     if (parse !== '' && parse.match(/^[0-9]*$/g) !== null) {
       if (parse.length === 6) {
@@ -852,7 +854,7 @@ export default class SpecificForm extends React.PureComponent {
         Helper.getNetworkHelper(
           url,
           Pref.methodGet,
-          result => {
+          (result) => {
             const {res_type, data} = JSON.parse(result);
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
@@ -865,7 +867,7 @@ export default class SpecificForm extends React.PureComponent {
               if (data.length > 0) {
                 const filterActive = Lodash.filter(
                   data,
-                  io => io.status === 'Active',
+                  (io) => io.status === 'Active',
                 );
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
@@ -884,7 +886,7 @@ export default class SpecificForm extends React.PureComponent {
               }
             }
           },
-          error => {
+          (error) => {
             this.setState({
               ccity: '',
               cstate: '',
@@ -917,7 +919,7 @@ export default class SpecificForm extends React.PureComponent {
     Helper.getNetworkHelper(
       Pref.GOLD_LOAN_DETAIL,
       Pref.methodGet,
-      result => {
+      (result) => {
         const {status, data} = JSON.parse(result);
         if (status) {
           this.setState({
@@ -925,7 +927,7 @@ export default class SpecificForm extends React.PureComponent {
           });
         }
       },
-      error => {},
+      (error) => {},
     );
   };
 
@@ -967,7 +969,7 @@ export default class SpecificForm extends React.PureComponent {
         {title === `Insure Check` ? (
           <View>
             <AnimatedInputBox
-              onChangeText={value => {
+              onChangeText={(value) => {
                 if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({dependent: value});
                 }
@@ -996,7 +998,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Insure Check' ? (
           <View>
             <AnimatedInputBox
-              onChangeText={value => this.setState({company: value})}
+              onChangeText={(value) => this.setState({company: value})}
               value={this.state.company}
               placeholder={`Company Name`}
               showStarVisible={false}
@@ -1012,7 +1014,7 @@ export default class SpecificForm extends React.PureComponent {
 
             <AnimatedInputBox
               keyboardType={'number-pad'}
-              onChangeText={value => {
+              onChangeText={(value) => {
                 if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({turnover: value});
                 }
@@ -1073,7 +1075,7 @@ export default class SpecificForm extends React.PureComponent {
         {title === 'Term Insurance' || title === 'Insure Check' ? (
           <AnimatedInputBox
             keyboardType={'number-pad'}
-            onChangeText={value => {
+            onChangeText={(value) => {
               if (String(value).match(/^[0-9]*$/g) !== null) {
                 this.setState({turnover: value});
               }
@@ -1095,7 +1097,7 @@ export default class SpecificForm extends React.PureComponent {
             placeholder={'Annual Turnover/CTC'}
             starVisible={false}
             value={this.state.turnover}
-            selectedItem={value => this.setState({turnover: value})}
+            selectedItem={(value) => this.setState({turnover: value})}
             style={{
               borderRadius: 0,
               borderBottomColor: '#f2f1e6',
@@ -1123,7 +1125,7 @@ export default class SpecificForm extends React.PureComponent {
         title !== 'Insure Check' ? (
           <AnimatedInputBox
             keyboardType={'number-pad'}
-            onChangeText={value => {
+            onChangeText={(value) => {
               if (String(value).match(/^[0-9]*$/g) !== null) {
                 this.setState({amount: value});
               }
@@ -1205,7 +1207,7 @@ export default class SpecificForm extends React.PureComponent {
             placeholder={'Required Cover (Amount in Lacs)'}
             starVisible={true}
             value={this.state.required_cover}
-            selectedItem={value => this.setState({required_cover: value})}
+            selectedItem={(value) => this.setState({required_cover: value})}
             style={{
               borderRadius: 0,
               borderBottomColor: '#f2f1e6',
@@ -1241,7 +1243,7 @@ export default class SpecificForm extends React.PureComponent {
             <AnimatedInputBox
               placeholder={'Profession'}
               showStarVisible={false}
-              onChangeText={value => this.setState({profession: value})}
+              onChangeText={(value) => this.setState({profession: value})}
               value={this.state.profession}
               changecolor
               containerstyle={styles.animatedInputCont}
@@ -1251,7 +1253,7 @@ export default class SpecificForm extends React.PureComponent {
             <AnimatedInputBox
               placeholder={'Investment Amount'}
               showStarVisible={false}
-              onChangeText={value => {
+              onChangeText={(value) => {
                 if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({investment_amount: value});
                 }
@@ -1345,8 +1347,7 @@ export default class SpecificForm extends React.PureComponent {
 
 
                 </View> : null} */}
-        {title !== 'Insure Check' &&
-        title !== 'Motor Insurance' ? (
+        {title !== 'Insure Check' && title !== 'Motor Insurance' ? (
           <View>
             <AnimatedInputBox
               // placeholder={`PAN Card Number${title === 'Auto Loan'
@@ -1356,7 +1357,7 @@ export default class SpecificForm extends React.PureComponent {
               // ? ' *' : ''}`}
               placeholder={`PAN Card Number`}
               showStarVisible={false}
-              onChangeText={value => this.setState({pancardNo: value})}
+              onChangeText={(value) => this.setState({pancardNo: value})}
               value={this.state.pancardNo}
               changecolor
               containerstyle={styles.animatedInputCont}
@@ -1370,7 +1371,7 @@ export default class SpecificForm extends React.PureComponent {
                   <View style={styles.radiodownbox}>
                     <Title style={styles.bbstyle}>{`Aadhar Card Detail`}</Title>
                     <RadioButton.Group
-                      onValueChange={value =>
+                      onValueChange={(value) =>
                         this.setState({eaadharcardNo: value, aadharcardNo: ''})
                       }
                       value={this.state.eaadharcardNo}>
@@ -1417,7 +1418,7 @@ export default class SpecificForm extends React.PureComponent {
                     showStarVisible={false}
                     maxLength={this.state.eaadharcardNo === 'Aadhar' ? 12 : 16}
                     keyboardType={'numeric'}
-                    onChangeText={value => {
+                    onChangeText={(value) => {
                       if (String(value).match(/^[0-9]*$/g) !== null) {
                         this.setState({aadharcardNo: value});
                       }
@@ -1444,7 +1445,7 @@ export default class SpecificForm extends React.PureComponent {
                 showStarVisible={false}
                 maxLength={16}
                 keyboardType={'number-pad'}
-                onChangeText={value => {
+                onChangeText={(value) => {
                   if (String(value).match(/^[0-9]*$/g) !== null) {
                     this.setState({aadharcardNo: value});
                   }
@@ -1485,7 +1486,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Any Claims Last Year`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({claim_type: value})}
+                  onValueChange={(value) => this.setState({claim_type: value})}
                   value={this.state.claim_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -1515,7 +1516,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Registration Types`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     this.setState({registration_type: value})
                   }
                   value={this.state.registration_type}>
@@ -1553,7 +1554,9 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Vehicle Type`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({vehicle_type: value})}
+                  onValueChange={(value) =>
+                    this.setState({vehicle_type: value})
+                  }
                   value={this.state.vehicle_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -1589,7 +1592,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Motor Type`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({motor_type: value})}
+                  onValueChange={(value) => this.setState({motor_type: value})}
                   value={this.state.motor_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -1624,7 +1627,7 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={'Types Of Insurance'}
               starVisible={false}
               value={this.state.insurance}
-              selectedItem={value => {
+              selectedItem={(value) => {
                 this.setState({
                   insurance: value,
                 });
@@ -1824,7 +1827,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Marital Status`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     this.setState({marital_status: value})
                   }
                   value={this.state.marital_status}>
@@ -1907,7 +1910,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Smoker *`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({lifestyle: value})}
+                  onValueChange={(value) => this.setState({lifestyle: value})}
                   value={this.state.lifestyle}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -1942,7 +1945,7 @@ export default class SpecificForm extends React.PureComponent {
                 {/* {`Alcohol Consumption *`} */}
                 <Title style={styles.bbstyle}>{`Alcohol Consumption *`}</Title>
                 <RadioButton.Group
-                  onValueChange={value => this.setState({lifestyle2: value})}
+                  onValueChange={(value) => this.setState({lifestyle2: value})}
                   value={this.state.lifestyle2}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -1979,7 +1982,7 @@ export default class SpecificForm extends React.PureComponent {
                 </Title>
 
                 <RadioButton.Group
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     this.setState({existing_diseases: value})
                   }
                   value={this.state.existing_diseases}>
@@ -2004,14 +2007,13 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
-
           </View>
         ) : null}
 
         {title === 'Term Insurance' || title === 'Health Insurance' ? (
           this.state.existing_diseases === 'YES' ? (
             <AnimatedInputBox
-              onChangeText={value => {
+              onChangeText={(value) => {
                 this.setState({diseases: value});
               }}
               value={this.state.diseases}
@@ -2025,14 +2027,16 @@ export default class SpecificForm extends React.PureComponent {
 
         {title === 'Term Insurance' ? (
           <View>
-                        <View style={styles.radiocont}>
+            <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 {/* {`Preferred Payment Mode ${title === 'Term Insurance' ? '*' : ''
                   }`} */}
                 <Title style={styles.bbstyle}>{`Preferred Payment Mode`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({payment_mode: value})}
+                  onValueChange={(value) =>
+                    this.setState({payment_mode: value})
+                  }
                   value={this.state.payment_mode}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2085,7 +2089,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Pay Type`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({pay_type: value})}
+                  onValueChange={(value) => this.setState({pay_type: value})}
                   value={this.state.pay_type}>
                   <View
                     styleName="horizontal"
@@ -2145,7 +2149,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Policy Term`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({policy_term: value})}
+                  onValueChange={(value) => this.setState({policy_term: value})}
                   value={this.state.policy_term}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2196,7 +2200,7 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={'Addons'}
               starVisible={false}
               value={this.state.addons}
-              selectedItem={value => {
+              selectedItem={(value) => {
                 this.setState({
                   addons: value,
                 });
@@ -2307,7 +2311,7 @@ export default class SpecificForm extends React.PureComponent {
           */}
           </View>
         ) : null}
-      
+
         {title === 'Health Insurance' || title === 'Vector Plus' ? (
           <View>
             <View style={styles.radiocont}>
@@ -2316,7 +2320,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Type of Insurance * `}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({claim_type: value})}
+                  onValueChange={(value) => this.setState({claim_type: value})}
                   value={this.state.claim_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2391,7 +2395,6 @@ export default class SpecificForm extends React.PureComponent {
           </View>
         ) : null}
 
-
         {title === 'Vector Plus' ? (
           <View>
             <View style={styles.radiocont}>
@@ -2400,7 +2403,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Required Cover`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     this.setState({required_cover: value})
                   }
                   value={this.state.required_cover}>
@@ -2531,7 +2534,7 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={'Members *'}
               starVisible={false}
               value={this.state.family_floater}
-              selectedItem={value => {
+              selectedItem={(value) => {
                 const clone = JSON.parse(JSON.stringify(floatCloneList));
                 if (value === `2 Adult` || value === `1 Adult 1 Child`) {
                   clone.length = 1;
@@ -2695,7 +2698,7 @@ export default class SpecificForm extends React.PureComponent {
               //placeholder={`Car RC Number ${title === 'Auto Loan' ? ' *' : ''}`}
               placeholder={`Car RC Number`}
               showStarVisible={false}
-              onChangeText={value => this.setState({rcbook: value})}
+              onChangeText={(value) => this.setState({rcbook: value})}
               value={this.state.rcbook}
               changecolor
               containerstyle={styles.animatedInputCont}
@@ -2706,7 +2709,7 @@ export default class SpecificForm extends React.PureComponent {
               //placeholder={`Car Model Number ${title === 'Auto Loan' ? ' *' : ''}`}
               placeholder={`Car Model Number`}
               showStarVisible={false}
-              onChangeText={value => this.setState({model: value})}
+              onChangeText={(value) => this.setState({model: value})}
               value={this.state.model}
               changecolor
               containerstyle={styles.animatedInputCont}
@@ -2719,7 +2722,7 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Type of Loan`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value => this.setState({nooldcard: value})}
+                  onValueChange={(value) => this.setState({nooldcard: value})}
                   value={this.state.nooldcard}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2754,7 +2757,7 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={'Type Of Ownership'}
               starVisible={false}
               value={this.state.ownership}
-              selectedItem={value => this.setState({ownership: value})}
+              selectedItem={(value) => this.setState({ownership: value})}
               style={{
                 borderRadius: 0,
                 borderBottomColor: '#f2f1e6',
@@ -2832,7 +2835,7 @@ export default class SpecificForm extends React.PureComponent {
               <Title style={styles.bbstyle}>{`Type of Loan`}</Title>
 
               <RadioButton.Group
-                onValueChange={value => {
+                onValueChange={(value) => {
                   this.setState({
                     fresh_pop: '',
                     type_loan: value,
@@ -2889,7 +2892,7 @@ export default class SpecificForm extends React.PureComponent {
             list={freshTypeofLoan}
             placeholder={'Select Type of Fresh Loan'}
             value={this.state.fresh_pop}
-            selectedItem={value => {
+            selectedItem={(value) => {
               this.setState({fresh_pop: value});
             }}
             style={styles.newdropdowncontainers}
@@ -2920,7 +2923,9 @@ export default class SpecificForm extends React.PureComponent {
                 <Title style={styles.bbstyle}>{`Existing Card/Loan`}</Title>
 
                 <RadioButton.Group
-                  //onValueChange={value => this.setState({existingcard: value})}
+                  onValueChange={(value) =>
+                    this.setState({existingcard: value})
+                  }
                   value={this.state.existingcard}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2929,7 +2934,10 @@ export default class SpecificForm extends React.PureComponent {
                       <RadioButton
                         value="Yes"
                         style={{alignSelf: 'center'}}
-                        disabled
+                        disabled={
+                          title === 'Home Loan' ||
+                          title === 'Loan Against Property'
+                        }
                       />
                       <Title
                         styleName="v-center h-center"
@@ -2941,7 +2949,10 @@ export default class SpecificForm extends React.PureComponent {
                       <RadioButton
                         value="No"
                         style={{alignSelf: 'center'}}
-                        disabled
+                        disabled={
+                          title === 'Home Loan' ||
+                          title === 'Loan Against Property'
+                        }
                       />
                       <Title
                         styleName="v-center h-center"
@@ -2951,6 +2962,40 @@ export default class SpecificForm extends React.PureComponent {
                 </RadioButton.Group>
               </View>
             </View>
+            {title === 'Credit Card' ? (
+              <View>
+                <AnimatedInputBox
+                  onChangeText={(value) => {
+                    if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+                      this.setState({ccfather: value});
+                    }
+                  }}
+                  // maxLength={6}
+                  // keyboardType={'number-pad'}
+                  value={this.state.ccfather}
+                  placeholder={`Father Name`}
+                  showStarVisible={false}
+                  returnKeyType={'next'}
+                  changecolor
+                  containerstyle={styles.animatedInputCont}
+                />
+                <AnimatedInputBox
+                  onChangeText={(value) => {
+                    if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+                      this.setState({ccmother: value});
+                    }
+                  }}
+                  //maxLength={6}
+                  //keyboardType={'number-pad'}
+                  value={this.state.ccmother}
+                  placeholder={`Mother Name`}
+                  showStarVisible={false}
+                  returnKeyType={'next'}
+                  changecolor
+                  containerstyle={styles.animatedInputCont}
+                />
+              </View>
+            ) : null}
             {/* <View
                         style={{
                             
@@ -3004,7 +3049,7 @@ export default class SpecificForm extends React.PureComponent {
                 />
 
                 <AnimatedInputBox
-                  onChangeText={value => this.setState({ccity: value})}
+                  onChangeText={(value) => this.setState({ccity: value})}
                   value={this.state.ccity}
                   placeholder={`Company City`}
                   editable={false}
@@ -3015,7 +3060,7 @@ export default class SpecificForm extends React.PureComponent {
                 />
 
                 <AnimatedInputBox
-                  onChangeText={value => this.setState({cstate: value})}
+                  onChangeText={(value) => this.setState({cstate: value})}
                   value={this.state.cstate}
                   placeholder={'Company State'}
                   editable={false}
@@ -3059,7 +3104,7 @@ export default class SpecificForm extends React.PureComponent {
                 </TouchableWithoutFeedback>
                 {this.state.showCompanyCityList ? (
                   <DropDown
-                    itemCallback={value =>
+                    itemCallback={(value) =>
                       this.setState({
                         showCompanyCityList: false,
                         companylocation: value,
@@ -3122,7 +3167,7 @@ export default class SpecificForm extends React.PureComponent {
             </TouchableWithoutFeedback>
             {this.state.showLoanCityList ? (
               <DropDown
-                itemCallback={value =>
+                itemCallback={(value) =>
                   this.setState({
                     showLoanCityList: false,
                     loan_property_city: value,
@@ -3150,7 +3195,9 @@ export default class SpecificForm extends React.PureComponent {
             />
 
             <AnimatedInputBox
-              onChangeText={value => this.setState({loan_property_city: value})}
+              onChangeText={(value) =>
+                this.setState({loan_property_city: value})
+              }
               value={this.state.loan_property_city}
               placeholder={`Current Property City`}
               editable={false}
@@ -3161,7 +3208,7 @@ export default class SpecificForm extends React.PureComponent {
             />
 
             <AnimatedInputBox
-              onChangeText={value => this.setState({homestate: value})}
+              onChangeText={(value) => this.setState({homestate: value})}
               value={this.state.homestate}
               placeholder={'Current Property State'}
               editable={false}
@@ -3172,7 +3219,7 @@ export default class SpecificForm extends React.PureComponent {
             />
 
             <AnimatedInputBox
-              onChangeText={value =>
+              onChangeText={(value) =>
                 this.setState({loan_property_address: value})
               }
               value={this.state.loan_property_address}
@@ -3206,7 +3253,7 @@ export default class SpecificForm extends React.PureComponent {
                   }>{`What type of insurance do you have?`}</Title>
 
                 <RadioButton.Group
-                  onValueChange={value =>
+                  onValueChange={(value) =>
                     this.setState({
                       type_insurance: value,
                       showInsureCheckList:
@@ -3288,7 +3335,7 @@ export default class SpecificForm extends React.PureComponent {
                   </View>
                 </View>
                 <AnimatedInputBox
-                  onChangeText={value => {
+                  onChangeText={(value) => {
                     if (String(value).match(/^[0-9]*$/g) !== null) {
                       this.setState({health_sum_assured: value});
                     }
@@ -3328,7 +3375,7 @@ export default class SpecificForm extends React.PureComponent {
                   </TouchableWithoutFeedback>
                   {this.state.showHealthCompany ? (
                     <DropDown
-                      itemCallback={value =>
+                      itemCallback={(value) =>
                         this.setState({
                           showHealthCompany: false,
                           health_company: value,
@@ -3359,7 +3406,7 @@ export default class SpecificForm extends React.PureComponent {
                   </View>
                 </View>
                 <AnimatedInputBox
-                  onChangeText={value => {
+                  onChangeText={(value) => {
                     if (String(value).match(/^[0-9]*$/g) !== null) {
                       this.setState({life_sum_assured: value});
                     }
@@ -3399,7 +3446,7 @@ export default class SpecificForm extends React.PureComponent {
                   </TouchableWithoutFeedback>
                   {this.state.showLifeCompany ? (
                     <DropDown
-                      itemCallback={value =>
+                      itemCallback={(value) =>
                         this.setState({
                           showLifeCompany: false,
                           life_company: value,
@@ -3541,7 +3588,7 @@ export default class SpecificForm extends React.PureComponent {
           <>
             <AnimatedInputBox
               keyboardType={'number-pad'}
-              onChangeText={value => {
+              onChangeText={(value) => {
                 if (String(value).match(/^[0-9]*$/g) !== null) {
                   this.setState({
                     desired_amount: value,
@@ -3567,7 +3614,7 @@ export default class SpecificForm extends React.PureComponent {
               placeholder={'Gold Karat'}
               starVisible={false}
               value={this.state.gold_karat}
-              selectedItem={value =>
+              selectedItem={(value) =>
                 this.setState({
                   gold_karat: value,
                   gold_pledge: findGoldPledge(
