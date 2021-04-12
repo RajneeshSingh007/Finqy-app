@@ -2889,16 +2889,16 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bmxqUE1BWWZoY3NoamtlQi91RFFpMDlydkNseFJ3ZVltY3BoQUE0VVgrS0tzR1E9PQ==`;
 
 //production url
-export const MainUrl = `https://erb.ai/`;
-export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
-export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
-export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
+// export const MainUrl = `https://erb.ai/`;
+// export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
+// export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
+// export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
 
 //test url
-// export const MainUrl = `https://uat.erb.ai/`;
-// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
-// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
+export const MainUrl = `https://uat.erb.ai/`;
+export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
+export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
@@ -3018,6 +3018,7 @@ export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
 export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
 export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
 export const DIALER_TL_DASHBOARD = `${DialerDirUrl}tl_dashboard.php`;
+export const DIALER_LIVE_TRACK_DATA =`${DialerDirUrl}live_last_record.php`;
 
 //server date time
 export const SERVER_DATE_TIME = `${DialerDirUrl}servertime.php`;

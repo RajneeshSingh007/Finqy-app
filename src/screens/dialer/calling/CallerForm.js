@@ -322,7 +322,7 @@ export default class CallerForm extends React.PureComponent {
       pincode,
     } = this.state;
 
-    console.log('product', product);
+    //console.log('product', product);
 
     let checkData = true;
     if (name === '') {

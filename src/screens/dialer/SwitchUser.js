@@ -16,7 +16,6 @@ import {sizeWidth, sizeHeight} from '../../util/Size';
 import DashboardItem from './components/DashboardItem';
 import NavigationActions from '../../util/NavigationActions';
 import ListError from '../common/ListError';
-import moment from 'moment';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import {firebase} from '@react-native-firebase/firestore';
@@ -37,12 +36,6 @@ const TLDashboard = [
     option: {},
     enabled: true,
   },
-  // {
-  //   name: 'Report',
-  //   image: require('../../res/images/dialer/report.png'),
-  //   click: 'MemberReport',
-  //   option: {},
-  // },
   {
     name: 'My Team',
     image: require('../../res/images/dialer/team.png'),
@@ -50,6 +43,13 @@ const TLDashboard = [
     option: {},
     enabled: true,
   },
+  // {
+  //   name: 'Report',
+  //   image: require('../../res/images/dialer/report.png'),
+  //   click: 'TlReport',
+  //   option: {},
+  //   enabled: true,
+  // },
 ];
 
 const TCDashboard = [
@@ -149,9 +149,9 @@ export default class SwitchUser extends React.PureComponent {
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       this.checkdeviceDataSetup(true);
-    //});
+    });
   }
 
   _handleAppStateChange = (nextAppState) =>{

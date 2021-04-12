@@ -26,12 +26,12 @@ export default class TlDashboard extends React.PureComponent {
 
   componentDidMount() {
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({token: value});
         this.fetchDashboard(value, '');
       });
-    //});
+    });
   }
 
   fetchDashboard = (token) => {

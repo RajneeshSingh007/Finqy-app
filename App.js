@@ -49,8 +49,8 @@ class App extends React.PureComponent {
     this.checkVersionForUpdate(); 
 
     //dialer
-    //this.dialerCheckCheckin();
-    //this.callDetectionListerner();
+    this.dialerCheckCheckin();
+    this.callDetectionListerner();
     
     //stopService();
     //enableIdleService();
@@ -75,7 +75,7 @@ class App extends React.PureComponent {
     this.callDetection = new CallDetectorManager(
       (event, phoneNumber) => {
         //console.log('event', event);
-        if(event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
+        if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
           if(Helper.nullStringCheck(phoneNumber) === false){
             Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, mobileNumberCleanup(phoneNumber));
           }

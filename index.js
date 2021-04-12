@@ -83,14 +83,14 @@ const serviceHandler = async( data) =>{
     });
   }
 }
-//AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
+AppRegistry.registerHeadlessTask('ServiceHandler', () =>  serviceHandler);
 
 
 //Idle Service
 const idleServiceHandler = async(data) =>{
 
 }
-//AppRegistry.registerHeadlessTask('IdleHandler', () => idleServiceHandler);
+AppRegistry.registerHeadlessTask('IdleHandler', () => idleServiceHandler);
 
 
 //firebase

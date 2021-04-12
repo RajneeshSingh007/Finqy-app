@@ -150,7 +150,7 @@ export const disableOffline = () =>{
 export const enableIdleService = (date) =>{
   const obj = {date:date};
   FinproCallModule.startIdleService(obj).then(res =>{
-    console.log(res)
+    //console.log(res)
   }).catch(e =>{
     console.log(e);
   })
@@ -161,7 +161,7 @@ export const enableIdleService = (date) =>{
  */
  export const stopIdleService = () =>{
   FinproCallModule.stopIdleService().then(res =>{
-    console.log(res)
+    //console.log(res)
   }).catch(e =>{
     console.log(e);
   })

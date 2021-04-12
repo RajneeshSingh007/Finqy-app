@@ -136,16 +136,19 @@ export default class FinorbitForm extends React.PureComponent {
 
   backClick = () => {
     const {title, currentPosition, editMode,dialerMobile} = this.state;
-    // if(Helper.nullStringCheck(dialerMobile) === false){
-    //   return false;
-    // }else{
+    //console.log(title, currentPosition, editMode,dialerMobile);
+    if(Helper.nullStringCheck(dialerMobile) === false){
+      return false;
+    }else{
       if (editMode === true) {
         NavigationActions.navigate('LeadList');
+        return true;
       } else {
         NavigationActions.goBack();
+        return true;
       }
-    //}
-    return true;
+    }
+    //return false
   };
 
   componentWillUnMount() {
@@ -518,9 +521,9 @@ export default class FinorbitForm extends React.PureComponent {
                   let backScreenName = editMode === false ? 'FinorbitScreen' : 'LeadList';
                   //for dialer screen
                   
-                  //if(Helper.nullStringCheck(this.state.dialerMobile) === false){
-                    //backScreenName = 'DialerCalling';
-                  //}
+                  if(Helper.nullStringCheck(this.state.dialerMobile) === false){
+                    backScreenName = 'DialerCalling';
+                  }
 
                   //finish screen
                   NavigationActions.navigate('Finish', {

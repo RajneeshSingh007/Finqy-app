@@ -12,17 +12,17 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--    Dialer Permission-->
-<!--    <uses-permission android:name="android.permission.READ_CONTACTS" />-->
-<!--    <uses-permission android:name="android.permission.WRITE_CONTACTS" />-->
-<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
-<!--    <uses-permission android:name="android.permission.VIBRATE" />-->
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />-->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-<!--    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />-->
-<!--    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />-->
-<!--    <uses-permission android:name="android.permission.CALL_PHONE" />-->
-<!--    <uses-permission android:name="android.permission.READ_CALL_LOG" />-->
-<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <!--    not required-->
     <!--    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>-->
@@ -83,27 +83,19 @@
 
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
-<!--        <service-->
-<!--            android:name=".floatingcall.FloatingWidgetService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false" />-->
+        <service
+            android:name=".floatingcall.FloatingWidgetService"
+            android:enabled="true"
+            android:exported="false" />
 
-<!--        <service android:name=".floatingcall.ServiceHandler" />-->
+        <service android:name=".floatingcall.ServiceHandler" />
 
-<!--        <service-->
-<!--            android:name=".floatingcall.IdleService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false" />-->
+        <service
+            android:name=".floatingcall.IdleService"
+            android:enabled="true"
+            android:exported="false" />
 
-<!--        <service android:name=".floatingcall.IdleHandler" />-->
-
-        <!--        <receiver android:name=".floatingcall.PhoneCallReceiver">-->
-<!--            <intent-filter android:priority="1000">-->
-<!--                <action android:name="android.intent.action.PHONE_STATE" />-->
-<!--                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />-->
-<!--                <action android:name="android.intent.action.ANSWER" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        <service android:name=".floatingcall.IdleHandler" />
 
     </application>
 

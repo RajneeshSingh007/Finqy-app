@@ -44,16 +44,15 @@ export default class TcTemplates extends React.PureComponent {
 
   componentDidMount() {
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
-      const {id, tlid, pname} = userdatas[0].tc;
-      Pref.getVal(Pref.saveToken, (token) => {
-        this.setState({token: token, id: id, tlid: tlid, pname: pname});
-        this.fetchData();
-        this.fetchCustomerData();
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
+        const {id, tlid, pname} = userdatas[0].tc;
+        Pref.getVal(Pref.saveToken, (token) => {
+          this.setState({token: token, id: id, tlid: tlid, pname: pname});
+          this.fetchData();
+        });
       });
     });
-    //});
   }
 
   componentWillUnMount() {
@@ -77,9 +76,13 @@ export default class TcTemplates extends React.PureComponent {
           const {enabled, global, teamName} = item.data();
           if (global === 0 && enabled === 0) {
             finalList.push(item.data());
-          }else if (global === -1 && enabled === 0 && Helper.nullStringCheck(teamName) == false) {
+          } else if (
+            global === -1 &&
+            enabled === 0 &&
+            Helper.nullStringCheck(teamName) == false
+          ) {
             const split = teamName.split(/\(/g);
-            if(userTeam === split[1].replace(/\)/g, '')){
+            if (userTeam === split[1].replace(/\)/g, '')) {
               finalList.push(item.data());
             }
           }
@@ -90,6 +93,7 @@ export default class TcTemplates extends React.PureComponent {
           fullLoader: false,
           userListModal: false,
         });
+        this.fetchCustomerData();
       })
       .catch((e) => {
         this.setState({loading: false});
@@ -110,9 +114,10 @@ export default class TcTemplates extends React.PureComponent {
       Pref.methodPost,
       this.state.token,
       (result) => {
+        //console.log('result',result);
         const {data, status} = result;
         if (status) {
-          if (data.length > 0) {
+          if (data && data.length > 0) {
             const sorting = data.sort((a, b) => {
               const splita = a.updated_at.split(/\s/g);
               const splitb = b.updated_at.split(/\s/g);

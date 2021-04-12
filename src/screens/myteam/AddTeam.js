@@ -138,15 +138,7 @@ export default class AddTeam extends React.Component {
       Helper.showToastMessage('Please, Select location', 0);
       return false;
     }
-
-    // let spcommons = JSON.parse(
-    //   JSON.stringify(this.specificFormRef.current.state),
-    // );
-
-    //const aadharcardNo = spcommons.aadharcardNo;
-
-    //body.pancard = panCards || '';
-    //body.aadharcard = aadharcardNo || '';
+    
     body.refercode = refercode;
 
     if (checkData) {
@@ -164,49 +156,8 @@ export default class AddTeam extends React.Component {
           if (res_type === `error`) {
             Helper.showToastMessage(message, 0);
           } else {
-            // NavigationActions.navigate('Finish', {
-            //   top: 'Add Team',
-            //   red: 'Success',
-            //   grey: 'Added succesfully',
-            //   blue: 'View team',
-            //   profilerefresh: 1,
-            //   back:'ViewTeam'
-            // });
             Helper.showToastMessage(`Added successfully`, 1);
             NavigationActions.navigate('ViewTeam');
-            // this.setState({
-            //   name: '',
-            //   mobile_no: '',
-            //   address: '',
-            //   email: '',
-            //   aadharcard: '',
-            //   refercode: '',
-            //   pancard: '',
-            // });
-            // this.specificFormRef.saveData(
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            //   '',
-            // );
-
           }
         },
         () => {
@@ -224,12 +175,6 @@ export default class AddTeam extends React.Component {
           <>
             <LeftHeaders
               title={`Add Team`}
-              // bottomtext={
-              //   <>
-              //     {`Add `}
-              //     {<Title style={styles.passText}>{`Team`}</Title>}
-              //   </>
-              // }
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,
@@ -273,15 +218,6 @@ export default class AddTeam extends React.Component {
                 keyboardType={'email-address'}
               />
 
-              {/* <CustomForm
-                value={this.state.address}
-                onChange={(v) => this.setState({address: v})}
-                label={`Current Address`}
-                placeholder={`Enter current address`}
-                keyboardType={'text'}
-                multiline
-              /> */}
-
               <CustomForm
                 value={this.state.pancard}
                 onChange={(v) => this.setState({ pancard: v })}
@@ -301,13 +237,6 @@ export default class AddTeam extends React.Component {
                 maxLength={12}
                 keyboardType={'numeric'}
               />
-
-              {/* <SpecificForm
-                title="Demat"
-                showHeader={false}
-                heading={`Other Information`}
-                ref={this.specificFormRef}
-              /> */}
 
               <View style={styles.radiocont}>
                 <TouchableWithoutFeedback
@@ -355,15 +284,6 @@ export default class AddTeam extends React.Component {
               </View>
 
               <View styleName="horizontal space-between md-gutter v-center h-center">
-                {/* <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={styles.loginButtonStyle}
-                onPress={this.login}>
-                <Title style={styles.btntext}>{'Sign In'}</Title>
-              </Button> */}
                 <Button
                   mode={'flat'}
                   uppercase={false}
@@ -374,160 +294,10 @@ export default class AddTeam extends React.Component {
                   <Title style={styles.btntext}>{`Submit`}</Title>
                 </Button>
               </View>
-              {/* <Button
-                mode={'flat'}
-                uppercase={true}
-                dark={true}
-                loading={false}
-                style={[styles.loginButtonStyle]}
-                onPress={this.submitt}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    letterSpacing: 1,
-                  }}>
-                  {'SUBMIT'}
-                </Text>
-              </Button> */}
             </View>
           </>
         }
       />
-      // <CommonScreen
-      //   title={''}
-      //   loading={this.state.loading}
-      //   absoluteBody={<Loader isShow={this.state.loading} />}
-      //   body={
-      //     <>
-      //       <LeftHeaders title={'Add Team'} showBack />
-
-      //       <Card
-      //         style={{
-      //           marginHorizontal: sizeWidth(4),
-      //           marginVertical: sizeHeight(2),
-      //           paddingHorizontal: sizeWidth(0),
-      //         }}>
-      // <CustomForm
-      //   value={this.state.name}
-      //   onChange={(v) => this.setState({name: v})}
-      //   label={`Name *`}
-      //   placeholder={`Enter name`}
-      // />
-
-      // <CustomForm
-      //   value={this.state.mobile_no}
-      //   onChange={(v) => {
-      //     if (String(v).match(/^[0-9]*$/g) !== null) {
-      //       this.setState({mobile_no: v});
-      //     }
-      //   }}
-      //   label={`Mobile Number *`}
-      //   placeholder={`Enter mobile number`}
-      //   keyboardType={'numeric'}
-      //   maxLength={10}
-      //   style={{
-      //     marginBottom: 2,
-      //   }}
-      // />
-
-      // <CustomForm
-      //   value={this.state.email}
-      //   onChange={(v) => this.setState({email: v})}
-      //   label={`Email *`}
-      //   placeholder={`Enter email`}
-      //   keyboardType={'email-address'}
-      // />
-
-      // {/* <CustomForm
-      //   value={this.state.address}
-      //   onChange={(v) => this.setState({address: v})}
-      //   label={`Current Address`}
-      //   placeholder={`Enter current address`}
-      //   keyboardType={'text'}
-      //   multiline
-      // /> */}
-
-      // <View
-      //   style={{
-      //     paddingVertical: sizeHeight(0),
-      //     marginHorizontal: sizeWidth(3),
-      //   }}>
-      //   <TouchableWithoutFeedback
-      //     onPress={() =>
-      //       this.setState({
-      //         showCityList: !this.state.showCityList,
-      //       })
-      //     }>
-      //     <View style={styles.boxstyle}>
-      //       <Subtitle
-      //         style={{
-      //           fontSize: 16,
-      //           fontFamily: 'Rubik',
-      //           fontWeight: '400',
-      //           color:
-      //             this.state.address === '' ? '#767676' : '#292929',
-      //           lineHeight: 25,
-      //           alignSelf: 'center',
-      //           padding: 4,
-      //           alignSelf: 'center',
-      //           marginHorizontal: 8,
-      //         }}>
-      //         {this.state.address === ''
-      //           ? `Select Location *`
-      //           : this.state.address}
-      //       </Subtitle>
-      //       <Icon
-      //         name={'chevron-down'}
-      //         size={24}
-      //         color={'#767676'}
-      //         style={{
-      //           padding: 4,
-      //           alignSelf: 'center',
-      //         }}
-      //       />
-      //     </View>
-      //   </TouchableWithoutFeedback>
-      //   {this.state.showCityList ? (
-      //     <DropDown
-      //       itemCallback={(value) =>
-      //         this.setState({showCityList: false, address: value})
-      //       }
-      //       list={this.state.cityList}
-      //       isCityList
-      //       enableSearch
-      //       autoFocus
-      //     />
-      //   ) : null}
-      // </View>
-
-      // <SpecificForm
-      //   title="Demat"
-      //   showHeader={false}
-      //   heading={`Other Information`}
-      //   ref={this.specificFormRef}
-      // />
-
-      // <Button
-      //   mode={'flat'}
-      //   uppercase={true}
-      //   dark={true}
-      //   loading={false}
-      //   style={[styles.loginButtonStyle]}
-      //   onPress={this.submitt}>
-      //   <Text
-      //     style={{
-      //       color: 'white',
-      //       fontSize: 16,
-      //       letterSpacing: 1,
-      //     }}>
-      //     {'SUBMIT'}
-      //   </Text>
-      // </Button>
-      //       </Card>
-      //     </>
-      //   }
-      // />
     );
   }
 }

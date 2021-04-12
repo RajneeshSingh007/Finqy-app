@@ -34,7 +34,7 @@ import {firebase} from '@react-native-firebase/firestore';
 import CallDetectorManager from 'react-native-call-detection';
 import DateRangePicker from 'react-native-daterange-picker';
 import moment from 'moment';
-import { disableOffline,stopIdleService } from '../../../util/DialerFeature';
+import {disableOffline, stopIdleService} from '../../../util/DialerFeature';
 
 const DATE_FORMAT = 'DD-MM-YYYY';
 const ITEM_LIMIT = 10;
@@ -96,7 +96,10 @@ export default class DialerCalling extends React.PureComponent {
     AppState.addEventListener('change', this._handleAppStateChange);
 
     const {navigation} = this.props;
-    const activeCallerItem = navigation.getParam('data',activeCallerPlaceholderJSON);
+    const activeCallerItem = navigation.getParam(
+      'data',
+      activeCallerPlaceholderJSON,
+    );
     const editEnabled = navigation.getParam('editEnabled', false);
     const isFollowup = navigation.getParam('isFollowup', -1);
     const outside = navigation.getParam('outside', false);
@@ -143,7 +146,7 @@ export default class DialerCalling extends React.PureComponent {
         });
       });
     });
-    
+
     disableOffline();
     this.firebaseListerner = firebase
       .firestore()
@@ -248,22 +251,34 @@ export default class DialerCalling extends React.PureComponent {
             //   widthArr.push(140);
             // }
             let itemList = [];
-            // if (isFollowup == 1) {
-            //   const currentDate = moment().format(DATE_FORMAT);
-            //   itemList = Lodash.filter(data, (io) => {
-            //     const {followup_datetime} = io;
-            //     const spli = followup_datetime.split(/\s/g, '');
-            //     if (
-            //       followup_datetime &&
-            //       Helper.nullStringCheck(followup_datetime) === false &&
-            //       String(spli[0]) === String(currentDate)
-            //     ) {
-            //       return io;
-            //     }
-            //   });
-            // } else {
-            itemList = data;
-            //}
+            if (isFollowup == 1) {
+              const currentDate = moment().format(DATE_FORMAT);
+              const spacespli = String(currentDate).split(/\s/g);
+              const startSp = String(spacespli[0]).split(/-/g);
+
+              itemList = Lodash.filter(data, (io) => {
+                const {followup_datetime} = io;
+                const spli = String(followup_datetime).split(/\s/g);
+                const datespl = String(spli[0]).split(/-/g);
+
+                const datecheck = Number(datespl[0]) === Number(startSp[0]);
+                const monthCheck = Number(datespl[1]) === Number(startSp[1]);
+                const yearCheck = Number(datespl[2]) === Number(startSp[2]);
+
+                if (
+                  followup_datetime &&
+                  Helper.nullStringCheck(followup_datetime) === false &&
+                  datecheck &&
+                  monthCheck &&
+                  yearCheck
+                ) {
+                  return io;
+                }
+              });
+            } else {
+              itemList = data;
+            }
+
             this.setState({
               //tableHead: tableHead,
               //widthArr: widthArr,
@@ -380,7 +395,7 @@ export default class DialerCalling extends React.PureComponent {
                 Helper.requestPermissionsDialer();
               } catch (error) {}
             } else if (result === 'success') {
-              stopIdleService();      
+              stopIdleService();
               this.setState({
                 progressLoader: true,
                 activeCallerItem: item,
@@ -656,7 +671,7 @@ export default class DialerCalling extends React.PureComponent {
   };
 
   fabClick = () => {
-    //this.setState({dateFilter: 1});
+    this.setState({dateFilter: 1});
   };
 
   dateFilterSubmit = () => {
@@ -670,20 +685,20 @@ export default class DialerCalling extends React.PureComponent {
         endparse = parse;
       }
 
-      console.log('parse', parse, 'end', endparse);
+      //console.log('parse', parse, 'end', endparse);
 
       //start date//18-03
-      const startParseSp = String(parse).split(/\s/g, '');
-      const startSp = String(startParseSp).split('-');
+      const startParseSp = String(parse).split(/\s/g);
+      const startSp = String(startParseSp).split(/-/g);
 
-      const endParseSp = String(endparse).split(/\s/g, '');
-      const endSp = String(endParseSp).split('-');
+      const endParseSp = String(endparse).split(/\s/g);
+      const endSp = String(endParseSp).split(/-/g);
 
       //console.log(parse, endparse);
       const itemList = Lodash.filter(cloneList, (io) => {
         const {followup_datetime} = io;
-        const spli = followup_datetime.split(/\s/g, '');
-        const datespl = String(spli).split('-');
+        const spli = String(followup_datetime).split(/\s/g);
+        const datespl = String(spli[0]).split(/-/g);
 
         const datecheck = Number(datespl[0]) >= Number(startSp[0]);
         const monthCheck = Number(datespl[1]) >= Number(startSp[1]);
@@ -693,14 +708,17 @@ export default class DialerCalling extends React.PureComponent {
         const monthEndCheck = Number(datespl[1]) <= Number(endSp[1]);
         const yearEndCheck = Number(datespl[2]) <= Number(endSp[2]);
 
-        console.log(
-          datecheck,
-          monthCheck,
-          yearCheck,
-          dateEndcheck,
-          monthEndCheck,
-          yearEndCheck,
-        );
+        // console.log(
+        //   followup_datetime,
+        //   spli,
+        //   datespl,
+        //   datecheck,
+        //   monthCheck,
+        //   yearCheck,
+        //   dateEndcheck,
+        //   monthEndCheck,
+        //   yearEndCheck,
+        // );
         if (
           datecheck &&
           monthCheck &&
@@ -716,7 +734,7 @@ export default class DialerCalling extends React.PureComponent {
       //console.log('itemList', itemList);
 
       this.setState({
-        //dataList: itemList,
+        dataList: itemList,
         dateFilter: -1,
         endDate: endparse,
         startDate: parse,
@@ -811,9 +829,9 @@ export default class DialerCalling extends React.PureComponent {
               isShow={this.state.progressLoader}
               bottomText={'Please do not press back button'}
             />
-            {/* {isFollowup === 1 ? (
+            {isFollowup === 1 ? (
               <FAB style={styles.fab} icon="filter" onPress={this.fabClick} />
-            ) : null} */}
+            ) : null}
 
             {dateFilter !== -1 ? (
               <Portal>

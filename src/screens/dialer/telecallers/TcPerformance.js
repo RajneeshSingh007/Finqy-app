@@ -8,17 +8,21 @@ import * as Pref from '../../../util/Pref';
 import CScreen from '../../component/CScreen';
 import Purechart from 'react-native-pure-chart';
 import {Card} from 'react-native-paper';
+import { disableOffline } from '../../../util/DialerFeature';
+import {firebase} from '@react-native-firebase/firestore';
 
 export default class TcPerformance extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      totalIdleTime:0,
       dashboardData: null,
       barData: [
         {x: 'Interested', y: 0, color: '#87c1fc'},
         {x: 'Not-Interested', y: 0, color: '#fe8c8c'},
         {x: 'Incorrect Number', y: 0, color: '#ffe251'},
         {x: 'Avg. Talktime', y: 0, color: '#77e450'},
+        {x: 'Idle Time', y: 0, color: '#fd8e'},
       ],
     };
   }
@@ -28,12 +32,12 @@ export default class TcPerformance extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({token: value});
-        this.fetchDashboard(value);
+        this.firebasereport();
       });
     });
   }
 
-  fetchDashboard = (token) => {
+  fetchDashboard = () => {
     Pref.getVal(Pref.DIALER_DATA, (vl) => {
       const {id, tlid, pname} = vl[0].tc;
       const body = JSON.stringify({
@@ -41,21 +45,22 @@ export default class TcPerformance extends React.PureComponent {
         userid: id,
         tname: pname,
       });
-      console.log('body', body)
+      //console.log('body', body)
       Helper.networkHelperTokenPost(
         Pref.DIALER_TC_PERFORMANCE,
         body,
         Pref.methodPost,
-        token,
+        this.state.token,
         (result) => {
-          console.log(result);
+          //console.log(result);
           const {barData} = this.state;
           let {data, status} = result;
-          if (status) {
+          if (status) {            
             barData[0].y = Number(data.inter);
             barData[1].y = Number(data.ntinter);
             barData[2].y = Number(data.wrong);
             barData[3].y = Number(data.dur.replace(/sec/g, ''));
+            barData[4].y = this.state.totalIdleTime;
             this.setState({dashboardData: data, barData: barData});
           }
         },
@@ -65,6 +70,41 @@ export default class TcPerformance extends React.PureComponent {
       );
     });
   };
+
+  firebasereport = () =>{
+    let totalIdleTime = 0;
+    disableOffline();
+    Pref.getVal(Pref.DIALER_DATA, (vl) => {
+      console.log('vl[0].tc', vl[0].tc);
+      const {id, tlid, pname} = vl[0].tc;
+      firebase.firestore()
+      .collection(Pref.COLLECTION_CHECKIN)
+      .get()
+      .then(snapshot =>{
+        snapshot.forEach(item =>{
+          if(item.exists){
+            const docpath = String(item.ref.path).replace(
+              `${Pref.COLLECTION_CHECKIN}/`,
+              '',
+            );
+            const patternRegex = new RegExp(docpath.slice(-8));
+            const userID = Number(docpath.replace(patternRegex.source, ''));
+            if(Number(userID) === Number(id)){
+              const {checkout, idle} = item.data();
+              if (Helper.nullCheck(idle) === false && idle.length > 0) {
+                totalIdleTime += idle.length;
+              }
+            }
+          }
+        });
+        this.setState({totalIdleTime:totalIdleTime});
+        this.fetchDashboard();
+      }).catch(e =>{
+        console.log('e', e);
+      })
+
+    });
+  }
 
   componentWillUnMount() {
     if (this.focusListener !== undefined) this.focusListener.remove();
@@ -111,7 +151,7 @@ export default class TcPerformance extends React.PureComponent {
     const {dashboardData} = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchDashboard(this.state.token)}
+        refresh={() => this.firebasereport()}
         bgColor={Pref.WHITE}
         body={
           <View>
@@ -148,6 +188,12 @@ export default class TcPerformance extends React.PureComponent {
                     {this.renderCircleItem(
                       `${dashboardData.dur}`,
                       'Avg. Talktime',
+                      '',
+                      () => {},
+                    )}
+                    {this.renderCircleItem(
+                      `${this.state.totalIdleTime}min`,
+                      'Idle Time',
                       '',
                       () => {},
                     )}

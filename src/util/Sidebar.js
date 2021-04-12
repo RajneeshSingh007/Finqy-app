@@ -649,15 +649,15 @@ export default class Sidebar extends React.Component {
                             JSON.stringify(filter),
                           );
                           finalFilterList.push(cloneobject[0]);
-                          // finalFilterList.push(
-                          //   {
-                          //     name: `Dialer`,
-                          //     expand: false,
-                          //     click: 'SwitchUser',
-                          //     options: {},
-                          //     iconname: require('../res/images/dialercalls.png'),
-                          //     icontype: 2,
-                          //   });
+                          finalFilterList.push(
+                            {
+                              name: `Dialer`,
+                              expand: false,
+                              click: 'SwitchUser',
+                              options: {},
+                              iconname: require('../res/images/dialercalls.png'),
+                              icontype: 2,
+                            });
                           const lastpos = cloneobject.splice(
                             1,
                             cloneobject.length,

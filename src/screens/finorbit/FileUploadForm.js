@@ -3019,7 +3019,7 @@ export default class FileUploadForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title !== 'Health Insurance' && title !== 'Credit Card' && title !== 'Gold Loan' ? (
+        {!loanCheck && title !== 'Profile' ? (
           <View>
             {truDownloadEnable === 1 ? (
               <View

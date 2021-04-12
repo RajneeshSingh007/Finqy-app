@@ -51,7 +51,7 @@ export default class TlMemberList extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({ loading: true, dataList: [] });
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
         const active = navigation.getParam("active", 1);
         //console.log('active', active)
@@ -66,7 +66,7 @@ export default class TlMemberList extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   componentWillUnMount() {

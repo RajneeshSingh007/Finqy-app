@@ -99,6 +99,7 @@ import TlTeam from '../screens/dialer/teleleaders/TlTeam';
 import TlMemberList from '../screens/dialer/teleleaders/TlMemberList';
 import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
 import TlLiveTracker from '../screens/dialer/teleleaders/TlLiveTracker';
+import TlReport from '../screens/dialer/teleleaders/TlReport';
 
 //Payin Payout
 import PayinProducts from '../screens/sales/PayinProducts';
@@ -292,7 +293,8 @@ const DialerNav = createStackNavigator({
   TcTemplates:{screen:TcTemplates},
   TlTeam:{screen:TlTeam},
   TlMemberList:{screen:TlMemberList},
-  TlLiveTracker:{screen:TlLiveTracker}
+  TlLiveTracker:{screen:TlLiveTracker},
+  TlReport:{screen:TlReport}
 },
 {
   headerMode: 'none',
@@ -356,7 +358,7 @@ const OtherNav = createDrawerNavigator(
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
     
-    //DialerNav:{screen: DialerNav},
+    DialerNav:{screen: DialerNav},
     TicketNav:{screen:TicketNav},
     SalesNav:{screen:SalesNav}
   },

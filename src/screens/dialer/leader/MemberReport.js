@@ -55,18 +55,23 @@ export default class MemberReport extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
+    
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
         const pastStartDate = moment().format(DATE_FORMAT);
         const pastEndDate = moment().subtract(7, 'd').format(DATE_FORMAT);
-        const efStartDate = moment().format(DATE_FORMAT);
-        const efEndDate = moment()
+        const efStartDate = '';
+        //moment().format(DATE_FORMAT);
+        const efEndDate = '';
+        //moment()
           ///.subtract(1, 'M')
-          .format(DATE_FORMAT);
-        const plStartDate = moment().format(DATE_FORMAT);
-        const plEndDate = moment()
+          //.format(DATE_FORMAT);
+        const plStartDate = '';
+        //moment().format(DATE_FORMAT);
+        const plEndDate = '';
+        //moment()
           //.subtract(1, 'M')
-          .format(DATE_FORMAT);
+          //.format(DATE_FORMAT);
 
         this.setState({
           tname: tname,
@@ -417,6 +422,22 @@ export default class MemberReport extends React.PureComponent {
     this.fetchData();
   };
 
+  resetFilter = () =>{
+    this.setState({
+      dateFilter: -1,
+      endDate: null,
+      startDate: null,
+      filterModal: false,
+      efStartDate:'',
+      efEndDate:'',
+      plStartDate:'',
+      plEndDate:'',
+      efDates:'',
+      plDates:'',
+    });
+    this.fetchData();
+  }
+
   render() {
     const {
       dataList,
@@ -447,7 +468,10 @@ export default class MemberReport extends React.PureComponent {
                   filterModal: false,
                 })
               }
-              ratioHeight={0.5}
+              ratioHeight={0.55}
+              centerFlex={0.2}
+              rightFlex={0.3}
+              centerFlex={0.5}
               backgroundColor={`white`}
               topCenterElement={
                 <Subtitle
@@ -460,7 +484,19 @@ export default class MemberReport extends React.PureComponent {
                   {`Filter Reports`}
                 </Subtitle>
               }
-              topRightElement={null}
+              topRightElement={
+                <TouchableWithoutFeedback onPress={this.resetFilter}>
+                  <Subtitle
+                    style={{
+                      color: '#0270e3',
+                      fontSize: 14,
+                      fontWeight: '700',
+                      letterSpacing: 0.5,
+                    }}>
+                    {`Clear Filter`}
+                  </Subtitle>
+                </TouchableWithoutFeedback>
+              }
               children={
                 <View
                   style={{

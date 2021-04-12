@@ -76,7 +76,6 @@ export default class ProfileScreen extends React.PureComponent {
 
   componentDidMount() {
     this.setState({ currentposition: 0, scrollReset: false });
-    //this.props.scrollToTop();
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
@@ -98,9 +97,6 @@ export default class ProfileScreen extends React.PureComponent {
                   this.setState({ loader: false })
                   const { res_type } = response_header;
                   if (res_type === `success`) {
-                    //const { id } = data[0];
-                    //Pref.setVal(Pref.userID, id);
-                    //Pref.setVal(Pref.userData, data[0]);
                     const parseda = JSON.parse(JSON.stringify(data[0]));
                     const pp = parseda.user_prof;
                     const url = pp === undefined || pp === null || pp === '' || (!pp.includes('.jpg') && !pp.includes('.jpeg') && !pp.includes('.png')) ? require('../../res/images/account.png') : {
@@ -111,9 +107,7 @@ export default class ProfileScreen extends React.PureComponent {
                     if (pp !== undefined || pp !== null || pp !== '') {
                       const sp = fm.split("/");
                       fileName = sp[sp.length - 1];
-                      //console.log('sp',sp)
                     }
-                    //console.log('url', url)
                     const { mail_host, mail_password, mail_port, mail_username } = parseda;
                     this.setState({
                       userData: parseda,
@@ -130,24 +124,15 @@ export default class ProfileScreen extends React.PureComponent {
                 },
                 (e) => {
                   this.setState({ loader: false })
-                  //console.log(`error`, e);
                 },
               );
             }));
           })
-          // Pref.getVal(Pref.userData, (parseda) => {
-          //   //console.log('parseda', parseda)
-          // });
         });
       });
     });
   }
 
-  // componentDidUpdate(){
-  //   if(this.state.currentposition > 0){
-  //     this.setState({currentposition:0})
-  //   }
-  // }
 
   updateData = (userData) => {
     if (this.commonFormRef.current !== null) {
@@ -358,75 +343,21 @@ export default class ProfileScreen extends React.PureComponent {
     formData.append('mail_password', this.state.mail_password);
 
     let commons = this.state.dataArray[0];
-    //JSON.parse(JSON.stringify(this.commonFormRef.current.state));
-    // delete commons.genderList;
-    // delete commons.employList;
-    // delete commons.cityList;
-    // delete commons.showCityList;
-    // delete commons.showGenderList;
-    // delete commons.showCalendar;
-    // delete commons.showEmployList;
-    // delete commons.currentDate;
-    // delete commons.maxDate;
-    // delete commons.gender;
-    // delete commons.dob;
-    // delete commons.employ;
-
     for (var key in commons) {
       const value = commons[key];
-      if (value !== undefined) {
-        formData.append(key, commons[key]);
+      if (Helper.arrayObjCheck(value, true)) {
+        formData.append(key, value);
       }
     }
 
     let spcommons = this.state.dataArray[1];
 
-    //JSON.parse(JSON.stringify(this.specificFormRef.current.state));
-    // delete spcommons.cityList;
-    // delete spcommons.showCarList;
-    // delete spcommons.showExisitingList;
-    // delete spcommons.showCalendar;
-    // delete spcommons.showLoanCityList;
-    // delete spcommons.motorInsList;
-    // delete spcommons.exisitingList;
-    // delete spcommons.employList;
-    // delete spcommons.carList;
-    // delete spcommons.termInsList;
-    // delete spcommons.showmotorInsList;
-    // delete spcommons.showtermInsList;
-    // delete spcommons.healthFList;
-    // delete spcommons.showHealthFlist;
-    // delete spcommons.maritalList;
-    // delete spcommons.showmaritalList;
-    // delete spcommons.showCompanyCityList;
-    // delete spcommons.currentDate;
-    // delete spcommons.maxDate;
-    // delete spcommons.vectorInsuList;
-    // delete spcommons.showvectorCoverList;
-    // delete spcommons.showvectorInsuList;
-    // delete spcommons.vectorCoverList;
-    // delete spcommons.vectorTypeIns;
-    // delete spcommons.vectorCover;
-    // delete spcommons.qualification;
-    // delete spcommons.company;
-    // delete spcommons.amount;
-    // delete spcommons.companylocation;
-    // delete spcommons.turnover;
-    // delete spcommons.nooldcard;
-    // delete spcommons.existingcard;
-    // delete spcommons.loan_property_city;
-    // delete spcommons.rcbook;
-    // delete spcommons.model;
-    // delete spcommons.car_brand;
-    // delete spcommons.car_value;
-    // delete spcommons.floaterItemList;
-
     // if (spcommons.pancardNo !== '') {
     //    else {
     for (var keys in spcommons) {
       const value = spcommons[keys];
-      if (value !== undefined) {
-        formData.append(keys, spcommons[keys]);
+      if (Helper.arrayObjCheck(value, true)) {
+        formData.append(key, value);
       }
     }
 
@@ -434,28 +365,25 @@ export default class ProfileScreen extends React.PureComponent {
 
     let bankformCommons = this.state.dataArray[2];
 
-    //console.log('bankformCommons', bankformCommons)
-
     for (var keys in bankformCommons) {
       const value = bankformCommons[keys];
-      if (value !== undefined) {
-        formData.append(keys, bankformCommons[keys]);
+      if (Helper.arrayObjCheck(value, true)) {
+        formData.append(key, value);
       }
     }
 
     let fcommons = JSON.parse(
       JSON.stringify(this.FileUploadFormRef.current.state),
     );
+
     let filex = fcommons.fileList;
     if (filex !== undefined && filex !== null && filex.length > 0) {
       const loops = Lodash.map(filex, (ele) => {
         let parseJs = JSON.parse(JSON.stringify(ele));
         for (var key in parseJs) {
           const value = parseJs[key];
-          if (value !== undefined) {
-            if (Array.isArray(value) === false) {
-              formData.append(key, parseJs[key]);
-            }
+          if (Helper.arrayObjCheck(value, true)) {
+            formData.append(key, value);
           }
         }
       });
@@ -466,6 +394,7 @@ export default class ProfileScreen extends React.PureComponent {
     } else if (fileName !== '') {
       formData.append('user_prof', fileName);
     }
+
     //console.log(`formData`, formData, token);
 
     if (checkData) {
@@ -476,7 +405,7 @@ export default class ProfileScreen extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          //console.log(`result`, result);
+          console.log(`result`, result);
           const { data, response_header } = result;
           const { res_type } = response_header;
           this.setState({ loading: false });
@@ -493,13 +422,12 @@ export default class ProfileScreen extends React.PureComponent {
               blue: 'Back to main menu',
               profilerefresh: 1
             });
-            //this.updateData(data[0]);
           } else {
             Helper.showToastMessage('Failed to update profile', 0);
           }
         },
         (e) => {
-          //console.log(`error`, e);
+          console.log(`error`, e);
           this.setState({ loading: false });
         },
       );

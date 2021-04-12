@@ -6,12 +6,12 @@ import * as Helper from '../../../util/Helper';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import * as Pref from '../../../util/Pref';
 import CScreen from '../../component/CScreen';
-import Lodash from 'lodash';
+import Lodash, { result } from 'lodash';
 import {sizeHeight} from '../../../util/Size';
 import moment from 'moment';
 import {disableOffline} from '../../../util/DialerFeature';
 import {firebase} from '@react-native-firebase/firestore';
-import {Pattern} from 'react-native-svg';
+import ListError from '../../common/ListError';
 
 export default class TlLiveTracker extends React.PureComponent {
   constructor(props) {
@@ -46,16 +46,17 @@ export default class TlLiveTracker extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          console.log('result', result);
+          //console.log('result', result);
           const {data, status} = result;
           if (status) {
             const teamUserList = [];
             Lodash.map(data, (io) => {
-              const {team, teamdata} = io;
+              const {team,tl, teamdata} = io;
               //console.log('io', io);
               if (teamdata.length > 0) {
                 teamdata.map((iz, index) => {
                   iz.teamName = team;
+                  iz.tl = tl;
                   teamUserList.push(iz);
                 });
               }
@@ -109,14 +110,29 @@ export default class TlLiveTracker extends React.PureComponent {
           Helper.nullStringCheck(checkout)
         ) {
           userData.type = 'Check In';
-          userData.livedata = checkin;
+          const spl = checkin.split(':');
+          const dateobj = new Date();
+          dateobj.setHours(Number(spl[0]));
+          dateobj.setMinutes(Number(spl[1]));
+          dateobj.setSeconds(Number(spl[2]));
+          const formatTime = moment(dateobj).format('hh:mm a');
+          userData.livedata = formatTime;
+          //checkin;
           trackChanges = true;
         } else if (
           Helper.nullStringCheck(checkin) === false &&
           Helper.nullStringCheck(checkout) === false
         ) {
           userData.type = 'Check Out';
-          userData.livedata = checkout;
+
+          const spl = checkout.split(':');
+          const dateobj = new Date();
+          dateobj.setHours(Number(spl[0]));
+          dateobj.setMinutes(Number(spl[1]));
+          dateobj.setSeconds(Number(spl[2]));
+          const formatTime = moment(dateobj).format('hh:mm a');
+          userData.livedata = formatTime;
+          //checkout;
           trackChanges = true;
         }
         if (Helper.nullCheck(idle) === false && idle.length > 0) {
@@ -136,9 +152,42 @@ export default class TlLiveTracker extends React.PureComponent {
           userData.isBreak = 'Break';
         }
         if (trackChanges) {
+          userData.isdata = false;
           teamUserList[findUserIndex] = userData;
-          console.log(teamUserList);
-          this.setState({dataList: teamUserList}, () => this.forceUpdate());
+
+          const startDate = moment().subtract(15, 'minute').format('DD-MM-YYYY HH:mm');
+          const endDate = moment().add(15, 'minute').format('DD-MM-YYYY HH:mm');
+
+          const jBody = JSON.stringify({teamid:userData.tl,userid:userData.id,date:`${startDate}:00`,tname:userData.teamName,endate:`${endDate}:00`});
+
+          //console.log('jBody', jBody);
+
+          Helper.networkHelperTokenPost(Pref.DIALER_LIVE_TRACK_DATA,jBody, Pref.methodPost,this.state.token, result =>{
+            const {status, data} = result;
+
+            const cloneObj = JSON.parse(JSON.stringify(userData));
+            cloneObj.isdata = status;
+            
+            if(status && data.length > 0){
+              const {call_duration,name, mobile,product, tracking_type_detail} = data[0];  
+              
+              cloneObj.status = tracking_type_detail;
+              cloneObj.name = name;
+              cloneObj.custnumber = mobile;
+              cloneObj.product = product;
+              cloneObj.dur = `${call_duration}sec`;
+
+              teamUserList.push(cloneObj);
+            }
+
+            //console.log('teamUserList', teamUserList);
+
+            this.setState({dataList: teamUserList}, () => this.forceUpdate()); 
+
+          }, error =>{
+            this.setState({dataList: teamUserList}, () => this.forceUpdate()); 
+          })
+
         }
       }
     }
@@ -164,7 +213,7 @@ export default class TlLiveTracker extends React.PureComponent {
     console.log(rowData.type);
     return (
       <View styleName="horizontal v-center" style={styles.mainTcontainer}>
-        <View style={{flex: 0.18}}>
+        <View style={{flex: 0.17, marginStart: 4}}>
           <View style={styles.leftcircle}>
             <Title style={styles.firstWord}>
               {rowData.username !== ''
@@ -175,100 +224,161 @@ export default class TlLiveTracker extends React.PureComponent {
         </View>
         <View
           styleName="vertical"
-          style={{flex: 0.82, flexDirection: 'column'}}>
-          <Subtitle style={{fontSize: 13, color: '#292929'}}>
-            {`${rowData.teamName}`}
-          </Subtitle>
-          <Title style={styles.timelinetitle}>{rowData.username}</Title>
-          <View styleName="horizontal" style={{flex: 1, flexDirection: 'row'}}>
+          style={{flex: 0.83, flexDirection: 'column'}}>
+          <View styleName="horizontal v-center">
+            <Subtitle style={{fontSize: 13, color: '#555555'}}>
+              {`${rowData.teamName}`}
+            </Subtitle>
             <View
-              style={{
-                flex: 0.4,
-              }}>
-              <Title style={styles.tlphone}>{rowData.mobile}</Title>
-            </View>
-            <View
-              style={{
-                flex: 0.3,
-              }}>
-              <Subtitle
-                style={{
-                  fontSize: 14,
-                  color:
-                    rowData.type === 'Idle'
-                      ? '#0270e3'
-                      : rowData.type === 'Check In'
-                      ? 'green'
-                      : Pref.RED,
-                  alignSelf: 'center',
-                  fontWeight: '700',
-                }}>
-                {rowData.type}
-              </Subtitle>
-            </View>
-            <View
-              style={{
-                flex: 0.3,
-              }}>
-              <Subtitle
-                style={{
-                  fontSize: 14,
-                  color: '#292929',
-                  alignSelf: 'center',
-                  fontWeight: '700',
-                }}>
-                {rowData.livedata}
-              </Subtitle>
-            </View>
+              style={StyleSheet.flatten([
+                styles.dividercircle,
+                {
+                  marginHorizontal: 16,
+                },
+              ])}></View>
+            <Subtitle style={{fontSize: 13, color: '#555555'}}>
+              {rowData.mobile}
+            </Subtitle>
           </View>
-          <View
-            styleName="horizontal"
-            style={{flex: 1, marginTop: 4, flexDirection: 'row'}}>
-            {rowData.idle !== '' ? (
-              <View
-                style={{
-                  flex: 0.5,
-                }}>
-                <Subtitle
-                  style={{
-                    fontSize: 14,
-                    color: '#0270e3',
-                    fontWeight: '700',
-                  }}>
-                  {'Idle    '}
+          <Title style={styles.timelinetitle}>{rowData.username}</Title>
+          {rowData.isdata ? (
+            <View>
+              <View style={{height:1,backgroundColor:'#ecebec', marginVertical:2}} />
+              <View styleName="horizontal v-center" style={{flex: 10, marginTop:4}}>
+                <View styleName="horizontal v-center " style={{flex: 6}}>
                   <Subtitle
                     style={{
                       fontSize: 14,
-                      color: '#292929',
-                      fontWeight: '700',
+                      color: '#555555',
                     }}>
-                    {rowData.idle}
+                    {rowData.name}
                   </Subtitle>
-                </Subtitle>
+                </View>
+                <View
+                  styleName="horizontal v-center h-center"
+                  style={{flex: 4}}>
+                  <View
+                    style={StyleSheet.flatten([styles.dividercircle])}></View>
+
+                  <Subtitle
+                    style={{
+                      fontSize: 14,
+                      color: '#555555',
+                      marginStart: 10,
+                    }}>
+                    {rowData.custnumber}
+                  </Subtitle>
+                </View>
               </View>
-            ) : null}
-            <View
-              style={{
-                flex: 0.5,
-              }}>
-              <Subtitle
-                style={{
-                  fontSize: 14,
-                  color: Pref.CARROT_ORANGE,
-                  fontWeight: '700',
-                }}>
-                {`${rowData.isBreak}    `}
+              <View styleName="horizontal v-center" style={{flex: 12}}>
+                <View styleName="horizontal v-center " style={{flex: 4}}>
+                  <Subtitle
+                    style={{
+                      fontSize: 14,
+                      color: '#555555',
+                    }}>
+                    {rowData.status}
+                  </Subtitle>
+                </View>
+                <View
+                  styleName="horizontal v-center h-center"
+                  style={{flex: 4}}>
+                  <View
+                    style={StyleSheet.flatten([styles.dividercircle])}></View>
+
+                  <Subtitle
+                    style={{
+                      fontSize: 14,
+                      color: '#555555',
+                      marginStart: 10,
+                    }}>
+                    {rowData.product}
+                  </Subtitle>
+                </View>
+                <View
+                  styleName="horizontal v-center  h-center"
+                  style={{flex: 4}}>
+                  <View
+                    style={StyleSheet.flatten([styles.dividercircle])}></View>
+                  <Subtitle
+                    style={{
+                      fontSize: 14,
+                      color: '#555555',
+                      marginStart: 10,
+                    }}>
+                    {rowData.dur}
+                  </Subtitle>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View styleName="horizontal v-center" style={{flex: 12}}>
+              <View styleName="horizontal v-center " style={{flex: 4}}>
+                <View
+                  style={StyleSheet.flatten([
+                    styles.dividercircle,
+                    {
+                      backgroundColor:
+                        rowData.type === 'Check In' ? '#1bd741' : Pref.RED,
+                    },
+                  ])}></View>
                 <Subtitle
                   style={{
                     fontSize: 14,
-                    color: '#292929',
+                    color: '#555555',
                     fontWeight: '700',
+                    marginStart: 10,
                   }}>
-                  {rowData.break}
+                  {rowData.livedata}
                 </Subtitle>
-              </Subtitle>
+              </View>
+              <View styleName="horizontal v-center h-center" style={{flex: 4}}>
+                {Helper.nullStringCheck(rowData.idle) === false ? (
+                  <>
+                    <View
+                      style={StyleSheet.flatten([
+                        styles.dividercircle,
+                        {
+                          backgroundColor: '#0270e3',
+                        },
+                      ])}></View>
+
+                    <Subtitle
+                      style={{
+                        fontSize: 14,
+                        color: '#555555',
+                        fontWeight: '700',
+                        marginStart: 10,
+                      }}>
+                      {rowData.idle}
+                    </Subtitle>
+                  </>
+                ) : null}
+              </View>
+              <View styleName="horizontal v-center  h-center" style={{flex: 4}}>
+                {Helper.nullStringCheck(rowData.break) === false ? (
+                  <>
+                    <View
+                      style={StyleSheet.flatten([
+                        styles.dividercircle,
+                        {
+                          backgroundColor: Pref.CARROT_ORANGE,
+                        },
+                      ])}></View>
+                    <Subtitle
+                      style={{
+                        fontSize: 14,
+                        color: '#555555',
+                        fontWeight: '700',
+                        marginStart: 10,
+                      }}>
+                      {rowData.break}
+                    </Subtitle>
+                  </>
+                ) : null}
+              </View>
             </View>
-          </View>
+          )}
         </View>
       </View>
     );
@@ -293,8 +403,8 @@ export default class TlLiveTracker extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-              <View style={styles.loader}>
-                <ActivityIndicator color={Pref.RED} />
+              <View style={styles.emptycont}>
+                <ListError subtitle={'Loading...'} />
               </View>
             )}
           </View>
@@ -305,6 +415,12 @@ export default class TlLiveTracker extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  dividercircle: {
+    backgroundColor: '#ecebec',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   firstWord: {
     alignSelf: 'center',
     color: 'white',
@@ -318,10 +434,10 @@ const styles = StyleSheet.create({
     paddingVertical: 100,
   },
   leftcircle: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     backgroundColor: Pref.RED,
-    borderRadius: 42 / 2,
+    borderRadius: 40 / 2,
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -347,9 +463,10 @@ const styles = StyleSheet.create({
     height: 40,
   },
   timelinetitle: {
-    color: '#292929',
-    fontSize: 15,
+    color: '#555555',
+    fontSize: 14,
     fontWeight: '700',
+    paddingBottom: 4,
   },
   tlphone: {
     color: '#313131',
@@ -377,12 +494,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   emptycont: {
-    flex: 0.7,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
     marginVertical: 48,
-    paddingVertical: 56,
+    paddingVertical: 100,
   },
   loader: {
     justifyContent: 'center',

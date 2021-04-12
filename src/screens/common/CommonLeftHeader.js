@@ -15,6 +15,7 @@ import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import {stopService,stopIdleService } from '../../util/DialerFeature';
 
 const LeftHeaders = props => {
   const {
@@ -85,6 +86,8 @@ const LeftHeaders = props => {
       {
         text: 'Ok',
         onPress: () => {
+          stopService();
+          stopIdleService();
           Pref.setVal(Pref.MENU_LIST, null);
           Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
           Pref.setVal(Pref.DIALER_DATA, null);
