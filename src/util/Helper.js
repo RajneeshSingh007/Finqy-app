@@ -101,7 +101,7 @@ export const requestPermissions = async () => {
  * Ask permission on android for dialer
  * @returns {Promise<void>}
  */
-export const requestPermissionsDialer = async () => {
+export const requestPermissionsDialer = async() => {
   try {
     if (Platform.OS === 'android') {
       const value = await PermissionsAndroid.requestMultiple([
@@ -109,36 +109,15 @@ export const requestPermissionsDialer = async () => {
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
         PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
         PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        PermissionsAndroid.PERMISSIONS.WRITE_CALL_LOG,
-        'android.permission.PROCESS_OUTGOING_CALLS',
-        'android.permission.ANSWER_PHONE_CALLS',
-        'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'
-      ]).then((result) => {
-        if (
-          result['android.permission.CALL_PHONE'] === 'granted'
-          &&
-          result['android.permission.READ_CONTACTS'] === 'granted'
-          &&
-          result['android.permission.WRITE_CONTACTS'] === 'granted'
-          &&
-          result['android.permission.READ_CALL_LOG'] === 'granted'
-          &&
-          result['android.permission.WRITE_CALL_LOG'] === 'granted'
-          // &&
-          // result['android.permission.PROCESS_OUTGOING_CALLS'] === 'granted'
-          // &&
-          // result['android.permission.ANSWER_PHONE_CALLS'] === 'granted'
-          // &&
-          // result['android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'] === 'granted'
-        ) {
-          //granted
-        }
-      });
+        //PermissionsAndroid.PERMISSIONS.WRITE_CALL_LOG
+        // 'android.permission.PROCESS_OUTGOING_CALLS',
+        // 'android.permission.ANSWER_PHONE_CALLS',
+        // 'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'
+      ]);
       return value;
     }else{
     }
   } catch (err) {
-    console.warn(err);
   }
 };
 

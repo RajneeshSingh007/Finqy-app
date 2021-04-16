@@ -90,7 +90,7 @@ export default class TcPerformance extends React.PureComponent {
             const patternRegex = new RegExp(docpath.slice(-8));
             const userID = Number(docpath.replace(patternRegex.source, ''));
             if(Number(userID) === Number(id)){
-              const {checkout, idle} = item.data();
+              const {idle} = item.data();
               if (Helper.nullCheck(idle) === false && idle.length > 0) {
                 totalIdleTime += idle.length;
               }

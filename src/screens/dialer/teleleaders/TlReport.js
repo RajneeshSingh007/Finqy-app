@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, BackHandler, TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {ActivityIndicator, Searchbar, List} from 'react-native-paper';
+import {ActivityIndicator, Searchbar} from 'react-native-paper';
 import {sizeHeight} from '../../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
@@ -12,24 +12,28 @@ import CommonTable from '../../common/CommonTable';
 import RNFetchBlob from 'rn-fetch-blob';
 import IconChooser from '../../common/IconChooser';
 import CScreen from './../../component/CScreen';
-import NavigationActions from '../../../util/NavigationActions';
-import Download from '../../component/Download';
-import moment from 'moment';
 import PaginationNumbers from '../../component/PaginationNumbers';
 
 const ITEM_LIMIT = 10;
+let FILEPATH = `${RNFetchBlob.fs.dirs.DownloadDir}/`;
 
 export default class TlReport extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.rowClicked = this.rowClicked.bind(this);
     this.state = {
       dataList: [],
       loading: false,
       token: '',
       userData: '',
-      tableHead: ['Sr. No.', 'Name', 'Mobile', 'Refercode', 'View'],
-      widthArr: [60, 140, 100, 100, 80],
+      tableHead: [
+        'Sr. No.',
+        'Team Name',
+        'Customer Report',
+        'Follow-up Report',
+        'Efficiency Report',
+        'Performance Report',
+      ],
+      widthArr: [60, 140, 100, 100, 100, 100],
       cloneList: [],
       type: '',
       itemSize: 10,
@@ -47,16 +51,16 @@ export default class TlReport extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.DIALER_DATA, userData => {
-        this.setState({userData: userData});
-        Pref.getVal(Pref.saveToken, value => {
-          this.setState({token: value}, () => {
-            this.fetchData();
-          });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.DIALER_DATA, (userData) => {
+      this.setState({userData: userData});
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({token: value}, () => {
+          this.fetchData();
         });
       });
     });
+    //});
   }
 
   componentWillUnMount() {
@@ -73,25 +77,23 @@ export default class TlReport extends React.PureComponent {
       teamid: id,
     });
     Helper.networkHelperTokenPost(
-      Pref.DIALER_TL_TEAMS,
+      Pref.DIALER_TL_TEAM_REPORT,
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
-        //console.log('result',result);
+      (result) => {
         const {data, status} = result;
         if (status) {
           if (data.length > 0) {
-            //const {itemSize} = this.state;
+            const {itemSize} = this.state;
             this.setState({
               cloneList: data,
-              dataList: data,
-              // this.returnData(data, 0, data.length).slice(
-              //   0,
-              //   itemSize,
-              // ),
+              dataList: this.returnData(data, 0, data.length).slice(
+                0,
+                itemSize,
+              ),
               loading: false,
-              //itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
+              itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
             this.setState({
@@ -102,10 +104,58 @@ export default class TlReport extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      e => {
+      (e) => {
         this.setState({loading: false});
       },
     );
+  };
+
+  exportExcel = (item, type) => {
+    const {report,team} = item;
+    const {all, ef, follow, perf} = report;
+    let fileName = '';
+    let dataList = [];
+    let excelHeader = '';
+    let teamName = String(team).replace(/\s/g,'_');
+    if (type === 0) {
+      fileName = `${teamName}_Customer_Report`;
+      dataList = all.data;
+      excelHeader = all.head + '\n';
+    } else if (type === 1) {
+      fileName = `${teamName}_Followup_Report`;
+      dataList = follow.data;
+      excelHeader = follow.head + '\n';
+    } else if (type === 2) {
+      fileName = `${teamName}_Efficiency_Report`;
+      dataList = ef.data;
+      excelHeader = ef.head + '\n';
+    } else if (type === 3) {
+      fileName = `${teamName}_Performance_Report`;
+      dataList = perf.data;
+      excelHeader = perf.head + '\n';
+    }
+
+    const parseList = JSON.parse(JSON.stringify(dataList));
+
+    if (parseList.length > 0) {
+      const finalFilePath = `${FILEPATH}${fileName}.csv`;
+
+      Helper.writeCSV(excelHeader, parseList, finalFilePath, (result) => {
+        if (result) {
+          RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
+            RNFetchBlob.android.addCompleteDownload({
+              title: name,
+              description: 'Record exported successfully',
+              mime: 'text/comma-separated-values',
+              path: finalFilePath,
+              showNotification: true,
+            }),
+            Helper.showToastMessage('Download Complete', 1);
+        }
+      });
+    } else {
+      Helper.showToastMessage('No data found...', 0);
+    }
   };
 
   /**
@@ -121,26 +171,26 @@ export default class TlReport extends React.PureComponent {
           if (Helper.nullCheck(item) === false) {
             const rowData = [];
             rowData.push(`${Number(i + 1)}`);
-            rowData.push(item.username);
-            rowData.push(item.mobile);
-            rowData.push(item.refercode);
-            const leadView = (value, tlObject) => (
+            rowData.push(item.team);
+            const downloadView = (value, type) => (
               <TouchableWithoutFeedback
-                onPress={() => this.rowClicked(value, tlObject)}>
-                <View>
-                  <Title
+                onPress={() => this.exportExcel(value, type)}>
+                <View style={{}}>
+                  <IconChooser
+                    name={'download'}
+                    size={18}
+                    color={'#555555'}
                     style={{
                       textAlign: 'center',
-                      fontWeight: '400',
-                      color: '#0270e3',
-                      fontSize: 15,
-                    }}>
-                    {`View`}
-                  </Title>
+                    }}
+                  />
                 </View>
               </TouchableWithoutFeedback>
             );
-            rowData.push(leadView(item, tlObject));
+            rowData.push(downloadView(item, 0));
+            rowData.push(downloadView(item, 1));
+            rowData.push(downloadView(item, 2));
+            rowData.push(downloadView(item, 3));
             dataList.push(rowData);
           }
         }
@@ -149,23 +199,15 @@ export default class TlReport extends React.PureComponent {
     return dataList;
   };
 
-  onChangeSearch = query => {
+  onChangeSearch = (query) => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, it => {
+      const result = Lodash.filter(clone, (it) => {
         const {team} = it;
-        return (
-          team &&
-          team
-            .trim()
-            .toLowerCase()
-            .includes(trimquery)
-        );
+        return team && team.trim().toLowerCase().includes(trimquery);
       });
       const data =
         result.length > 0 ? this.returnData(result, 0, result.length) : [];
@@ -185,20 +227,6 @@ export default class TlReport extends React.PureComponent {
     this.setState({searchQuery: '', enableSearch: !enableSearch, itemSize: 10});
   };
 
-  rowClicked = (item, tlObject) => {
-    const {tl, tname} = tlObject;
-    const sp = String(tname).split('&');
-    const data = [
-      sp[2],
-      item.username,
-      item.mobile,
-      item.email,
-      item.refercode,
-      Number(item.id),
-    ];
-    NavigationActions.navigate('MemberReport', {data: data, tlID: Number(tl),currentId:item.id, tname:tname});
-  };
-
   pageNumberClicked = (start, end) => {
     const {cloneList} = this.state;
     const clone = JSON.parse(JSON.stringify(cloneList));
@@ -207,24 +235,6 @@ export default class TlReport extends React.PureComponent {
       dataList: data,
       itemSize: end,
     });
-  };
-
-  renderTeamData = (item, dataList) => {
-    return (
-      <List.Accordion
-        title={item.team}
-        description={`${item.totalm} Members`}
-        titleStyle={styles.accordTitle}
-        style={styles.accordStyle}>
-        <CommonTable
-          enableHeight={false}
-          dataList={dataList}
-          widthArr={this.state.widthArr}
-          tableHead={this.state.tableHead}
-          //rowClicked={this.rowClicked}
-        />
-      </List.Accordion>
-    );
   };
 
   render() {
@@ -249,22 +259,22 @@ export default class TlReport extends React.PureComponent {
               }
             />
 
-            {/* <View styleName="horizontal md-gutter space-between">
+            <View styleName="horizontal md-gutter space-between">
               <PaginationNumbers
                 dataSize={this.state.cloneList.length}
                 itemSize={this.state.itemSize}
                 itemLimit={ITEM_LIMIT}
                 pageNumberClicked={this.pageNumberClicked}
               />
-              <TouchableWithoutFeedback onPress={this.revertBack}>
+              {/* <TouchableWithoutFeedback onPress={this.revertBack}> */}
                 <View styleName="horizontal v-center h-center">
-                  <IconChooser
-                    name={enableSearch ? 'x' : 'search'}
+                  {/* <IconChooser
+                    name={enableSearch ? 'x' : 'filter'}
                     size={24}
                     color={'#555555'}
-                  />
+                  /> */}
                 </View>
-              </TouchableWithoutFeedback>
+              {/* </TouchableWithoutFeedback> */}
             </View>
 
             {enableSearch === true ? (
@@ -282,33 +292,33 @@ export default class TlReport extends React.PureComponent {
                   clearIcon={() => null}
                 />
               </View>
-            ) : null} */}
+            ) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
-            ) : this.state.dataList.length > 0 ? (
-              <View style={{flex:1}}>
-                {dataList.map(io => {
-                  return this.renderTeamData(
-                    io,
-                    this.returnData(io.teamdata, 0, io.teamdata.length, io),
-                  );
-                })}
+            ) : dataList.length > 0 ? (
+              <View style={{flex: 1}}>
+                <CommonTable
+                  enableHeight={false}
+                  dataList={dataList}
+                  widthArr={this.state.widthArr}
+                  tableHead={this.state.tableHead}
+                />
               </View>
             ) : (
               <View style={styles.emptycont}>
                 <ListError subtitle={'No Teams Found...'} />
               </View>
             )}
-            {/* {this.state.dataList.length > 0 ? (
+            {this.state.dataList.length > 0 ? (
               <>
                 <Title style={styles.itemtext}>{`Showing ${
                   this.state.itemSize
                 }/${Number(this.state.cloneList.length)} entries`}</Title>
               </>
-            ) : null} */}
+            ) : null}
           </>
         }
       />
@@ -317,6 +327,19 @@ export default class TlReport extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  circle: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+    borderRadius: 36 / 2,
+    //borderColor: '#4a4949',
+    //borderStyle: 'solid',
+    //borderWidth: 3,
+    backgroundColor: Pref.RED,
+  },
   accordStyle: {
     backgroundColor: '#fff',
     borderColor: '#bcbaa1',

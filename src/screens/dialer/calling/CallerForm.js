@@ -23,7 +23,12 @@ import Icon from 'react-native-vector-icons/Feather';
 import IconChooser from '../../common/IconChooser';
 import ModalDialog from '../../component/ModalDialog';
 import {firebase} from '@react-native-firebase/firestore';
-import {serverClientDateCheck} from '../../../util/DialerFeature';
+import {
+  disableOffline,
+  serverClientDateCheck,
+  enableIdleService,
+  stopIdleService
+} from '../../../util/DialerFeature';
 
 let trackTypeList = [
   {
@@ -140,12 +145,9 @@ export default class CallerForm extends React.PureComponent {
 
     //console.log('customerItem',customerItem)
 
-    Helper.networkHelperGet(
-      Pref.SERVER_DATE_TIME,
-      (datetime) => {
-        this.serverDateTime = serverClientDateCheck(datetime, false);
-      }
-    );
+    Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
+      this.serverDateTime = serverClientDateCheck(datetime, false);
+    });
 
     const {
       mobile = '',
@@ -283,6 +285,7 @@ export default class CallerForm extends React.PureComponent {
   };
 
   formSubmit = () => {
+    //stopIdleService();
     const {
       customerItem,
       token,
@@ -364,7 +367,7 @@ export default class CallerForm extends React.PureComponent {
     if (checkData && clickedBtn == 0) {
       this.setState({clickedBtn: 1});
       this.props.startLoader(true, -1);
-      
+
       let body = JSON.parse(JSON.stringify(this.state));
       delete body.showContactDialog;
       delete body.showNonContactDialog;
@@ -432,37 +435,20 @@ export default class CallerForm extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          //console.log('result', result);
-          const {status, message, savedtime} = result;
+          const {status, message, id} = result;
           if (status == true) {
             Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, '');
-            // if(this.serverDateTime.length > 0){
-            //   firebase
-            //   .firestore()
-            //   .collection(Pref.COLLECTION_CHECKIN)
-            //   .doc(`${user_id}${this.serverDateTime[2]}`)
-            //   .get()
-            //   .then((result) => {
-            //     if (result.exists) {
-            //       const data = result.data();
-            //       if (data) {
-            //         const {checkin,idle} = data;
-            //         let idletimeList = [];
-            //         if(Helper.nullCheck(data.idletime) === false){
-            //           idletimeList = data.idletime;
-            //         }else{
-            //           //const calculateTimeInMinutes = 
-            //           idletimeList = [];
-            //         }
-            //         firebase
-            //         .firestore()
-            //         .collection(Pref.COLLECTION_CHECKIN)
-            //         .doc(`${user_id}${this.serverDateTime[2]}`)
-            //         .set({idle:[savedtime]}, {merge:true});  
-            //       }
-            //     }
-            //   });         
-            // }
+            if (this.serverDateTime.length > 0) {
+              //enableIdleService(`${user_id}${this.serverDateTime[2]}`);
+              if (Helper.nullStringCheck(id) === false) {
+                disableOffline();
+                firebase
+                  .firestore()
+                  .collection(Pref.COLLECTION_CHECKIN)
+                  .doc(`${user_id}${this.serverDateTime[2]}`)
+                  .set({lead: Number(id)}, {merge: true});
+              }
+            }
 
             if (leadConfirm === 1) {
               //navigate to finorbit form

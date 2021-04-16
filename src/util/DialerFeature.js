@@ -1,5 +1,5 @@
 import * as Helper from './Helper';
-import {Alert} from 'react-native';
+import {Alert, BackHandler} from 'react-native';
 import FinproCallModule from '../../FinproCallModule';
 import * as Pref from './Pref';
 import moment from 'moment';
@@ -13,25 +13,32 @@ export const enableCallModule = (startService = false) => {
   Pref.getVal(Pref.DIALER_DATA, data => {                 
     if(Helper.nullCheck(data) === false){
       if (data.length > 0 && Helper.nullCheck(data[0].tc) === false) {
-        FinproCallModule.askPermission().then(result => {
-          if (result === true) {
-            dialerPermissionAndServiceStart(startService);
-          } else {
+        Helper.requestPermissionsDialer()
+          .then(permissionResult =>{
+          if(permissionResult['android.permission.CALL_PHONE'] === 'granted'
+          &&
+          permissionResult['android.permission.READ_CONTACTS'] === 'granted'
+          &&
+          permissionResult['android.permission.WRITE_CONTACTS'] === 'granted'
+          &&
+          permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
+          //&&
+          //permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
+          ){
+            FinproCallModule.askPermission().then(result => {
+              FinproCallModule.requestCallsPermission().then(op => {});
+            });
+          }else{
             Alert.alert(
-              'Permission Required',
-              'We need overlay permission\nPlease, Grant permission from setting.',
+              'Permissions Denied',
+              'Please, Grant Call Log, Phone, Contact permissions from setting',
               [
                 {
-                  text: 'DECLINE',
+                  text: 'ok',
                   onPress:() =>{
-                    
+                    BackHandler.exitApp();
                   }
-                },
-                {
-                  text: 'GRANT',
-                  onPress: () => dialerPermissionAndServiceStart(startService),
-                },
-              ],
+                }],
             );
           }
         });
@@ -41,56 +48,17 @@ export const enableCallModule = (startService = false) => {
 };
 
 /**
- * ask permission and enable service
- */
-export const dialerPermissionAndServiceStart = (enableService) => {
-  FinproCallModule.requestCallsPermission().then(op => {
-    console.log('op', op);
-    if (op === 'success') {
-      Pref.setVal(Pref.DIALER_SERVICE_ENABLED, true);  
-    } else {
-      Alert.alert(
-        'Permission Required',
-        'Please, Grant CALL LOGS, PHONE CALL permissions',
-        [
-          {
-            text: 'DECLINE',
-          },
-          {
-            text: 'GRANT',
-            onPress: () => {
-              Helper.requestPermissionsDialer();
-            },
-          },
-        ],
-      );
-    }
-  });
-};
-
-/**
- * Stop service
+ * Stop bubble service
  */
 export const stopService = () => {
   FinproCallModule.stopService();
 };
 
 /**
- * Start service
- */
-export const startService = () =>{
-  FinproCallModule.startService();
-}
-
-/**
- * 
+ * Start bubble service
  */
 export const enableService = () =>{
-  Pref.getVal(Pref.DIALER_SERVICE_ENABLED, val =>{
-    if(Helper.nullCheck(val) === false){
-      startService();
-    }
-  })
+  FinproCallModule.startService();
 }
 
 /**
@@ -139,8 +107,12 @@ export const totalTimeinMinutes = (date, firstTime, secondTime) =>{
 }
 
 export const disableOffline = () =>{
-  firebase.firestore()
+  try{
+    firebase.firestore()
     .settings({persistence:false});
+  }catch(e){
+    //ignore
+  }
 }
 
 /**

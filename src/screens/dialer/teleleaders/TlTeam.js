@@ -16,6 +16,8 @@ import NavigationActions from '../../../util/NavigationActions';
 import Download from '../../component/Download';
 import moment from 'moment';
 import PaginationNumbers from '../../component/PaginationNumbers';
+import { disableOffline } from '../../../util/DialerFeature';
+import {firebase} from '@react-native-firebase/firestore';
 
 const ITEM_LIMIT = 10;
 
@@ -39,6 +41,7 @@ export default class TlTeam extends React.PureComponent {
       enableSearch: false,
       orderBy: 'asc',
       fileName: '',
+      leaderData:[]
     };
   }
 
@@ -48,14 +51,16 @@ export default class TlTeam extends React.PureComponent {
       this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.DIALER_DATA, userData => {
-        this.setState({userData: userData});
-        Pref.getVal(Pref.saveToken, value => {
-          this.setState({token: value}, () => {
-            this.fetchData();
+      Pref.getVal(Pref.userData, data =>{
+        Pref.getVal(Pref.DIALER_DATA, userData => {
+          this.setState({userData: userData, leaderData:data});
+          Pref.getVal(Pref.saveToken, value => {
+            this.setState({token: value}, () => {
+              this.fetchData();
+            });
           });
         });
-      });
+      })
     });
   }
 
@@ -67,45 +72,71 @@ export default class TlTeam extends React.PureComponent {
 
   fetchData = () => {
     this.setState({loading: true});
-    const {userData} = this.state;
+    disableOffline();
+    const {userData,leaderData} = this.state;
+    const {leader} = leaderData;
     const {id} = userData[0].tl;
-    const body = JSON.stringify({
-      teamid: id,
-    });
-    Helper.networkHelperTokenPost(
-      Pref.DIALER_TL_TEAMS,
-      body,
-      Pref.methodPost,
-      this.state.token,
-      result => {
-        //console.log('result',result);
-        const {data, status} = result;
-        if (status) {
-          if (data.length > 0) {
-            //const {itemSize} = this.state;
-            this.setState({
-              cloneList: data,
-              dataList: data,
-              // this.returnData(data, 0, data.length).slice(
-              //   0,
-              //   itemSize,
-              // ),
-              loading: false,
-              //itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
-            });
-          } else {
-            this.setState({
-              loading: false,
-            });
-          }
-        } else {
-          this.setState({loading: false});
-        }
-      },
-      e => {
+    firebase.firestore()
+    .collection(Pref.COLLECTION_PARENT)
+    .doc(leader[0].id)
+    .get()
+    .then(firestoredata =>{
+      if(firestoredata.exists){
+        const {teamlist} = firestoredata.data();
+        //console.log('teamlist', teamlist);
+        teamlist.map( io =>{
+          const {tllist, name, memberlist} = io;
+          tllist.map(item =>{
+            if(Number(item.id) === Number(id)){
+              //console.log('item', io);
+              const body = JSON.stringify({
+                tlid: item.id,
+                tname:name,
+                idlist:memberlist.map(io => io.id)
+              });
+              Helper.networkHelperTokenPost(
+                Pref.DILAER_TL_TEAM_MEMBERS,
+                body,
+                Pref.methodPost,
+                this.state.token,
+                result => {
+                  //console.log('result',result);
+                  const {data, status} = result;
+                  if (status) {
+                    if (data.length > 0) {
+                      //const {itemSize} = this.state;
+                      this.setState({
+                        cloneList: data,
+                        dataList: data,
+                        // this.returnData(data, 0, data.length).slice(
+                        //   0,
+                        //   itemSize,
+                        // ),
+                        loading: false,
+                        //itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
+                      });
+                    } else {
+                      this.setState({
+                        loading: false,
+                      });
+                    }
+                  } else {
+                    this.setState({loading: false});
+                  }
+                },
+                e => {
+                  this.setState({loading: false});
+                },
+              );
+            }
+          })
+        })
+      }else{
         this.setState({loading: false});
-      },
-    );
+      }
+    }).catch(e =>{
+      this.setState({loading: false});
+    })
   };
 
   /**

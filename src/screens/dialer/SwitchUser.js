@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   BackHandler,
-  AppState
+  AppState,
 } from 'react-native';
 import * as Pref from '../../util/Pref';
 import * as Helper from '../../util/Helper';
@@ -19,7 +19,13 @@ import ListError from '../common/ListError';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import {firebase} from '@react-native-firebase/firestore';
-import { enableCallModule,serverClientDateCheck,enableIdleService,stopIdleService } from '../../util/DialerFeature';
+import {
+  enableCallModule,
+  serverClientDateCheck,
+  enableIdleService,
+  stopIdleService,
+  disableOffline,
+} from '../../util/DialerFeature';
 
 const TLDashboard = [
   {
@@ -43,13 +49,13 @@ const TLDashboard = [
     option: {},
     enabled: true,
   },
-  // {
-  //   name: 'Report',
-  //   image: require('../../res/images/dialer/report.png'),
-  //   click: 'TlReport',
-  //   option: {},
-  //   enabled: true,
-  // },
+  {
+    name: 'Report',
+    image: require('../../res/images/dialer/report.png'),
+    click: 'TlReport',
+    option: {},
+    enabled: true,
+  },
 ];
 
 const TCDashboard = [
@@ -99,6 +105,7 @@ const TCDashboard = [
     name: 'Performance',
     image: require('../../res/images/dialer/growth.png'),
     click: 'TcPerformance',
+    enabled: true,
     option: {},
   },
   {
@@ -120,6 +127,7 @@ const TCDashboard = [
     image: require('../../res/images/dialer/template.png'),
     click: 'TcTemplates',
     option: {},
+    enabled: true,
   },
 ];
 
@@ -154,7 +162,7 @@ export default class SwitchUser extends React.PureComponent {
     });
   }
 
-  _handleAppStateChange = (nextAppState) =>{
+  _handleAppStateChange = (nextAppState) => {
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
@@ -162,19 +170,21 @@ export default class SwitchUser extends React.PureComponent {
       this.checkdeviceDataSetup(false);
     }
     this.setState({appState: nextAppState});
-  }
+  };
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  checkdeviceDataSetup = (loading = true) =>{
+  checkdeviceDataSetup = (loading = true) => {
+    if (loading) {
+      enableCallModule(true);
+    }
     Helper.networkHelperGet(
       Pref.SERVER_DATE_TIME,
       (datetime) => {
         const checkClientServer = serverClientDateCheck(datetime, true);
         if (checkClientServer) {
-          enableCallModule(true);
           this.setState({progressLoader: false, loading: loading});
           Pref.getVal(Pref.USERTYPE, (type) => {
             if (type === 'team') {
@@ -238,7 +248,7 @@ export default class SwitchUser extends React.PureComponent {
         console.log('e', e);
       },
     );
-  }
+  };
 
   /**
    * follow check
@@ -268,33 +278,19 @@ export default class SwitchUser extends React.PureComponent {
     });
   };
 
+  /**
+   * item clicked
+   * @param {*} param0
+   * @param {*} index
+   */
   itemClicked = ({name, click, option, enabled}, index) => {
     if (enabled) {
-      const {dataList, tc, dialerData} = this.state;
-      if (name === 'Check In') {
-        Alert.alert('', 'Are you sure want to check in?', [
-          {
-            text: 'Yes',
-            onPress: () => {
-              this.checkincheckout(name, 'checkin', true);
-            },
-          },
-          {
-            text: 'No',
-          },
-        ]);
-      } else if (name === 'Check Out') {
-        Alert.alert('', 'Are you sure want to checkout?', [
-          {
-            text: 'Yes',
-            onPress: () => {
-              this.checkincheckout(name, 'checkout', false);
-            },
-          },
-          {
-            text: 'No',
-          },
-        ]);
+      if (name === 'Check In' || name == 'Check Out') {
+        this.checkincheckout(
+          name,
+          name == 'Check Out' ? 'checkout' : 'checkin',
+          name == 'Check Out' ? false : true,
+        );
       } else if (name === 'Break' || name === 'Resume') {
         this.breakResume(name, 'breaktime', false);
       } else {
@@ -316,6 +312,7 @@ export default class SwitchUser extends React.PureComponent {
    */
   setupfirebase = (id, date, showToast, message) => {
     const {cloneList} = this.state;
+    disableOffline();
     const docRef = firebase
       .firestore()
       .collection(Pref.COLLECTION_CHECKIN)
@@ -326,73 +323,70 @@ export default class SwitchUser extends React.PureComponent {
       .then((result) => {
         if (result.exists) {
           const data = result.data();
+          //console.log('datasetup', data);
           if (data) {
-            const {checkin, checkout, idle, breaktime} = data;
-            const checkinval = Helper.nullStringCheck(checkin);
-            const checkoutval = Helper.nullStringCheck(checkout);
+            const {breaktime, checkincheckout} = data;
             let evenoddcheck = false;
+            let evenoddcheckCheck = false;
+            let dataExist = false;
             if (breaktime && breaktime.length > 0) {
               evenoddcheck = Number(breaktime.length) % 2 === 0 ? false : true;
+              dataExist = true;
             }
-            const enableList = Lodash.map(cloneList, (io) => {
-              if (checkinval && checkoutval) {
-                io.enabled = io.name !== 'Check In' ? false : true;
-              } else if (checkinval === false && checkoutval) {
-                io.enabled = io.name !== 'Check In' ? true : false;
-              } else if (checkoutval === false && checkinval === false) {
-                io.enabled = io.name !== 'Check Out' ? false : true;
-              }
-              if (io.name === 'Break' || io.name === 'Resume') {
-                io.name = evenoddcheck ? 'Resume' : 'Break';
-              } else if (io.name === 'Check Out') {
-                io.name = checkoutval ? 'Check Out' : 'Check In';
-                io.enabled = true;
-              } else if (io.name === 'Check In') {
-                io.name =
-                  checkinval === false && checkoutval === false
-                    ? 'Check In'
-                    : checkinval
-                    ? 'Check In'
-                    : 'Check Out';
-                io.enabled = true;
-              } else if (
-                io.name === 'Call Records' ||
-                io.name === 'Call Logs' ||
-                io.name === 'Dashboard' ||
-                io.name === 'Templates' ||
-                io.name === 'Performance'
-              ) {
-                io.enabled = true;
-              }
-              // else if(io.name === 'Check In'){
-              //   io.name = checkinval === false ? 'Check Out' : 'Check In';
-              //   io.enabled = true;
-              // }
-              return io;
-            });
-            const findisResume = Lodash.find(
-              enableList,
-              (io) => io.name === 'Resume',
-            );
-            const findIsbreakFilter = Lodash.map(enableList, (io) => {
-              if (
-                io.name === 'Call Records' ||
-                io.name === 'Call Logs' ||
-                io.name === 'Dashboard' ||
-                io.name === 'Templates' ||
-                io.name === 'Performance'
-              ) {
-                io.enabled = true;
-              } else if (io.name === 'Check In' || io.name === 'Check Out') {
-                io.enabled = true;
-              } else if (findisResume && io.name !== 'Resume') {
-                io.enabled = false;
-              }
-              return io;
-            });
+            if (checkincheckout && checkincheckout.length > 0) {
+              evenoddcheckCheck =
+                Number(checkincheckout.length) % 2 === 0 ? false : true;
+              dataExist = true;
+            }
+            let filterList = [];
+            if (dataExist) {
+              filterList = Lodash.map(cloneList, (io) => {
+                if (io.name === 'Break' || io.name === 'Resume') {
+                  io.name = evenoddcheck ? 'Resume' : 'Break';
+                  io.enabled = evenoddcheckCheck ? true : false;
+                } else if (io.name === 'Check Out' || io.name === 'Check In') {
+                  io.name = evenoddcheckCheck ? 'Check Out' : 'Check In';
+                } else if (
+                  io.name === 'Start Calling' ||
+                  io.name === 'Follow-up'
+                ) {
+                  io.enabled = evenoddcheckCheck ? true : false;
+
+                  if (evenoddcheck == false && evenoddcheckCheck == false) {
+                    io.enabled = false;
+                  } else if (evenoddcheck) {
+                    io.enabled = false;
+                  }
+                }
+                return io;
+              });
+            } else {
+              filterList = cloneList;
+            }
+
+            // const findisResume = Lodash.find(
+            //   enableList,
+            //   (io) => io.name === 'Resume',
+            // );
+            // const findIsbreakFilter = Lodash.map(enableList, (io) => {
+            //   if (
+            //     io.name === 'Call Records' ||
+            //     io.name === 'Call Logs' ||
+            //     io.name === 'Dashboard' ||
+            //     io.name === 'Templates' ||
+            //     io.name === 'Performance'
+            //   ) {
+            //     io.enabled = true;
+            //   } else if (io.name === 'Check In' || io.name === 'Check Out') {
+            //     io.enabled = true;
+            //   } else if (findisResume && io.name !== 'Resume') {
+            //     io.enabled = false;
+            //   }
+            //   return io;
+            // });
             this.setState(
               {
-                dataList: findIsbreakFilter,
+                dataList: filterList,
                 loading: false,
                 progressLoader: false,
               },
@@ -405,8 +399,9 @@ export default class SwitchUser extends React.PureComponent {
           }
         } else {
           docRef.set({
-            checkin: '',
-            checkout: '',
+            checkincheckout: [],
+            checkin: [],
+            checkout: [],
             breaktime: [],
             idle: [],
           });
@@ -433,89 +428,139 @@ export default class SwitchUser extends React.PureComponent {
     if (tc) {
       const {id, tlid, pname} = dialerData[0].tc;
       this.setState({progressLoader: true});
+      //server date time call
       Helper.networkHelperGet(
         Pref.SERVER_DATE_TIME,
         (datetime) => {
-          const checkClientServer = serverClientDateCheck(datetime,false);
-          if (docName === 'checkin') {
-            firebase
-              .firestore()
-              .collection(Pref.COLLECTION_CHECKIN)
-              .doc(`${id}${checkClientServer[2]}`)
-              .get()
-              .then((result) => {
-                if (result.exists) {
-                  const data = result.data();
-                  if (data) {
-                    const {checkout} = data;
-                    if (Helper.nullStringCheck(checkout) === false) {
-                      stopIdleService();
-                      this.setState({progressLoader: false});
-                      Helper.showToastMessage(
-                        'You have already Checked-out',
-                        0,
-                      );
-                    } else {
-                      //check in  update time
-                      const obj = {};
-                      obj[docName] = checkClientServer[1];
-                      firebase
-                        .firestore()
-                        .collection(Pref.COLLECTION_CHECKIN)
-                        .doc(`${id}${checkClientServer[2]}`)
-                        .set(obj, {merge: true})
-                        .then((result) => {
-                          if(docName === 'checkin'){
-                            enableIdleService(`${id}${checkClientServer[2]}`);
-                          }else{
-                            stopIdleService();
-                          }
-                          this.setupfirebase(
-                            id,
-                            checkClientServer[2],
-                            true,
-                            docName === 'checkin'
-                              ? `Checked In Successfully`
-                              : `Checked Out Successfully`,
-                          );
-                        })
-                        .catch((e) => {
-                          Helper.showToastMessage('Something went wrong!', 0);
-                          this.setState({progressLoader: false});
-                        });
-                    }
-                  }
-                }
-              });
-          } else {
-            //check out update time
-            const obj = {};
-            obj[docName] = checkClientServer[1];
-            firebase
-              .firestore()
-              .collection(Pref.COLLECTION_CHECKIN)
-              .doc(`${id}${checkClientServer[2]}`)
-              .set(obj, {merge: true})
-              .then((result) => {
-                if(docName === 'checkin'){
+          const checkClientServer = serverClientDateCheck(datetime, false);
+          firebase
+            .firestore()
+            .collection(Pref.COLLECTION_CHECKIN)
+            .doc(`${id}${checkClientServer[2]}`)
+            .get()
+            .then((result) => {
+              if (result.exists) {
+                const {checkincheckout} = result.data();
+
+                checkincheckout.push(checkClientServer[1]);
+
+                const obj = {};
+                obj.checkincheckout = checkincheckout;
+
+                if (docName === 'checkin') {
+                  isCheckedin = true;
                   enableIdleService(`${id}${checkClientServer[2]}`);
-                }else{
+                  dialerData[0].tc['checkin'] = true;
+                } else {
+                  dialerData[0].tc['checkin'] = false;
+                  isCheckedin = false;
                   stopIdleService();
                 }
-                this.setupfirebase(
-                  id,
-                  checkClientServer[2],
-                  true,
-                  docName === 'checkin'
-                    ? `Checked In Successfully`
-                    : `Checked Out Successfully`,
-                );
-              })
-              .catch((e) => {
-                Helper.showToastMessage('Something went wrong!', 0);
-                this.setState({progressLoader: false});
-              });
-          }
+
+                Pref.setVal(Pref.DIALER_DATA, dialerData);
+
+                firebase
+                  .firestore()
+                  .collection(Pref.COLLECTION_CHECKIN)
+                  .doc(`${id}${checkClientServer[2]}`)
+                  .set(obj, {merge: true})
+                  .then((result) => {
+                    this.setupfirebase(
+                      id,
+                      checkClientServer[2],
+                      true,
+                      docName === 'checkin'
+                        ? `Checked In Successfully`
+                        : `Checked Out Successfully`,
+                    );
+                  })
+                  .catch((e) => {
+                    Helper.showToastMessage('Something went wrong!', 0);
+                    this.setState({progressLoader: false});
+                  });
+              }
+            });
+
+          // if (docName === 'checkin') {
+          //   firebase
+          //     .firestore()
+          //     .collection(Pref.COLLECTION_CHECKIN)
+          //     .doc(`${id}${checkClientServer[2]}`)
+          //     .get()
+          //     .then((result) => {
+          //       if (result.exists) {
+          //         const data = result.data();
+          //         if (data) {
+          //           const {checkout} = data;
+          //           if (Helper.nullStringCheck(checkout) === false) {
+          //             stopIdleService();
+          //             this.setState({progressLoader: false});
+          //             Helper.showToastMessage(
+          //               'You have already Checked-out',
+          //               0,
+          //             );
+          //           } else {
+          //             //check in  update time
+          //             const obj = {};
+          //             obj[docName] = checkClientServer[1];
+          //             firebase
+          //               .firestore()
+          //               .collection(Pref.COLLECTION_CHECKIN)
+          //               .doc(`${id}${checkClientServer[2]}`)
+          //               .set(obj, {merge: true})
+          //               .then((result) => {
+          //                 if(docName === 'checkin'){
+          //                   enableIdleService(`${id}${checkClientServer[2]}`);
+          //                 }else{
+          //                   stopIdleService();
+          //                 }
+          //                 this.setupfirebase(
+          //                   id,
+          //                   checkClientServer[2],
+          //                   true,
+          //                   docName === 'checkin'
+          //                     ? `Checked In Successfully`
+          //                     : `Checked Out Successfully`,
+          //                 );
+          //               })
+          //               .catch((e) => {
+          //                 Helper.showToastMessage('Something went wrong!', 0);
+          //                 this.setState({progressLoader: false});
+          //               });
+          //           }
+          //         }
+          //       }
+          //     });
+          // } else {
+          //   //check out update time
+
+          //   const obj = {};
+          //   obj[docName] = checkClientServer[1];
+          //   firebase
+          //     .firestore()
+          //     .collection(Pref.COLLECTION_CHECKIN)
+          //     .doc(`${id}${checkClientServer[2]}`)
+          //     .set(obj, {merge: true})
+          //     .then((result) => {
+          //       if(docName === 'checkin'){
+          //         enableIdleService(`${id}${checkClientServer[2]}`);
+          //       }else{
+          //         stopIdleService();
+          //       }
+          //       this.setupfirebase(
+          //         id,
+          //         checkClientServer[2],
+          //         true,
+          //         docName === 'checkin'
+          //           ? `Checked In Successfully`
+          //           : `Checked Out Successfully`,
+          //       );
+          //     })
+          //     .catch((e) => {
+          //       Helper.showToastMessage('Something went wrong!', 0);
+          //       this.setState({progressLoader: false});
+          //     });
+          // }
         },
         (e) => {},
       );
@@ -536,7 +581,7 @@ export default class SwitchUser extends React.PureComponent {
       Helper.networkHelperGet(
         Pref.SERVER_DATE_TIME,
         (datetime) => {
-          const checkClientServer = serverClientDateCheck(datetime,false);
+          const checkClientServer = serverClientDateCheck(datetime, false);
           firebase
             .firestore()
             .collection(Pref.COLLECTION_CHECKIN)

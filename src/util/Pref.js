@@ -3017,8 +3017,10 @@ export const DIALER_TC_PERFORMANCE = `${DialerDirUrl}tc_performance.php`;
 export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
 export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
 export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
+export const DILAER_TL_TEAM_MEMBERS=`${DialerDirUrl}get_member_list.php`;
 export const DIALER_TL_DASHBOARD = `${DialerDirUrl}tl_dashboard.php`;
 export const DIALER_LIVE_TRACK_DATA =`${DialerDirUrl}live_last_record.php`;
+export const DIALER_TL_TEAM_REPORT = `${DialerDirUrl}team_report.php`;
 
 //server date time
 export const SERVER_DATE_TIME = `${DialerDirUrl}servertime.php`;

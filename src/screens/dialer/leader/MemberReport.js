@@ -38,6 +38,7 @@ export default class MemberReport extends React.PureComponent {
       filterModal: false,
       plDates: '',
       efDates: '',
+      hrDates:'',
       dateFilter: -1,
       startDate: null,
       endDate: null,
@@ -73,6 +74,8 @@ export default class MemberReport extends React.PureComponent {
           //.subtract(1, 'M')
           //.format(DATE_FORMAT);
 
+          const hourdate = '';
+
         this.setState({
           tname: tname,
           currentId: currentId,
@@ -85,6 +88,7 @@ export default class MemberReport extends React.PureComponent {
           efEndDate: efEndDate,
           plStartDate: plStartDate,
           plEndDate: plEndDate,
+          hourdate:hourdate
         });
         Pref.getVal(Pref.USERTYPE, (v) => {
           this.setState({type: v}, () => {
@@ -124,6 +128,7 @@ export default class MemberReport extends React.PureComponent {
       tlID,
       currentId,
       tname,
+      hourdate
     } = this.state;
     this.setState({loading: true});
     //const {id} = userData;
@@ -144,6 +149,7 @@ export default class MemberReport extends React.PureComponent {
       efendDate: efEndDate,
       plstartDate: plStartDate,
       plendDate: plEndDate,
+      hourdate:hourdate
     });
     //console.log('body', body);
     Helper.networkHelperTokenPost(
@@ -220,6 +226,15 @@ export default class MemberReport extends React.PureComponent {
           filterModal: true,
           efStartDate: efStartDate,
           efEndDate: efEndDate,
+        });
+      } else if (dateFilter === 3) {
+        this.setState({
+          dateFilter: -1,
+          endDate: null,
+          startDate: null,
+          filterModal: true,
+          hrDates: parse,
+          hourdate:parse
         });
       }
     } else {
@@ -434,6 +449,7 @@ export default class MemberReport extends React.PureComponent {
       plEndDate:'',
       efDates:'',
       plDates:'',
+      hrDates:''
     });
     this.fetchData();
   }
@@ -520,6 +536,17 @@ export default class MemberReport extends React.PureComponent {
                     }
                     value={this.state.efDates}
                     placeholder={'Efficiency Date'}
+                    returnKeyType={'next'}
+                    changecolor
+                    containerstyle={styles.animatedInputCont}
+                  />
+
+                  <AnimatedWithoutInputBox
+                    onChangeText={() =>
+                      this.setState({dateFilter: 3, filterModal: false})
+                    }
+                    value={this.state.hrDates}
+                    placeholder={'Hourly Date'}
                     returnKeyType={'next'}
                     changecolor
                     containerstyle={styles.animatedInputCont}

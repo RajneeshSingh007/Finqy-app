@@ -34,7 +34,7 @@ import {firebase} from '@react-native-firebase/firestore';
 import CallDetectorManager from 'react-native-call-detection';
 import DateRangePicker from 'react-native-daterange-picker';
 import moment from 'moment';
-import {disableOffline, stopIdleService} from '../../../util/DialerFeature';
+import {disableOffline, stopIdleService,enableIdleService,serverClientDateCheck} from '../../../util/DialerFeature';
 
 const DATE_FORMAT = 'DD-MM-YYYY';
 const ITEM_LIMIT = 10;
@@ -56,6 +56,7 @@ export default class DialerCalling extends React.PureComponent {
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
     this.backClick = this.backClick.bind(this);
     this.startCalling = this.startCalling.bind(this);
+    this.serverDateTime = [];
     this.state = {
       appState: AppState.currentState,
       dataList: [],
@@ -88,9 +89,9 @@ export default class DialerCalling extends React.PureComponent {
   }
 
   componentDidMount() {
-    try {
-      Helper.requestPermissionsDialer();
-    } catch (error) {}
+    // try {
+    //   Helper.requestPermissionsDialer();
+    // } catch (error) {}
 
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
     AppState.addEventListener('change', this._handleAppStateChange);
@@ -114,6 +115,10 @@ export default class DialerCalling extends React.PureComponent {
     });
 
     this.focusListener = navigation.addListener('didFocus', () => {
+      Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
+        this.serverDateTime = serverClientDateCheck(datetime, false);
+      });
+  
       Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
         const {id, tlid, pname} = userdatas[0].tc;
         activeCallerItem.team_id = tlid;
@@ -183,14 +188,7 @@ export default class DialerCalling extends React.PureComponent {
           }
         }
       },
-      true,
-      () => {},
-      {
-        title: 'Phone Permission',
-        message:
-          'This app needs access to your phone state in order to use this feature',
-      },
-    );
+      false);
   }
 
   componentWillUnMount() {
@@ -334,6 +332,11 @@ export default class DialerCalling extends React.PureComponent {
   };
 
   clearback = () => {
+    const {userid} = this.state;
+    if(this.serverDateTime.length > 0){
+      enableIdleService(`${userid}${this.serverDateTime[2]}`);
+    }
+    
     NavigationActions.goBack();
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
@@ -391,9 +394,9 @@ export default class DialerCalling extends React.PureComponent {
                 'Please, Grant Phone Call, Contact And Call Log Permissions',
                 2,
               );
-              try {
-                Helper.requestPermissionsDialer();
-              } catch (error) {}
+              // try {
+              //   Helper.requestPermissionsDialer();
+              // } catch (error) {}
             } else if (result === 'success') {
               stopIdleService();
               this.setState({
@@ -422,7 +425,7 @@ export default class DialerCalling extends React.PureComponent {
           'Please, Grant Phone Call, Contact And Call Log Permissions',
           2,
         );
-        Helper.requestPermissionsDialer();
+        //Helper.requestPermissionsDialer();
       }
     } else {
       stopIdleService();
