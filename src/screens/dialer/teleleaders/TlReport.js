@@ -51,16 +51,16 @@ export default class TlReport extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.DIALER_DATA, (userData) => {
-      this.setState({userData: userData});
-      Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value}, () => {
-          this.fetchData();
+    this.focusListener = navigation.addListener('didFocus', () => {
+      Pref.getVal(Pref.DIALER_DATA, (userData) => {
+        this.setState({userData: userData});
+        Pref.getVal(Pref.saveToken, (value) => {
+          this.setState({token: value}, () => {
+            this.fetchData();
+          });
         });
       });
     });
-    //});
   }
 
   componentWillUnMount() {
@@ -111,12 +111,12 @@ export default class TlReport extends React.PureComponent {
   };
 
   exportExcel = (item, type) => {
-    const {report,team} = item;
+    const {report, team} = item;
     const {all, ef, follow, perf} = report;
     let fileName = '';
     let dataList = [];
     let excelHeader = '';
-    let teamName = String(team).replace(/\s/g,'_');
+    let teamName = String(team).replace(/\s/g, '_');
     if (type === 0) {
       fileName = `${teamName}_Customer_Report`;
       dataList = all.data;
@@ -267,13 +267,13 @@ export default class TlReport extends React.PureComponent {
                 pageNumberClicked={this.pageNumberClicked}
               />
               {/* <TouchableWithoutFeedback onPress={this.revertBack}> */}
-                <View styleName="horizontal v-center h-center">
-                  {/* <IconChooser
+              <View styleName="horizontal v-center h-center">
+                {/* <IconChooser
                     name={enableSearch ? 'x' : 'filter'}
                     size={24}
                     color={'#555555'}
                   /> */}
-                </View>
+              </View>
               {/* </TouchableWithoutFeedback> */}
             </View>
 

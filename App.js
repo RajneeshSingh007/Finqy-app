@@ -65,9 +65,8 @@ class App extends React.PureComponent {
 
     //dialer
     this.callDetectionListerner();
-
+    
     //this.dialerCheckCheckin();
-    //stopService();
     //enableIdleService();
     //stopIdleService();
   }
@@ -95,7 +94,7 @@ class App extends React.PureComponent {
         );
       }
       Pref.getVal(Pref.DIALER_DATA, (value) => {
-        console.log('ddata', value);
+        //console.log('ddata', value);
         if (
           Helper.nullCheck(value) == false &&
           value.length > 0 &&

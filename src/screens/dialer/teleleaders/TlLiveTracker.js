@@ -527,7 +527,6 @@ export default class TlLiveTracker extends React.PureComponent {
               />
             ) : (
               <View style={styles.emptycont}>
-                <ListError subtitle={'Loading...'} />
               </View>
             )}
           </View>

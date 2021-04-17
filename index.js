@@ -14,6 +14,7 @@ import {StatusBar,Platform} from 'react-native';
 import codePush from "react-native-code-push";
 import NavigationActions from '././src/util/NavigationActions';
 import * as Helper from '././src/util/Helper';
+import {stopService} from '././src/util/DialerFeature';
 
 const theme = {
   ...DefaultTheme,
@@ -70,6 +71,7 @@ const options = {
 const serviceHandler = async( data) =>{
   const {outside} = data;
   if(outside){
+    stopService();
     Pref.getVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, phoneNumber =>{
       let outsideAppNumber = ''
       if(Helper.nullStringCheck(phoneNumber) === false){
