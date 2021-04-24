@@ -54,11 +54,11 @@ export default class FinorbitForm extends React.PureComponent {
       editFour: null,
       editLeadData: null,
       disableClick: 0,
-      dialerName:'',
-      dialerMobile:'',
-      dialerEmail:'',
-      dialerPincode:'',
-      dialerDob:''
+      dialerName: '',
+      dialerMobile: '',
+      dialerEmail: '',
+      dialerPincode: '',
+      dialerDob: '',
     };
   }
 
@@ -75,19 +75,18 @@ export default class FinorbitForm extends React.PureComponent {
     const dialerEmail = navigation.getParam('dialerEmail', '');
     const dialerPincode = navigation.getParam('dialerPincode', '');
     const dialerDob = navigation.getParam('dialerDob', '');
-    
+
     this.focusListener = navigation.addListener('didFocus', () => {
-    
-      Pref.getVal(Pref.saveToken, value => {
+      Pref.getVal(Pref.saveToken, (value) => {
         this.setState({token: value}, () => {
-          Pref.getVal(Pref.userData, userData => {
+          Pref.getVal(Pref.userData, (userData) => {
             const checknullEdit = Helper.nullCheck(editLeadData);
             this.setState({
-              dialerDob:dialerDob,
-              dialerEmail:dialerEmail,
-              dialerPincode:dialerPincode,
-              dialerName:dialerName,
-              dialerMobile:dialerMobile,
+              dialerDob: dialerDob,
+              dialerEmail: dialerEmail,
+              dialerPincode: dialerPincode,
+              dialerName: dialerName,
+              dialerMobile: dialerMobile,
               userData: userData,
               imageUrl: url,
               title: title,
@@ -125,7 +124,6 @@ export default class FinorbitForm extends React.PureComponent {
           });
         });
       });
-    
     });
 
     // NavigationActions.navigate("GetQuotes", {
@@ -135,11 +133,11 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   backClick = () => {
-    const {title, currentPosition, editMode,dialerMobile} = this.state;
+    const {title, currentPosition, editMode, dialerMobile} = this.state;
     //console.log(title, currentPosition, editMode,dialerMobile);
-    if(Helper.nullStringCheck(dialerMobile) === false){
+    if (Helper.nullStringCheck(dialerMobile) === false) {
       return false;
-    }else{
+    } else {
       if (editMode === true) {
         NavigationActions.navigate('LeadList');
         return true;
@@ -161,12 +159,12 @@ export default class FinorbitForm extends React.PureComponent {
     if (currentPosition === 0) {
       this.setState({scrollReset: true});
       return false;
-    }else if (jumped && position === 0) {
+    } else if (jumped && position === 0) {
       this.setState({scrollReset: true});
       return false;
     }
     this.setState(
-      prev => {
+      (prev) => {
         return {
           currentPosition: jumped ? position : prev.currentPosition - 1,
           scrollReset: true,
@@ -234,10 +232,7 @@ export default class FinorbitForm extends React.PureComponent {
     let formData = new FormData();
     let uniq = '';
     if (title.includes(' ')) {
-      uniq = title
-        .trim()
-        .toLowerCase()
-        .replace(' ', '_');
+      uniq = title.trim().toLowerCase().replace(' ', '_');
     }
     if (title === `Life Cum Invt. Plan`) {
       uniq = 'life_cum_investment';
@@ -282,15 +277,17 @@ export default class FinorbitForm extends React.PureComponent {
       if (currentPosition < limit) {
         if (this.state.title === 'Insure Check') {
           this.setState(
-            prevState => {
+            (prevState) => {
               // let btnText = 'Next';
               // if(jumped){
               //   btnText = position === 2 ? 'Submit' : 'Next';
               // }else{
-              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';             
+              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';
               // }
               return {
-                currentPosition: jumped ? position : prevState.currentPosition + 1,
+                currentPosition: jumped
+                  ? position
+                  : prevState.currentPosition + 1,
                 //bottontext: btnText,
                 scrollReset: true,
               };
@@ -305,15 +302,17 @@ export default class FinorbitForm extends React.PureComponent {
           );
         } else {
           this.setState(
-            prevState => {
+            (prevState) => {
               // let btnText = 'Next';
               // if(jumped){
               //   btnText = position === 3 ? 'Submit' : 'Next';
               // }else{
-              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';             
+              //   btnText = prevState.currentPosition + 1 > 2 ? 'Next' : 'Submit';
               // }
               return {
-                currentPosition: jumped ? position : prevState.currentPosition + 1,
+                currentPosition: jumped
+                  ? position
+                  : prevState.currentPosition + 1,
                 //bottontext: btnText,
                 scrollReset: true,
               };
@@ -379,7 +378,7 @@ export default class FinorbitForm extends React.PureComponent {
               const floaterItemList = JSON.parse(
                 JSON.stringify(specificForms.floaterItemList),
               );
-              const loops = Lodash.map(floaterItemList, ele => {
+              const loops = Lodash.map(floaterItemList, (ele) => {
                 let parseJs = JSON.parse(JSON.stringify(ele));
                 for (var key in parseJs) {
                   const value = parseJs[key];
@@ -416,7 +415,7 @@ export default class FinorbitForm extends React.PureComponent {
 
           //3rd form
           if (allfileslist !== undefined && allfileslist.length > 0) {
-            const loops = Lodash.map(allfileslist, ele => {
+            const loops = Lodash.map(allfileslist, (ele) => {
               let parseJs = JSON.parse(JSON.stringify(ele));
               Object.entries(parseJs).forEach(([key, value]) => {
                 if (Helper.arrayObjCheck(value, false)) {
@@ -432,25 +431,35 @@ export default class FinorbitForm extends React.PureComponent {
             });
           }
 
-          if(fileListForms){
+          if (fileListForms) {
             const popItemList = fileListForms.popitemList;
             let property = '';
-            if(popItemList !== undefined && popItemList != null && popItemList.length > 0){
-              Lodash.map(popItemList, io =>{
+            if (
+              popItemList !== undefined &&
+              popItemList != null &&
+              popItemList.length > 0
+            ) {
+              Lodash.map(popItemList, (io) => {
                 const {value} = io;
-                if(Helper.nullStringCheck(value) === false){
+                if (Helper.nullStringCheck(value) === false) {
                   property += `${value},`;
                 }
-              })
+              });
             }
             //console.log('popItemList1', popItemList);
             //console.log('property', property);
             //console.log('popItemList', popItemList);
 
             // let property = `${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property1)},${Helper.nullStringCheckWithReturn(fileListForms.proof_of_property2)}`;
-            formData.append('exisitng_loan_doc', fileListForms.exisitng_loan_doc);
+            formData.append(
+              'exisitng_loan_doc',
+              fileListForms.exisitng_loan_doc,
+            );
             formData.append('proof_of_property', property);
-            formData.append('current_add_proof', fileListForms.current_add_proof);
+            formData.append(
+              'current_add_proof',
+              fileListForms.current_add_proof,
+            );
           }
 
           //forth
@@ -497,7 +506,7 @@ export default class FinorbitForm extends React.PureComponent {
             formData,
             Pref.methodPost,
             this.state.token,
-            result => {
+            (result) => {
               //console.log('result', result);
               const {response_header} = result;
               const {res_type, res} = response_header;
@@ -509,19 +518,26 @@ export default class FinorbitForm extends React.PureComponent {
                     : 'Form updated successfully',
                   1,
                 );
-                if (title === `Health Insurance` && Helper.nullCheck(res.id) === false && res.id !== '') {
+                if (
+                  title === `Health Insurance` &&
+                  Helper.nullCheck(res.id) === false &&
+                  res.id !== ''
+                ) {
                   const {id} = res;
                   const cov = Number(specificForms.required_cover);
                   NavigationActions.navigate('GetQuotes', {
                     formId: id,
                     sumin: cov,
-                    editmode:this.state.editMode
+                    editmode: this.state.editMode,
                   });
                 } else {
-                  let backScreenName = editMode === false ? 'FinorbitScreen' : 'LeadList';
+                  let backScreenName =
+                    editMode === false ? 'FinorbitScreen' : 'LeadList';
                   //for dialer screen
-                  
-                  if(Helper.nullStringCheck(this.state.dialerMobile) === false){
+
+                  if (
+                    Helper.nullStringCheck(this.state.dialerMobile) === false
+                  ) {
                     backScreenName = 'DialerCalling';
                   }
 
@@ -544,46 +560,57 @@ export default class FinorbitForm extends React.PureComponent {
                 Helper.showToastMessage('Failed to submit form', 0);
               }
             },
-            e => {
+            (e) => {
               console.log(e);
               this.setState({progressLoader: false});
               Helper.showToastMessage('Something went wrong', 0);
             },
           );
-
         }
       }
     }
   };
 
-  btnText = () =>{
+  btnText = () => {
     let btnText = 'Next';
     const {title, currentPosition} = this.state;
-    if(Helper.nullStringCheck(title) === false){
-      if(title === 'Insure Check'){
+    if (Helper.nullStringCheck(title) === false) {
+      if (title === 'Insure Check') {
         btnText = currentPosition === 2 ? 'Submit' : 'Next';
-      }else{
-        btnText = currentPosition === 3 ? 'Submit' : 'Next';       
+      } else {
+        btnText = currentPosition === 3 ? 'Submit' : 'Next';
       }
     }
     return btnText;
-  }
+  };
 
   /**
    * edit mode find Existing
-   * @param {*} editMode 
-   * @param {*} title 
-   * @param {*} editSecond 
-   * @param {*} restoreList 
-   * @returns 
+   * @param {*} editMode
+   * @param {*} title
+   * @param {*} editSecond
+   * @param {*} restoreList
+   * @returns
    */
-  getExistingValue = (editMode, title, editSecond) =>{
-    if(title === 'Home Loan' || title === 'Loan Against Property'){
-    return  editMode ? (editSecond && editSecond.type_loan === 'Fresh' ? 'No' : 'Yes') : (this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh' ? 'No' : 'Yes')  
-    }else{
-      return editMode ? (editSecond && editSecond.existingcard ? editSecond.existingcard : '') : (this.restoreList[1] && this.restoreList[1].existingcard ? this.restoreList[1].existingcard : '')
-    } 
-  }
+  getExistingValue = (editMode, title, editSecond) => {
+    if (title === 'Home Loan' || title === 'Loan Against Property') {
+      return editMode
+        ? editSecond && editSecond.type_loan === 'Fresh'
+          ? 'No'
+          : 'Yes'
+        : this.restoreList[1] && this.restoreList[1].type_loan === 'Fresh'
+        ? 'No'
+        : 'Yes';
+    } else {
+      return editMode
+        ? editSecond && editSecond.existingcard
+          ? editSecond.existingcard
+          : ''
+        : this.restoreList[1] && this.restoreList[1].existingcard
+        ? this.restoreList[1].existingcard
+        : '';
+    }
+  };
 
   render() {
     const {
@@ -613,13 +640,6 @@ export default class FinorbitForm extends React.PureComponent {
               backClicked={this.backClick}
               showBack
               title={
-                // split.length === 2
-                //   ? `${split[0]} ${split[1]}`
-                //   : split.length === 3
-                //     ? `${split[0]} ${split[1]} ${split[2]}`
-                //     : split.length === 4
-                //       ? `${split[0]} ${split[1]} ${split[2]} ${split[3]}`
-                //       : split[0]
                 title === '' ? '' : !editMode ? `Add New Lead` : `Edit Lead`
               }
               bottomtext={
@@ -634,9 +654,18 @@ export default class FinorbitForm extends React.PureComponent {
                       }>{`${split[1]} ${split[2]}`}</Title>
                   ) : split.length === 4 ? (
                     <Title
-                      style={
-                        styles.passText
-                      }>{`${split[1]} ${split[2]} ${split[3]}`}</Title>
+                      style={StyleSheet.flatten([
+                        styles.passText,
+                        {
+                          color: '#555555',
+                        },
+                      ])}>
+                      {`${split[1]}`}{' '}
+                      <Title style={styles.passText}>
+                        {split[2].replace('Invt.', 'Investment')}
+                      </Title>{' '}
+                      <Title style={styles.passText}>{split[3]}</Title>
+                    </Title>
                   ) : null}
                 </>
               }
@@ -648,7 +677,7 @@ export default class FinorbitForm extends React.PureComponent {
             <StepIndicator
               activeCounter={this.state.currentPosition}
               stepCount={this.state.title === 'Insure Check' ? 2 : 4}
-              positionClicked={(pos) =>{
+              positionClicked={(pos) => {
                 // const {currentPosition} = this.state;
                 // if(pos > currentPosition){
                 //   this.formSubmit(true, pos);
@@ -687,11 +716,11 @@ export default class FinorbitForm extends React.PureComponent {
                     />
                   ) : this.state.currentPosition === 1 ? (
                     <>
-                    <SpecificForm
-                      ref={this.specificFormRef}
-                      editItemRestore={editSecond}
-                      title={this.state.title}
-                    />
+                      <SpecificForm
+                        ref={this.specificFormRef}
+                        editItemRestore={editSecond}
+                        title={this.state.title}
+                      />
                     </>
                   ) : this.state.currentPosition === 2 ? (
                     <FileUploadForm
@@ -714,33 +743,69 @@ export default class FinorbitForm extends React.PureComponent {
                       policycopy={editThird && editThird.policycopy}
                       multipleFilesList={
                         editThird &&
-                        Helper.nullCheck(editThird.multipleFilesList) === false &&
+                        Helper.nullCheck(editThird.multipleFilesList) ===
+                          false &&
                         editThird.multipleFilesList
                       }
                       editMode={this.state.editMode}
                       exisitng_loan_doc={
-                        editMode ? (editThird &&
-                        editThird.exisitng_loan_doc) : (this.restoreList[2] && this.restoreList[2].exisitng_loan_doc)
+                        editMode
+                          ? editThird && editThird.exisitng_loan_doc
+                          : this.restoreList[2] &&
+                            this.restoreList[2].exisitng_loan_doc
                       }
                       current_add_proof={
-                        editMode ? (editThird &&
-                        editThird.current_add_proof) : (this.restoreList[2] && this.restoreList[2].current_add_proof)
+                        editMode
+                          ? editThird && editThird.current_add_proof
+                          : this.restoreList[2] &&
+                            this.restoreList[2].current_add_proof
                       }
                       proof_of_property={
-                        editMode ? (editThird &&
-                        editThird.proof_of_property) : (this.restoreList[2] && this.restoreList[2].proof_of_property)
+                        editMode
+                          ? editThird && editThird.proof_of_property
+                          : this.restoreList[2] &&
+                            this.restoreList[2].proof_of_property
                       }
-                      other = {editThird && editThird.other}
-                      existing = {editThird && editThird.existing}
-                      passportPhoto = {editThird && editThird.passportPhoto}
-                      cap_aadhar = {editThird && editThird.cap_aadhar}
-                      itrdoc = {editThird && editThird.itrdoc}
-                      pop_electricity = {editThird && editThird.pop_electricity}
-                      current_loan_repayment_statement = {editThird && editThird.current_loan_repayment_statement}
-                      existingcard={this.getExistingValue(editMode, title, editSecond)}
-                      fresh_pop={editMode ? (editSecond && editSecond.fresh_pop !== '' ? editSecond.fresh_pop : '') : (this.restoreList[1] && this.restoreList[1].fresh_pop !== '' ? this.restoreList[1].fresh_pop : '')  }
-                      popitemList={editMode ? (editThird && editThird.popitemList) : (this.restoreList[1] && this.restoreList[1].popitemList)}
-                      employ={editMode ? (editFirst && editFirst.employ ? editFirst.employ : '') : (this.restoreList[0] && this.restoreList[0].employ !== '' ? this.restoreList[0].employ : '')}
+                      other={editThird && editThird.other}
+                      existing={editThird && editThird.existing}
+                      passportPhoto={editThird && editThird.passportPhoto}
+                      cap_aadhar={editThird && editThird.cap_aadhar}
+                      itrdoc={editThird && editThird.itrdoc}
+                      pop_electricity={editThird && editThird.pop_electricity}
+                      current_loan_repayment_statement={
+                        editThird && editThird.current_loan_repayment_statement
+                      }
+                      existingcard={this.getExistingValue(
+                        editMode,
+                        title,
+                        editSecond,
+                      )}
+                      fresh_pop={
+                        editMode
+                          ? editSecond && editSecond.fresh_pop !== ''
+                            ? editSecond.fresh_pop
+                            : ''
+                          : this.restoreList[1] &&
+                            this.restoreList[1].fresh_pop !== ''
+                          ? this.restoreList[1].fresh_pop
+                          : ''
+                      }
+                      popitemList={
+                        editMode
+                          ? editThird && editThird.popitemList
+                          : this.restoreList[1] &&
+                            this.restoreList[1].popitemList
+                      }
+                      employ={
+                        editMode
+                          ? editFirst && editFirst.employ
+                            ? editFirst.employ
+                            : ''
+                          : this.restoreList[0] &&
+                            this.restoreList[0].employ !== ''
+                          ? this.restoreList[0].employ
+                          : ''
+                      }
                     />
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm
@@ -790,9 +855,7 @@ export default class FinorbitForm extends React.PureComponent {
                     loading={false}
                     style={styles.loginButtonStyle}
                     onPress={() => this.formSubmit(false)}>
-                    <Title style={styles.btntext}>
-                      {this.btnText()}
-                    </Title>
+                    <Title style={styles.btntext}>{this.btnText()}</Title>
                   </Button>
                 </View>
               </>

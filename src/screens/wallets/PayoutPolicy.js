@@ -10,6 +10,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Pdf from 'react-native-pdf';
 import CScreen from '../component/CScreen';
+import * as Helper from '../../util/Helper';
 
 export default class PayoutPolicy extends React.PureComponent {
     constructor(props) {
@@ -60,7 +61,7 @@ export default class PayoutPolicy extends React.PureComponent {
                 scrollEnable={false}
                 body={
                     <View style={{ flex: 1 }}>
-                        <LeftHeaders title={`Payout Policy`} showBack />
+                        <LeftHeaders title={Helper.getScreenName(this.props)} showBack />
                         {/* <View style={{ flex: 0.02 }}></View> */}
                         <Pdf
                             source={{

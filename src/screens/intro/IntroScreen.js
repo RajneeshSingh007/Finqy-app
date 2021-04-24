@@ -58,13 +58,9 @@ export default class IntroScreen extends React.PureComponent {
     //this.focusListener = navigation.addListener('didFocus', () => {
       //this.syncImmediate();
       Pref.setVal(Pref.saveToken, Helper.removeQuotes(Pref.API_TOKEN));
-      const body = JSON.stringify({
-        username: `ERBFinPro`,
-        product: `FinPro App`,
-      });
       Helper.networkHelper(
         Pref.GetToken,
-        body,
+        Pref.API_TOKEN_POST_DATA,
         Pref.methodPost,
         (result) => {
           //console.log('result', result)

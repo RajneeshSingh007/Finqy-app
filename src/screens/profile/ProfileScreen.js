@@ -200,61 +200,27 @@ export default class ProfileScreen extends React.PureComponent {
           JSON.stringify(this.commonFormRef.current.state),
         );
         this.restoreList[0] = commons;
-        delete commons.genderList;
-        delete commons.employList;
-        delete commons.cityList;
-        delete commons.showCityList;
-        delete commons.showGenderList;
-        delete commons.showCalendar;
-        delete commons.showEmployList;
-        delete commons.currentDate;
-        delete commons.maxDate;
-        delete commons.gender;
-        delete commons.dob;
-        delete commons.employ;
+        // delete commons.genderList;
+        // delete commons.employList;
+        // delete commons.cityList;
+        // delete commons.showCityList;
+        // delete commons.showGenderList;
+        // delete commons.showCalendar;
+        // delete commons.showEmployList;
+        // delete commons.currentDate;
+        // delete commons.maxDate;
+        // delete commons.gender;
+        // delete commons.dob;
+        // delete commons.employ;
+        // delete commons.residence_address;
+        // delete commons.dialerEditable;
+        // delete commons.state;
+        // delete commons.contactTypeCd;
 
         let spcommons = JSON.parse(
           JSON.stringify(this.specificFormRef.current.state),
         );
         this.restoreList[1] = spcommons;
-        delete spcommons.cityList;
-        delete spcommons.showCarList;
-        delete spcommons.showExisitingList;
-        delete spcommons.showCalendar;
-        delete spcommons.showLoanCityList;
-        delete spcommons.motorInsList;
-        delete spcommons.exisitingList;
-        delete spcommons.employList;
-        delete spcommons.carList;
-        delete spcommons.termInsList;
-        delete spcommons.showmotorInsList;
-        delete spcommons.showtermInsList;
-        delete spcommons.healthFList;
-        delete spcommons.showHealthFlist;
-        delete spcommons.maritalList;
-        delete spcommons.showmaritalList;
-        delete spcommons.showCompanyCityList;
-        delete spcommons.currentDate;
-        delete spcommons.maxDate;
-        delete spcommons.vectorInsuList;
-        delete spcommons.showvectorCoverList;
-        delete spcommons.showvectorInsuList;
-        delete spcommons.vectorCoverList;
-        delete spcommons.vectorTypeIns;
-        delete spcommons.vectorCover;
-        delete spcommons.qualification;
-        delete spcommons.company;
-        delete spcommons.amount;
-        delete spcommons.companylocation;
-        delete spcommons.turnover;
-        delete spcommons.nooldcard;
-        delete spcommons.existingcard;
-        delete spcommons.loan_property_city;
-        delete spcommons.rcbook;
-        delete spcommons.model;
-        delete spcommons.car_brand;
-        delete spcommons.car_value;
-        delete spcommons.floaterItemList;
 
         if (commons != null) {
           this.state.dataArray[0] = commons;
@@ -343,34 +309,46 @@ export default class ProfileScreen extends React.PureComponent {
     formData.append('mail_password', this.state.mail_password);
 
     let commons = this.state.dataArray[0];
-    for (var key in commons) {
-      const value = commons[key];
-      if (Helper.arrayObjCheck(value, true)) {
-        formData.append(key, value);
-      }
-    }
+    //for (var key in commons) {
+      //const value = commons[key];
+      //if (Helper.arrayObjCheck(value, true)) {
+        formData.append('name', commons.name);
+        formData.append('mobile', commons.mobile);
+        formData.append('email', commons.email);
+        formData.append('ofc_add', commons.ofc_add);
+        formData.append('pincode', commons.pincode);
+        formData.append('gst_no', commons.gst_no);
+      //}
+    //}
 
     let spcommons = this.state.dataArray[1];
 
     // if (spcommons.pancardNo !== '') {
     //    else {
-    for (var keys in spcommons) {
-      const value = spcommons[keys];
-      if (Helper.arrayObjCheck(value, true)) {
-        formData.append(key, value);
-      }
-    }
+    //for (var keys in spcommons) {
+      //const value = spcommons[keys];
+      //if (Helper.arrayObjCheck(value, true)) {
+        formData.append('pancardNo', spcommons.pancardNo);
+        formData.append('aadharcardNo', spcommons.aadharcardNo);
+      //}
+    //}
 
 
 
     let bankformCommons = this.state.dataArray[2];
 
-    for (var keys in bankformCommons) {
-      const value = bankformCommons[keys];
-      if (Helper.arrayObjCheck(value, true)) {
-        formData.append(key, value);
-      }
-    }
+    //for (var keys in bankformCommons) {
+      //const value = bankformCommons[keys];
+      //if (Helper.arrayObjCheck(value, true)) {
+        formData.append('bank', bankformCommons.bank);
+        formData.append('bank_ifsc', bankformCommons.bank_ifsc);
+        formData.append('account_no', bankformCommons.account_no);
+        formData.append('account_branch', bankformCommons.account_branch);
+        formData.append('bank_account_name', bankformCommons.bank_account_name);
+        formData.append('bank_name', bankformCommons.bank_name);
+        formData.append('account_type', bankformCommons.account_type);
+      //}
+    //}
 
     let fcommons = JSON.parse(
       JSON.stringify(this.FileUploadFormRef.current.state),
@@ -382,9 +360,9 @@ export default class ProfileScreen extends React.PureComponent {
         let parseJs = JSON.parse(JSON.stringify(ele));
         for (var key in parseJs) {
           const value = parseJs[key];
-          if (Helper.arrayObjCheck(value, true)) {
+          //if (Helper.arrayObjCheck(value, true)) {
             formData.append(key, value);
-          }
+          //}
         }
       });
     }
@@ -395,7 +373,7 @@ export default class ProfileScreen extends React.PureComponent {
       formData.append('user_prof', fileName);
     }
 
-    //console.log(`formData`, formData, token);
+    //console.log(`formData`, formData);
 
     if (checkData) {
       this.setState({ loading: true });
@@ -405,7 +383,7 @@ export default class ProfileScreen extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
-          console.log(`result`, result);
+          //console.log(`result`, result);
           const { data, response_header } = result;
           const { res_type } = response_header;
           this.setState({ loading: false });
@@ -507,7 +485,7 @@ export default class ProfileScreen extends React.PureComponent {
 
             <View>
               <LeftHeaders
-                title={`Edit My Profile`}
+                title={Helper.getScreenName(this.props)}
                 bottomtext={
                   <>
                     {`${this.state.topText} `}

@@ -130,7 +130,8 @@ export default class GetQuotesView extends React.PureComponent {
   buyNow = () => {
     const {companyList} = this.state;
     if (companyList.length === 0 || companyList.length == 1) {
-      Linking.openURL(Pref.BuyInsurance);
+      const healthByLink = `${Pref.BuyInsurance}?unq_no=${formId}`;
+      Linking.openURL(healthByLink);
       //NavigationActions.navigate('WebComp', { url: `${Pref.BuyInsurance}` })
     } else {
       this.setState({showDialog: true});

@@ -17,7 +17,7 @@ import IntroHeader from '../intro/IntroHeader';
 import CScreen from '../component/CScreen';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import RNFetchBlob from 'rn-fetch-blob';
-import { notifications, NotificationMessage, Android } from 'react-native-firebase-push-notifications'
+import { notifications } from 'react-native-firebase-push-notifications'
 
 const ConnectorMenuList = [
   {
@@ -55,7 +55,7 @@ const ConnectorMenuList = [
     click: '',
   },
   {
-    name: `My FinPro`,
+    name: `My Finqy`,
     expand: false,
     heading: true,
     iconname: require('../../res/images/menuicon2.png'),
@@ -213,7 +213,7 @@ const MainMenuList = [
     click: '',
   },
   {
-    name: `My FinPro`,
+    name: `My Finqy`,
     expand: false,
     heading: true,
     iconname: require('../../res/images/menuicon2.png'),
@@ -387,7 +387,7 @@ const MainMenuList = [
 
 const TeamMenuList = [
   {
-    name: `My FinPro`,
+    name: `My Finqy`,
     expand: false,
     heading: true,
     iconname: require('../../res/images/menuicon2.png'),
@@ -542,9 +542,9 @@ export default class LoginScreen extends React.PureComponent {
       token: '',
       loginType:''
     };
-    Pref.setVal(Pref.MENU_LIST, null);
     Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
     Pref.setVal(Pref.DIALER_DATA, null);
+    Pref.setVal(Pref.DIALER_SERVICE_ENABLED, false);
     Pref.setVal(Pref.salespayoutUpdate, null);
     Pref.setVal(Pref.userData, null);
     Pref.setVal(Pref.userID, null);
@@ -567,13 +567,9 @@ export default class LoginScreen extends React.PureComponent {
       }
       Pref.getVal(Pref.saveToken, (value) => {
         if (Helper.nullStringCheck(value) === true) {
-          const body = JSON.stringify({
-            username: `ERBFinPro`,
-            product: `FinPro App`,
-          });
           Helper.networkHelper(
             Pref.GetToken,
-            body,
+            Pref.API_TOKEN_POST_DATA,
             Pref.methodPost,
             (result) => {
               //console.log('result', result)

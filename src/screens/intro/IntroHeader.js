@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Image, Subtitle,Title, View} from '@shoutem/ui';
+import {Image, Subtitle, Title, View} from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 import * as Pref from '../../util/Pref';
 
 const IntroHeader = (prop) => {
-  const {flex = 0.13, iconClick = () =>{}, showRight = false} = prop;
+  const {flex = 0.13, iconClick = () => {}, showRight = false} = prop;
   return (
     <View
       styleName="md-gutter"
@@ -16,39 +16,51 @@ const IntroHeader = (prop) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          flex: 1,
         }}>
         <View style={styles.leftcon}>
-          <View style={{flex: 0.6}}>
+          <View
+            style={{
+              flex: 0.5,
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+            }}>
             <Image
               source={require('../../res/images/squarelogo.png')}
-              styleName="medium"
+              styleName="medium-wide"
               style={{
-                resizeMode:'contain'
+                marginStart: 16,
+                resizeMode: 'contain',
               }}
             />
           </View>
           <View style={styles.rightcon}>
-            {showRight === false  ?<> 
-              <TouchableWithoutFeedback onPress={iconClick}>
-                        <View>
-                        <Title style={styles.rightText}>
-              {`Login `}
-              <IconChooser name={'arrow-right'} size={20} color={'#bbb8ac'} />
-            </Title>
-                        </View>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback onPress={iconClick}>
-              <View style={styles.circle}>
-                <IconChooser
-                  name={'user'}
-                  size={18}
-                  color={'red'}
-                  style={styles.icon}
-                />
-              </View>
-            </TouchableWithoutFeedback>
-            </> : null}
+            {showRight === false ? (
+              <>
+                <TouchableWithoutFeedback onPress={iconClick}>
+                  <View>
+                    <Title style={styles.rightText}>
+                      {`Login `}
+                      <IconChooser
+                        name={'arrow-right'}
+                        size={20}
+                        color={'#bbb8ac'}
+                      />
+                    </Title>
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={iconClick}>
+                  <View style={styles.circle}>
+                    <IconChooser
+                      name={'user'}
+                      size={18}
+                      color={'red'}
+                      style={styles.icon}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              </>
+            ) : null}
           </View>
         </View>
       </View>
@@ -72,16 +84,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rightcon: {
-    flex: 0.4,
+    flex: 0.5,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   rightText: {
     color: '#bbb8ac',
     fontSize: 18,
     marginEnd: 8,
     letterSpacing: 0.5,
-    fontFamily:Pref.getFontName(4)
+    fontFamily: Pref.getFontName(4),
   },
   circle: {
     width: 48,

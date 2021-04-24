@@ -14,7 +14,7 @@ export default class TlDashboard extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      dashboardData: null,
+      dashboardData: {"data": [{"contactable": "0", "dialer": "0", "followup": "0", "memberCount": 0, "notContactable": "0", "teamName": ""}], "status": true},
       barData: [
         {x: 'Contactable', y: 0, color: '#87c1fc'},
         {x: 'Non-Contactable', y: 0, color: '#fe8c8c'},
@@ -29,7 +29,7 @@ export default class TlDashboard extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         this.setState({token: value});
-        this.fetchDashboard(value, '');
+        this.fetchDashboard(value);
       });
     });
   }
@@ -65,14 +65,16 @@ export default class TlDashboard extends React.PureComponent {
               Pref.methodPost,
               token,
               (result) => {
-                // const {barData} = this.state;
+                const {barData} = this.state;
                 let {data, status} = result;
-                if (status) {
-                  // barData[0].y = Number(data.contactable);
-                  // barData[1].y = Number(data.notContactable);
-                  // barData[2].y = Number(data.follwup);
-                  // barData[3].y = Number(data.dialer);
-                  this.setState({dashboardData: data});
+                if (status && data.length > 0) {
+                  // const item = JSON.parse(JSON.stringify(data[0]));
+                  // barData[0].y = Number(item.contactable);
+                  // barData[1].y = Number(item.notContactable);
+                  // barData[2].y = Number(item.follwup);
+                  // barData[3].y = Number(item.dialer);
+                  // console.log('barData', barData);
+                  this.setState({dashboardData: data,});
                 }
               },
               () => {
@@ -135,7 +137,7 @@ export default class TlDashboard extends React.PureComponent {
     const {dashboardData} = this.state;
     return (
       <CScreen
-        refresh={() => this.fetchDashboard(this.state.token, '')}
+        refresh={() => this.fetchDashboard(this.state.token)}
         bgColor={Pref.WHITE}
         body={
           <View>

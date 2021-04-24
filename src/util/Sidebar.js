@@ -23,11 +23,12 @@ const COLOR = '#f9f8f1';
 
 const ConnectorMenuList = [
   {
-    name: `My Profile`,
+    name: `Q-Profile`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon1.png'),
     icontype: 0,
+    qincludes: true,
     sub: [
       {
         name: `Edit Profile`,
@@ -36,13 +37,13 @@ const ConnectorMenuList = [
         options: {},
       },
       {
-        name: `My Agreement`,
+        name: `Agreement`,
         click: 'Agreement',
         expand: false,
         options: {},
       },
       {
-        name: `My Certificate`,
+        name: `Certificate`,
         expand: false,
         click: 'Certificate',
         options: {},
@@ -57,7 +58,7 @@ const ConnectorMenuList = [
     click: '',
   },
   {
-    name: `My FinPro`,
+    name: `My-Finqy`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon2.png'),
@@ -69,13 +70,13 @@ const ConnectorMenuList = [
       //     click: ''
       // },
       {
-        name: `My New Lead`,
+        name: `Add New Lead`,
         expand: false,
         click: '',
         heading: true,
         sub: [
           {
-            name: `Add Single Lead`,
+            name: `Single Lead`,
             expand: false,
             click: `FinorbitScreen`,
             options: {},
@@ -89,31 +90,34 @@ const ConnectorMenuList = [
         ],
       },
       {
-        name: `My Lead Record`,
+        name: `Q-Leads`,
         expand: false,
         click: 'LeadList',
         options: {},
+        qincludes: true,
       },
     ],
     click: '',
   },
   {
-    name: `FinNews`,
+    name: `Q-News`,
     expand: false,
     click: 'Blogs',
     options: {},
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Wallet`,
+    name: `Q-Wallet`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon4.png'),
     icontype: 2,
+    qincludes: true,
     sub: [
       {
-        name: `My Payout Structure`,
+        name: `Payout Structure`,
         expand: false,
         click: 'Payout',
         options: {},
@@ -125,13 +129,13 @@ const ConnectorMenuList = [
         options: {},
       },
       {
-        name: `My Invoice`,
+        name: `Invoice`,
         expand: false,
         click: 'Invoice',
         options: {},
       },
       {
-        name: `My 26AS`,
+        name: `26AS`,
         expand: false,
         click: 'As26',
         options: {},
@@ -146,46 +150,51 @@ const ConnectorMenuList = [
     click: '',
   },
   {
-    name: `My Offers`,
+    name: `Q-Offers`,
     expand: false,
     click: `MyOffers`,
     options: {},
     iconname: require('../res/images/menuicon5.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `ERB Popular Plan`,
+    name: `Q-Popular Plan`,
     expand: false,
     click: 'PopularPlan',
     options: {},
     iconname: require('../res/images/menuicon6.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Marketing Tool`,
+    name: `Q-Marketing Tool`,
     expand: false,
     click: 'MarketingTool',
     options: {},
     iconname: require('../res/images/menuicon7.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `FinTrain Learning`,
+    name: `Q-Train Learning`,
     expand: false,
     click: 'Training',
     options: {},
     iconname: require('../res/images/menuicon8.png'),
     icontype: 2,
+    qincludes: true,
   },
 ];
 
 const MainMenuList = [
   {
-    name: `My Profile`,
+    name: `Q-Profile`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon1.png'),
     icontype: 0,
+    qincludes: true,
     sub: [
       {
         name: `Edit Profile`,
@@ -194,13 +203,13 @@ const MainMenuList = [
         options: {},
       },
       {
-        name: `My Agreement`,
+        name: `Agreement`,
         click: 'Agreement',
         expand: false,
         options: {},
       },
       {
-        name: `My Certificate`,
+        name: `Certificate`,
         expand: false,
         click: 'Certificate',
         options: {},
@@ -215,7 +224,7 @@ const MainMenuList = [
     click: '',
   },
   {
-    name: `My FinPro`,
+    name: `My-Finqy`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon2.png'),
@@ -227,13 +236,13 @@ const MainMenuList = [
       //     click: ''
       // },
       {
-        name: `My New Lead`,
+        name: `Add New Lead`,
         expand: false,
         click: '',
         heading: true,
         sub: [
           {
-            name: `Add Single Lead`,
+            name: `Single Lead`,
             expand: false,
             click: `FinorbitScreen`,
             options: {},
@@ -247,63 +256,70 @@ const MainMenuList = [
         ],
       },
       {
-        name: `My Lead Record`,
+        name: `Q-Leads`,
         expand: false,
         click: 'LeadList',
         options: {},
+        qincludes: true,
       },
     ],
     click: '',
   },
   {
-    name: `FinNews`,
+    name: `Q-News`,
     expand: false,
     click: 'Blogs',
     options: {},
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Marketing Tool`,
+    name: `Q-Marketing Tool`,
     expand: false,
     click: 'MarketingTool',
     options: {},
     iconname: require('../res/images/menuicon7.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `FinTrain Learning`,
+    name: `Q-Train Learning`,
     expand: false,
     click: 'Training',
     options: {},
     iconname: require('../res/images/menuicon8.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `ERB Popular Plan`,
+    name: `Q-Popular Plan`,
     expand: false,
     click: 'PopularPlan',
     options: {},
     iconname: require('../res/images/menuicon6.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Offers`,
+    name: `Q-Offers`,
     expand: false,
     click: `MyOffers`,
     options: {},
     iconname: require('../res/images/menuicon5.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Wallet`,
+    name: `Q-Wallet`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon4.png'),
     icontype: 2,
+    qincludes: true,
     sub: [
       {
-        name: `My Payout Structure`,
+        name: `Payout Structure`,
         expand: false,
         click: 'Payout',
         options: {},
@@ -315,13 +331,13 @@ const MainMenuList = [
         options: {},
       },
       {
-        name: `My Invoice`,
+        name: `Invoice`,
         expand: false,
         click: 'Invoice',
         options: {},
       },
       {
-        name: `My 26AS`,
+        name: `26AS`,
         expand: false,
         click: 'As26',
         options: {},
@@ -336,17 +352,19 @@ const MainMenuList = [
     click: '',
   },
   {
-    name: `FinTeam Manager`,
+    name: `Q-Team Manager`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon3.png'),
     icontype: 2,
+    qincludes: true,
     sub: [
       {
-        name: `My Connector`,
+        name: `Q-Connector`,
         expand: false,
         click: '',
         heading: true,
+        qincludes: true,
         sub: [
           {
             name: `Add Connector`,
@@ -363,10 +381,11 @@ const MainMenuList = [
         ],
       },
       {
-        name: `My Team`,
+        name: `Q-Team`,
         expand: false,
         click: '',
         heading: true,
+        qincludes: true,
         sub: [
           {
             name: `Add Team`,
@@ -389,7 +408,7 @@ const MainMenuList = [
 
 const TeamMenuList = [
   {
-    name: `My FinPro`,
+    name: `My-Finqy`,
     expand: false,
     heading: true,
     iconname: require('../res/images/menuicon2.png'),
@@ -401,13 +420,13 @@ const TeamMenuList = [
       //     click: ''
       // },
       {
-        name: `My New Lead`,
+        name: `Add New Lead`,
         expand: false,
         click: '',
         heading: true,
         sub: [
           {
-            name: `Add Single Lead`,
+            name: `Single Lead`,
             expand: false,
             click: `FinorbitScreen`,
             options: {},
@@ -421,16 +440,17 @@ const TeamMenuList = [
         ],
       },
       {
-        name: `My Lead Record`,
+        name: `Q-Leads`,
         expand: false,
         click: 'LeadList',
         options: {},
+        qincludes: true,
       },
     ],
     click: '',
   },
   // {
-  //   name: `My Offers`,
+  //   name: `Q-Offers`,
   //   expand: false,
   //   click: `MyOffers`,
   //   options: {},
@@ -438,46 +458,50 @@ const TeamMenuList = [
   //   icontype: 2,
   // },
   {
-    name: `ERB Popular Plan`,
+    name: `Q-Popular Plan`,
     expand: false,
     click: 'PopularPlan',
     options: {},
     iconname: require('../res/images/menuicon6.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `FinNews`,
+    name: `Q-News`,
     expand: false,
     click: 'Blogs',
     options: {},
     iconname: require('../res/images/menuicon9.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `My Marketing Tool`,
+    name: `Q-Marketing Tool`,
     expand: false,
     click: 'MarketingTool',
     options: {},
     iconname: require('../res/images/menuicon7.png'),
     icontype: 2,
+    qincludes: true,
   },
   {
-    name: `FinTrain Learning`,
+    name: `Q-Train Learning`,
     expand: false,
     click: 'Training',
     options: {},
     iconname: require('../res/images/menuicon8.png'),
     icontype: 2,
+    qincludes: true,
   },
 ];
 
 const SalesMarketing = {
-  name: `Sales Marketing`,
+  name: `Q-Sales Marketing`,
   expand: false,
   heading: true,
   iconname: require('../res/images/menuicon7.png'),
   icontype: 2,
-
+  qincludes: true,
   sub: [
     {
       name: `Payout Structure`,
@@ -496,12 +520,12 @@ const SalesMarketing = {
 };
 
 const HelpDeskMenu = {
-  name: `Helpdesk`,
+  name: `Q-Support`,
   expand: false,
   heading: true,
   iconname: require('../res/images/menuicon10.png'),
   icontype: 2,
-
+  qincludes: true,
   sub: [
     {
       name: `Relation Manager`,
@@ -649,15 +673,14 @@ export default class Sidebar extends React.Component {
                             JSON.stringify(filter),
                           );
                           finalFilterList.push(cloneobject[0]);
-                          finalFilterList.push(
-                            {
-                              name: `Dialer`,
-                              expand: false,
-                              click: 'SwitchUser',
-                              options: {},
-                              iconname: require('../res/images/dialercalls.png'),
-                              icontype: 2,
-                            });
+                          finalFilterList.push({
+                            name: `Dialer`,
+                            expand: false,
+                            click: 'SwitchUser',
+                            options: {},
+                            iconname: require('../res/images/dialercalls.png'),
+                            icontype: 2,
+                          });
                           const lastpos = cloneobject.splice(
                             1,
                             cloneobject.length,
@@ -699,7 +722,7 @@ export default class Sidebar extends React.Component {
       if (Number(userdata.sales_enable) === 1) {
         const findSalesMarketing = Lodash.find(
           menuList,
-          (io) => io.name === 'Sales Marketing',
+          (io) => String(io.name).toLowerCase() === 'sales marketing',
         );
         if (Helper.nullCheck(findSalesMarketing)) {
           menuList.push(SalesMarketing);
@@ -707,7 +730,10 @@ export default class Sidebar extends React.Component {
       }
     }
     //enable helpdesk
-    const findHelpdesk = Lodash.find(menuList, (io) => io.name === 'Helpdesk');
+    const findHelpdesk = Lodash.find(
+      menuList,
+      (io) => String(io.name).toLowerCase() === 'helpdesk',
+    );
     if (Helper.nullCheck(findHelpdesk)) {
       menuList.push(HelpDeskMenu);
     }
@@ -778,6 +804,7 @@ export default class Sidebar extends React.Component {
           },
         ]);
       } else {
+        item.options.name = item.name;
         NavigationActions.navigate(item.click, item.options);
         NavigationActions.closeDrawer();
       }
@@ -792,8 +819,10 @@ export default class Sidebar extends React.Component {
         const {refercode} = this.state.userData;
         NavigationActions.navigate(s.click, {
           item: refercode,
+          name: s.name,
         });
       } else {
+        s.options.name = s.name;
         NavigationActions.navigate(s.click, s.options);
       }
       NavigationActions.closeDrawer();
@@ -837,6 +866,18 @@ export default class Sidebar extends React.Component {
                               resizeMode: 'contain',
                             }}
                           />
+                          {item.qincludes ? (
+                            <Image
+                              source={require('../res/images/q.png')}
+                              style={{
+                                marginStart: 8,
+                                width: 24,
+                                height: 24,
+                                //tintColor: '#626161',
+                                resizeMode: 'contain',
+                              }}
+                            />
+                          ) : null}
 
                           {/* <IconChooser
                             name={item.iconname}
@@ -856,7 +897,7 @@ export default class Sidebar extends React.Component {
                               fontWeight: 'bold',
                               justifyContent: 'center',
                               marginStart: 16,
-                            }}>{`${item.name}`}</Title>
+                            }}>{`${item.name.replace('Q-', '')}`}</Title>
                         </View>
                         {item.heading ? (
                           <Icon
@@ -883,30 +924,54 @@ export default class Sidebar extends React.Component {
                                   this.subClick(item, s, index, i)
                                 }>
                                 <View
-                                  styleName="horizontal v-center space-between"
+                                  styleName="horizontal"
                                   style={{
                                     marginHorizontal: 16,
                                     marginVertical: 8,
                                     paddingVertical: 10,
+                                    flex: 1,
                                   }}>
-                                  <Title
-                                    styleName="wrap"
-                                    style={{
-                                      fontSize: 14,
-
-                                      letterSpacing: 0.5,
-                                      color: !s.expand
-                                        ? '#97948c'
-                                        : Pref.PRIMARY_COLOR,
-                                      alignSelf: 'flex-start',
-                                    }}>{`${s.name}`}</Title>
-                                  {s.heading ? (
-                                    <Icon
-                                      name={`chevron-down`}
-                                      size={22}
-                                      color={'#97948c'}
-                                    />
+                                  {s.qincludes ? (
+                                    <View style={{flex: 0.15}}>
+                                      <Image
+                                        source={require('../res/images/q.png')}
+                                        style={{
+                                          width: 24,
+                                          height: 24,
+                                          //tintColor: '#626161',
+                                          resizeMode: 'contain',
+                                        }}
+                                      />
+                                    </View>
                                   ) : null}
+
+                                  <View
+                                    styleName="horizontal v-center space-between"
+                                    style={{flex: 0.9}}>
+                                    <View styleName="horizontal v-center">
+                                      <Title
+                                        styleName="wrap"
+                                        style={{
+                                          fontSize: 14,
+
+                                          letterSpacing: 0.5,
+                                          color: !s.expand
+                                            ? '#97948c'
+                                            : Pref.PRIMARY_COLOR,
+                                          alignSelf: 'flex-start',
+                                        }}>{`${s.name.replace(
+                                        'Q-',
+                                        '',
+                                      )}`}</Title>
+                                    </View>
+                                    {s.heading ? (
+                                      <Icon
+                                        name={`chevron-down`}
+                                        size={22}
+                                        color={'#97948c'}
+                                      />
+                                    ) : null}
+                                  </View>
                                 </View>
                               </TouchableWithoutFeedback>
                               {s.expand
@@ -923,9 +988,13 @@ export default class Sidebar extends React.Component {
                                           style={styles.line}
                                         />
                                         <TouchableWithoutFeedback
-                                          onPress={() =>
-                                            NavigationActions.navigate(s.click)
-                                          }>
+                                          onPress={() => {
+                                            s.options.name = s.name;
+                                            NavigationActions.navigate(
+                                              s.click,
+                                              s.options,
+                                            );
+                                          }}>
                                           <View
                                             styleName="horizontal v-center space-between"
                                             style={{

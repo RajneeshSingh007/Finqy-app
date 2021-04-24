@@ -23,6 +23,7 @@ export default class TlLiveTracker extends React.PureComponent {
     this.state = {
       dataList: [],
       teamUserList: [],
+      teamUserListClone: [],
     };
   }
 
@@ -69,9 +70,16 @@ export default class TlLiveTracker extends React.PureComponent {
                 });
               }
             });
-            this.setState({teamUserList: teamUserList, dataList: []}, () => {
-              this.setupLiveListerner();
-            });
+            this.setState(
+              {
+                teamUserListClone: teamUserList,
+                teamUserList: teamUserList,
+                dataList: [],
+              },
+              () => {
+                this.setupLiveListerner();
+              },
+            );
           }
         },
         (error) => {},
@@ -112,7 +120,7 @@ export default class TlLiveTracker extends React.PureComponent {
       );
       if (findUserIndex !== -1) {
         let trackChanges = false;
-        const userData = teamUserList[findUserIndex];
+        var userData = teamUserList[findUserIndex];
 
         if (
           Helper.nullCheck(checkincheckout) === false &&
@@ -125,11 +133,12 @@ export default class TlLiveTracker extends React.PureComponent {
           dateobj.setSeconds(Number(spl[2]));
           const formatTime = moment(dateobj).format('hh:mm a');
           userData.livedata = formatTime;
-          userData.type =
-            checkincheckout.length % 2 === 0 ? 'Check Out' : 'Check In';
+          userData.livetype =
+            checkincheckout.length % 2 === 0 ? 'checkout' : 'checkin';
           trackChanges = true;
         } else {
           userData.livedata = '';
+          userData.livetype = 'checkin';
         }
 
         // if (
@@ -189,7 +198,8 @@ export default class TlLiveTracker extends React.PureComponent {
           userData.type = breaktime.length % 2 === 0 ? 'Resume' : 'Break';
           trackChanges = true;
         } else {
-          userData.break = '';
+          userData.break = 'Break';
+          userData.type = '';
         }
 
         //update
@@ -204,7 +214,8 @@ export default class TlLiveTracker extends React.PureComponent {
           } else {
             userData.showinList = true;
           }
-          teamUserList[findUserIndex] = userData;
+          const cloneObj = JSON.parse(JSON.stringify(userData));
+          teamUserList[findUserIndex] = cloneObj;
           this.setState(
             {
               dataList: teamUserList.map((item) => {
@@ -357,8 +368,17 @@ export default class TlLiveTracker extends React.PureComponent {
                   </Subtitle>
                 </View>
               </View>
+              <Subtitle
+                style={{
+                  fontSize: 14,
+                  color: '#555555',
+                  paddingVertical: 4,
+                  fontWeight: '700',
+                }}>
+                {`Status: ${rowData.status}`}
+              </Subtitle>
               <View styleName="horizontal v-center" style={{flex: 12}}>
-                <View styleName="horizontal v-center " style={{flex: 4}}>
+                {/* <View styleName="horizontal v-center " style={{flex: 4}}>
                   <Subtitle
                     style={{
                       fontSize: 14,
@@ -366,25 +386,17 @@ export default class TlLiveTracker extends React.PureComponent {
                     }}>
                     {rowData.status}
                   </Subtitle>
-                </View>
-                <View
-                  styleName="horizontal v-center h-center"
-                  style={{flex: 4}}>
-                  <View
-                    style={StyleSheet.flatten([styles.dividercircle])}></View>
-
+                </View> */}
+                <View styleName="horizontal v-center" style={{flex: 8}}>
                   <Subtitle
                     style={{
                       fontSize: 14,
                       color: '#555555',
-                      marginStart: 10,
                     }}>
-                    {rowData.product}
+                    {`Product: ${rowData.product}`}
                   </Subtitle>
                 </View>
-                <View
-                  styleName="horizontal v-center  h-center"
-                  style={{flex: 4}}>
+                <View styleName="horizontal v-center" style={{flex: 4}}>
                   <View
                     style={StyleSheet.flatten([styles.dividercircle])}></View>
                   <Subtitle
@@ -406,7 +418,7 @@ export default class TlLiveTracker extends React.PureComponent {
                     styles.dividercircle,
                     {
                       backgroundColor:
-                        rowData.type === 'Check In' ? '#1bd741' : Pref.RED,
+                        rowData.livetype === 'checkin' ? '#1bd741' : Pref.RED,
                     },
                   ])}></View>
                 <Subtitle
@@ -526,8 +538,7 @@ export default class TlLiveTracker extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-              <View style={styles.emptycont}>
-              </View>
+              <View style={styles.emptycont}></View>
             )}
           </View>
         }

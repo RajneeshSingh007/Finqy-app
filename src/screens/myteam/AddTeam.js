@@ -174,7 +174,7 @@ export default class AddTeam extends React.Component {
         body={
           <>
             <LeftHeaders
-              title={`Add Team`}
+              title={Helper.getScreenName(this.props)}
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

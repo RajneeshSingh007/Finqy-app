@@ -59,8 +59,10 @@ export default class MemberReport extends React.PureComponent {
     
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.userData, (userData) => {
-        const pastStartDate = moment().format(DATE_FORMAT);
-        const pastEndDate = moment().subtract(7, 'd').format(DATE_FORMAT);
+        const pastStartDate = '';
+        //moment().format(DATE_FORMAT);
+        const pastEndDate = '';
+        //moment().subtract(7, 'd').format(DATE_FORMAT);
         const efStartDate = '';
         //moment().format(DATE_FORMAT);
         const efEndDate = '';
@@ -110,7 +112,6 @@ export default class MemberReport extends React.PureComponent {
   }
 
   backClick = () => {
-    NavigationActions.navigate('AllMembers', {reportenabled: true});
     BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return true;
   };

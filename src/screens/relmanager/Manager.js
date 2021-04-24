@@ -80,20 +80,11 @@ export default class Manager extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item, index) {
-    const inc = index + 1;
     return (
       <View styleName="sm-gutter" style={{
         flex: 1
       }}>
         <View styleName="vertical" style={styles.itemContainer}>
-          {/* <Image
-            source={{
-              uri: `https://image.freepik.com/free-vector/online-courses-concept_23-2148524391.jpg`,
-            }}
-            styleName="large"
-            style={styles.image}
-          /> */}
-
           <View styleName="horizontal space-between" style={styles.footerCon}>
             <View>
               {index === 0 ? <Title
@@ -110,7 +101,7 @@ export default class Manager extends React.PureComponent {
                   style={StyleSheet.flatten([styles.itemtext, {
                     color: '#bcbaa1'
                   }])}>
-                  {`Escalation ${inc}`}
+                  {`Escalation ${index}`}
                 </Title>
               }
               <Title
@@ -170,7 +161,7 @@ export default class Manager extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={'Relation Manager'}
+              title={Helper.getScreenName(this.props)}
               showBack
               // bottomtext={
               //   <>

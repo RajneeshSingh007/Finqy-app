@@ -114,12 +114,7 @@ export default class Blogs extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-    // let url = item.category === `newspaper` ? `https://erb.ai/erevbay_admin/blogs/newspaper/${item.img}` : `https://erb.ai/erevbay_admin/${item.img}`;
-    // if (url.includes('newspaper')){
-    //     url = url.replace('/images', '');
-    // }
-    //console.log(item);
-    let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
+    let url = `${Pref.BlogFileUrl}${item.img}`;
     return (
       <View styleName="md-gutter">
         <TouchableWithoutFeedback
@@ -205,7 +200,7 @@ export default class Blogs extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'FinNews'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`Fin`}

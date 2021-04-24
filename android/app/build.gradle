@@ -133,8 +133,8 @@ android {
         applicationId "com.erb.finpro"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 17122056
-        versionName "2.5.0"
+        versionCode 17122060
+        versionName "2.6.0"
         multiDexEnabled true
     }
     splits {

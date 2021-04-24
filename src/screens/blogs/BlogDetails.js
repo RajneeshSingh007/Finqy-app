@@ -50,12 +50,7 @@ export default class BlogDetails extends React.PureComponent {
    * @param {*} index
    */
   renderItems(item) {
-    let url = `${Pref.MainUrl}/erevbay_admin/${item.img}`;
-
-    // const url =
-    //   item.category === `newspaper`
-    //     ? `https://erb.ai/erevbay_admin/blogs/newspaper/${item.img}`
-    //     : `https://erb.ai/erevbay_admin/${item.img}`;
+    let url = `${Pref.BlogFileUrl}${item.img}`;
     const cat = item.category.replace('_', ' ');
     const sp = item.date.split(' ');
     const d = new Date();

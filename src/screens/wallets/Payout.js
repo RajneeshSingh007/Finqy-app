@@ -201,7 +201,7 @@ export default class Payout extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={'My Payout Structure'}
+              title={'Payout Structure'}
               showBack
             // bottomtext={' '}
             // bottomtextStyle={{

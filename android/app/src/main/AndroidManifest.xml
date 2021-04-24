@@ -66,9 +66,10 @@
 <!--        <meta-data-->
 <!--            android:name="com.google.firebase.messaging.default_notification_color"-->
 <!--            android:resource="@color/accentcolor" />-->
-<!--        <meta-data-->
-<!--            android:name="com.google.firebase.messaging.default_notification_channel_id"-->
-<!--            android:value="@string/default_notification_channel_id"/>-->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id"
+            tools:replace="android:value"/>
 
         <receiver android:name="com.afrihost.firebase.notifications.RNFirebaseNotificationReceiver"/>
         <receiver android:enabled="true" android:exported="true"  android:name="com.afrihost.firebase.notifications.RNFirebaseNotificationsRebootReceiver">

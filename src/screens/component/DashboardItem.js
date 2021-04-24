@@ -1,10 +1,9 @@
 import React from 'react';
 import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {Image, Title, View} from '@shoutem/ui';
-import * as Helper from '../../../util/Helper';
-import * as Pref from '../../../util/Pref';
-import Lodash from 'lodash';
-import IconChooser from '../../common/IconChooser';
+import * as Helper from '../../util/Helper';
+import * as Pref from '../../util/Pref';
+import IconChooser from '../common/IconChooser';
 
 const DashboardItem = prop => {
   const {item, itemClick = () => {}, index = -1, appoint = false} = prop;

@@ -273,7 +273,7 @@ export default class AddConnector extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={`New Leader`}
+              title={Helper.getScreenName(this.props)}
               bottomtextStyle={{
                 color: '#555555',
                 fontSize: 20,

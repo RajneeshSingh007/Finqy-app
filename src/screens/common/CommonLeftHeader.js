@@ -15,9 +15,10 @@ import Lodash from 'lodash';
 import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import {stopService,stopIdleService } from '../../util/DialerFeature';
+import {stopService, stopIdleService} from '../../util/DialerFeature';
+import Loader from '../../util/Loader';
 
-const LeftHeaders = props => {
+const LeftHeaders = (props) => {
   const {
     title,
     bottomBody,
@@ -37,6 +38,7 @@ const LeftHeaders = props => {
   const [userData, setuserData] = useState(null);
   const [type, settype] = useState(null);
   const [leaderData, setleaderData] = useState(null);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     changeNavigationBarColor('white', true, true);
@@ -46,7 +48,7 @@ const LeftHeaders = props => {
   }, []);
 
   useEffect(() => {
-    Pref.getVal(Pref.userData, value => {
+    Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
         const pp = value.user_prof;
         let profilePic =
@@ -58,7 +60,7 @@ const LeftHeaders = props => {
             !pp.includes('.png'))
             ? null
             : {uri: decodeURIComponent(pp)};
-           // console.log('profilePic', profilePic)
+        // console.log('profilePic', profilePic)
         setPic(profilePic);
         setuserData(value);
         setleaderData(
@@ -67,7 +69,7 @@ const LeftHeaders = props => {
       }
     });
 
-    Pref.getVal(Pref.USERTYPE, type => {
+    Pref.getVal(Pref.USERTYPE, (type) => {
       settype(type);
     });
 
@@ -86,21 +88,45 @@ const LeftHeaders = props => {
       {
         text: 'Ok',
         onPress: () => {
-          stopService();
-          stopIdleService();
-          Pref.setVal(Pref.MENU_LIST, null);
-          Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
-          Pref.setVal(Pref.DIALER_DATA, null);
-          Pref.setVal(Pref.salespayoutUpdate, null);
-          Pref.setVal(Pref.saveToken, null);
-          Pref.setVal(Pref.userData, null);
-          Pref.setVal(Pref.userID, null);
-          Pref.setVal(Pref.USERTYPE, '');
-          Pref.setVal(Pref.loggedStatus, false);
-          NavigationActions.navigate('IntroScreen');
+          //value
+          setLoader(true);
+          const body = JSON.stringify({
+            id: `${userData.id}`,
+            type: `${type}`,
+          });
+          Pref.getVal(Pref.saveToken, (token) => {
+            Helper.networkHelperTokenPost(
+              Pref.LogoutUrl,
+              body,
+              Pref.methodPost,
+              token,
+              (result) => {
+                cleanup();
+              },
+              (error) => {
+                cleanup();
+              },
+            );
+          });
         },
       },
     ]);
+  };
+
+  const cleanup = () => {
+    stopService();
+    stopIdleService();
+    Pref.setVal(Pref.MENU_LIST, null);
+    Pref.setVal(Pref.DIALER_TEAM_LEADER, null);
+    Pref.setVal(Pref.DIALER_DATA, null);
+    Pref.setVal(Pref.DIALER_SERVICE_ENABLED, false);
+    Pref.setVal(Pref.salespayoutUpdate, null);
+    Pref.setVal(Pref.saveToken, null);
+    Pref.setVal(Pref.userData, null);
+    Pref.setVal(Pref.userID, null);
+    Pref.setVal(Pref.USERTYPE, '');
+    Pref.setVal(Pref.loggedStatus, false);
+    NavigationActions.navigate('IntroScreen');
   };
 
   return (
@@ -130,10 +156,13 @@ const LeftHeaders = props => {
                           fontSize: 16,
                         },
                       ])}>
-                      {userData !== null && Helper.nullStringCheck(userData.rname) === false
-                          ? userData.rname
-                          : userData !== null && Helper.nullStringCheck(userData.username) === false
-                          ? userData.username : ''}
+                      {userData !== null &&
+                      Helper.nullStringCheck(userData.rname) === false
+                        ? userData.rname
+                        : userData !== null &&
+                          Helper.nullStringCheck(userData.username) === false
+                        ? userData.username
+                        : ''}
                     </Title>
 
                     <Subtitle
@@ -146,11 +175,15 @@ const LeftHeaders = props => {
                           marginTop: 4,
                         },
                       ])}>
-                      {userData != null && Helper.nullStringCheck(userData.rcontact) === false
-                          ? `${userData.rcontact}${type==='referral' ? '' : '(Connector)'}`
-                          : userData != null && Helper.nullStringCheck(userData.mobile) === false
-                          ? `${userData.mobile}(Team)`
-                          : ''}
+                      {userData != null &&
+                      Helper.nullStringCheck(userData.rcontact) === false
+                        ? `${userData.rcontact}${
+                            type === 'referral' ? '' : '(Connector)'
+                          }`
+                        : userData != null &&
+                          Helper.nullStringCheck(userData.mobile) === false
+                        ? `${userData.mobile}(Team)`
+                        : ''}
                     </Subtitle>
 
                     <Title
@@ -161,14 +194,17 @@ const LeftHeaders = props => {
                           fontSize: 14,
                           paddingVertical: 0,
                           marginBottom: 2,
-                          paddingBottom:2,
-                          marginTop:1
+                          paddingBottom: 2,
+                          marginTop: 1,
                         },
                       ])}>
-                      {`${type === `referral`
+                      {`${
+                        type === `referral`
                           ? 'Partner'
-                          : leaderData != null && Helper.nullCheck(leaderData.rname) === false
-                          ? `${leaderData.rname}(Partner)` : ''
+                          : leaderData != null &&
+                            Helper.nullCheck(leaderData.rname) === false
+                          ? `${leaderData.rname}(Partner)`
+                          : ''
                       }`}
                     </Title>
 
@@ -202,6 +238,12 @@ const LeftHeaders = props => {
         </Portal>
       ) : null}
 
+      {loader === true ? (
+        <Portal>
+          <Loader isShow={loader} />
+        </Portal>
+      ) : null}
+
       <View
         style={{
           flex: 0.13,
@@ -223,15 +265,16 @@ const LeftHeaders = props => {
             </View>
             <View style={{flex: 0.6}}>
               {showBack === true ? (
-                title === 'Finpro' ? (
+                title === 'Finqy' ? (
                   <Image
                     source={require('../../res/images/squarelogo.png')}
-                    styleName="medium"
+                    styleName="medium-wide"
                     style={{
                       alignSelf: 'center',
                       justifyContent: 'center',
-                      resizeMode: 'contain',
-                    }}
+                      resizeMode:'contain',
+                      marginBottom:8
+                      }}
                   />
                 ) : (
                   <Title style={styles.centertext}>
@@ -241,11 +284,12 @@ const LeftHeaders = props => {
               ) : (
                 <Image
                   source={require('../../res/images/squarelogo.png')}
-                  styleName="medium"
+                  styleName="medium-wide"
                   style={{
                     alignSelf: 'center',
                     justifyContent: 'center',
-                    resizeMode: 'contain',
+                    resizeMode:'contain',
+                    marginBottom:8
                   }}
                 />
               )}

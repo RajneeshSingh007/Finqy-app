@@ -16,6 +16,7 @@ import NavigationActions from '././src/util/NavigationActions';
 import * as Helper from '././src/util/Helper';
 import {stopService} from '././src/util/DialerFeature';
 
+
 const theme = {
   ...DefaultTheme,
   colors: {
@@ -100,6 +101,11 @@ const firebaseBackgroundMessage = async(data) =>{
   
 }
 AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => firebaseBackgroundMessage);
+
+const firebaseMessagingHeadlessTask = async(data) =>{
+
+}
+AppRegistry.registerHeadlessTask('ReactNativeFirebaseMessagingHeadlessTask', () => firebaseMessagingHeadlessTask);
 
 //codepush
 AppRegistry.registerComponent(appName, () => codePush(options)(Main));

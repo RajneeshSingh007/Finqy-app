@@ -90,7 +90,9 @@ export default class Certificate extends React.PureComponent {
         scrollEnable={false}
         body={
           <View style={{ flex: 1 }}>
-            <LeftHeaders title={`My Certificate`} showBack />
+            <LeftHeaders 
+                title={Helper.getScreenName(this.props)}
+                showBack />
             <View style={{ flex: 0.02 }}></View>
             <Pdf
               source={{

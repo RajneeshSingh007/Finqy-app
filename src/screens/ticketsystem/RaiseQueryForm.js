@@ -31,7 +31,7 @@ let itIssueList = [
   {value: 'FinTeam Manager'},
   {value: 'HelpDesk/Relation Manager'},
   {value: 'My Profile'},
-  {value: 'My FinPro'},
+  {value: 'My Finqy'},
   {value: 'Marketing Tool'},
   {value: 'MIS'},
   {value: 'Offers'},
@@ -527,13 +527,14 @@ export default class RaiseQueryForm extends React.Component {
         body={
           <>
             <LeftHeaders
-              title={`Raise A Ticket`}
+              title={Helper.getScreenName(this.props)}
+              // title={`Raise A Ticket`}
               bottomtext={
                 <>
                   {editMode ? 'Edit ' : `Raise A `}
                   {
                     <Title style={styles.passText}>
-                      {editMode ? `Ticket` : `Query`}
+                      {editMode ? `Ticket` : `Ticket`}
                     </Title>
                   }
                 </>
@@ -558,7 +559,7 @@ export default class RaiseQueryForm extends React.Component {
                 placeholder={`Select Ticket Type`}
                 starVisible
                 value={this.state.ticketissue}
-                selectedItem={value =>
+                selectedItem={(value) =>
                   this.setState({
                     ticketissue: value,
                     itissue: '',
@@ -576,7 +577,7 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Issue`}
                   starVisible
                   value={this.state.itissue}
-                  selectedItem={value => this.setState({itissue: value})}
+                  selectedItem={(value) => this.setState({itissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -588,7 +589,7 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Product`}
                   starVisible
                   value={this.state.nonitissue}
-                  selectedItem={value => this.setState({nonitissue: value})}
+                  selectedItem={(value) => this.setState({nonitissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -600,7 +601,9 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Issue`}
                   starVisible
                   value={this.state.nonitesubissue}
-                  selectedItem={value => this.setState({nonitesubissue: value})}
+                  selectedItem={(value) =>
+                    this.setState({nonitesubissue: value})
+                  }
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -610,14 +613,14 @@ export default class RaiseQueryForm extends React.Component {
                 list={priorityList}
                 placeholder={`Select Priority`}
                 value={this.state.priority}
-                selectedItem={value => this.setState({priority: value})}
+                selectedItem={(value) => this.setState({priority: value})}
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               />
 
               <CustomForm
                 value={this.state.description}
-                onChange={v => this.setState({description: v})}
+                onChange={(v) => this.setState({description: v})}
                 label={`Short Description`}
                 placeholder={`Enter description`}
                 keyboardType={'text'}
@@ -627,7 +630,7 @@ export default class RaiseQueryForm extends React.Component {
 
               <CustomForm
                 value={this.state.remark}
-                onChange={v => this.setState({remark: v})}
+                onChange={(v) => this.setState({remark: v})}
                 label={`Remark`}
                 placeholder={`Enter remark`}
                 keyboardType={'text'}

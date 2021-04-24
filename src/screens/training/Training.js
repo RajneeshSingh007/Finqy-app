@@ -407,7 +407,7 @@ export default class Training extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'FinTrain Learning'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`FinTrain `}

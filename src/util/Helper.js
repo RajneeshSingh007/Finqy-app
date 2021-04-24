@@ -101,7 +101,11 @@ export const requestPermissions = async () => {
  * Ask permission on android for dialer
  * @returns {Promise<void>}
  */
-export const requestPermissionsDialer = async() => {
+/**
+ * Ask permission on android for dialer
+ * @returns {Promise<void>}
+ */
+ export const requestPermissionsDialer = async() => {
   try {
     if (Platform.OS === 'android') {
       const value = await PermissionsAndroid.requestMultiple([
@@ -969,20 +973,20 @@ export const lowercaseWithDashWord = (word) =>{
  */
 export const productShareList = () =>{
   const list = [
-    { value: 'Auto Loan', url: `${Pref.FinURL}alform.php` },
-    { value: 'Business Loan', url: `${Pref.FinURL}blform.php` },
-    { value: 'Credit Card', url: `${Pref.FinURL}ccf.php` },
+    { value: 'Auto Loan', url: `${Pref.FinURL}al.php` },
+    { value: 'Business Loan', url: `${Pref.FinURL}bl.php` },
+    { value: 'Credit Card', url: `${Pref.FinURL}cc.php` },
     { value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php` },
-    { value: 'Home Loan', url: `${Pref.FinURL}hlform.php` },
-    { value: 'Health Insurance', url: `${Pref.FinURL}hiform.php` },
-    { value: 'Insurance Samadhan', url: `${Pref.FinURL}isform.php` },
+    { value: 'Home Loan', url: `${Pref.FinURL}hl.php` },
+    { value: 'Health Insurance', url: `${Pref.FinURL}hi.php` },
+    { value: 'Insurance Samadhan', url: `${Pref.FinURL}is.php` },
     { value: 'Insure Check', url: `${Pref.FinURL}ic.php` },
-    { value: 'Loan Against Property', url: `${Pref.FinURL}lapform.php` },
+    { value: 'Loan Against Property', url: `${Pref.FinURL}lap.php` },
     { value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php` },
     { value: 'Motor Insurance', url: `${Pref.FinURL}mi.php` },
-    { value: 'Mutual Fund', url: `${Pref.FinURL}mfform.php` },
-    { value: 'Personal Loan', url: `${Pref.FinURL}plform.php` },
-    { value: 'Term Insurance', url: `${Pref.FinURL}tiform.php` },
+    { value: 'Mutual Fund', url: `${Pref.FinURL}mf.php` },
+    { value: 'Personal Loan', url: `${Pref.FinURL}pl.php` },
+    { value: 'Term Insurance', url: `${Pref.FinURL}ti.php` },
     // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
     // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
     // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
@@ -998,3 +1002,16 @@ export const productShareList = () =>{
 export const replacetext = title => {
   return Lodash.startCase(title.replace(/_/g, ' '));
 };
+
+/**
+ * screen Name
+ * @param {*} props 
+ * @returns 
+ */
+export const getScreenName = (props = undefined, title = '') =>{
+  if(props){
+    return props.navigation.getParam('name', '');
+  }else{
+    return title;
+  }
+}

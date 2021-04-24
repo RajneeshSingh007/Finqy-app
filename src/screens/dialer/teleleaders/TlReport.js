@@ -144,7 +144,7 @@ export default class TlReport extends React.PureComponent {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
-              title: name,
+              title: fileName,
               description: 'Record exported successfully',
               mime: 'text/comma-separated-values',
               path: finalFilePath,

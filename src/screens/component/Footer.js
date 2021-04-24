@@ -1,40 +1,37 @@
-import React,{useEffect, useState} from 'react';
-import { StyleSheet, TouchableWithoutFeedback, Linking } from 'react-native';
-import { Image, Subtitle, View } from '@shoutem/ui';
-import IconChooser from '../common/IconChooser';
-import { Avatar } from 'react-native-paper';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, TouchableWithoutFeedback, Linking} from 'react-native';
+import {Subtitle, View} from '@shoutem/ui';
+import {Avatar} from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
 import * as Pref from '../../util/Pref';
-import codePush from "react-native-code-push";
+import codePush from 'react-native-code-push';
 
 async function getAppVersion() {
-  const [{ appVersion }, update] = await Promise.all([
-  codePush.getConfiguration(),
-  codePush.getUpdateMetadata()
+  const [{appVersion}, update] = await Promise.all([
+    codePush.getConfiguration(),
+    codePush.getUpdateMetadata(),
   ]);
 
   if (!update) {
-      return `v${appVersion}`;
+    return `v${appVersion}`;
   }
 
   const label = update.label.substring(1);
   return `v${appVersion} rev.${label}`;
-};
+}
 
-export { getAppVersion };
-
+export {getAppVersion};
 
 const Footer = (prop) => {
-  const { flex = 0.13, iconClick = () => { } } = prop;
+  const {flex = 0.13, iconClick = () => {}} = prop;
 
   const [version, setVersion] = useState();
 
   useEffect(() => {
-    getAppVersion().then(r => {
+    getAppVersion().then((r) => {
       setVersion(r);
     });
-    return () => {
-    };
+    return () => {};
   }, []);
 
   return (
@@ -53,11 +50,46 @@ const Footer = (prop) => {
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => Linking.openURL(`${Pref.MainUrl}about.php`)}>
-          <Subtitle style={styles.centerText}>{`About FinPro`}</Subtitle>
+          <Subtitle style={styles.centerText}>{`About Finqy`}</Subtitle>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
-          onPress={() => NavigationActions.navigate('Term')}>
+          onPress={() =>
+            NavigationActions.navigate('Term', {
+              url: Pref.TermOfUseUrl,
+              title: 'Term Of Use',
+            })
+          }>
           <Subtitle style={styles.centerText}>{`Read Term of use`}</Subtitle>
+        </TouchableWithoutFeedback>
+
+        <TouchableWithoutFeedback
+          onPress={() =>
+            NavigationActions.navigate('Term', {
+              url: Pref.PrivacyPolicyUrl,
+              title: 'Privacy Policy',
+            })
+          }>
+          <Subtitle style={styles.centerText}>{`Privacy Policy`}</Subtitle>
+        </TouchableWithoutFeedback>
+
+        <TouchableWithoutFeedback
+          onPress={() =>
+            NavigationActions.navigate('Term', {
+              url: Pref.CookiePolicyUrl,
+              title: 'Coockie Policy',
+            })
+          }>
+          <Subtitle style={styles.centerText}>{`Coockie Policy`}</Subtitle>
+        </TouchableWithoutFeedback>
+
+        <TouchableWithoutFeedback
+          onPress={() =>
+            NavigationActions.navigate('Term', {
+              url: Pref.DisclaimerUrl,
+              title: 'Disclaimer',
+            })
+          }>
+          <Subtitle style={styles.centerText}>{`Disclaimer`}</Subtitle>
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.line} />
@@ -82,14 +114,15 @@ const Footer = (prop) => {
           }}
         />
       </View>
-      <Subtitle style={StyleSheet.flatten([
-        styles.centerText,
-        {
-          marginEnd:0,
-          paddingVertical:0,
-          fontSize:13
-        }
-      ])}>{`${version}`}</Subtitle>
+      <Subtitle
+        style={StyleSheet.flatten([
+          styles.centerText,
+          {
+            marginEnd: 0,
+            paddingVertical: 0,
+            fontSize: 13,
+          },
+        ])}>{`${version}`}</Subtitle>
     </View>
   );
 };

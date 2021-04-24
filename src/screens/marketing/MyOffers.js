@@ -274,7 +274,7 @@ export default class MyOffers extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'My Offers'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`FinAds `}

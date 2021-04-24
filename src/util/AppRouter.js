@@ -16,6 +16,7 @@ import OtpScreen from './../screens/auth/OtpScreen';
 
 //home page
 import HomeScreen from './../screens/home/HomeScreen';
+import NewHomeScreen from './../screens/home/NewHomeScreen';
 
 //finorbit
 import FinorbitScreen from './../screens/finorbit/FinorbitScreen';
@@ -76,18 +77,18 @@ import BlogDetails from './../screens/blogs/BlogDetails';
 import Training from './../screens/training/Training';
 
 import Manager from './../screens/relmanager/Manager';
-import Qrc from './../screens/helpdesk/Qrc';
+//import Qrc from './../screens/helpdesk/Qrc';
+
 //term condition
 import TCondition from './../screens/auth/TCondition';
 import WebComp from '../screens/component/WebComp';
+
 //finish screen
 import FinishScreen from '../screens/common/FinishScreen';
 
 /// Dialer Screens
 import DialerCalling from '../screens/dialer/calling/DialerCalling';
 import DialerRecords from '../screens/dialer/leads/DialerRecords';
-import AllMembers from '../screens/dialer/leader/AllMembers';
-import MemberReport from '../screens/dialer/leader/MemberReport';
 import Followup from '../screens/dialer/leads/Followup';
 import SwitchUser from '../screens/dialer/SwitchUser';
 import TcDashboard from '../screens/dialer/telecallers/TcDashboard';
@@ -95,11 +96,13 @@ import TcPerformance from '../screens/dialer/telecallers/TcPerformance';
 import TcTemplates from '../screens/dialer/telecallers/TcTemplates';
 import CallLogs from '../screens/dialer/telecallers/CallLogs';
 
+// dialer teleleader
 import TlTeam from '../screens/dialer/teleleaders/TlTeam';
 import TlMemberList from '../screens/dialer/teleleaders/TlMemberList';
 import TlDashboard from '../screens/dialer/teleleaders/TlDashboard';
 import TlLiveTracker from '../screens/dialer/teleleaders/TlLiveTracker';
 import TlReport from '../screens/dialer/teleleaders/TlReport';
+import MemberReport from '../screens/dialer/teleleaders/MemberReport';
 
 //Payin Payout
 import PayinProducts from '../screens/sales/PayinProducts';
@@ -200,6 +203,7 @@ const FinOrbitNav = createStackNavigator(
   },
 );
 
+//deprecated
 const BlogNav = createStackNavigator(
   {
     Blogs: { screen: Blogs },
@@ -246,10 +250,11 @@ const OfferNav2 = createStackNavigator(
   },
 );
 
+//deprecated
 const SwitchTranNav = createSwitchNavigator(
   {
     Training: { screen: Training },
-    Blogs: BlogNav,
+    //Blogs: BlogNav,
   },
   {
     headerMode: 'none',
@@ -287,7 +292,6 @@ const DialerNav = createStackNavigator({
   TcPerformance:{screen:TcPerformance},
   TlDashboard:{screen:TlDashboard},
   Followup:{screen:Followup},
-  //AllMembers:{screen:AllMembers},
   MemberReport:{screen:MemberReport},
   CallLogs:{screen:CallLogs},
   TcTemplates:{screen:TcTemplates},
@@ -329,7 +333,11 @@ const SalesNav = createSwitchNavigator({
 
 const OtherNav = createDrawerNavigator(
   {
-    Home: { screen: HomeScreen },
+    Home: { screen: 
+      NewHomeScreen
+      //HomeScreen 
+    },
+    Dashboard:{screen:HomeScreen},
     FinorbitScreen: FinOrbitNav,
     ProfileScreen: { screen: ProfileScreen },
     MyWallet: WalletNav,
@@ -341,7 +349,6 @@ const OtherNav = createDrawerNavigator(
     ViewTeam: { screen: ViewTeam },
     Manager: { screen: Manager },
     LinkSharingOption: { screen: LinkSharingOption },
-    Qrc: { screen: Qrc },
     Invoice: { screen: Invoice },
     SwitchTranNav: SwitchTranNav,
     As26: { screen: As26 },
@@ -357,10 +364,11 @@ const OtherNav = createDrawerNavigator(
     WebComp: { screen: WebComp },
     Payout: { screen: payoutNav },
     PayoutPolicy:{screen:PayoutPolicy},
-    
-    DialerNav:{screen: DialerNav},
+    Blogs: { screen: Blogs },
+    Training: { screen: Training },
     TicketNav:{screen:TicketNav},
-    SalesNav:{screen:SalesNav}
+    SalesNav:{screen:SalesNav},
+    DialerNav:{screen: DialerNav},
   },
   {
     initialRouteName: 'Home',

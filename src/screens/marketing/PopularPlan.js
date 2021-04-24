@@ -273,7 +273,7 @@ export default class PopularPlan extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'Popular Plan'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`FinAds `}

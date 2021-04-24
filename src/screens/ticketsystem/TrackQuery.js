@@ -1214,7 +1214,7 @@ export default class TrackQuery extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'Track My Query'}
+              title={Helper.getScreenName(this.props)}
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">

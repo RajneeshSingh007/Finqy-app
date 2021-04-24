@@ -91,7 +91,9 @@ export default class Agreement extends React.PureComponent {
         scrollEnable={false}
         body={
           <View style={{ flex: 1 }}>
-            <LeftHeaders title={`My Agreement`} showBack />
+            <LeftHeaders 
+                title={Helper.getScreenName(this.props)}
+                showBack />
             <View style={{ flex: 0.02 }}></View>
             <Pdf
               source={{

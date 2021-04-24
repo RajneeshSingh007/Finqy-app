@@ -13,19 +13,23 @@ import * as Helper from '../../util/Helper';
 import CScreen from './../component/CScreen';
 import LeftHeaders from '../common/CommonLeftHeader';
 import {sizeWidth, sizeHeight} from '../../util/Size';
-import DashboardItem from './components/DashboardItem';
+import DashboardItem from '../component/DashboardItem';
 import NavigationActions from '../../util/NavigationActions';
 import ListError from '../common/ListError';
 import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import {firebase} from '@react-native-firebase/firestore';
 import {
+  enableService,
   enableCallModule,
   serverClientDateCheck,
   enableIdleService,
   stopIdleService,
   disableOffline,
+  stopService,
+  mobileNumberCleanup,
 } from '../../util/DialerFeature';
+import CallDetectorManager from 'react-native-call-detection';
 
 const TLDashboard = [
   {
@@ -339,6 +343,7 @@ export default class SwitchUser extends React.PureComponent {
               dataExist = true;
             }
             let filterList = [];
+            let check = '';
             if (dataExist) {
               filterList = Lodash.map(cloneList, (io) => {
                 if (io.name === 'Break' || io.name === 'Resume') {
@@ -346,6 +351,7 @@ export default class SwitchUser extends React.PureComponent {
                   io.enabled = evenoddcheckCheck ? true : false;
                 } else if (io.name === 'Check Out' || io.name === 'Check In') {
                   io.name = evenoddcheckCheck ? 'Check Out' : 'Check In';
+                  check = io.name;
                 } else if (
                   io.name === 'Start Calling' ||
                   io.name === 'Follow-up'
@@ -363,6 +369,36 @@ export default class SwitchUser extends React.PureComponent {
             } else {
               filterList = cloneList;
             }
+
+            let checkIn = false;
+            //bubble
+            if (String(check).toLowerCase().includes('out')) {
+              enableIdleService(`${id}${date}`);
+              checkIn = true;
+              this.callDetection = new CallDetectorManager(
+                (event, phoneNumber) => {
+                  //console.log('event', event);
+                  //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
+                  enableService();
+                  if (Helper.nullStringCheck(phoneNumber) === false) {
+                    Pref.setVal(
+                      Pref.DIALER_TEMP_BUBBLE_NUMBER,
+                      mobileNumberCleanup(phoneNumber),
+                    );
+                  }
+                  //}
+                },
+              );
+            } else {
+              checkIn = false;
+              stopService();
+              stopIdleService();
+              if (this.callDetection !== undefined) {
+                this.callDetection.dispose();
+              }
+            }
+
+            Pref.setVal(Pref.DIALER_SERVICE_ENABLED, checkIn);
 
             // const findisResume = Lodash.find(
             //   enableList,
@@ -447,17 +483,15 @@ export default class SwitchUser extends React.PureComponent {
                 const obj = {};
                 obj.checkincheckout = checkincheckout;
 
-                if (docName === 'checkin') {
-                  isCheckedin = true;
-                  enableIdleService(`${id}${checkClientServer[2]}`);
-                  dialerData[0].tc['checkin'] = true;
-                } else {
-                  dialerData[0].tc['checkin'] = false;
-                  isCheckedin = false;
-                  stopIdleService();
-                }
+                //if (docName === 'checkin') {
+                //isCheckedin = true;
+                //dialerData[0].tc['checkin'] = true;
+                //} else {
+                //dialerData[0].tc['checkin'] = false;
+                //isCheckedin = false;
+                // }
 
-                Pref.setVal(Pref.DIALER_DATA, dialerData);
+                //Pref.setVal(Pref.DIALER_DATA, dialerData);
 
                 firebase
                   .firestore()
@@ -475,6 +509,7 @@ export default class SwitchUser extends React.PureComponent {
                     );
                   })
                   .catch((e) => {
+                    console.log(e);
                     Helper.showToastMessage('Something went wrong!', 0);
                     this.setState({progressLoader: false});
                   });

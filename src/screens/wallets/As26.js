@@ -220,7 +220,10 @@ export default class As26 extends React.PureComponent {
         refresh={() => this.fetchData()}
         body={
           <>
-            <LeftHeaders showBack title={'26AS'} />
+            <LeftHeaders 
+            showBack 
+            title={Helper.getScreenName(this.props)}
+            />
 
             <View styleName="horizontal md-gutter">
               <PaginationNumbers

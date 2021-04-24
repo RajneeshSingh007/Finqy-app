@@ -327,7 +327,7 @@ export default class ViewConnector extends React.PureComponent {
         refresh={() => this.fetchData()}
         body={
           <>
-            <LeftHeaders showBack title={'View Connector'} />
+            <LeftHeaders showBack               title={Helper.getScreenName(this.props)} />
 
             <View styleName="horizontal md-gutter space-between">
               <PaginationNumbers

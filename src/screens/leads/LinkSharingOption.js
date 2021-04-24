@@ -101,7 +101,7 @@ export default class LinkSharingOption extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'Link Sharing'}
+              title={Helper.getScreenName(this.props).replace(/Option/g, '')}
               // bottomtext={
               //   <>
               //     {`Link `}

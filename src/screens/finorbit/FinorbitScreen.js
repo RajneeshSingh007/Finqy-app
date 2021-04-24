@@ -23,18 +23,6 @@ export default class FinorbitScreen extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    // const { navigation } = this.props;
-    // this.willfocusListener = navigation.addListener('willFocus', () => {
-    //   this.setState({ loading: true });
-    // });
-    // this.focusListener = navigation.addListener('didFocus', () => {
-    //   const productList = JSON.parse(JSON.stringify(Pref.productList));
-    //   // productList.push({
-    //   //   name: 'Insure Check',
-    //   // })
-
-    //   this.setState({ loading: false, dataList: productList });
-    // });
   }
 
   componentWillUnMount() {
@@ -169,11 +157,11 @@ export default class FinorbitScreen extends React.PureComponent {
         body={
           <>
             <LeftHeaders
-              title={'Finpro'}
+              title={'Finqy'}
               showBack
               bottomtext={
                 <>
-                  {`Add Single `}
+                  {`Single `}
                   <Title style={styles.passText}>{`Lead`}</Title>
                 </>
               }

@@ -154,7 +154,7 @@ export default class AddTeam extends React.Component {
           <>
             <LeftHeaders
               showBack
-              title={'Change Password'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`Change `}

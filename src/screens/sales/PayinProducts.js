@@ -373,7 +373,7 @@ export default class PayinProducts extends React.PureComponent {
                   NavigationActions.goBack();
                 }
               }}
-              title={showUpdateButton ? 'Partner Payout' : 'Payout Structure'}
+              title={showUpdateButton ? 'Q-Payout' : 'Q-Pay'}
               showBack
               // bottomtext={' '}
               // bottomtextStyle={{

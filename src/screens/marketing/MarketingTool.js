@@ -74,7 +74,7 @@ export default class MarketingTool extends React.PureComponent {
         type: utype,
       });
 
-      //console.log('body', Pref.OffersUrl, body, this.state.token);
+    //console.log('body', type);
       Helper.networkHelperTokenPost(
         Pref.OffersUrl,
         body,
@@ -271,7 +271,7 @@ export default class MarketingTool extends React.PureComponent {
           <>
             <LeftHeaders
               showBack
-              title={'My Marketing Tool'}
+              title={Helper.getScreenName(this.props)}
               // bottomtext={
               //   <>
               //     {`FinAds `}

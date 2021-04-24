@@ -16,7 +16,7 @@ import NavigationActions from '../../../util/NavigationActions';
 import Download from '../../component/Download';
 import moment from 'moment';
 import PaginationNumbers from '../../component/PaginationNumbers';
-import { disableOffline } from '../../../util/DialerFeature';
+import {disableOffline} from '../../../util/DialerFeature';
 import {firebase} from '@react-native-firebase/firestore';
 
 const ITEM_LIMIT = 10;
@@ -41,7 +41,8 @@ export default class TlTeam extends React.PureComponent {
       enableSearch: false,
       orderBy: 'asc',
       fileName: '',
-      leaderData:[]
+      leaderData: [],
+      teamInfo: null,
     };
   }
 
@@ -51,16 +52,16 @@ export default class TlTeam extends React.PureComponent {
       this.setState({loading: true, dataList: []});
     });
     this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, data =>{
-        Pref.getVal(Pref.DIALER_DATA, userData => {
-          this.setState({userData: userData, leaderData:data});
-          Pref.getVal(Pref.saveToken, value => {
+      Pref.getVal(Pref.userData, (data) => {
+        Pref.getVal(Pref.DIALER_DATA, (userData) => {
+          this.setState({userData: userData, leaderData: data});
+          Pref.getVal(Pref.saveToken, (value) => {
             this.setState({token: value}, () => {
               this.fetchData();
             });
           });
         });
-      })
+      });
     });
   }
 
@@ -73,70 +74,77 @@ export default class TlTeam extends React.PureComponent {
   fetchData = () => {
     this.setState({loading: true});
     disableOffline();
-    const {userData,leaderData} = this.state;
+    const {userData, leaderData} = this.state;
     const {leader} = leaderData;
     const {id} = userData[0].tl;
-    firebase.firestore()
-    .collection(Pref.COLLECTION_PARENT)
-    .doc(leader[0].id)
-    .get()
-    .then(firestoredata =>{
-      if(firestoredata.exists){
-        const {teamlist} = firestoredata.data();
-        //console.log('teamlist', teamlist);
-        teamlist.map( io =>{
-          const {tllist, name, memberlist} = io;
-          tllist.map(item =>{
-            if(Number(item.id) === Number(id)){
-              //console.log('item', io);
-              const body = JSON.stringify({
-                tlid: item.id,
-                tname:name,
-                idlist:memberlist.map(io => io.id)
-              });
-              Helper.networkHelperTokenPost(
-                Pref.DILAER_TL_TEAM_MEMBERS,
-                body,
-                Pref.methodPost,
-                this.state.token,
-                result => {
-                  //console.log('result',result);
-                  const {data, status} = result;
-                  if (status) {
-                    if (data.length > 0) {
-                      //const {itemSize} = this.state;
-                      this.setState({
-                        cloneList: data,
-                        dataList: data,
-                        // this.returnData(data, 0, data.length).slice(
-                        //   0,
-                        //   itemSize,
-                        // ),
-                        loading: false,
-                        //itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
-                      });
+    firebase
+      .firestore()
+      .collection(Pref.COLLECTION_PARENT)
+      .doc(leader[0].id)
+      .get()
+      .then((firestoredata) => {
+        if (firestoredata.exists) {
+          const {teamlist} = firestoredata.data();
+          //console.log('teamlist', teamlist);
+          teamlist.map((io) => {
+            const {tllist, name, memberlist} = io;
+            tllist.map((item) => {
+              if (Number(item.id) === Number(id)) {
+                //console.log('item', io);
+                const body = JSON.stringify({
+                  tlid: item.id,
+                  tname: name,
+                  idlist: memberlist.map((io) => io.id),
+                });
+                Helper.networkHelperTokenPost(
+                  Pref.DILAER_TL_TEAM_MEMBERS,
+                  body,
+                  Pref.methodPost,
+                  this.state.token,
+                  (result) => {
+                    //console.log('result',result);
+                    const {data, status} = result;
+                    if (status) {
+                      if (data.length > 0) {
+                        const {itemSize} = this.state;
+                        const teamData = data[0].teamdata;
+                        this.setState({
+                          teamInfo: data[0],
+                          cloneList: teamData,
+                          dataList: this.returnData(
+                            teamData,
+                            0,
+                            teamData.length,
+                          ).slice(0, itemSize),
+                          loading: false,
+                          itemSize:
+                            teamData.length <= ITEM_LIMIT
+                              ? teamData.length
+                              : ITEM_LIMIT,
+                        });
+                      } else {
+                        this.setState({
+                          loading: false,
+                        });
+                      }
                     } else {
-                      this.setState({
-                        loading: false,
-                      });
+                      this.setState({loading: false});
                     }
-                  } else {
+                  },
+                  (e) => {
                     this.setState({loading: false});
-                  }
-                },
-                e => {
-                  this.setState({loading: false});
-                },
-              );
-            }
-          })
-        })
-      }else{
+                  },
+                );
+              }
+            });
+          });
+        } else {
+          this.setState({loading: false});
+        }
+      })
+      .catch((e) => {
         this.setState({loading: false});
-      }
-    }).catch(e =>{
-      this.setState({loading: false});
-    })
+      });
   };
 
   /**
@@ -180,23 +188,15 @@ export default class TlTeam extends React.PureComponent {
     return dataList;
   };
 
-  onChangeSearch = query => {
+  onChangeSearch = (query) => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, it => {
+      const result = Lodash.filter(clone, (it) => {
         const {team} = it;
-        return (
-          team &&
-          team
-            .trim()
-            .toLowerCase()
-            .includes(trimquery)
-        );
+        return team && team.trim().toLowerCase().includes(trimquery);
       });
       const data =
         result.length > 0 ? this.returnData(result, 0, result.length) : [];
@@ -217,7 +217,8 @@ export default class TlTeam extends React.PureComponent {
   };
 
   rowClicked = (item, tlObject) => {
-    const {tl, tname} = tlObject;
+    const {teamInfo} = this.state;
+    const {tl, tname} = teamInfo;
     const sp = String(tname).split('&');
     const data = [
       sp[2],
@@ -227,7 +228,12 @@ export default class TlTeam extends React.PureComponent {
       item.refercode,
       Number(item.id),
     ];
-    NavigationActions.navigate('MemberReport', {data: data, tlID: Number(tl),currentId:item.id, tname:tname});
+    NavigationActions.navigate('MemberReport', {
+      data: data,
+      tlID: Number(tl),
+      currentId: item.id,
+      tname: tname,
+    });
   };
 
   pageNumberClicked = (start, end) => {
@@ -240,26 +246,19 @@ export default class TlTeam extends React.PureComponent {
     });
   };
 
-  renderTeamData = (item, dataList) => {
-    return (
-      <List.Accordion
-        title={item.team}
-        description={`${item.totalm} Members`}
-        titleStyle={styles.accordTitle}
-        style={styles.accordStyle}>
-        <CommonTable
-          enableHeight={false}
-          dataList={dataList}
-          widthArr={this.state.widthArr}
-          tableHead={this.state.tableHead}
-          //rowClicked={this.rowClicked}
-        />
-      </List.Accordion>
-    );
-  };
+  // renderTeamData = (item, dataList) => {
+  //   return (
+  //     // <List.Accordion
+  //     //   title={item.team}
+  //     //   description={`${item.totalm} Members`}
+  //     //   titleStyle={styles.accordTitle}
+  //     //   style={styles.accordStyle}>
+  //     // </List.Accordion>
+  //   );
+  // };
 
   render() {
-    const {searchQuery, enableSearch, reportenabled, dataList} = this.state;
+    const {searchQuery, enableSearch, teamInfo, dataList} = this.state;
     return (
       <CScreen
         body={
@@ -280,7 +279,15 @@ export default class TlTeam extends React.PureComponent {
               }
             />
 
-            {/* <View styleName="horizontal md-gutter space-between">
+            {teamInfo != null ? (
+              <View styleName="v-center h-center md-gutter">
+                <Title styleName="v-center h-center" style={styles.accordTitle}>
+                  {teamInfo.team}
+                </Title>
+              </View>
+            ) : null}
+
+            <View styleName="horizontal md-gutter space-between">
               <PaginationNumbers
                 dataSize={this.state.cloneList.length}
                 itemSize={this.state.itemSize}
@@ -313,33 +320,32 @@ export default class TlTeam extends React.PureComponent {
                   clearIcon={() => null}
                 />
               </View>
-            ) : null} */}
+            ) : null}
 
             {this.state.loading ? (
               <View style={styles.loader}>
                 <ActivityIndicator />
               </View>
-            ) : this.state.dataList.length > 0 ? (
-              <View style={{flex:1}}>
-                {dataList.map(io => {
-                  return this.renderTeamData(
-                    io,
-                    this.returnData(io.teamdata, 0, io.teamdata.length, io),
-                  );
-                })}
-              </View>
+            ) : dataList.length > 0 ? (
+              <CommonTable
+                enableHeight={false}
+                dataList={dataList}
+                widthArr={this.state.widthArr}
+                tableHead={this.state.tableHead}
+                //rowClicked={this.rowClicked}
+              />
             ) : (
               <View style={styles.emptycont}>
                 <ListError subtitle={'No Teams Found...'} />
               </View>
             )}
-            {/* {this.state.dataList.length > 0 ? (
+            {dataList.length > 0 ? (
               <>
                 <Title style={styles.itemtext}>{`Showing ${
                   this.state.itemSize
                 }/${Number(this.state.cloneList.length)} entries`}</Title>
               </>
-            ) : null} */}
+            ) : null}
           </>
         }
       />
@@ -358,7 +364,7 @@ const styles = StyleSheet.create({
   },
   accordTitle: {
     color: '#292929',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
   },
   button: {

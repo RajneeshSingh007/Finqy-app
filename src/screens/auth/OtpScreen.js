@@ -245,7 +245,7 @@ export default class OtpScreen extends React.PureComponent {
           const { response_header } = result;
           const { res_type, message } = response_header;
           if (res_type === `success`) {
-            const mess = `Dear User, Congratulations! you have successfully registered with ERB Finpro. Your Login credentials are: ID-${jsonData.contact} Password-${pass}`
+            const mess = `Dear User, Congratulations! you have successfully registered with ERB Finqy. Your Login credentials are: ID-${jsonData.contact} Password-${pass}`
 
             Helper.networkHelperGet(`${Pref.SMS_SEND}?authkey=345308AQ4dSpkOE55f9280a7P1&mobiles=${jsonData.contact}&message=${mess}&country=91&sender=erbfin&route=4`, result => {
             }, error => {

@@ -19,23 +19,17 @@ import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
 import {
   notifications,
-  NotificationMessage,
-  Android,
 } from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
 import {
-  enableCallModule,
   enableService,
   stopService,
   serverClientDateCheck,
   mobileNumberCleanup,
-  enableIdleService,
   stopIdleService,
 } from './src/util/DialerFeature';
 import CallDetectorManager from 'react-native-call-detection';
-import {firebase} from '@react-native-firebase/firestore';
-import moment from 'moment';
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -52,7 +46,7 @@ class App extends React.PureComponent {
 
   componentDidMount() {
     //this.syncImmediate();
-    
+
     Crashes.setEnabled(true);
 
     analytics().setAnalyticsCollectionEnabled(true);
@@ -65,7 +59,7 @@ class App extends React.PureComponent {
 
     //dialer
     this.callDetectionListerner();
-    
+
     //this.dialerCheckCheckin();
     //enableIdleService();
     //stopIdleService();
@@ -87,58 +81,20 @@ class App extends React.PureComponent {
     this.callDetection = new CallDetectorManager((event, phoneNumber) => {
       //console.log('event', event);
       //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
-      if (Helper.nullStringCheck(phoneNumber) === false) {
-        Pref.setVal(
-          Pref.DIALER_TEMP_BUBBLE_NUMBER,
-          mobileNumberCleanup(phoneNumber),
-        );
-      }
-      Pref.getVal(Pref.DIALER_DATA, (value) => {
-        //console.log('ddata', value);
-        if (
-          Helper.nullCheck(value) == false &&
-          value.length > 0 &&
-          Helper.nullCheck(value[0].tc) === false
-        ) {
-          const {checkin} = value[0].tc;
-          if (checkin) {
+        if (Helper.nullStringCheck(phoneNumber) === false) {
+          Pref.setVal(
+            Pref.DIALER_TEMP_BUBBLE_NUMBER,
+            mobileNumberCleanup(phoneNumber),
+          );
+        }
+        Pref.getVal(Pref.DIALER_SERVICE_ENABLED, (value) => {
+          if (Helper.nullCheck(value)) {
             enableService();
           } else {
             stopService();
+            stopIdleService();
           }
-          //const {id} = value[0].tc;
-          //   if(this.serverDateTime.length > 0){
-          //     firebase
-          //       .firestore()
-          //       .collection(Pref.COLLECTION_CHECKIN)
-          //       .doc(`${id}${this.serverDateTime[2]}`)
-          //       .get()
-          //       .then(ret =>{
-          //         if(ret){
-          //           const {breaktime, checkincheckout} = ret.data();
-          //                       let evenoddcheck = false;
-          // let evenoddcheckCheck = false;
-          // let dataExist = false;
-          // if (breaktime && breaktime.length > 0) {
-          //   evenoddcheck = Number(breaktime.length) % 2 === 0 ? false : true;
-          //   dataExist = true;
-          // }
-          // if (checkincheckout && checkincheckout.length > 0) {
-          //   evenoddcheckCheck = Number(checkincheckout.length) % 2 === 0 ? false : true;
-          //   dataExist = true;
-          // }
-          //           if(Helper.nullStringCheck(checkin) === false && Helper.nullStringCheck(checkout) === false){
-          //             stopService();
-          //           }else if(Helper.nullStringCheck(checkin) === false && Helper.nullStringCheck(checkout)){
-          //             enableService();
-          //           }
-          //         }
-          //       })
-          //   }
-        } else {
-          stopService();
-        }
-      });
+        });
       //}
     }, false);
   };

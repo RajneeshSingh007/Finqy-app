@@ -34,6 +34,7 @@ export const JET_BLACK = Colors.white; //'#3e3e40';
 export const VIOLET_BLUE = '#af67a9';
 export const WHITE_LINEN = '#ebe7de';
 export const WHITE = 'white';
+export const DARK_RED = '#b51f20';
 
 //colors
 export const PRIMARY_COLOR = '#ea343c';
@@ -2879,20 +2880,26 @@ export const HealthCompany = [{ value: "Acko General Insurance Limited" },
 { value: "Others" },
 { value: "None" },]
 
-/**
- * Server url
- */
+//placehodler profile pic
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
+/**
+ * API url
+ */
+
+export const API_TOKEN_POST_DATA = JSON.stringify({
+  username: `ERBFinPro`,
+  product: `FinPro App`,
+});
 
 //token
 export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bmxqUE1BWWZoY3NoamtlQi91RFFpMDlydkNseFJ3ZVltY3BoQUE0VVgrS0tzR1E9PQ==`;
 
 //production url
-// export const MainUrl = `https://erb.ai/`;
-// export const ApiDirUrl = `${MainUrl}finpro/appapi/`;
+// export const MainUrl = `https://finqy.ai/`;
+// export const ApiDirUrl = `${MainUrl}partner/appapi/`;
 // export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
-// export const PayoutPolicy = `${MainUrl}/finpro/Payout%20Policy.pdf`;
+// export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
 
 //test url
 export const MainUrl = `https://uat.erb.ai/`;
@@ -2906,6 +2913,8 @@ export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
 //forms directory
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
+
+export const BlogFileUrl = `${MainUrl}/super_admin/`;
 
 export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
 export const NewDashBoardUrl = `${ApiDirUrl}tool_dashboard_api.php`;
@@ -2935,12 +2944,16 @@ export const CertUrl = `${ApiDirUrl}tool_cert.php`;
 export const PayoutUrl = `${ApiDirUrl}tool_payout_rp.php`;
 export const ConnectorPercentage = `${ApiDirUrl}tool_payout`;
 export const AccountViewUrl = `${ApiDirUrl}tool_view_profile.php`;
-
-//forgot
+export const LogoutUrl = `${ApiDirUrl}app_logout.php`;
+export const CheckInUrl = `${ApiDirUrl}tool_update_app_checkin.php`;
+export const HomeUrl = `${ApiDirUrl}tool_home.php`;
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
-export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
 export const TCondition = `${MainUrl}termcondition.php`;
-export const TermOfUse = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
+export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
+export const PrivacyPolicyUrl = `${MainUrl}/PRIVACY%20POLICY.pdf`;
+export const CookiePolicyUrl = `${MainUrl}/COOKIE%20POLICY.pdf`;
+export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
+export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 
 //insurance
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
@@ -2971,8 +2984,8 @@ export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 /////////////////////////////////////
 //  Code Push Key
 /////////////////////////////////////
-export const PRODUCTION_CODE_PUSH = 'glm7UxfFs5fdrMNn9PQgA84GoR8clOBhLHDqL';
-export const STAGING_CODE_PUSH = 'FcVrxLHWW9i6t8Ql9p6uizc_NZwn6Yf8GQ6ig';
+export const PRODUCTION_CODE_PUSH = 'WNPeKIJKfNDf_uy0ML7exe0WA0kHwTx-SW_M-';
+export const STAGING_CODE_PUSH = '26IakH8Ph0o21dx99c0PMy_7g6IeLivO9Rkki';
 export const PRODUCTION_CODE_PUSH_IOS = 'PavWWJS5tedBdJlTQim3Y6G3_3uJ7yZvFeAk3';
 export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
 

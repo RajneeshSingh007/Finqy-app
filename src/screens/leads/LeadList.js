@@ -939,15 +939,16 @@ export default class LeadList extends React.PureComponent {
             <LeftHeaders
               backClicked={this.backclick}
               showBack
-              title={
-                type === ''
-                  ? ''
-                  : type !== 'referaal'
-                  ? 'My Lead Records'
-                  : flag === 2
-                  ? 'My Lead Records'
-                  : 'Lead Records'
-              }
+              title={flag !== 2 ? 'Lead Records' : 'Q-Leads'}
+              // title={
+              //   type === ''
+              //     ? ''
+              //     : type !== 'referaal'
+              //     ? 'My Lead Records'
+              //     : flag === 2
+              //     ? 'My Lead Records'
+              //     : 'Lead Records'
+              // }
               bottomBody={
                 <>
                   {/* <View styleName="md-gutter">

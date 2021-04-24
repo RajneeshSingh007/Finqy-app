@@ -20,33 +20,35 @@ export default class Term extends React.PureComponent {
       pdfurl: '',
       remoteFileUrl: '',
       referCode: '',
-      type:''
+      type: '',
+      title: '',
     };
   }
 
   componentDidMount() {
-    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, data => {
-        //console.log('data', data)
-        Pref.getVal(Pref.USERTYPE, v => this.fetchData(data, v));
-      });
-    });
+    this.fetch();
   }
 
-  fetchData = (data, v) => {
-    const {refercode} = data;
-    const agree = `${Pref.TermOfUse}`;
+  componentDidUpdate() {
+    this.fetch();
+  }
+
+  fetch = () =>{
+    const {navigation} = this.props;
+    const pdfUrl = navigation.getParam('url', Pref.TermOfUseUrl);
+    const title = navigation.getParam('title', 'Term Of Use');
+
+    //this.focusListener = navigation.addListener('didFocus', () => {
     this.setState({
-      pdfurl: agree,
+      title: title,
+      pdfurl: pdfUrl,
       loading: false,
       modalvis: true,
-      remoteFileUrl: agree,
-      referCode: refercode,
-      type:v
+      remoteFileUrl: pdfUrl,
     });
-  };
+
+    //});
+  }
 
   componentWillUnMount() {
     if (this.focusListener !== undefined) this.focusListener.remove();
@@ -58,8 +60,11 @@ export default class Term extends React.PureComponent {
         scrollEnable={false}
         body={
           <View style={{flex: 1}}>
-            <LeftHeaders title={`Term Of Use`} showBack backClicked={() => NavigationActions.goBack()} />
-            {/* <View style={{ flex: 0.02 }}></View> */}
+            <LeftHeaders
+              title={this.state.title}
+              showBack
+              backClicked={() => NavigationActions.goBack()}
+            />
             <Pdf
               source={{
                 uri: this.state.pdfurl,
@@ -74,12 +79,6 @@ export default class Term extends React.PureComponent {
               enablePaging
               scale={1}
             />
-            {/* <Download
-              rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}.pdf`, `Agreement_${this.state.referCode}`, `Agreement_${this.state.referCode}.pdf`, 'application/pdf');
-              }}
-              style={{ flex: 0.09 }}
-            /> */}
           </View>
         }
       />

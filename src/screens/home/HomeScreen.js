@@ -128,13 +128,9 @@ export default class HomeScreen extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         if (Helper.nullStringCheck(value) === true) {
-          const body = JSON.stringify({
-            username: `ERBFinPro`,
-            product: `FinPro App`,
-          });
           Helper.networkHelper(
             Pref.GetToken,
-            body,
+            Pref.API_TOKEN_POST_DATA,
             Pref.methodPost,
             (result) => {
               const { data, response_header } = result;
@@ -159,13 +155,24 @@ export default class HomeScreen extends React.PureComponent {
   }
 
   fetchDashboard = (token,filterdates = '') => {
-    const { refercode} = this.state.userData;
+    const { refercode,id} = this.state.userData;
     const body = JSON.stringify({
       user_id: refercode,
       flag: this.state.type === "referral" ? 2 : 1,
       date_range: filterdates
     });
-    //console.log('body', body)
+    
+    const updateCheckin = JSON.stringify({
+      id:`${id}`,
+      type:`${this.state.type}`
+    })
+
+    //update app checkin 
+    Helper.networkHelperTokenPost(Pref.CheckInUrl, updateCheckin, Pref.methodPost,token,result =>{
+    }, error =>{
+    })
+
+    //fetch dashboard data
     Helper.networkHelperTokenPost(
       Pref.NewDashBoardUrl,
       body,

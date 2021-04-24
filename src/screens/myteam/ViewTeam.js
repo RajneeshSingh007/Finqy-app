@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {Title, View} from '@shoutem/ui';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Title, View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
-import {ActivityIndicator, Searchbar} from 'react-native-paper';
-import {sizeHeight} from '../../util/Size';
+import { ActivityIndicator, Searchbar } from 'react-native-paper';
+import { sizeHeight } from '../../util/Size';
 import Lodash from 'lodash';
 import LeftHeaders from '../common/CommonLeftHeader';
 import ListError from '../common/ListError';
@@ -55,9 +55,9 @@ export default class ViewTeam extends React.PureComponent {
 
   componentDidMount() {
     //BackHandler.addEventListener('hardwareBackPress', this.backClick);
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: true});
+      this.setState({ loading: true });
     });
     this.focusListener = navigation.addListener('didFocus', () => {
       this.fetch();
@@ -76,10 +76,10 @@ export default class ViewTeam extends React.PureComponent {
   // }
 
   fetch = () => {
-    Pref.getVal(Pref.userData, userData => {
-      this.setState({userData: userData});
-      Pref.getVal(Pref.saveToken, value => {
-        this.setState({token: value}, () => {
+    Pref.getVal(Pref.userData, (userData) => {
+      this.setState({ userData: userData });
+      Pref.getVal(Pref.saveToken, (value) => {
+        this.setState({ token: value }, () => {
           this.fetchData();
         });
       });
@@ -93,8 +93,8 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   fetchData = () => {
-    this.setState({loading: true});
-    const {refercode} = this.state.userData;
+    this.setState({ loading: true });
+    const { refercode } = this.state.userData;
     const body = JSON.stringify({
       refercode: refercode,
     });
@@ -103,14 +103,14 @@ export default class ViewTeam extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+      (result) => {
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === `success`) {
           // //console.log('data', data)
           if (data.length > 0) {
             const dataList = data.reverse();
-            const {itemSize} = this.state;
+            const { itemSize } = this.state;
             this.setState({
               cloneList: dataList,
               dataList: this.returnData(
@@ -123,19 +123,19 @@ export default class ViewTeam extends React.PureComponent {
               itemSize: data.length <= ITEM_LIMIT ? data.length : ITEM_LIMIT,
             });
           } else {
-            this.setState({loading: false});
+            this.setState({ loading: false });
           }
         } else {
-          this.setState({loading: false});
+          this.setState({ loading: false });
         }
       },
       () => {
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   };
 
-  refdataClick = value => {
+  refdataClick = (value) => {
     if (Helper.nullStringCheck(value.refercode) === false) {
       NavigationActions.navigate('LeadList', {
         ref: value.refercode,
@@ -165,7 +165,7 @@ export default class ViewTeam extends React.PureComponent {
             rowData.push(`${Lodash.capitalize(item.pancard)}`);
             rowData.push(`${item.aadharcard}`);
             rowData.push(`${item.refercode === null ? '' : item.refercode}`);
-            const leadView = value => (
+            const leadView = (value) => (
               <TouchableWithoutFeedback
                 onPress={() => this.refdataClick(value)}>
                 <View>
@@ -182,7 +182,7 @@ export default class ViewTeam extends React.PureComponent {
               </TouchableWithoutFeedback>
             );
             rowData.push(leadView(item));
-            const stdataView = value => (
+            const stdataView = (value) => (
               <View>
                 <Title
                   style={{
@@ -212,16 +212,16 @@ export default class ViewTeam extends React.PureComponent {
   }
 
   clickedexport = () => {
-    const {cloneList, userData} = this.state;
+    const { cloneList, userData } = this.state;
     if (cloneList.length > 0) {
       const data = this.returnData(cloneList, 0, cloneList.length, true);
-      const {refercode} = userData;
+      const { refercode } = userData;
       const name = `${refercode}_MyTeam`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(HEADER, data, finalFilePath, result => {
+      Helper.writeCSV(HEADER, data, finalFilePath, (result) => {
         //console.log(result);
         if (result) {
-          RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
+          RNFetchBlob.fs.scanFile([{ path: finalFilePath, mime: 'text/csv' }]),
             RNFetchBlob.android.addCompleteDownload({
               title: name,
               description: 'Team record exported successfully',
@@ -235,48 +235,22 @@ export default class ViewTeam extends React.PureComponent {
     }
   };
 
-  onChangeSearch = query => {
-    this.setState({searchQuery: query});
-    const {cloneList, itemSize} = this.state;
+  onChangeSearch = (query) => {
+    this.setState({ searchQuery: query });
+    const { cloneList, itemSize } = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
 
-      const result = Lodash.filter(clone, it => {
-        const {aadharcard, pancard, status, mobile, email, username} = it;
+      const result = Lodash.filter(clone, (it) => {
+        const { aadharcard, pancard, status, mobile, email, username } = it;
         return (
-          (aadharcard &&
-            aadharcard
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (pancard &&
-            pancard
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (status &&
-            status
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (mobile &&
-            mobile
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (email &&
-            email
-              .trim()
-              .toLowerCase()
-              .includes(trimquery)) ||
-          (username &&
-            username
-              .trim()
-              .toLowerCase()
-              .includes(trimquery))
+          (aadharcard && aadharcard.trim().toLowerCase().includes(trimquery)) ||
+          (pancard && pancard.trim().toLowerCase().includes(trimquery)) ||
+          (status && status.trim().toLowerCase().includes(trimquery)) ||
+          (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+          (email && email.trim().toLowerCase().includes(trimquery)) ||
+          (username && username.trim().toLowerCase().includes(trimquery))
         );
       });
       const data =
@@ -284,17 +258,17 @@ export default class ViewTeam extends React.PureComponent {
           ? this.returnData(result, 0, result.length, false)
           : [];
       const count = result.length > 0 ? result.length : itemSize;
-      this.setState({dataList: data, itemSize: count});
+      this.setState({ dataList: data, itemSize: count });
     }
   };
 
   revertBack = () => {
-    const {enableSearch} = this.state;
-    const {cloneList} = this.state;
+    const { enableSearch } = this.state;
+    const { cloneList } = this.state;
     if (enableSearch === true && cloneList.length > 0) {
       const clone = JSON.parse(JSON.stringify(cloneList));
       const data = this.returnData(clone, 0, ITEM_LIMIT, false);
-      this.setState({dataList: data});
+      this.setState({ dataList: data });
     }
     this.setState({
       searchQuery: '',
@@ -304,7 +278,7 @@ export default class ViewTeam extends React.PureComponent {
   };
 
   pageNumberClicked = (start, end) => {
-    const {cloneList} = this.state;
+    const { cloneList } = this.state;
     const clone = JSON.parse(JSON.stringify(cloneList));
     const data = this.returnData(clone, start, end);
     this.setState({
@@ -314,14 +288,14 @@ export default class ViewTeam extends React.PureComponent {
   };
 
   render() {
-    const {searchQuery, enableSearch} = this.state;
+    const { searchQuery, enableSearch } = this.state;
 
     return (
       <CScreen
         refresh={() => this.fetchData()}
         body={
           <>
-            <LeftHeaders showBack title={'My Team'} />
+            <LeftHeaders showBack title={Helper.getScreenName(this.props)} />
             <View styleName="horizontal md-gutter space-between">
               <PaginationNumbers
                 dataSize={this.state.cloneList.length}
@@ -363,8 +337,7 @@ export default class ViewTeam extends React.PureComponent {
               </View>
             ) : this.state.dataList.length > 0 ? (
               <CommonTable
-              enableHeight={false}
-
+                enableHeight={false}
                 dataList={this.state.dataList}
                 widthArr={this.state.widthArr}
                 tableHead={this.state.tableHead}
@@ -376,9 +349,8 @@ export default class ViewTeam extends React.PureComponent {
             )}
             {this.state.dataList.length > 0 ? (
               <>
-                <Title style={styles.itemtext}>{`Showing ${
-                  this.state.itemSize
-                }/${Number(this.state.cloneList.length)} entries`}</Title>
+                <Title style={styles.itemtext}>{`Showing ${this.state.itemSize
+                  }/${Number(this.state.cloneList.length)} entries`}</Title>
                 <Download rightIconClick={this.clickedexport} />
               </>
             ) : null}
