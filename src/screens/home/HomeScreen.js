@@ -170,6 +170,7 @@ export default class HomeScreen extends React.PureComponent {
     //update app checkin 
     Helper.networkHelperTokenPost(Pref.CheckInUrl, updateCheckin, Pref.methodPost,token,result =>{
     }, error =>{
+      console.log(error);
     })
 
     //fetch dashboard data
@@ -719,9 +720,10 @@ export default class HomeScreen extends React.PureComponent {
           <TouchableWithoutFeedback onPress={this.dismisssProfile}>
             <View>
               <LeftHeaders
+                showBack
                 //profile={() => this.setState({ showProfile: !showProfile })}
-                backClicked={() => NavigationActions.openDrawer()}
-                title={`Hi,`}
+                //backClicked={() => NavigationActions.openDrawer()}
+                title={`Dashboard`}
                 name={name}
                 profilePic={profilePic}
                 type={type}

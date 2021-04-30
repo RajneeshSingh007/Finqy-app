@@ -199,20 +199,23 @@ public class IdleService extends Service implements Runnable {
                                         if(task.isSuccessful()){
                                             DocumentSnapshot documentSnapshot = task.getResult();
                                             if(documentSnapshot != null) {
-                                                String checkIn = (String) documentSnapshot.get("checkin");
-                                                String checkOut = (String) documentSnapshot.get("checkout");
+                                                ArrayList<String> checkincheckoutList = (ArrayList<String>) documentSnapshot.get("checkincheckout");
                                                 //checkin and checkout check
-                                                if(!TextUtils.isEmpty(checkIn) && TextUtils.isEmpty(checkOut)) {
-                                                    ArrayList<String> existingList = (ArrayList<String>) documentSnapshot.get("idle");
-                                                    if (existingList != null && !existingList.isEmpty() && existingList.size() > 0) {
-                                                        existingList.add(split[1]);
-                                                        Map<String, ArrayList<String>> objex = new HashMap<>();
-                                                        objex.put("idle", existingList);
-                                                        reference.set(objex, SetOptions.merge());
-                                                        handler.postDelayed(IdleService.this, TIME);
-                                                    } else {
-                                                        reference.set(obj, SetOptions.merge());
-                                                        handler.postDelayed(IdleService.this, TIME);
+                                                if(checkincheckoutList != null && !checkincheckoutList.isEmpty() && checkincheckoutList.size() > 0) {
+                                                    int size = checkincheckoutList.size();
+                                                    boolean isEven = size%2 == 0 ? true : false;
+                                                    if(isEven == false){
+                                                        ArrayList<String> existingList = (ArrayList<String>) documentSnapshot.get("idle");
+                                                        if (existingList != null && !existingList.isEmpty() && existingList.size() > 0) {
+                                                            existingList.add(split[1]);
+                                                            Map<String, ArrayList<String>> objex = new HashMap<>();
+                                                            objex.put("idle", existingList);
+                                                            reference.set(objex, SetOptions.merge());
+                                                            handler.postDelayed(IdleService.this, TIME);
+                                                        } else {
+                                                            reference.set(obj, SetOptions.merge());
+                                                            handler.postDelayed(IdleService.this, TIME);
+                                                        }
                                                     }
                                                 }
                                             }else{

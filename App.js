@@ -45,7 +45,7 @@ class App extends React.PureComponent {
   }
 
   componentDidMount() {
-    //this.syncImmediate();
+    this.syncImmediate();
 
     Crashes.setEnabled(true);
 
@@ -58,9 +58,11 @@ class App extends React.PureComponent {
     this.checkVersionForUpdate();
 
     //dialer
+    stopService();
+    this.dialerCheckCheckin();
+
     this.callDetectionListerner();
 
-    //this.dialerCheckCheckin();
     //enableIdleService();
     //stopIdleService();
   }
@@ -78,7 +80,8 @@ class App extends React.PureComponent {
    * call detection
    */
   callDetectionListerner = () => {
-    this.callDetection = new CallDetectorManager((event, phoneNumber) => {
+    CallDetectorManager.dispose();
+    CallDetectorManager.listenCalls((event, phoneNumber) => {
       //console.log('event', event);
       //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
         if (Helper.nullStringCheck(phoneNumber) === false) {
@@ -89,12 +92,12 @@ class App extends React.PureComponent {
         }
         Pref.getVal(Pref.DIALER_SERVICE_ENABLED, (value) => {
           if (Helper.nullCheck(value)) {
-            enableService();
-          } else {
             stopService();
             stopIdleService();
+          } else {
+            enableService();
           }
-        });
+        });    
       //}
     }, false);
   };
@@ -108,6 +111,20 @@ class App extends React.PureComponent {
       const checkClientServer = serverClientDateCheck(datetime, true);
       if (checkClientServer.length > 0) {
         this.serverDateTime = checkClientServer;
+        Pref.getVal(Pref.DIALER_DATA, data =>{
+          if(Helper.nullCheck(data) === false && data.length>0){
+            if(Helper.nullCheck(data[0]) === false && Helper.nullCheck(data[0].tc) === false){
+              const {id} = data[0].tc;
+              Pref.getVal(Pref.DIALER_SERVICE_ENABLED, (value) => {
+                if (Helper.nullCheck(value)) {
+                  stopIdleService();
+                } else {
+                  enableIdleService(`${id}${this.serverDateTime[2]}`);
+                }
+              });
+            }
+          }
+        })
       }
     });
   };
@@ -148,7 +165,7 @@ class App extends React.PureComponent {
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }
-    if (this.callDetection !== undefined) this.callDetection.dispose();
+    CallDetectorManager.dispose();
   }
 
   codePushStatusDidChange(syncStatus) {

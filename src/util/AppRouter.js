@@ -291,7 +291,7 @@ const DialerNav = createStackNavigator({
   TcDashboard:{screen:TcDashboard},
   TcPerformance:{screen:TcPerformance},
   TlDashboard:{screen:TlDashboard},
-  Followup:{screen:Followup},
+  //Followup:{screen:Followup},
   MemberReport:{screen:MemberReport},
   CallLogs:{screen:CallLogs},
   TcTemplates:{screen:TcTemplates},

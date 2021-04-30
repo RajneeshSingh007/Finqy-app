@@ -178,6 +178,7 @@ export default class SwitchUser extends React.PureComponent {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+    CallDetectorManager.dispose();
   }
 
   checkdeviceDataSetup = (loading = true) => {
@@ -375,7 +376,8 @@ export default class SwitchUser extends React.PureComponent {
             if (String(check).toLowerCase().includes('out')) {
               enableIdleService(`${id}${date}`);
               checkIn = true;
-              this.callDetection = new CallDetectorManager(
+              CallDetectorManager.dispose();
+              CallDetectorManager.listenCalls(
                 (event, phoneNumber) => {
                   //console.log('event', event);
                   //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){

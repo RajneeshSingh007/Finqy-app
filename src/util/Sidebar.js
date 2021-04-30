@@ -722,17 +722,18 @@ export default class Sidebar extends React.Component {
       if (Number(userdata.sales_enable) === 1) {
         const findSalesMarketing = Lodash.find(
           menuList,
-          (io) => String(io.name).toLowerCase() === 'sales marketing',
+          (io) => String(io.name).toLowerCase() === 'q-sales marketing',
         );
         if (Helper.nullCheck(findSalesMarketing)) {
           menuList.push(SalesMarketing);
         }
       }
     }
+
     //enable helpdesk
     const findHelpdesk = Lodash.find(
       menuList,
-      (io) => String(io.name).toLowerCase() === 'helpdesk',
+      (io) => String(io.name).toLowerCase() === 'q-support',
     );
     if (Helper.nullCheck(findHelpdesk)) {
       menuList.push(HelpDeskMenu);
@@ -744,7 +745,7 @@ export default class Sidebar extends React.Component {
   componentWillUnmount() {
     if (
       this.firebaseListerner !== undefined &&
-      this.firebaseListerner != null
+      this.firebaseListerner != null && this.firebaseListerner.remove
     ) {
       this.firebaseListerner.remove();
     }

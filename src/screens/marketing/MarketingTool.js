@@ -124,7 +124,7 @@ export default class MarketingTool extends React.PureComponent {
    * @returns
    */
   getSelectedItemProduct = (item) => {
-    const {userData, productList} = this.state;
+    const {productList} = this.state;
     const find = Lodash.find(productList, (io) => {
       if (item.product) {
         const parseText = String(io.value).toLowerCase().replace(/\s/g, '_');

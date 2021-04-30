@@ -168,55 +168,6 @@ export default class CallerForm extends React.PureComponent {
         dob: dob,
         pincode: pincode,
       });
-      if (Platform.OS === 'android') {
-        PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-          {
-            title: 'Permission Required',
-            message: 'We required to access your call logs',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        ).then((result) => {
-          if (result === 'granted') {
-            let numberArray = [];
-            if (Helper.nullStringCheck(mobile) === false) {
-              let trimnumber = mobile.trim();
-              numberArray.push(`+91${trimnumber}`);
-              numberArray.push(trimnumber);
-              numberArray.push(
-                `${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                  5,
-                  trimnumber.length,
-                )}`,
-              );
-              numberArray.push(`+91 ${trimnumber}`);
-              numberArray.push(
-                `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                  5,
-                  trimnumber.length,
-                )}`,
-              );
-              //console.log('numberArray', numberArray);
-              CallLogs.load(-1, {
-                phoneNumbers: numberArray,
-              }).then((c) => {
-                let callDur = 0;
-                if (c.length > 0) {
-                  const {duration} = c[0];
-                  if (callDur > 60) {
-                    callDur = Number(duration / 60).toPrecision(3);
-                  }
-                }
-                this.setState({
-                  callLogs: c,
-                  callDur: callDur,
-                });
-              });
-            }
-          }
-        });
-      }
     } else {
       let trackingType = '';
       let trackingDetail = '';
@@ -252,6 +203,56 @@ export default class CallerForm extends React.PureComponent {
         trackingDetail: trackingDetail,
         product: product,
         remarks: remarks,
+      });
+    }
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+        {
+          title: 'Permission Required',
+          message: 'We required to access your call logs',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      ).then((result) => {
+        if (result === 'granted') {
+          let numberArray = [];
+          if (Helper.nullStringCheck(mobile) === false) {
+            let trimnumber = mobile.trim();
+            numberArray.push(`+91${trimnumber}`);
+            numberArray.push(trimnumber);
+            numberArray.push(
+              `${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                5,
+                trimnumber.length,
+              )}`,
+            );
+            numberArray.push(`+91 ${trimnumber}`);
+            numberArray.push(
+              `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                5,
+                trimnumber.length,
+              )}`,
+            );
+            CallLogs.load(-1, {
+              phoneNumbers: numberArray,
+            }).then((c) => {
+              let callDur = 0;
+              if (c.length > 0) {
+                const {duration} = c[0];
+                if (callDur > 60) {
+                  callDur = Number(duration / 60).toPrecision(3);
+                }else {
+                  callDur = Number(duration);
+                }
+              }
+              this.setState({
+                callLogs: c,
+                callDur: callDur,
+              });
+            });
+          }
+        }
       });
     }
   }
@@ -377,6 +378,7 @@ export default class CallerForm extends React.PureComponent {
       delete body.maxDates;
       delete body.mode;
       delete body.currentTime;
+      delete body.confirmModal;
 
       const dates = new Date();
       const dateFormat = moment(dates).format('DD-MM-YYYY HH:mm:ss');
@@ -408,6 +410,12 @@ export default class CallerForm extends React.PureComponent {
       body.editmode = editEnabled === true ? '1' : '0';
       body.followup_date_time = followup_date_time;
       body.tname = teamName;
+      if(body.customerId == undefined){
+        body.customerId = '';
+      }
+      if(callLogs.length == 0){
+        body.callLogs =  '';
+      }
 
       let formName = product.trim().toLowerCase().replace(/\s/g, '_');
 

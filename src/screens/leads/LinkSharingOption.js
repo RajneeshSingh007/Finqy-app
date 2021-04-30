@@ -43,14 +43,21 @@ export default class LinkSharingOption extends React.PureComponent {
     });
   }
 
-  shareApp = (value) => {
+  shareApp = (value, productName) => {
     const userData = this.state.userData;
-    const { rcontact, rname, refercode } = userData;
+    const { refercode } = userData;
     const url = ``;
     const title = 'ERB Referral';
     const finalUrl = `${value}?ref=${refercode}`
-    //console.log('finalUrl', finalUrl)
-    const message = `Greetings!!\n\nPlease find the below product your looking for\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${rcontact}.\n\nYours Sincerely\n${rname}`
+    const username =
+    Helper.nullCheck(userData.rname) === false
+      ? userData.rname
+      : userData.username;
+  const mobile =
+    Helper.nullCheck(userData.rcontact) === false
+      ? userData.rcontact
+      : userData.mobile;
+    const message = `Greetings!!\n\nPlease find the link below for your ${productName} requirement\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n${username}`
     const options = Platform.select({
       ios: {
         activityItemSources: [
@@ -91,7 +98,7 @@ export default class LinkSharingOption extends React.PureComponent {
     }
     this.setState({ showProduct: false });
     const find = Lodash.find(productList, io => io.value === productName);
-    this.shareApp(find.url);
+    this.shareApp(find.url, productName);
   };
 
   render() {

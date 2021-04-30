@@ -76,10 +76,10 @@ const Footer = (prop) => {
           onPress={() =>
             NavigationActions.navigate('Term', {
               url: Pref.CookiePolicyUrl,
-              title: 'Coockie Policy',
+              title: 'Cookie Policy',
             })
           }>
-          <Subtitle style={styles.centerText}>{`Coockie Policy`}</Subtitle>
+          <Subtitle style={styles.centerText}>{`Cookie Policy`}</Subtitle>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback

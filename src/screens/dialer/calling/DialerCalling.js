@@ -173,7 +173,8 @@ export default class DialerCalling extends React.PureComponent {
         }
       });
 
-    this.callDetection = new CallDetectorManager(
+    CallDetectorManager.dispose();
+    CallDetectorManager.listenCalls(
       (event, phoneNumber) => {
         //console.log(event, phoneNumber);
         const {callTrack, activeCallerItem} = this.state;
@@ -188,7 +189,7 @@ export default class DialerCalling extends React.PureComponent {
           }
         }
       },
-      false);
+    false);
   }
 
   componentWillUnMount() {
@@ -197,7 +198,7 @@ export default class DialerCalling extends React.PureComponent {
     if (this.focusListener !== undefined) this.focusListener.remove();
     if (this.willfocusListener !== undefined) this.willfocusListener.remove();
     if (this.firebaseListerner !== undefined) this.firebaseListerner.remove();
-    if (this.callDetection !== undefined) this.callDetection.dispose();
+    CallDetectorManager.dispose();
   }
 
   _handleAppStateChange = (nextAppState) => {

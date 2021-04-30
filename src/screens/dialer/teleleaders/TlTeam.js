@@ -31,7 +31,7 @@ export default class TlTeam extends React.PureComponent {
       token: '',
       userData: '',
       tableHead: ['Sr. No.', 'Name', 'Mobile', 'Refercode', 'View'],
-      widthArr: [60, 140, 100, 100, 80],
+      widthArr: [60, 140, 120, 120, 80],
       cloneList: [],
       type: '',
       itemSize: 10,
@@ -90,11 +90,15 @@ export default class TlTeam extends React.PureComponent {
             const {tllist, name, memberlist} = io;
             tllist.map((item) => {
               if (Number(item.id) === Number(id)) {
-                //console.log('item', io);
+                const filters = memberlist.map((io) => {
+                  if(io.id && io.enabled == 0){
+                    return io.id;
+                  }
+                });
                 const body = JSON.stringify({
                   tlid: item.id,
                   tname: name,
-                  idlist: memberlist.map((io) => io.id),
+                  idlist: filters.filter(io => io !== undefined),
                 });
                 Helper.networkHelperTokenPost(
                   Pref.DILAER_TL_TEAM_MEMBERS,
