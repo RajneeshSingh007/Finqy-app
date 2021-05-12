@@ -94,10 +94,10 @@ export default class TcTemplates extends React.PureComponent {
           userListModal: false,
         });
         this.fetchCustomerData();
-      })
-      .catch((e) => {
-        this.setState({loading: false});
       });
+      // .catch((e) => {
+      //   this.setState({loading: false});
+      // });
   };
 
   fetchCustomerData = () => {

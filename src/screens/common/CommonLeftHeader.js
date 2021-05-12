@@ -16,6 +16,7 @@ import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {stopService, stopIdleService} from '../../util/DialerFeature';
+import FinproCallModule from '../../../FinproCallModule';
 import Loader from '../../util/Loader';
 
 const LeftHeaders = (props) => {
@@ -114,6 +115,7 @@ const LeftHeaders = (props) => {
   };
 
   const cleanup = () => {
+    FinproCallModule.stopCalling({});
     stopService();
     stopIdleService();
     Pref.setVal(Pref.MENU_LIST, null);

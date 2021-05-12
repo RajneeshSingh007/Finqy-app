@@ -54,6 +54,11 @@ const closeDrawer = () => {
   _navigator.dispatch(DrawerActions.closeDrawer());
 };
 
+const openDrawerPayload = (payload) => {
+  _navigator.dispatch(DrawerActions.openDrawer(payload));
+};
+
+
 export default {
   setTopLevelNavigator,
   navigate,
@@ -62,5 +67,6 @@ export default {
   replace,
   openDrawer,
   toggleDrawer,
-  closeDrawer
+  closeDrawer,
+  openDrawerPayload
 };

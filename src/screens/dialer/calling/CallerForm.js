@@ -4,12 +4,11 @@ import {
   PermissionsAndroid,
   Platform,
   TouchableWithoutFeedback,
-  Alert,
 } from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
-import {Colors, Button, Portal, Modal} from 'react-native-paper';
+import {Colors, Button, Portal} from 'react-native-paper';
 import {sizeHeight, sizeWidth} from '../../../util/Size';
 import moment from 'moment';
 import AnimatedInputBox from '../../component/AnimatedInputBox';
@@ -20,14 +19,11 @@ import NavigationActions from '../../../util/NavigationActions';
 import FlashMessage from 'react-native-flash-message';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/Feather';
-import IconChooser from '../../common/IconChooser';
 import ModalDialog from '../../component/ModalDialog';
 import {firebase} from '@react-native-firebase/firestore';
 import {
   disableOffline,
   serverClientDateCheck,
-  enableIdleService,
-  stopIdleService
 } from '../../../util/DialerFeature';
 
 let trackTypeList = [
@@ -137,13 +133,27 @@ export default class CallerForm extends React.PureComponent {
     }
   };
 
+  //static contextType = CallContext;
+
   componentDidMount() {
-    const {editItemRestore, editEnabled = false, customerItem} = this.props;
+    //this.context.dialerCallback('', null, false, false);
+
+    //Pref.setVal(Pref.DIALER_TEMP_CUSTOMER_DATA, null);
+
+    this.setupData();
+  }
+
+  setupData = () => {
+    const {
+      editItemRestore = null,
+      editEnabled = false,
+      customerItem,
+    } = this.props;
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
     }
 
-    //console.log('customerItem',customerItem)
+    //console.log('customerItem', customerItem, editEnabled);
 
     Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
       this.serverDateTime = serverClientDateCheck(datetime, false);
@@ -167,6 +177,10 @@ export default class CallerForm extends React.PureComponent {
         email: email,
         dob: dob,
         pincode: pincode,
+        trackingType: '',
+        trackingDetail: '',
+        product: '',
+        remarks: '',
       });
     } else {
       let trackingType = '';
@@ -206,15 +220,12 @@ export default class CallerForm extends React.PureComponent {
       });
     }
     if (Platform.OS === 'android') {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        {
-          title: 'Permission Required',
-          message: 'We required to access your call logs',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      ).then((result) => {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
+        title: 'Permission Required',
+        message: 'We required to access your call logs',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      }).then((result) => {
         if (result === 'granted') {
           let numberArray = [];
           if (Helper.nullStringCheck(mobile) === false) {
@@ -242,7 +253,7 @@ export default class CallerForm extends React.PureComponent {
                 const {duration} = c[0];
                 if (callDur > 60) {
                   callDur = Number(duration / 60).toPrecision(3);
-                }else {
+                } else {
                   callDur = Number(duration);
                 }
               }
@@ -254,6 +265,20 @@ export default class CallerForm extends React.PureComponent {
           }
         }
       });
+    }
+  };
+
+  componentDidUpdate() {
+    const {customerItem} = this.props;
+    const cItem = this.state;
+    if (customerItem.mobile != '' && cItem.mobile === '') {
+      this.setupData();
+    } else if (
+      customerItem.mobile != '' &&
+      cItem.mobile !== '' &&
+      customerItem.mobile !== cItem.mobile
+    ) {
+      this.setupData();
     }
   }
 
@@ -286,7 +311,6 @@ export default class CallerForm extends React.PureComponent {
   };
 
   formSubmit = () => {
-    //stopIdleService();
     const {
       customerItem,
       token,
@@ -410,28 +434,28 @@ export default class CallerForm extends React.PureComponent {
       body.editmode = editEnabled === true ? '1' : '0';
       body.followup_date_time = followup_date_time;
       body.tname = teamName;
-      if(body.customerId == undefined){
+      if (body.customerId == undefined) {
         body.customerId = '';
       }
-      if(callLogs.length == 0){
-        body.callLogs =  '';
+      if (callLogs.length == 0) {
+        body.callLogs = '';
       }
 
-      let formName = product.trim().toLowerCase().replace(/\s/g, '_');
+      // let formName = product.trim().toLowerCase().replace(/\s/g, '_');
 
-      const formUrls = `${Pref.FinorbitFormUrl}${formName}.php`;
+      // const formUrls = `${Pref.FinorbitFormUrl}${formName}.php`;
 
-      const formData = new FormData();
-      formData.append(formName, formName);
-      formData.append('formid', '');
-      formData.append('name', name);
-      formData.append('mobile', mobile);
-      formData.append('remark', remarks);
+      // const formData = new FormData();
+      // formData.append(formName, formName);
+      // formData.append('formid', '');
+      // formData.append('name', name);
+      // formData.append('mobile', mobile);
+      // formData.append('remark', remarks);
 
-      if (Helper.nullCheck(userData.refercode) === false) {
-        const {refercode} = userData;
-        formData.append('ref', refercode);
-      }
+      // if (Helper.nullCheck(userData.refercode) === false) {
+      //   const {refercode} = userData;
+      //   formData.append('ref', refercode);
+      // }
 
       //console.log('formData', formData, formUrls);
 
@@ -446,8 +470,8 @@ export default class CallerForm extends React.PureComponent {
           const {status, message, id} = result;
           if (status == true) {
             Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, '');
+            //live update
             if (this.serverDateTime.length > 0) {
-              //enableIdleService(`${user_id}${this.serverDateTime[2]}`);
               if (Helper.nullStringCheck(id) === false) {
                 disableOffline();
                 firebase

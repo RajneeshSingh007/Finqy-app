@@ -17,6 +17,8 @@ export const DIALER_TEAM_LEADER = 'dialer_team_leader';
 export const DIALER_DATA = "dialer_data";
 export const DIALER_SERVICE_ENABLED = "dialer_service_enabled";
 export const DIALER_TEMP_BUBBLE_NUMBER = 'dialer_temp_bubble_number';
+export const NEW_HOME_MENUPOSITION = 'scrollmenuposition';
+export const DIALER_TEMP_CUSTOMER_DATA = 'dialer_temp_customer_data';
 
 //network
 export const methodPost = 'POST';
@@ -2947,6 +2949,8 @@ export const AccountViewUrl = `${ApiDirUrl}tool_view_profile.php`;
 export const LogoutUrl = `${ApiDirUrl}app_logout.php`;
 export const CheckInUrl = `${ApiDirUrl}tool_update_app_checkin.php`;
 export const HomeUrl = `${ApiDirUrl}tool_home.php`;
+export const NotificationUrl = `${ApiDirUrl}/tool_allnotify.php`;
+
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
 export const TCondition = `${MainUrl}termcondition.php`;
 export const AgreeUrl = `${MainUrl}corporate_tool/agree.pdf`;
@@ -2954,6 +2958,7 @@ export const PrivacyPolicyUrl = `${MainUrl}/PRIVACY%20POLICY.pdf`;
 export const CookiePolicyUrl = `${MainUrl}/COOKIE%20POLICY.pdf`;
 export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
 export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
+
 
 //insurance
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;

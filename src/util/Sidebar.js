@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Alert,
+  FlatList,
 } from 'react-native';
 import {Image, Title, View} from '@shoutem/ui';
 import {Colors, Divider, HelperText} from 'react-native-paper';
@@ -555,8 +556,10 @@ export default class Sidebar extends React.Component {
     changeNavigationBarColor(COLOR, true, true);
     StatusBar.setBackgroundColor(COLOR, false);
     StatusBar.setBarStyle('dark-content');
+    this.scrollViewRef = React.createRef();
     this.menuheaderClick = this.menuheaderClick.bind(this);
     this.menuSubHeaderClick = this.menuSubHeaderClick.bind(this);
+    this.scrollMenu = -1;
     this.state = {
       userData: null,
       pic: '',
@@ -568,6 +571,11 @@ export default class Sidebar extends React.Component {
   componentDidMount() {
     const {navigation} = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.NEW_HOME_MENUPOSITION, (io) => {
+      if (Helper.nullStringCheck(io) === false) {
+        this.scrollMenu = io;
+      }
+    });
     Pref.getVal(Pref.userData, (parse) => {
       this.setState(
         {
@@ -605,7 +613,7 @@ export default class Sidebar extends React.Component {
 
                           let find = undefined;
 
-                          if (memberlist) {
+                          if (memberlist && memberlist.length > 0) {
                             Lodash.map(memberlist, (io) => {
                               if (
                                 io.enabled === 0 &&
@@ -697,9 +705,9 @@ export default class Sidebar extends React.Component {
                       this.teamMenuSet(filter, parse);
                     }
                   })
-                  .catch((e) => {
-                    this.teamMenuSet(filter, parse);
-                  });
+                  // .catch((e) => {
+                  //   this.teamMenuSet(filter, parse);
+                  // });
               } else {
                 this.teamMenuSet(filter, parse);
               }
@@ -739,13 +747,63 @@ export default class Sidebar extends React.Component {
       menuList.push(HelpDeskMenu);
     }
 
-    this.setState({menuList: menuList}, () => this.forceUpdate());
+    this.setState({menuList: menuList}, () => {
+      this.forceUpdate();
+    });
   };
+
+  scrollToMenuOutside = () => {
+    const {menuList} = this.state;
+    if (Number(this.scrollMenu) > -1) {
+      let item = null;
+      const nm = Number(this.scrollMenu);
+      let pos = -1;
+      if (nm == 0) {
+        item = Lodash.find(menuList, (io) => io.name === 'Q-Wallet');
+        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Wallet');
+      } else if (nm == 1) {
+        item = Lodash.find(menuList, (io) => io.name === 'Q-Team Manager');
+        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Team Manager');
+      } else if (nm == 2) {
+        item = Lodash.find(menuList, (io) => io.name === 'Q-Profile');
+        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Profile');
+      } else if (nm == 3) {
+        item = Lodash.find(menuList, (io) => io.name === 'Q-Support');
+        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Support');
+      }
+      if (Helper.nullCheck(item) === false && pos != -1) {
+        item.expand = false;
+        this.headingclick(item, pos);
+        if (
+          this.scrollViewRef &&
+          this.scrollViewRef.current &&
+          this.scrollViewRef.current.scrollToIndex
+        ) {
+          this.scrollViewRef.current.scrollToIndex({
+            animated: true,
+            index: pos,
+            viewOffset: 0.5,
+          });
+          Pref.setVal(Pref.NEW_HOME_MENUPOSITION, '');
+        }
+      }
+    }
+  };
+
+  componentDidUpdate() {
+    Pref.getVal(Pref.NEW_HOME_MENUPOSITION, (io) => {
+      if (Helper.nullStringCheck(io) === false) {
+        this.scrollMenu = io;
+        this.scrollToMenuOutside();
+      }
+    });
+  }
 
   componentWillUnmount() {
     if (
       this.firebaseListerner !== undefined &&
-      this.firebaseListerner != null && this.firebaseListerner.remove
+      this.firebaseListerner != null &&
+      this.firebaseListerner.remove
     ) {
       this.firebaseListerner.remove();
     }
@@ -770,7 +828,7 @@ export default class Sidebar extends React.Component {
       item.sub = meh;
       return ele;
     });
-    this.setState({menuList: fill});
+    this.setState({menuList: fill}, () => this.forceUpdate());
   };
 
   menuSubHeaderClick = (item, index, sub, i) => {
@@ -830,77 +888,116 @@ export default class Sidebar extends React.Component {
     }
   };
 
-  render() {
-    const {menuList} = this.state;
+  renderItem = (item, index) => {
     return (
-      <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
-        <View style={styles.mainContainer}>
-          <DrawerTop />
-          <View style={{flex: 0.87, marginStart: 12, marginEnd: 12}}>
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}>
-              {menuList.map((item, index) => {
-                return (
-                  <View styleName="v-center h-center sm-gutter">
-                    <TouchableWithoutFeedback
-                      onPress={() => this.headingclick(item, index)}>
-                      <View
-                        styleName="horizontal v-center md-gutter space-between"
-                        style={{
-                          backgroundColor: !item.expand
-                            ? 'transparent'
-                            : '#f2f0e4',
-                        }}>
-                        <View
-                          styleName="horizontal v-center h-center"
-                          style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
+      <View styleName="v-center h-center sm-gutter">
+        <TouchableWithoutFeedback
+          onPress={() => this.headingclick(item, index)}>
+          <View
+            styleName="horizontal v-center md-gutter space-between"
+            style={{
+              backgroundColor: !item.expand ? 'transparent' : '#f2f0e4',
+              height: 56,
+            }}>
+            <View
+              styleName="horizontal v-center h-center"
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image
+                source={item.iconname}
+                style={{
+                  width: 24,
+                  height: 24,
+                  tintColor: '#626161',
+                  resizeMode: 'contain',
+                }}
+              />
+              {item.qincludes ? (
+                <Image
+                  source={require('../res/images/q.png')}
+                  style={{
+                    marginStart: 8,
+                    width: 24,
+                    height: 24,
+                    //tintColor: '#626161',
+                    resizeMode: 'contain',
+                  }}
+                />
+              ) : null}
+
+              {/* <IconChooser
+            name={item.iconname}
+            size={22}
+            color={'#626161'}
+            iconType={item.icontype}
+          /> */}
+              <Title
+                styleName="wrap"
+                style={{
+                  fontSize: 14,
+                  letterSpacing: 0.5,
+                  color: !item.expand ? '#97948c' : Pref.PRIMARY_COLOR,
+                  alignSelf: 'center',
+                  fontWeight: 'bold',
+                  justifyContent: 'center',
+                  marginStart: 16,
+                }}>{`${item.name.replace('Q-', '')}`}</Title>
+            </View>
+            {item.heading ? (
+              <Icon name={`chevron-down`} size={22} color={'#97948c'} />
+            ) : null}
+          </View>
+        </TouchableWithoutFeedback>
+        {item.expand
+          ? item.sub.map((s, i) => {
+              return (
+                <View
+                  style={{
+                    backgroundColor: s.expand ? '#e8e5d7' : 'transparent',
+                    marginStart: s.expand ? 0 : 16,
+                    paddingStart: s.expand ? 16 : 0,
+                  }}>
+                  <TouchableWithoutFeedback
+                    onPress={() => this.subClick(item, s, index, i)}>
+                    <View
+                      styleName="horizontal"
+                      style={{
+                        marginHorizontal: 16,
+                        marginVertical: 8,
+                        paddingVertical: 10,
+                        flex: 1,
+                      }}>
+                      {s.qincludes ? (
+                        <View style={{flex: 0.15}}>
                           <Image
-                            source={item.iconname}
+                            source={require('../res/images/q.png')}
                             style={{
                               width: 24,
                               height: 24,
-                              tintColor: '#626161',
+                              //tintColor: '#626161',
                               resizeMode: 'contain',
                             }}
                           />
-                          {item.qincludes ? (
-                            <Image
-                              source={require('../res/images/q.png')}
-                              style={{
-                                marginStart: 8,
-                                width: 24,
-                                height: 24,
-                                //tintColor: '#626161',
-                                resizeMode: 'contain',
-                              }}
-                            />
-                          ) : null}
+                        </View>
+                      ) : null}
 
-                          {/* <IconChooser
-                            name={item.iconname}
-                            size={22}
-                            color={'#626161'}
-                            iconType={item.icontype}
-                          /> */}
+                      <View
+                        styleName="horizontal v-center space-between"
+                        style={{flex: 0.9}}>
+                        <View styleName="horizontal v-center">
                           <Title
                             styleName="wrap"
                             style={{
                               fontSize: 14,
+
                               letterSpacing: 0.5,
-                              color: !item.expand
-                                ? '#97948c'
-                                : Pref.PRIMARY_COLOR,
-                              alignSelf: 'center',
-                              fontWeight: 'bold',
-                              justifyContent: 'center',
-                              marginStart: 16,
-                            }}>{`${item.name.replace('Q-', '')}`}</Title>
+                              color: !s.expand ? '#97948c' : Pref.PRIMARY_COLOR,
+                              alignSelf: 'flex-start',
+                            }}>{`${s.name.replace('Q-', '')}`}</Title>
                         </View>
-                        {item.heading ? (
+                        {s.heading ? (
                           <Icon
                             name={`chevron-down`}
                             size={22}
@@ -908,137 +1005,93 @@ export default class Sidebar extends React.Component {
                           />
                         ) : null}
                       </View>
-                    </TouchableWithoutFeedback>
-                    {item.expand
-                      ? item.sub.map((s, i) => {
-                          return (
-                            <View
-                              style={{
-                                backgroundColor: s.expand
-                                  ? '#e8e5d7'
-                                  : 'transparent',
-                                marginStart: s.expand ? 0 : 16,
-                                paddingStart: s.expand ? 16 : 0,
+                    </View>
+                  </TouchableWithoutFeedback>
+                  {s.expand
+                    ? s.sub.map((s) => {
+                        return (
+                          <View
+                            style={{
+                              marginStart: s.expand ? 0 : 16,
+                              paddingStart: s.expand ? 16 : 0,
+                              paddingVertical: 6,
+                            }}>
+                            <Divider styleName="light" style={styles.line} />
+                            <TouchableWithoutFeedback
+                              onPress={() => {
+                                s.options.name = s.name;
+                                NavigationActions.navigate(s.click, s.options);
                               }}>
-                              <TouchableWithoutFeedback
-                                onPress={() =>
-                                  this.subClick(item, s, index, i)
-                                }>
-                                <View
-                                  styleName="horizontal"
-                                  style={{
-                                    marginHorizontal: 16,
-                                    marginVertical: 8,
-                                    paddingVertical: 10,
-                                    flex: 1,
-                                  }}>
-                                  {s.qincludes ? (
-                                    <View style={{flex: 0.15}}>
-                                      <Image
-                                        source={require('../res/images/q.png')}
-                                        style={{
-                                          width: 24,
-                                          height: 24,
-                                          //tintColor: '#626161',
-                                          resizeMode: 'contain',
-                                        }}
-                                      />
-                                    </View>
-                                  ) : null}
-
-                                  <View
-                                    styleName="horizontal v-center space-between"
-                                    style={{flex: 0.9}}>
-                                    <View styleName="horizontal v-center">
-                                      <Title
-                                        styleName="wrap"
-                                        style={{
-                                          fontSize: 14,
-
-                                          letterSpacing: 0.5,
-                                          color: !s.expand
-                                            ? '#97948c'
-                                            : Pref.PRIMARY_COLOR,
-                                          alignSelf: 'flex-start',
-                                        }}>{`${s.name.replace(
-                                        'Q-',
-                                        '',
-                                      )}`}</Title>
-                                    </View>
-                                    {s.heading ? (
-                                      <Icon
-                                        name={`chevron-down`}
-                                        size={22}
-                                        color={'#97948c'}
-                                      />
-                                    ) : null}
-                                  </View>
-                                </View>
-                              </TouchableWithoutFeedback>
-                              {s.expand
-                                ? s.sub.map((s) => {
-                                    return (
-                                      <View
-                                        style={{
-                                          marginStart: s.expand ? 0 : 16,
-                                          paddingStart: s.expand ? 16 : 0,
-                                          paddingVertical: 6,
-                                        }}>
-                                        <Divider
-                                          styleName="light"
-                                          style={styles.line}
-                                        />
-                                        <TouchableWithoutFeedback
-                                          onPress={() => {
-                                            s.options.name = s.name;
-                                            NavigationActions.navigate(
-                                              s.click,
-                                              s.options,
-                                            );
-                                          }}>
-                                          <View
-                                            styleName="horizontal v-center space-between"
-                                            style={{
-                                              marginHorizontal: 16,
-                                              marginVertical: 8,
-                                            }}>
-                                            <Title
-                                              styleName="wrap"
-                                              style={
-                                                styles.menusubtitle
-                                              }>{`${s.name}`}</Title>
-                                            {s.heading ? (
-                                              <Icon
-                                                name={`chevron-right`}
-                                                size={22}
-                                                color={'#97948c'}
-                                              />
-                                            ) : null}
-                                          </View>
-                                        </TouchableWithoutFeedback>
-                                      </View>
-                                    );
-                                  })
-                                : null}
-                              {s.sub !== undefined ? (
-                                i === s.sub.length - 1 ? null : (
-                                  <Divider
-                                    styleName="light"
-                                    style={styles.line}
+                              <View
+                                styleName="horizontal v-center space-between"
+                                style={{
+                                  marginHorizontal: 16,
+                                  marginVertical: 8,
+                                }}>
+                                <Title
+                                  styleName="wrap"
+                                  style={
+                                    styles.menusubtitle
+                                  }>{`${s.name}`}</Title>
+                                {s.heading ? (
+                                  <Icon
+                                    name={`chevron-right`}
+                                    size={22}
+                                    color={'#97948c'}
                                   />
-                                )
-                              ) : null}
-                            </View>
-                          );
-                        })
-                      : null}
-                    {index === this.state.menuList.length - 1 ? null : (
+                                ) : null}
+                              </View>
+                            </TouchableWithoutFeedback>
+                          </View>
+                        );
+                      })
+                    : null}
+                  {s.sub !== undefined ? (
+                    i === s.sub.length - 1 ? null : (
                       <Divider styleName="light" style={styles.line} />
-                    )}
-                  </View>
+                    )
+                  ) : null}
+                </View>
+              );
+            })
+          : null}
+        {index === this.state.menuList.length - 1 ? null : (
+          <Divider styleName="light" style={styles.line} />
+        )}
+      </View>
+    );
+  };
+
+  render() {
+    const {menuList} = this.state;
+    return (
+      <SafeAreaView style={styles.mainContainer} forceInset={{top: 'never'}}>
+        <View style={styles.mainContainer}>
+          <DrawerTop />
+          <View style={{flex: 0.87, marginStart: 12, marginEnd: 12}}>
+            <FlatList
+              getItemLayout={(data, index) => ({
+                length: 56,
+                offset: 56 * index,
+                index,
+              })}
+              ref={this.scrollViewRef}
+              data={menuList}
+              extraData={this.state}
+              renderItem={({item, index}) => this.renderItem(item, index)}
+              keyExtractor={(item, index) => `${index}`}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+            />
+            {/* <ScrollView
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}>
+              {menuList.map((item, index) => {
+                return (
+                
                 );
               })}
-            </ScrollView>
+            </ScrollView> */}
           </View>
         </View>
       </SafeAreaView>

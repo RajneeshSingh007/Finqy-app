@@ -88,6 +88,7 @@ import FinishScreen from '../screens/common/FinishScreen';
 
 /// Dialer Screens
 import DialerCalling from '../screens/dialer/calling/DialerCalling';
+import DialerCallerForm from '../screens/dialer/calling/DialerCallerForm';
 import DialerRecords from '../screens/dialer/leads/DialerRecords';
 import Followup from '../screens/dialer/leads/Followup';
 import SwitchUser from '../screens/dialer/SwitchUser';
@@ -284,6 +285,16 @@ const TicketNav = createSwitchNavigator(
 );
 
 //dialer nav
+
+const DialerCallerFormNav = createSwitchNavigator({
+  DialerCallerForm:{screen:DialerCallerForm}
+}, {
+  headerMode: 'none',
+  resetOnBlur:true,
+  initialRouteName:'DialerCallerForm',
+  transitionConfig: (nav) => handleCustomTransition(nav),
+});
+
 const DialerNav = createStackNavigator({
   SwitchUser:{screen:SwitchUser},
   DialerCalling:{screen:DialerCalling},
@@ -298,7 +309,8 @@ const DialerNav = createStackNavigator({
   TlTeam:{screen:TlTeam},
   TlMemberList:{screen:TlMemberList},
   TlLiveTracker:{screen:TlLiveTracker},
-  TlReport:{screen:TlReport}
+  TlReport:{screen:TlReport},
+  DialerCallerForm:{screen:DialerCallerFormNav}
 },
 {
   headerMode: 'none',

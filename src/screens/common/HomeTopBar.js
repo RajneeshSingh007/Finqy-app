@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   TouchableWithoutFeedback,
@@ -8,31 +8,22 @@ import {
   StatusBar,
 } from 'react-native';
 import * as Pref from '../../util/Pref';
-import {Avatar, Portal} from 'react-native-paper';
+import { Portal } from 'react-native-paper';
 import NavigationActions from '../../util/NavigationActions';
-import {sizeHeight, sizeWidth} from '../../util/Size';
-import {Image, View, Title, Subtitle} from '@shoutem/ui';
-import Lodash from 'lodash';
+import { sizeHeight, sizeWidth } from '../../util/Size';
+import { Image, View, Title, Subtitle } from '@shoutem/ui';
 import IconChooser from '../common/IconChooser';
 import * as Helper from '../../util/Helper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import {stopService, stopIdleService} from '../../util/DialerFeature';
+import { stopService, stopIdleService } from '../../util/DialerFeature';
 import Loader from '../../util/Loader';
 import RectRoundBtn from '../component/RectRoundBtn';
+import FinproCallModule from '../../../FinproCallModule';
 
 const HomeTopBar = (props) => {
   const {
-    title,
-    bottomBody,
-    showBack = false,
-    backClicked = () => {
-      NavigationActions.goBack();
-    },
-    bottomtext = '',
-    bottomtextStyle,
-    profile = () => {},
-    //name = '',
-    //type = '',
+    notifyClicked = () => { },
+    counter = 0
   } = props;
 
   const [pic, setPic] = useState(null);
@@ -46,7 +37,7 @@ const HomeTopBar = (props) => {
     changeNavigationBarColor('white', true, true);
     StatusBar.setBackgroundColor('white', false);
     StatusBar.setBarStyle('dark-content');
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -55,13 +46,13 @@ const HomeTopBar = (props) => {
         const pp = value.user_prof;
         let profilePic =
           pp === undefined ||
-          pp === null ||
-          pp === '' ||
-          (!pp.includes('.jpg') &&
-            !pp.includes('.jpeg') &&
-            !pp.includes('.png'))
+            pp === null ||
+            pp === '' ||
+            (!pp.includes('.jpg') &&
+              !pp.includes('.jpeg') &&
+              !pp.includes('.png'))
             ? null
-            : {uri: decodeURIComponent(pp)};
+            : { uri: decodeURIComponent(pp) };
         // console.log('profilePic', profilePic)
         setPic(profilePic);
         setuserData(value);
@@ -75,7 +66,7 @@ const HomeTopBar = (props) => {
       settype(type);
     });
 
-    return () => {};
+    return () => { };
   }, []);
 
   const dismisssProfile = () => setShowProfile(false);
@@ -116,6 +107,7 @@ const HomeTopBar = (props) => {
   };
 
   const cleanup = () => {
+    FinproCallModule.stopCalling({});
     stopService();
     stopIdleService();
     Pref.setVal(Pref.MENU_LIST, null);
@@ -143,10 +135,10 @@ const HomeTopBar = (props) => {
                 backgroundColor: 'rgba(0,0,0,0)',
               }}
               onPress={dismisssProfile}>
-              <View style={{flex: 0.15}} />
-              <View style={{flex: 0.1}}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                  <View style={{flex: 0.1}} />
+              <View style={{ flex: 0.15 }} />
+              <View style={{ flex: 0.1 }}>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View style={{ flex: 0.1 }} />
                   <View
                     styleName="vertical md-gutter"
                     style={styles.filtercont}>
@@ -159,12 +151,12 @@ const HomeTopBar = (props) => {
                         },
                       ])}>
                       {userData !== null &&
-                      Helper.nullStringCheck(userData.rname) === false
+                        Helper.nullStringCheck(userData.rname) === false
                         ? userData.rname
                         : userData !== null &&
                           Helper.nullStringCheck(userData.username) === false
-                        ? userData.username
-                        : ''}
+                          ? userData.username
+                          : ''}
                     </Title>
 
                     <Subtitle
@@ -178,14 +170,13 @@ const HomeTopBar = (props) => {
                         },
                       ])}>
                       {userData != null &&
-                      Helper.nullStringCheck(userData.rcontact) === false
-                        ? `${userData.rcontact}${
-                            type === 'referral' ? '' : '(Connector)'
-                          }`
+                        Helper.nullStringCheck(userData.rcontact) === false
+                        ? `${userData.rcontact}${type === 'referral' ? '' : '(Connector)'
+                        }`
                         : userData != null &&
                           Helper.nullStringCheck(userData.mobile) === false
-                        ? `${userData.mobile}(Team)`
-                        : ''}
+                          ? `${userData.mobile}(Team)`
+                          : ''}
                     </Subtitle>
 
                     <Title
@@ -200,14 +191,13 @@ const HomeTopBar = (props) => {
                           marginTop: 1,
                         },
                       ])}>
-                      {`${
-                        type === `referral`
+                      {`${type === `referral`
                           ? 'Partner'
                           : leaderData != null &&
                             Helper.nullCheck(leaderData.rname) === false
-                          ? `${leaderData.rname}(Partner)`
-                          : ''
-                      }`}
+                            ? `${leaderData.rname}(Partner)`
+                            : ''
+                        }`}
                     </Title>
 
                     <View style={styles.line}></View>
@@ -231,10 +221,10 @@ const HomeTopBar = (props) => {
                       </Title>
                     </TouchableWithoutFeedback>
                   </View>
-                  <View style={{flex: 0.2}} />
+                  <View style={{ flex: 0.2 }} />
                 </View>
               </View>
-              <View style={{flex: 0.75}} />
+              <View style={{ flex: 0.75 }} />
             </View>
           </TouchableWithoutFeedback>
         </Portal>
@@ -254,7 +244,7 @@ const HomeTopBar = (props) => {
         <View
           styleName="horizontal space-between wrap md-gutter"
           style={styles.toolbarheight}>
-          <View styleName="horizontal v-center" style={{flex: 0.5}}>
+          <View styleName="horizontal v-center" style={{ flex: 0.5 }}>
             <Pressable onPress={() => NavigationActions.openDrawer()}>
               <IconChooser name={'menu'} color={'#292929'} size={38} />
             </Pressable>
@@ -266,7 +256,7 @@ const HomeTopBar = (props) => {
           </View>
           <View
             styleName="horizontal v-center"
-            style={{flex: 0.5, justifyContent: 'flex-end'}}>
+            style={{ flex: 0.5, justifyContent: 'flex-end' }}>
             <RectRoundBtn
               child={<IconChooser name={'user'} color={'#292929'} size={20} />}
               onPress={visProfile}
@@ -276,21 +266,23 @@ const HomeTopBar = (props) => {
               styleName={'horizontal v-center h-center'}
               child={<IconChooser name={'bell'} color={'#292929'} size={20} />}
               onPress={() => {
-                console.log('bell');
+                notifyClicked();
               }}
               bottomChild={
+                // counter > 0  ?
                 <View
                   style={styles.counter}
                   styleName="vertical v-center h-center">
                   <Title
                     style={{
                       color: 'white',
-                      fontSize: 12,
+                      fontSize: 11,
                       fontFamily: Pref.getFontName(3),
                     }}>
-                    {'1'}
+                    { counter >= 10 ? `9+` : `${counter}`}
                   </Title>
-                </View>
+                </View> 
+                // : null
               }
               style={{
                 marginEnd: 4,
@@ -574,7 +566,7 @@ const styles = StyleSheet.create({
     marginTop: -4,
     marginRight: -4,
   },
-  toolbarheight: {flexDirection: 'row'},
+  toolbarheight: { flexDirection: 'row' },
   bannerView: {},
   applogo: {
     resizeMode: 'contain',

@@ -20,9 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -39,8 +36,8 @@ public class FloatingWidgetService extends Service {
     public static final String FLOATING_WIDGET_ID = BuildConfig.APPLICATION_ID + ".FloatingWidgetService";
 
     public static final int FLOATING_WIDGET_NOTIFICATION_ID = 100;
-    public static final String CHANNEL_ID = "exampleServiceChannel";
-    public static final String CHANNEL_NAME = "Example Service Channel";
+    public static final String CHANNEL_ID = "FinqyServiceChannel";
+    public static final String CHANNEL_NAME = "Finqy Service Channel";
 
     private WindowManager mWindowManager;
     int lastAction;
@@ -168,6 +165,9 @@ public class FloatingWidgetService extends Service {
         }
     }
 
+    /**
+     *
+     */
     public void gotoInsideApp() {
         ReactApplicationContext reactContext = FinproCallModule.getReactContext();
         try {
@@ -175,7 +175,7 @@ public class FloatingWidgetService extends Service {
             if (activityIntent != null) {
                 reactContext.startActivity(activityIntent);
             }
-            Intent service = new Intent(getApplicationContext(), ServiceHandler.class);
+            Intent service = new Intent(getApplicationContext(), FloatingServiceHandler.class);
             Bundle bundle = new Bundle();
             bundle.putBoolean("outside", true);
             service.putExtras(bundle);
@@ -186,6 +186,17 @@ public class FloatingWidgetService extends Service {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopForeground(true);
+        if (mFloatingWidgetView != null)
+            mWindowManager.removeView(mFloatingWidgetView);
+    }
+
+    private void stopCurrentService() {
+        stopSelf();
+    }
 
     public Intent createSingleInstanceIntent() {
 
@@ -203,16 +214,5 @@ public class FloatingWidgetService extends Service {
             stopCurrentService();
         }
         return activityIntent;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopForeground(true);
-        if (mFloatingWidgetView != null)
-            mWindowManager.removeView(mFloatingWidgetView);
-    }
-    private void stopCurrentService() {
-        stopSelf();
     }
 }

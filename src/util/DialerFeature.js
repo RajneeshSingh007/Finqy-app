@@ -94,8 +94,14 @@ export const serverClientDateCheck = (serverDate, checkClient = false) =>{
  */
 export const mobileNumberCleanup = (number = '') =>{
   if(Helper.nullStringCheck(number) === false){
-    const rep = number.replace(/\s/g, '').replace(/\+91/g, '');
-    return rep;
+    let finalNumber = '';
+    const cleanUpNumber = number.replace(/\s/g, '').replace(/\+91/g, '');
+    if(Number(cleanUpNumber.length) == 12){
+      finalNumber = String(cleanUpNumber).substr(2, cleanUpNumber.length);
+    }else{
+      finalNumber = cleanUpNumber;
+    }
+    return finalNumber;
   }
   return '';
 }
@@ -137,4 +143,21 @@ export const enableIdleService = (date) =>{
   }).catch(e =>{
     console.log(e);
   })
+}
+
+/**
+ * batter disable
+ */
+export const askBatteryOptiDisable = ()  =>{
+  Alert.alert(
+    'Battery Optimization',
+    'Please, Disable battery optimization for Dialer',
+    [
+      {
+        text: 'ok',
+        onPress:() =>{
+          FinproCallModule.disableBatteryOff();
+        }
+      }],
+  );
 }

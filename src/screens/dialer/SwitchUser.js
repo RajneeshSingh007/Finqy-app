@@ -20,16 +20,12 @@ import Loader from '../../util/Loader';
 import Lodash from 'lodash';
 import {firebase} from '@react-native-firebase/firestore';
 import {
-  enableService,
   enableCallModule,
   serverClientDateCheck,
-  enableIdleService,
-  stopIdleService,
   disableOffline,
-  stopService,
-  mobileNumberCleanup,
+  enableIdleService
 } from '../../util/DialerFeature';
-import CallDetectorManager from 'react-native-call-detection';
+import FinproCallModule from '../../../FinproCallModule';
 
 const TLDashboard = [
   {
@@ -139,6 +135,7 @@ const TCDashboard = [
  * SwitchUser
  */
 export default class SwitchUser extends React.PureComponent {
+
   constructor(props) {
     super(props);
     this.checkInCheckoutRef = null;
@@ -178,7 +175,6 @@ export default class SwitchUser extends React.PureComponent {
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
-    CallDetectorManager.dispose();
   }
 
   checkdeviceDataSetup = (loading = true) => {
@@ -310,6 +306,8 @@ export default class SwitchUser extends React.PureComponent {
     }
   };
 
+  //static contextType = CallContext;
+
   /**
    *
    * @param {*} id
@@ -339,8 +337,7 @@ export default class SwitchUser extends React.PureComponent {
               dataExist = true;
             }
             if (checkincheckout && checkincheckout.length > 0) {
-              evenoddcheckCheck =
-                Number(checkincheckout.length) % 2 === 0 ? false : true;
+              evenoddcheckCheck = Number(checkincheckout.length) % 2 === 0 ? false : true;
               dataExist = true;
             }
             let filterList = [];
@@ -372,56 +369,18 @@ export default class SwitchUser extends React.PureComponent {
             }
 
             let checkIn = false;
-            //bubble
+            
             if (String(check).toLowerCase().includes('out')) {
               enableIdleService(`${id}${date}`);
               checkIn = true;
-              CallDetectorManager.dispose();
-              CallDetectorManager.listenCalls(
-                (event, phoneNumber) => {
-                  //console.log('event', event);
-                  //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
-                  enableService();
-                  if (Helper.nullStringCheck(phoneNumber) === false) {
-                    Pref.setVal(
-                      Pref.DIALER_TEMP_BUBBLE_NUMBER,
-                      mobileNumberCleanup(phoneNumber),
-                    );
-                  }
-                  //}
-                },
-              );
+              FinproCallModule.startCalling();
             } else {
               checkIn = false;
-              stopService();
-              stopIdleService();
-              if (this.callDetection !== undefined) {
-                this.callDetection.dispose();
-              }
+              FinproCallModule.stopCalling();
             }
 
             Pref.setVal(Pref.DIALER_SERVICE_ENABLED, checkIn);
 
-            // const findisResume = Lodash.find(
-            //   enableList,
-            //   (io) => io.name === 'Resume',
-            // );
-            // const findIsbreakFilter = Lodash.map(enableList, (io) => {
-            //   if (
-            //     io.name === 'Call Records' ||
-            //     io.name === 'Call Logs' ||
-            //     io.name === 'Dashboard' ||
-            //     io.name === 'Templates' ||
-            //     io.name === 'Performance'
-            //   ) {
-            //     io.enabled = true;
-            //   } else if (io.name === 'Check In' || io.name === 'Check Out') {
-            //     io.enabled = true;
-            //   } else if (findisResume && io.name !== 'Resume') {
-            //     io.enabled = false;
-            //   }
-            //   return io;
-            // });
             this.setState(
               {
                 dataList: filterList,
@@ -429,6 +388,10 @@ export default class SwitchUser extends React.PureComponent {
                 progressLoader: false,
               },
               () => {
+                
+                // //listen calls
+                // this.context.callListerner();
+
                 if (showToast) {
                   Helper.showToastMessage(message, 1);
                 }
@@ -478,22 +441,17 @@ export default class SwitchUser extends React.PureComponent {
             .get()
             .then((result) => {
               if (result.exists) {
-                const {checkincheckout} = result.data();
+                
+                let {checkincheckout} = result.data();
+                
+                if(checkincheckout === undefined){
+                  checkincheckout = [];
+                }
 
                 checkincheckout.push(checkClientServer[1]);
 
                 const obj = {};
                 obj.checkincheckout = checkincheckout;
-
-                //if (docName === 'checkin') {
-                //isCheckedin = true;
-                //dialerData[0].tc['checkin'] = true;
-                //} else {
-                //dialerData[0].tc['checkin'] = false;
-                //isCheckedin = false;
-                // }
-
-                //Pref.setVal(Pref.DIALER_DATA, dialerData);
 
                 firebase
                   .firestore()
@@ -517,87 +475,6 @@ export default class SwitchUser extends React.PureComponent {
                   });
               }
             });
-
-          // if (docName === 'checkin') {
-          //   firebase
-          //     .firestore()
-          //     .collection(Pref.COLLECTION_CHECKIN)
-          //     .doc(`${id}${checkClientServer[2]}`)
-          //     .get()
-          //     .then((result) => {
-          //       if (result.exists) {
-          //         const data = result.data();
-          //         if (data) {
-          //           const {checkout} = data;
-          //           if (Helper.nullStringCheck(checkout) === false) {
-          //             stopIdleService();
-          //             this.setState({progressLoader: false});
-          //             Helper.showToastMessage(
-          //               'You have already Checked-out',
-          //               0,
-          //             );
-          //           } else {
-          //             //check in  update time
-          //             const obj = {};
-          //             obj[docName] = checkClientServer[1];
-          //             firebase
-          //               .firestore()
-          //               .collection(Pref.COLLECTION_CHECKIN)
-          //               .doc(`${id}${checkClientServer[2]}`)
-          //               .set(obj, {merge: true})
-          //               .then((result) => {
-          //                 if(docName === 'checkin'){
-          //                   enableIdleService(`${id}${checkClientServer[2]}`);
-          //                 }else{
-          //                   stopIdleService();
-          //                 }
-          //                 this.setupfirebase(
-          //                   id,
-          //                   checkClientServer[2],
-          //                   true,
-          //                   docName === 'checkin'
-          //                     ? `Checked In Successfully`
-          //                     : `Checked Out Successfully`,
-          //                 );
-          //               })
-          //               .catch((e) => {
-          //                 Helper.showToastMessage('Something went wrong!', 0);
-          //                 this.setState({progressLoader: false});
-          //               });
-          //           }
-          //         }
-          //       }
-          //     });
-          // } else {
-          //   //check out update time
-
-          //   const obj = {};
-          //   obj[docName] = checkClientServer[1];
-          //   firebase
-          //     .firestore()
-          //     .collection(Pref.COLLECTION_CHECKIN)
-          //     .doc(`${id}${checkClientServer[2]}`)
-          //     .set(obj, {merge: true})
-          //     .then((result) => {
-          //       if(docName === 'checkin'){
-          //         enableIdleService(`${id}${checkClientServer[2]}`);
-          //       }else{
-          //         stopIdleService();
-          //       }
-          //       this.setupfirebase(
-          //         id,
-          //         checkClientServer[2],
-          //         true,
-          //         docName === 'checkin'
-          //           ? `Checked In Successfully`
-          //           : `Checked Out Successfully`,
-          //       );
-          //     })
-          //     .catch((e) => {
-          //       Helper.showToastMessage('Something went wrong!', 0);
-          //       this.setState({progressLoader: false});
-          //     });
-          // }
         },
         (e) => {},
       );

@@ -17,19 +17,11 @@ import Loader from './src/util/Loader';
 import Crashes from 'appcenter-crashes';
 import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
-import {
-  notifications,
-} from 'react-native-firebase-push-notifications';
+import {notifications} from 'react-native-firebase-push-notifications';
 import * as Helper from './src/util/Helper';
 import * as Pref from './src/util/Pref';
-import {
-  enableService,
-  stopService,
-  serverClientDateCheck,
-  mobileNumberCleanup,
-  stopIdleService,
-} from './src/util/DialerFeature';
-import CallDetectorManager from 'react-native-call-detection';
+import {stopIdleService, stopService} from './src/util/DialerFeature';
+import FinproCallModule from './FinproCallModule';
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -58,75 +50,28 @@ class App extends React.PureComponent {
     this.checkVersionForUpdate();
 
     //dialer
-    stopService();
-    this.dialerCheckCheckin();
-
-    this.callDetectionListerner();
-
-    //enableIdleService();
-    //stopIdleService();
+    this.dialerCheck();
   }
+
+  dialerCheck = () => {
+    Pref.getVal(Pref.DIALER_SERVICE_ENABLED, value => {
+      if (Helper.nullCheck(value) || value === false) {
+        stopService();
+        stopIdleService();
+        FinproCallModule.stopCalling();
+      } else {
+        FinproCallModule.startCalling();
+      }
+    });
+  };
 
   /**
    *
    */
   onNotificationListener = () => {
     this.removeOnNotification = notifications.onNotification(
-      (notification) => {},
+      notification => {},
     );
-  };
-
-  /**
-   * call detection
-   */
-  callDetectionListerner = () => {
-    CallDetectorManager.dispose();
-    CallDetectorManager.listenCalls((event, phoneNumber) => {
-      //console.log('event', event);
-      //if(event === 'Incoming' || event === 'Connected' || event === 'Disconnected' || event === 'Missed'){
-        if (Helper.nullStringCheck(phoneNumber) === false) {
-          Pref.setVal(
-            Pref.DIALER_TEMP_BUBBLE_NUMBER,
-            mobileNumberCleanup(phoneNumber),
-          );
-        }
-        Pref.getVal(Pref.DIALER_SERVICE_ENABLED, (value) => {
-          if (Helper.nullCheck(value)) {
-            stopService();
-            stopIdleService();
-          } else {
-            enableService();
-          }
-        });    
-      //}
-    }, false);
-  };
-
-  /**
-   * check server client date and time
-   * and store date in array
-   */
-  dialerCheckCheckin = () => {
-    Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
-      const checkClientServer = serverClientDateCheck(datetime, true);
-      if (checkClientServer.length > 0) {
-        this.serverDateTime = checkClientServer;
-        Pref.getVal(Pref.DIALER_DATA, data =>{
-          if(Helper.nullCheck(data) === false && data.length>0){
-            if(Helper.nullCheck(data[0]) === false && Helper.nullCheck(data[0].tc) === false){
-              const {id} = data[0].tc;
-              Pref.getVal(Pref.DIALER_SERVICE_ENABLED, (value) => {
-                if (Helper.nullCheck(value)) {
-                  stopIdleService();
-                } else {
-                  enableIdleService(`${id}${this.serverDateTime[2]}`);
-                }
-              });
-            }
-          }
-        })
-      }
-    });
   };
 
   /**
@@ -136,7 +81,7 @@ class App extends React.PureComponent {
     Helper.getNetworkHelper(
       Pref.UPDATE_DIALOG,
       Pref.methodGet,
-      (result) => {
+      result => {
         CodePush.getConfiguration().then(({appVersion}) => {
           if (result !== appVersion) {
             Alert.alert(
@@ -157,7 +102,7 @@ class App extends React.PureComponent {
           }
         });
       },
-      (error) => {},
+      error => {},
     );
   };
 
@@ -165,7 +110,6 @@ class App extends React.PureComponent {
     if (this.removeOnNotification) {
       this.removeOnNotification();
     }
-    CallDetectorManager.dispose();
   }
 
   codePushStatusDidChange(syncStatus) {
@@ -216,7 +160,7 @@ class App extends React.PureComponent {
           flex: 1,
         }}>
         <AppContainer
-          ref={(ref) => NavigationActions.setTopLevelNavigator(ref)}
+          ref={ref => NavigationActions.setTopLevelNavigator(ref)}
           onNavigationStateChange={this.handleNavigationChange}
         />
 
@@ -235,7 +179,7 @@ class App extends React.PureComponent {
   };
 }
 
-const getActiveRouteName = (navigationState) => {
+const getActiveRouteName = navigationState => {
   if (!navigationState) {
     return null;
   }

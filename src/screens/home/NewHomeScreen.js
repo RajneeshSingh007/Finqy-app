@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Platform,
   Pressable,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import * as Helper from '../../util/Helper';
 import {sizeWidth, sizeHeight} from '../../util/Size';
@@ -15,17 +16,21 @@ import IconChooser from '../common/IconChooser';
 import RectRoundBtn from '../component/RectRoundBtn';
 import LinearGradient from 'react-native-linear-gradient';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import {ActivityIndicator} from 'react-native-paper';
+import {ActivityIndicator, Portal} from 'react-native-paper';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import HomeTopBar from '../common/HomeTopBar';
 import {firebase} from '@react-native-firebase/firestore';
 import {disableOffline} from '../../util/DialerFeature';
+import Share from 'react-native-share';
+import Loader from '../../util/Loader';
+import NotificationSidebar from '../common/NotificationSidebar';
 
 export default class NewHomeScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.navigateToPage = this.navigateToPage.bind(this);
     this.state = {
+      fullLoader: false,
       loading: false,
       userData: null,
       token: '',
@@ -40,6 +45,12 @@ export default class NewHomeScreen extends React.PureComponent {
       alertMessage: '',
       alertType: -1,
       dialerActive: false,
+      noVideoData: false,
+      noBannerData: false,
+      noTestimonialData: false,
+      noMarketingImagesData: false,
+      notifyVisible: false,
+      notificationData: [],
     };
 
     Pref.getVal(Pref.userData, (value) => {
@@ -62,7 +73,7 @@ export default class NewHomeScreen extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: false});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         if (Helper.nullStringCheck(value) === true) {
           Helper.networkHelper(
@@ -88,7 +99,7 @@ export default class NewHomeScreen extends React.PureComponent {
           this.fetchAll(value);
         }
       });
-    });
+    //});
   }
 
   componentWillUnmount() {
@@ -102,10 +113,10 @@ export default class NewHomeScreen extends React.PureComponent {
   }
 
   fetchAll = (value) => {
-    this.fetchDashboard(value, '');
-    this.fetchMarketingImages(value);
     this.fetchBannerVideoTestiData(value);
+    this.fetchMarketingImages(value);
     const {type} = this.state;
+    this.fetchNofication(value);
 
     if (Helper.nullStringCheck(type) === false && type === 'team') {
       this.checkDialerFeatures();
@@ -136,7 +147,7 @@ export default class NewHomeScreen extends React.PureComponent {
 
               let find = undefined;
 
-              if (memberlist) {
+              if (memberlist && memberlist.length > 0) {
                 Lodash.map(memberlist, (io) => {
                   if (io.enabled === 0 && io.id === Number(loggedMemberId)) {
                     find = io;
@@ -191,26 +202,6 @@ export default class NewHomeScreen extends React.PureComponent {
       });
   };
 
-  fetchDashboard = (token, filterdates = '') => {
-    const {refercode, id} = this.state.userData;
-    const body = JSON.stringify({
-      user_id: refercode,
-      flag: this.state.type === 'referral' ? 2 : 1,
-      date_range: filterdates,
-    });
-    //fetch dashboard data
-    Helper.networkHelperTokenPost(
-      Pref.NewDashBoardUrl,
-      body,
-      Pref.methodPost,
-      token,
-      (result) => {},
-      (error) => {
-        //console.log(error);
-      },
-    );
-  };
-
   fetchMarketingImages = (parseToken) => {
     const {type, userData} = this.state;
     const {rname, rcontact, id, username, mobile} = userData;
@@ -227,18 +218,45 @@ export default class NewHomeScreen extends React.PureComponent {
       Pref.methodPost,
       parseToken,
       (result) => {
+        //console.log('result', result);
         const {data, response_header} = result;
         const {res_type} = response_header;
         if (res_type === 'success') {
           if (data.length > 0) {
             this.setState({marketingImagesData: data});
           }
+        } else {
+          this.setState({noMarketingImagesData: true});
         }
       },
       (error) => {
         //console.log('error', error);
-        this.setState({loading: false});
+        this.setState({loading: false, noMarketingImagesData: true});
       },
+    );
+  };
+
+  fetchNofication = (parseToken) => {
+    const {type, userData} = this.state;
+    const {id} = userData;
+    const body = JSON.stringify({
+      userid: `${id}`,
+      type: type,
+    });
+    //console.log('body', body);
+    Helper.networkHelperTokenPost(
+      Pref.NotificationUrl,
+      body,
+      Pref.methodPost,
+      parseToken,
+      (result) => {
+        //console.log('result', result);
+        const {data} = result;
+        if (data.length > 0) {
+          this.setState({notificationData: data});
+        }
+      },
+      (error) => {},
     );
   };
 
@@ -255,68 +273,36 @@ export default class NewHomeScreen extends React.PureComponent {
             bannerData: banner,
             testimonialData: testi,
             videoData: video,
+            noVideoData: video.length == 0 ? true : false,
+            noTestimonialData: testi.length == 0 ? true : false,
+            noBannerData: banner.length == 0 ? true : false,
+          });
+        } else {
+          this.setState({
+            noVideoData: true,
+            noTestimonialData: true,
+            noBannerData: true,
           });
         }
       },
       (error) => {
-        this.setState({loading: false});
+        this.setState({
+          loading: false,
+          noVideoData: true,
+          noTestimonialData: true,
+          noBannerData: true,
+        });
       },
     );
   };
 
   renderTopbar = () => {
-    return <HomeTopBar />;
-
+    const {notificationData} = this.state;
     return (
-      <View
-        styleName="horizontal space-between wrap md-gutter"
-        style={styles.toolbarheight}>
-        <View styleName="horizontal v-center" style={{flex: 0.5}}>
-          <Pressable onPress={() => NavigationActions.openDrawer()}>
-            <IconChooser name={'menu'} color={'#292929'} size={38} />
-          </Pressable>
-          <Image
-            styleName="v-center h-center"
-            source={require('../../res/images/q.png')}
-            style={styles.applogo}
-          />
-        </View>
-        <View
-          styleName="horizontal v-center"
-          style={{flex: 0.5, justifyContent: 'flex-end'}}>
-          <RectRoundBtn
-            child={<IconChooser name={'user'} color={'#292929'} size={20} />}
-            onPress={() => {
-              console.log('clicked');
-            }}
-          />
-
-          <RectRoundBtn
-            styleName={'horizontal v-center h-center'}
-            child={<IconChooser name={'bell'} color={'#292929'} size={20} />}
-            onPress={() => {
-              console.log('bell');
-            }}
-            bottomChild={
-              <View
-                style={styles.counter}
-                styleName="vertical v-center h-center">
-                <Title
-                  style={{
-                    color: 'white',
-                    fontSize: 12,
-                    fontFamily: Pref.getFontName(3),
-                  }}>
-                  {'1'}
-                </Title>
-              </View>
-            }
-            style={{
-              marginEnd: 4,
-            }}
-          />
-        </View>
-      </View>
+      <HomeTopBar
+        notifyClicked={() => this.setState({notifyVisible: true})}
+        counter={notificationData.length}
+      />
     );
   };
 
@@ -405,6 +391,11 @@ export default class NewHomeScreen extends React.PureComponent {
     );
   };
 
+  openMenu = (index) => {
+    Pref.setVal(Pref.NEW_HOME_MENUPOSITION, `${index}`);
+    NavigationActions.openDrawer();
+  };
+
   renderManage = () => {
     return (
       <View>
@@ -420,13 +411,21 @@ export default class NewHomeScreen extends React.PureComponent {
             require('../../res/images/home/mylead.png'),
             'Q-Leads',
           )}
+
           {this.renderManageItem(
-            () => this.navigateToPage('MyWallet'),
+            () => this.navigateToPage('Dashboard'),
+            require('../../res/images/home/dashboard.png'),
+            'Dashboard',
+          )}
+
+          {/* {this.renderManageItem(
+            () => this.openMenu(0),
             require('../../res/images/home/qwallet.png'),
             'Q-Wallet',
-          )}
+          )} */}
+
           {this.renderManageItem(
-            () => this.navigateToPage('ViewTeam', {name: 'View Team'}),
+            () => this.openMenu(1),
             require('../../res/images/home/myteam.png'),
             'My Team',
           )}
@@ -626,9 +625,9 @@ export default class NewHomeScreen extends React.PureComponent {
           styleName="horizontal space-between"
           style={{flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24}}>
           {this.renderQuickItem(
-            () => this.navigateToPage('Dashboard'),
-            require('../../res/images/home/dashboard.png'),
-            'Dashboard',
+            () => this.openMenu(0),
+            require('../../res/images/home/qwallet.png'),
+            'Q-Wallet',
           )}
           {this.renderQuickItem(
             () => this.showAlert('Coming Soon!', 1),
@@ -738,6 +737,156 @@ export default class NewHomeScreen extends React.PureComponent {
     );
   };
 
+  /**
+   * find product
+   * @param {*} item
+   * @returns
+   */
+  getSelectedItemProduct = (item) => {
+    const productList = Helper.productShareList();
+    const find = Lodash.find(productList, (io) => {
+      if (item.product) {
+        const parseText = String(io.value).toLowerCase().replace(/\s/g, '_');
+        return (
+          parseText === String(item.product).toLowerCase().replace(/\s/g, '_')
+        );
+      }
+      return undefined;
+    });
+    if (find) {
+      return find;
+    }
+    return undefined;
+  };
+
+  /**
+   *
+   * @param {*} item
+   * @returns
+   */
+  getMessageFromProduct = (item) => {
+    const {userData} = this.state;
+    const {refercode} = userData;
+    const find = this.getSelectedItemProduct(item);
+    if (find) {
+      const finalUrl = `${find.url}?ref=${refercode}`;
+      const username =
+        Helper.nullCheck(userData.rname) === false
+          ? userData.rname
+          : userData.username;
+      const mobile =
+        Helper.nullCheck(userData.rcontact) === false
+          ? userData.rcontact
+          : userData.mobile;
+      const message = `Greetings!!\n\nPlease find the below product you\'re looking for.\n\nLink – ${finalUrl}\n\nIn case of any query please feel free to call us at ${mobile}.\n\nYours Sincerely\n\n${username}`;
+      return message;
+    }
+    return '';
+  };
+
+  /**
+   * share on whatsapp with image
+   * @param {*} id
+   * @param {*} image
+   * @param {*} index
+   * @param {*} item
+   */
+  shareOffer = (image, item) => {
+    this.setState({fullLoader: true});
+    Helper.networkHelperGet(
+      `${Pref.BASEImageUrl}?url=${image}`,
+      (result) => {
+        this.setState({fullLoader: false});
+        this.whatsappSharing(item, result);
+      },
+      (e) => {
+        this.setState({fullLoader: false});
+        this.whatsappSharing(item, '');
+      },
+    );
+  };
+
+  /**
+   * share whatsapp
+   * @param {*} param0
+   */
+  whatsappSharing = (item, result) => {
+    const message = this.getMessageFromProduct(item);
+    const shareOptions = {
+      title: '',
+      message: message,
+      url: result,
+      social: Share.Social.WHATSAPP,
+      whatsAppNumber: '',
+    };
+    Share.shareSingle(shareOptions);
+  };
+
+  mailShareOffer = (item) => {
+    const find = this.getSelectedItemProduct(item);
+    if (find) {
+      const message = this.getMessageFromProduct(item);
+      const shareOptions = {
+        subject: `${find.value} Product`,
+        title: '',
+        message: message,
+        url: '',
+        social: Share.Social.EMAIL,
+      };
+      Share.open(shareOptions);
+    } else {
+      Helper.showToastMessage('Something went wrong!', 0);
+    }
+  };
+
+  renderItemMarketing = (item, index) =>{
+    return <View>
+    <Image
+      source={{uri: item.image}}
+      style={styles.marketingimages}
+    />
+    <View
+      styleName="horizontal v-center"
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        justifyContent: 'flex-end',
+        marginEnd: 16,
+      }}>
+      <View style={styles.roundtouch}>
+        <TouchableWithoutFeedback
+          onPress={() => this.mailShareOffer(item)}>
+          <View style={StyleSheet.flatten([styles.circle1])}>
+            <IconChooser
+              name="mail"
+              size={18}
+              color={'white'}
+              iconType={1}
+              style={styles.icon}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+      <View style={styles.gap}></View>
+      <View style={styles.roundtouch}>
+        <TouchableWithoutFeedback
+          onPress={() => this.shareOffer(item.image, item)}>
+          <View style={styles.circle1}>
+            <IconChooser
+              name="whatsapp"
+              size={18}
+              color={'white'}
+              iconType={2}
+              style={styles.icon}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  </View>
+  }
+
   renderMarketingImages = () => {
     const {marketingImagesData} = this.state;
     return (
@@ -751,18 +900,10 @@ export default class NewHomeScreen extends React.PureComponent {
             this._carousel2 = c;
           }}
           data={marketingImagesData}
-          renderItem={({item, index}) => {
-            return (
-              <Pressable>
-                <Image
-                  source={{uri: item.image}}
-                  style={styles.marketingimages}
-                />
-              </Pressable>
-            );
-          }}
+          renderItem={({item, index}) => this.renderItemMarketing(item, index)}
           sliderWidth={sizeWidth(96)}
-          itemWidth={sizeWidth(68)}
+          itemWidth={224}
+          itemHeight={156}
         />
       </View>
     );
@@ -814,14 +955,14 @@ export default class NewHomeScreen extends React.PureComponent {
           )}
           <View style={styles.linedividers} />
           {this.renderBottomItem(
-            () => this.navigateToPage('ProfileScreen', {name: 'Profile'}),
+            () => this.openMenu(2),
             require('../../res/images/home/profile.png'),
             'My Profile\n',
           )}
           <View style={styles.linedividers} />
 
           {this.renderBottomItem(
-            () => this.navigateToPage('TrackQuery', {name: 'Track My Query'}),
+            () => this.openMenu(3),
             require('../../res/images/home/query.png'),
             'Query\n/Issues',
           )}
@@ -874,6 +1015,10 @@ export default class NewHomeScreen extends React.PureComponent {
     );
   };
 
+  notificationClose = () => {
+    this.setState({notifyVisible: false});
+  };
+
   render() {
     const {
       testimonialData,
@@ -882,6 +1027,12 @@ export default class NewHomeScreen extends React.PureComponent {
       marketingImagesData,
       alertMessage,
       alertType,
+      noVideoData,
+      noBannerData,
+      noTestimonialData,
+      noMarketingImagesData,
+      notifyVisible,
+      notificationData,
     } = this.state;
     return (
       <CScreen
@@ -889,20 +1040,45 @@ export default class NewHomeScreen extends React.PureComponent {
         showfooter={false}
         refresh={() => this.fetchAll(this.state.token)}
         bgColor={Pref.WHITE}
+        absolute={
+          <>
+            <Loader isShow={this.state.fullLoader} />
+            {notifyVisible ? (
+              <Portal>
+                <NotificationSidebar
+                  list={notificationData}
+                  backClicked={() => this.notificationClose()}
+                />
+              </Portal>
+            ) : null}
+          </>
+        }
         body={
           <View styleName="vertical">
             {this.renderTopbar()}
-            {bannerData.length > 0 ? this.renderBanner() : this.renderLoader()}
+            {noBannerData
+              ? null
+              : bannerData.length > 0
+              ? this.renderBanner()
+              : this.renderLoader()}
             {this.renderManage()}
-            {videoData.length > 0 ? this.renderVideos() : this.renderLoader()}
             {alertType === 0 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderProduct()}
             {alertType === 1 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderQuickLinks()}
-            {marketingImagesData.length > 0
+            {noVideoData
+              ? null
+              : videoData.length > 0
+              ? this.renderVideos()
+              : this.renderLoader()}
+            {noMarketingImagesData
+              ? null
+              : marketingImagesData.length > 0
               ? this.renderMarketingImages()
               : this.renderLoader()}
-            {testimonialData.length > 0
+            {noTestimonialData
+              ? null
+              : testimonialData.length > 0
               ? this.renderTestimonials()
               : this.renderLoader()}
             {this.renderMarginPadding()}
@@ -1023,9 +1199,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#0270e3',
   },
   marketingimages: {
-    width: 250,
-    height: 164,
-    resizeMode: 'cover',
+    width: 224,
+    height: 156,
+    //resizeMode:'cover',
     borderTopEndRadius: 12,
     borderTopStartRadius: 12,
     borderTopLeftRadius: 12,
@@ -1324,5 +1500,26 @@ const styles = StyleSheet.create({
     marginStart: 12,
     marginEnd: 12,
     marginTop: 8,
+  },
+  roundtouch: {flex: 0.3},
+  gap: {
+    marginHorizontal: 4,
+  },
+  circle1: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 4,
+    borderRadius: 36 / 2,
+    //borderColor: '#000',
+    //borderStyle: 'solid',
+    //borderWidth: 3,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  icon: {
+    alignSelf: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
 });
