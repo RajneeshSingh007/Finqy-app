@@ -72,6 +72,7 @@ export default class CallerForm extends React.PureComponent {
     this.formSubmit = this.formSubmit.bind(this);
     this.contactDialogClicked = this.contactDialogClicked.bind(this);
     this.noncontactDialogClicked = this.noncontactDialogClicked.bind(this);
+    this.outsideAgainsetup = false;
     this.state = {
       name: '',
       mobile: '',
@@ -173,7 +174,10 @@ export default class CallerForm extends React.PureComponent {
       this.setState({
         name: name,
         mobile: mobile,
-        editable: editable,
+        editable:
+          Helper.nullStringCheck(name) && Helper.nullStringCheck(mobile)
+            ? true
+            : editable,
         email: email,
         dob: dob,
         pincode: pincode,
@@ -278,6 +282,9 @@ export default class CallerForm extends React.PureComponent {
       cItem.mobile !== '' &&
       customerItem.mobile !== cItem.mobile
     ) {
+      this.setupData();
+    } else if (this.outsideAgainsetup === false) {
+      this.outsideAgainsetup = true;
       this.setupData();
     }
   }

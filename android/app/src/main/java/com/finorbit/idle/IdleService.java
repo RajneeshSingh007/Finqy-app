@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.finorbit.ApiCallback;
 import com.finorbit.BuildConfig;
+import com.finorbit.Constants;
 import com.finorbit.MainActivity;
 import com.finorbit.R;
 import com.finorbit.RetrofitClient;
@@ -131,7 +132,7 @@ public class IdleService extends Service implements Runnable {
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful() && response.body() != null){
                     serverDatetime = (String) response.body();
-                    Log.e("idle Service", "onStartCommand: "+serverDatetime );
+                    //Log.e("idle Service", "onStartCommand: "+serverDatetime );
                     if(!TextUtils.isEmpty(serverDatetime)){
                         String split[] = serverDatetime.split(" ");
                         Map<String, ArrayList<String>> obj = new HashMap<>();
@@ -139,7 +140,7 @@ public class IdleService extends Service implements Runnable {
                         timeArray.add(split[1]);
                         obj.put("idle",timeArray);
                         DocumentReference reference = firebaseFirestore
-                                .collection("checkincheckout")
+                                .collection(Constants.getFirestoreCollection())
                                 .document(docName);
 
                         reference.get()
@@ -149,7 +150,7 @@ public class IdleService extends Service implements Runnable {
                                         if(task.isSuccessful()){
                                             DocumentSnapshot documentSnapshot = task.getResult();
                                             if(documentSnapshot != null) {
-                                                ArrayList<String> checkincheckoutList = (ArrayList<String>) documentSnapshot.get("checkincheckout");
+                                                ArrayList<String> checkincheckoutList = (ArrayList<String>) documentSnapshot.get(Constants.getFirestoreCollection());
                                                 //checkin and checkout check
                                                 if(checkincheckoutList != null && !checkincheckoutList.isEmpty() && checkincheckoutList.size() > 0) {
                                                     int size = checkincheckoutList.size();

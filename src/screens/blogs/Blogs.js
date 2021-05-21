@@ -33,6 +33,7 @@ export default class Blogs extends React.PureComponent {
       token: '',
       userData: '',
       categoryList: [],
+      cloneCategoryList: [],
       cloneList: [],
       selected: 'All',
     };
@@ -96,6 +97,7 @@ export default class Blogs extends React.PureComponent {
             cloneList: catlist,
             dataList: catlist,
             categoryList: Lodash.uniq(categoryList),
+            cloneCategoryList: Lodash.uniq(categoryList),
             loading: false,
           });
         } else {
@@ -121,9 +123,9 @@ export default class Blogs extends React.PureComponent {
           onPress={() => {
             //console.log(item.post);
             //if (item.post.includes('https') || item.post.includes('http')) {
-              Linking.openURL(item.post);
+            Linking.openURL(item.post);
             //} else {
-              //NavigationActions.navigate(`BlogDetails`, {item: item});
+            //NavigationActions.navigate(`BlogDetails`, {item: item});
             //}
           }}>
           <View styleName="vertical" style={styles.itemContainer}>
@@ -154,15 +156,30 @@ export default class Blogs extends React.PureComponent {
    * @param {*} catName
    */
   chipclick = (catName, index) => {
-    const {cloneList} = this.state;
+    const {cloneList, cloneCategoryList} = this.state;
     const filter = Lodash.filter(
       cloneList,
       (item) =>
         String(item.category).toLowerCase() === String(catName).toLowerCase(),
     );
+    const newCategoryList = [];
+    newCategoryList.push('All');
+    newCategoryList.push(catName);
+    const changeOrderList = Lodash.map(cloneCategoryList, (io) => {
+      if (
+        String(io).toLowerCase() === 'all' ||
+        String(io).toLowerCase() === String(catName).toLowerCase()
+      ) {
+      } else {
+        newCategoryList.push(io);
+      }
+    });
+
+    //categoryList
     this.setState({
       dataList: catName === `All` ? cloneList : filter,
       selected: catName,
+      categoryList: catName === 'All' ? cloneCategoryList : newCategoryList,
     });
     // if(this.headerFlatListRef && this.headerFlatListRef.current){
     //   if(this.headerFlatListRef.current.scrollToIndex){

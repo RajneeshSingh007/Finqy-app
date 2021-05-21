@@ -113,7 +113,7 @@ export const requestPermissions = async () => {
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
         PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
         PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        //PermissionsAndroid.PERMISSIONS.WRITE_CALL_LOG
+        PermissionsAndroid.PERMISSIONS.WRITE_CALL_LOG
         // 'android.permission.PROCESS_OUTGOING_CALLS',
         // 'android.permission.ANSWER_PHONE_CALLS',
         // 'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'

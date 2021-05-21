@@ -82,32 +82,36 @@ const HomeTopBar = (props) => {
         text: 'Ok',
         onPress: () => {
           //value
-          setLoader(true);
-          const body = JSON.stringify({
-            id: `${userData.id}`,
-            type: `${type}`,
-          });
-          Pref.getVal(Pref.saveToken, (token) => {
-            Helper.networkHelperTokenPost(
-              Pref.LogoutUrl,
-              body,
-              Pref.methodPost,
-              token,
-              (result) => {
-                cleanup();
-              },
-              (error) => {
-                cleanup();
-              },
-            );
-          });
+          if(userData && userData.id){
+            setLoader(true);
+            const body = JSON.stringify({
+              id: `${userData.id}`,
+              type: `${type}`,
+            });
+            Pref.getVal(Pref.saveToken, (token) => {
+              Helper.networkHelperTokenPost(
+                Pref.LogoutUrl,
+                body,
+                Pref.methodPost,
+                token,
+                (result) => {
+                  cleanup();
+                },
+                (error) => {
+                  cleanup();
+                },
+              );
+            });
+          }else{
+            cleanup();      
+          }
         },
       },
     ]);
   };
 
   const cleanup = () => {
-    FinproCallModule.stopCalling({});
+    FinproCallModule.stopCalling();
     stopService();
     stopIdleService();
     Pref.setVal(Pref.MENU_LIST, null);

@@ -11,16 +11,16 @@ import * as Pref from '../../util/Pref';
 import {
   Button,
   Colors,
-  DefaultTheme,
 } from 'react-native-paper';
 import { sizeHeight, sizeWidth } from '../../util/Size';
 import LeftHeaders from '../common/CommonLeftHeader';
 import Loader from '../../util/Loader';
 import AnimatedInputBox from '../component/AnimatedInputBox';
 import CScreen from '../component/CScreen';
+import NavigationActions from '../../util/NavigationActions';
 
 
-export default class AddTeam extends React.Component {
+export default class ChangePass extends React.Component {
   constructor(props) {
     super(props);
     this.submitt = this.submitt.bind(this);
@@ -44,7 +44,7 @@ export default class AddTeam extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.willfocusListener = navigation.addListener('willFocus', () => {
+    //this.willfocusListener = navigation.addListener('willFocus', () => {
       Pref.getVal(Pref.userData, (value) => this.setState({ userData: value }, () => {
         Pref.getVal(Pref.saveToken, (token) =>
           this.setState({ token: token }, () => {
@@ -52,7 +52,7 @@ export default class AddTeam extends React.Component {
           }),
         );
       }));
-    });
+    //});
   }
 
   submitt = () => {
@@ -99,7 +99,7 @@ export default class AddTeam extends React.Component {
           const { res_type, message } = response_header;
           this.setState({ loading: false });
           if (res_type === `error`) {
-            Helper.showToastMessage("Failed to update password", 0);
+            Helper.showToastMessage(message, 0);
           } else {
             this.setState({
               loading: false,
@@ -109,6 +109,7 @@ export default class AddTeam extends React.Component {
               refercode: '',
             });
             Helper.showToastMessage(`Password changed successfully`, 1);
+            NavigationActions.navigate('Home');
           }
         },
         (error) => {

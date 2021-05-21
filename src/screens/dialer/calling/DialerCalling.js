@@ -72,11 +72,11 @@ export default class DialerCalling extends React.PureComponent {
     this.focusListener = navigation.addListener('didFocus', () => {
       stopIdleService();
 
-      Helper.networkHelperGet(Pref.SERVER_DATE_TIME, datetime => {
+      Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
         this.serverDateTime = serverClientDateCheck(datetime, false);
       });
 
-      Pref.getVal(Pref.DIALER_DATA, userdatas => {
+      Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
         const {id, tlid, pname} = userdatas[0].tc;
         this.setState({
           userid: id,
@@ -84,7 +84,7 @@ export default class DialerCalling extends React.PureComponent {
           teamid: tlid,
           isFollowup: isFollowup,
         });
-        Pref.getVal(Pref.saveToken, value => {
+        Pref.getVal(Pref.saveToken, (value) => {
           this.setState({token: value}, () => {
             this.fetchData();
           });
@@ -93,10 +93,11 @@ export default class DialerCalling extends React.PureComponent {
     });
   }
 
-  _handleAppStateChange = nextState => {
+  _handleAppStateChange = (nextState) => {
     console.log(nextState);
-    FinproCallModule.whatsAppCallMode().then(result => {
-      if (result === 'Voip' && this.whatsappClicked) {
+    FinproCallModule.whatsAppCallMode().then((result) => {
+      //&& this.whatsappClicked
+      if (result === 'Voip') {
         if (Helper.nullCheck(global.dialerCustomerItem) === false) {
           const param = {
             outside: false,
@@ -108,8 +109,8 @@ export default class DialerCalling extends React.PureComponent {
           if (global.dialerScreenName === 'DialerCalling') {
             NavigationActions.navigate('DialerCallerForm', param);
           }
-          global.dialerCustomerItem = null;
-          global.dialerScreenName = '';
+          delete global.dialerCustomerItem;
+          delete global.dialerScreenName;
         }
       }
     });
@@ -138,7 +139,7 @@ export default class DialerCalling extends React.PureComponent {
       body,
       Pref.methodPost,
       this.state.token,
-      result => {
+      (result) => {
         const {data, status} = result;
         if (status === true) {
           if (data.length > 0) {
@@ -148,7 +149,7 @@ export default class DialerCalling extends React.PureComponent {
               const spacespli = String(currentDate).split(/\s/g);
               const startSp = String(spacespli[0]).split(/-/g);
 
-              itemList = Lodash.filter(data, io => {
+              itemList = Lodash.filter(data, (io) => {
                 const {followup_datetime} = io;
                 const spli = String(followup_datetime).split(/\s/g);
                 const datespl = String(spli[0]).split(/-/g);
@@ -185,7 +186,7 @@ export default class DialerCalling extends React.PureComponent {
           this.setState({loading: false});
         }
       },
-      e => {
+      (e) => {
         this.setState({loading: false});
       },
     );
@@ -217,15 +218,15 @@ export default class DialerCalling extends React.PureComponent {
     if (isWhatsapp === true) {
       FinproCallModule.whatsappCall({
         isvideo: videocall,
-        phone: '7715873581',
-      }).then(result => {
+        phone: mobile,
+      }).then((result) => {
         if (result === 'no permission granted') {
           Helper.showToastMessage(
             'Please, Grant Phone Call, Contact And Call Log Permissions',
             2,
           );
         } else if (result === 'success') {
-          this.whatsappClicked = true;
+          //this.whatsappClicked = true;
         } else {
           Helper.showToastMessage(result, 0);
         }
@@ -311,7 +312,7 @@ export default class DialerCalling extends React.PureComponent {
     );
   };
 
-  setDates = dates => {
+  setDates = (dates) => {
     this.setState({
       ...dates,
     });
@@ -342,7 +343,7 @@ export default class DialerCalling extends React.PureComponent {
       const endSp = String(endParseSp).split(/-/g);
 
       //console.log(parse, endparse);
-      const itemList = Lodash.filter(cloneList, io => {
+      const itemList = Lodash.filter(cloneList, (io) => {
         const {followup_datetime} = io;
         const spli = String(followup_datetime).split(/\s/g);
         const datespl = String(spli[0]).split(/-/g);

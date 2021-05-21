@@ -2949,7 +2949,7 @@ export const AccountViewUrl = `${ApiDirUrl}tool_view_profile.php`;
 export const LogoutUrl = `${ApiDirUrl}app_logout.php`;
 export const CheckInUrl = `${ApiDirUrl}tool_update_app_checkin.php`;
 export const HomeUrl = `${ApiDirUrl}tool_home.php`;
-export const NotificationUrl = `${ApiDirUrl}/tool_allnotify.php`;
+export const NotificationUrl = `${ApiDirUrl}tool_allnotify.php`;
 
 export const ForgotUrl = `${MainUrl}forgot_all.php`;
 export const TCondition = `${MainUrl}termcondition.php`;
@@ -2958,34 +2958,14 @@ export const PrivacyPolicyUrl = `${MainUrl}/PRIVACY%20POLICY.pdf`;
 export const CookiePolicyUrl = `${MainUrl}/COOKIE%20POLICY.pdf`;
 export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
 export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
+export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
+export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
 
 
 //insurance
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 export const BuyInsurance = `${FinURL}hicif.php`;
 
-
-
-///////////////////////////////////////////////////////////
-/**
- * disabled 
- */
-//export const LiveUrl = `https://erb.ai/erbfinorbit`;
-export const NewFormPayment = `${FinURL}policy_premium.php`;
-//export const VectorFormPayment = `${LiveUrl}vp_payment.php`;
-//export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
-export const VectorFormPayment = `${FinURL}vp_payment.php`;
-export const GroupFormPayment = `${FinURL}gp_payment.php`;
-export const AjaxWithoutToken = `${FinURL}ajax.php`;
-export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
-export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
-///////////////////////////////////////////////////////////////
-
-
-
-export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
-export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
-export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 /////////////////////////////////////
 //  Code Push Key
 /////////////////////////////////////
@@ -2998,9 +2978,7 @@ export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
 //  SMS API
 /////////////////////////////////////
 export const SMSURL = `https://api.msg91.com/api/`;
-//OTP SMS
 export const SMS_OTP = `${SMSURL}v5/otp`;
-//Send SMS
 export const SMS_SEND = `${SMSURL}sendhttp.php`;
 
 //////////////////////////////////
@@ -3014,6 +2992,7 @@ export const UVDESK_ASSIGN_AGENT = `${MAIN_SUPPORT_URL}ticket/`;
 export const UVDESK_REPLY_THREAD = `${MAIN_SUPPORT_URL}ticket/`;
 export const UVDESK_UPDATE_STATUS = `${MAIN_SUPPORT_URL}ticket/`;
 export const UVDESK_THREAD_LIST = `${MAIN_SUPPORT_URL}tickets`;
+
 //////////////////////////////
 // Ticket API
 //////////////////////////////
@@ -3071,6 +3050,12 @@ export const COLLECTION_PRODUCT = 'productlist';
 export const COLLECTION_CHECKIN = 'checkincheckout';
 export const COLLECTION_TEMPLATE = 'templates';
 
+///////production firestore dialer ///////////
+// export const COLLECTION_PARENT = 'live_parent';
+// export const COLLECTION_PRODUCT = 'live_productlist';
+// export const COLLECTION_CHECKIN = 'live_checkincheckout';
+// export const COLLECTION_TEMPLATE = 'live_templates';
+
 /**
  * Set Val
  * @param key
@@ -3122,3 +3107,23 @@ export const getFontName = (type) => {
       return 'Roboto-Regular';
   }
 }
+
+
+
+
+///////////////////////////////////////////////////////////
+/**
+ * disabled 
+ */
+//export const LiveUrl = `https://erb.ai/erbfinorbit`;
+export const NewFormPayment = `${FinURL}policy_premium.php`;
+//export const VectorFormPayment = `${LiveUrl}vp_payment.php`;
+//export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
+export const VectorFormPayment = `${FinURL}vp_payment.php`;
+export const GroupFormPayment = `${FinURL}gp_payment.php`;
+export const AjaxWithoutToken = `${FinURL}ajax.php`;
+export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
+export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
+export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
+///////////////////////////////////////////////////////////////
+

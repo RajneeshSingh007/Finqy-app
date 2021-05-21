@@ -22,7 +22,7 @@ public class RetrofitClient {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.addInterceptor(interceptor);
             retrofit  = new Retrofit.Builder()
-                    .baseUrl(Constants.getMainUrl(false))
+                    .baseUrl(Constants.getMainUrl())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .client(builder.build())
                     .build();

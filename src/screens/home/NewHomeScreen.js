@@ -1,13 +1,14 @@
-import {Title, View, Image} from '@shoutem/ui';
+import { Title, View, Image } from '@shoutem/ui';
 import React from 'react';
 import {
   StyleSheet,
   Platform,
   Pressable,
   TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import * as Helper from '../../util/Helper';
-import {sizeWidth, sizeHeight} from '../../util/Size';
+import { sizeWidth, sizeHeight } from '../../util/Size';
 import NavigationActions from '../../util/NavigationActions';
 import * as Pref from '../../util/Pref';
 import CScreen from '../component/CScreen';
@@ -16,14 +17,20 @@ import IconChooser from '../common/IconChooser';
 import RectRoundBtn from '../component/RectRoundBtn';
 import LinearGradient from 'react-native-linear-gradient';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import {ActivityIndicator, Portal} from 'react-native-paper';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
+import { ActivityIndicator, Portal } from 'react-native-paper';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 import HomeTopBar from '../common/HomeTopBar';
-import {firebase} from '@react-native-firebase/firestore';
-import {disableOffline} from '../../util/DialerFeature';
+import { firebase } from '@react-native-firebase/firestore';
+import { disableOffline } from '../../util/DialerFeature';
 import Share from 'react-native-share';
 import Loader from '../../util/Loader';
 import NotificationSidebar from '../common/NotificationSidebar';
+import Banner from './component/Banner';
+import Videos from './component/Videos';
+
+const { width } = Dimensions.get('window');
+
+const ratio = 300 / 720;
 
 export default class NewHomeScreen extends React.PureComponent {
   constructor(props) {
@@ -55,11 +62,11 @@ export default class NewHomeScreen extends React.PureComponent {
 
     Pref.getVal(Pref.userData, (value) => {
       if (value !== undefined && value !== null) {
-        this.setState({userData: value});
+        this.setState({ userData: value });
       }
     });
     Pref.getVal(Pref.USERTYPE, (v) => {
-      this.setState({type: v});
+      this.setState({ type: v });
     });
   }
 
@@ -69,11 +76,11 @@ export default class NewHomeScreen extends React.PureComponent {
     } catch (e) {
       // //console.log(e);
     }
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.willfocusListener = navigation.addListener('willFocus', () => {
-      this.setState({loading: false});
+      this.setState({ loading: false });
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.saveToken, (value) => {
         if (Helper.nullStringCheck(value) === true) {
           Helper.networkHelper(
@@ -81,12 +88,12 @@ export default class NewHomeScreen extends React.PureComponent {
             Pref.API_TOKEN_POST_DATA,
             Pref.methodPost,
             (result) => {
-              const {data, response_header} = result;
-              const {res_type} = response_header;
+              const { data, response_header } = result;
+              const { res_type } = response_header;
               if (res_type === `success`) {
                 const parseToken = Helper.removeQuotes(data);
                 Pref.setVal(Pref.saveToken, parseToken);
-                this.setState({token: parseToken});
+                this.setState({ token: parseToken });
                 this.fetchAll(parseToken);
               }
             },
@@ -95,11 +102,11 @@ export default class NewHomeScreen extends React.PureComponent {
             },
           );
         } else {
-          this.setState({token: value});
+          this.setState({ token: value });
           this.fetchAll(value);
         }
       });
-    //});
+    });
   }
 
   componentWillUnmount() {
@@ -115,7 +122,7 @@ export default class NewHomeScreen extends React.PureComponent {
   fetchAll = (value) => {
     this.fetchBannerVideoTestiData(value);
     this.fetchMarketingImages(value);
-    const {type} = this.state;
+    const { type } = this.state;
     this.fetchNofication(value);
 
     if (Helper.nullStringCheck(type) === false && type === 'team') {
@@ -124,10 +131,10 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   checkDialerFeatures = () => {
-    const {userData} = this.state;
-    const {leader} = userData;
+    const { userData } = this.state;
+    const { leader } = userData;
     const leaderData = leader[0];
-    const {id} = leaderData;
+    const { id } = leaderData;
     const loggedMemberId = userData.id;
     disableOffline();
     this.firebaseListerner = firebase
@@ -136,12 +143,12 @@ export default class NewHomeScreen extends React.PureComponent {
       .doc(id)
       .onSnapshot((documentSnapshot) => {
         if (documentSnapshot.exists) {
-          const {role, teamlist} = documentSnapshot.data();
+          const { role, teamlist } = documentSnapshot.data();
           if (role === 0) {
             let existence = false;
             const dialerData = [];
             for (let j = 0; j < teamlist.length; j++) {
-              const {memberlist, tllist, name} = teamlist[j];
+              const { memberlist, tllist, name } = teamlist[j];
 
               let membererlist = '';
 
@@ -171,10 +178,10 @@ export default class NewHomeScreen extends React.PureComponent {
 
               const tlfind = tllist
                 ? Lodash.find(
-                    tllist,
-                    (io) =>
-                      io.enabled === 0 && io.id === Number(loggedMemberId),
-                  )
+                  tllist,
+                  (io) =>
+                    io.enabled === 0 && io.id === Number(loggedMemberId),
+                )
                 : undefined;
 
               if (find || tlfind) {
@@ -195,7 +202,7 @@ export default class NewHomeScreen extends React.PureComponent {
             }
             if (existence) {
               Pref.setVal(Pref.DIALER_DATA, dialerData);
-              this.setState({dialerActive: true});
+              this.setState({ dialerActive: true });
             }
           }
         }
@@ -203,8 +210,8 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   fetchMarketingImages = (parseToken) => {
-    const {type, userData} = this.state;
-    const {rname, rcontact, id, username, mobile} = userData;
+    const { type, userData } = this.state;
+    const { rname, rcontact, id, username, mobile } = userData;
     const body = JSON.stringify({
       offer_type: '1',
       rname: type === 'team' ? `${username}` : `${rname}`,
@@ -219,26 +226,26 @@ export default class NewHomeScreen extends React.PureComponent {
       parseToken,
       (result) => {
         //console.log('result', result);
-        const {data, response_header} = result;
-        const {res_type} = response_header;
+        const { data, response_header } = result;
+        const { res_type } = response_header;
         if (res_type === 'success') {
           if (data.length > 0) {
-            this.setState({marketingImagesData: data});
+            this.setState({ marketingImagesData: data });
           }
         } else {
-          this.setState({noMarketingImagesData: true});
+          this.setState({ noMarketingImagesData: true });
         }
       },
       (error) => {
         //console.log('error', error);
-        this.setState({loading: false, noMarketingImagesData: true});
+        this.setState({ loading: false, noMarketingImagesData: true });
       },
     );
   };
 
   fetchNofication = (parseToken) => {
-    const {type, userData} = this.state;
-    const {id} = userData;
+    const { type, userData } = this.state;
+    const { id } = userData;
     const body = JSON.stringify({
       userid: `${id}`,
       type: type,
@@ -251,12 +258,12 @@ export default class NewHomeScreen extends React.PureComponent {
       parseToken,
       (result) => {
         //console.log('result', result);
-        const {data} = result;
+        const { data } = result;
         if (data.length > 0) {
-          this.setState({notificationData: data});
+          this.setState({ notificationData: data });
         }
       },
-      (error) => {},
+      (error) => { },
     );
   };
 
@@ -266,9 +273,9 @@ export default class NewHomeScreen extends React.PureComponent {
       Pref.methodGet,
       parseToken,
       (result) => {
-        const {status, data} = result;
+        const { status, data } = result;
         if (status) {
-          const {banner, testi, video} = data;
+          const { banner, testi, video } = data;
           this.setState({
             bannerData: banner,
             testimonialData: testi,
@@ -297,64 +304,12 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   renderTopbar = () => {
-    const {notificationData} = this.state;
+    const { notificationData } = this.state;
     return (
       <HomeTopBar
-        notifyClicked={() => this.setState({notifyVisible: true})}
+        notifyClicked={() => this.setState({ notifyVisible: true })}
         counter={notificationData.length}
       />
-    );
-  };
-
-  renderBanner = () => {
-    const {bannerData, bannerActiveIndex} = this.state;
-    return (
-      <>
-        <Carousel
-          ref={(c) => {
-            this._carousel1 = c;
-          }}
-          data={bannerData}
-          renderItem={({item, index}) => {
-            return (
-              <View styleName="md-gutter" style={styles.bannerView}>
-                <Image
-                  source={{
-                    uri: item.banner,
-                  }}
-                  style={styles.bannerImg}
-                />
-              </View>
-            );
-          }}
-          sliderWidth={sizeWidth(100)}
-          itemWidth={sizeWidth(96)}
-          autoplay
-          loop
-          autoplayInterval={2000}
-          onSnapToItem={(val) => this.setState({bannerActiveIndex: val})}
-        />
-        <Pagination
-          carouselRef={this._carousel1}
-          dotsLength={bannerData.length}
-          activeDotIndex={bannerActiveIndex}
-          dotStyle={{
-            width: 8,
-            height: 8,
-            borderRadius: 4,
-            backgroundColor: '#0270e3',
-          }}
-          inactiveDotStyle={{
-            backgroundColor: 'rgba(0,0,0,0.3)',
-          }}
-          inactiveDotOpacity={0.5}
-          inactiveDotScale={0.7}
-          tappableDots={false}
-          containerStyle={{
-            marginTop: -sizeHeight(8),
-          }}
-        />
-      </>
     );
   };
 
@@ -392,8 +347,17 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   openMenu = (index) => {
-    Pref.setVal(Pref.NEW_HOME_MENUPOSITION, `${index}`);
-    NavigationActions.openDrawer();
+    const { type } = this.state;
+    if (type === 'team' && index === 1) {
+      this.showAlert("You're not allowed to use this feature", 2);
+    } else if (type === 'team' && index === 0) {
+      this.showAlert("You're not allowed to use this feature", 1);
+    } else if (type === 'team' && index === 2) {
+      this.showAlert("You're not allowed to use this feature", 3);
+    } else {
+      Pref.setVal(Pref.NEW_HOME_MENUPOSITION, `${index}`);
+      NavigationActions.openDrawer();
+    }
   };
 
   renderManage = () => {
@@ -407,7 +371,7 @@ export default class NewHomeScreen extends React.PureComponent {
             'New Lead',
           )}
           {this.renderManageItem(
-            () => this.navigateToPage('LeadList', {name: 'Q-Leads'}),
+            () => this.navigateToPage('LeadList', { name: 'Q-Leads' }),
             require('../../res/images/home/mylead.png'),
             'Q-Leads',
           )}
@@ -431,52 +395,6 @@ export default class NewHomeScreen extends React.PureComponent {
           )}
         </View>
       </View>
-    );
-  };
-
-  renderVideos = () => {
-    const {videoData, videoActiveIndex} = this.state;
-    return (
-      <>
-        <Carousel
-          ref={(c) => {
-            this._carousel = c;
-          }}
-          data={videoData}
-          renderItem={({item, index}) => {
-            return (
-              <LinearGradient
-                colors={['#eeeeee', '#eeeeee', '#f5f5f5']}
-                style={styles.videoscontainer}>
-                <YoutubePlayer
-                  height={200}
-                  width={sizeWidth(94)}
-                  videoId={item.id}
-                  allowWebViewZoom={false}
-                />
-              </LinearGradient>
-            );
-          }}
-          sliderWidth={sizeWidth(96)}
-          itemWidth={sizeWidth(94)}
-          autoplay
-          loop
-          onSnapToItem={(val) => this.setState({videoActiveIndex: val})}
-        />
-        <Pagination
-          carouselRef={this._carousel}
-          dotsLength={videoData.length}
-          activeDotIndex={videoActiveIndex}
-          dotStyle={styles.dotsyle}
-          inactiveDotStyle={styles.inactivedot}
-          inactiveDotOpacity={0.5}
-          inactiveDotScale={0.7}
-          tappableDots={false}
-          containerStyle={{
-            marginTop: -sizeHeight(5.5),
-          }}
-        />
-      </>
     );
   };
 
@@ -507,6 +425,7 @@ export default class NewHomeScreen extends React.PureComponent {
       </Pressable>
     );
   };
+
 
   renderProduct = () => {
     return (
@@ -567,12 +486,12 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   dialerClick = () => {
-    const {dialerActive} = this.state;
+    const { dialerActive } = this.state;
     if (dialerActive) {
       this.navigateToPage('SwitchUser');
     } else {
       this.showAlert(
-        'You do not have permission, Please contact administrator',
+        'You do not have permission\nPlease, Contact administrator',
         1,
       );
     }
@@ -598,32 +517,32 @@ export default class NewHomeScreen extends React.PureComponent {
         </Title>
         <View
           styleName="horizontal space-between"
-          style={{flex: 12, marginStart: 4, marginEnd: 4, marginTop: 16}}>
+          style={{ flex: 12, marginStart: 4, marginEnd: 4, marginTop: 16 }}>
           {this.renderQuickItem(
             () => this.dialerClick(),
             require('../../res/images/home/dialer.png'),
             'Dialer',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('MarketingTool', {name: 'Q-Marketing'}),
+            () => this.navigateToPage('MarketingTool', { name: 'Q-Marketing' }),
             require('../../res/images/home/mark.png'),
             'Q-Marketing',
           )}
           {this.renderQuickItem(
             () =>
-              this.navigateToPage('LinkSharingOption', {name: 'Link Sharing'}),
+              this.navigateToPage('LinkSharingOption', { name: 'Link Sharing' }),
             require('../../res/images/home/qlinks.png'),
             'Link-Share',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('Blogs', {name: 'Q-News'}),
+            () => this.navigateToPage('Blogs', { name: 'Q-News' }),
             require('../../res/images/home/qnews.png'),
             'Q-News',
           )}
         </View>
         <View
           styleName="horizontal space-between"
-          style={{flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24}}>
+          style={{ flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24 }}>
           {this.renderQuickItem(
             () => this.openMenu(0),
             require('../../res/images/home/qwallet.png'),
@@ -635,12 +554,12 @@ export default class NewHomeScreen extends React.PureComponent {
             'Calculator',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('MyOffers', {name: 'Q-Offers'}),
+            () => this.navigateToPage('MyOffers', { name: 'Q-Offers' }),
             require('../../res/images/home/offers.png'),
             'Q-Offers',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('Payout', {name: 'Payout Structure'}),
+            () => this.navigateToPage('Payout', { name: 'Payout Structure' }),
             require('../../res/images/home/pay.png'),
             'Payout Structure',
           )}
@@ -683,25 +602,25 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   testimonialnavigate = (isNext, isPrev) => {
-    const {currentTestimonialIndex, testimonialData} = this.state;
+    const { currentTestimonialIndex, testimonialData } = this.state;
     let parseIndex = isNext
       ? currentTestimonialIndex + 1
       : currentTestimonialIndex - 1;
     const isCheck = parseIndex >= 0 && parseIndex < testimonialData.length;
     if (isNext && isCheck) {
-      this.setState({currentTestimonialIndex: parseIndex});
+      this.setState({ currentTestimonialIndex: parseIndex });
     } else if (isPrev && isCheck) {
-      this.setState({currentTestimonialIndex: parseIndex});
+      this.setState({ currentTestimonialIndex: parseIndex });
     }
   };
 
   renderTestimonialsFlatItem = () => {
-    const {testimonialData, currentTestimonialIndex} = this.state;
+    const { testimonialData, currentTestimonialIndex } = this.state;
     return (
       <View>
         <View
           styleName="horizontal space-between v-center h-center"
-          style={{marginStart: 10, marginEnd: 10, marginTop: 16}}>
+          style={{ marginStart: 10, marginEnd: 10, marginTop: 16 }}>
           <Pressable onPress={() => this.testimonialnavigate(false, true)}>
             <IconChooser name={'chevron-left'} size={24} color={'#292929'} />
           </Pressable>
@@ -765,8 +684,8 @@ export default class NewHomeScreen extends React.PureComponent {
    * @returns
    */
   getMessageFromProduct = (item) => {
-    const {userData} = this.state;
-    const {refercode} = userData;
+    const { userData } = this.state;
+    const { refercode } = userData;
     const find = this.getSelectedItemProduct(item);
     if (find) {
       const finalUrl = `${find.url}?ref=${refercode}`;
@@ -792,15 +711,15 @@ export default class NewHomeScreen extends React.PureComponent {
    * @param {*} item
    */
   shareOffer = (image, item) => {
-    this.setState({fullLoader: true});
+    this.setState({ fullLoader: true });
     Helper.networkHelperGet(
       `${Pref.BASEImageUrl}?url=${image}`,
       (result) => {
-        this.setState({fullLoader: false});
+        this.setState({ fullLoader: false });
         this.whatsappSharing(item, result);
       },
       (e) => {
-        this.setState({fullLoader: false});
+        this.setState({ fullLoader: false });
         this.whatsappSharing(item, '');
       },
     );
@@ -839,68 +758,62 @@ export default class NewHomeScreen extends React.PureComponent {
     }
   };
 
-  renderItemMarketing = (item, index) =>{
-    return <View>
-    <Image
-      source={{uri: item.image}}
-      style={styles.marketingimages}
-    />
-    <View
-      styleName="horizontal v-center"
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        justifyContent: 'flex-end',
-        marginEnd: 16,
-      }}>
-      <View style={styles.roundtouch}>
-        <TouchableWithoutFeedback
-          onPress={() => this.mailShareOffer(item)}>
-          <View style={StyleSheet.flatten([styles.circle1])}>
-            <IconChooser
-              name="mail"
-              size={18}
-              color={'white'}
-              iconType={1}
-              style={styles.icon}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+  shareableRender = (mailShare = () => { }, whatsappShare = () => { }) => {
+    return (
+      <View styleName="horizontal v-center" style={styles.sharecontainers}>
+        <View style={styles.roundtouch}>
+          <TouchableWithoutFeedback onPress={mailShare}>
+            <View style={StyleSheet.flatten([styles.circle1])}>
+              <IconChooser
+                name="mail"
+                size={18}
+                color={'white'}
+                iconType={1}
+                style={styles.icon}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        <View style={styles.gap}></View>
+        <View style={styles.roundtouch}>
+          <TouchableWithoutFeedback onPress={whatsappShare}>
+            <View style={styles.circle1}>
+              <IconChooser
+                name="whatsapp"
+                size={18}
+                color={'white'}
+                iconType={2}
+                style={styles.icon}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
-      <View style={styles.gap}></View>
-      <View style={styles.roundtouch}>
-        <TouchableWithoutFeedback
-          onPress={() => this.shareOffer(item.image, item)}>
-          <View style={styles.circle1}>
-            <IconChooser
-              name="whatsapp"
-              size={18}
-              color={'white'}
-              iconType={2}
-              style={styles.icon}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+    );
+  };
+
+  renderItemMarketing = (item, index) => {
+    return (
+      <View>
+        <Image source={{ uri: item.image }} style={styles.marketingimages} />
+        {this.shareableRender(
+          () => this.mailShareOffer(item),
+          () => this.shareOffer(item.image, item),
+        )}
       </View>
-    </View>
-  </View>
-  }
+    );
+  };
 
   renderMarketingImages = () => {
-    const {marketingImagesData} = this.state;
+    const { marketingImagesData } = this.state;
     return (
-      <View
-        styleName="md-gutter horizontal"
-        style={{
-          marginVertical: 4,
-        }}>
+      <View styleName="md-gutter horizontal" style={styles.marketingcontiners}>
         <Carousel
           ref={(c) => {
             this._carousel2 = c;
           }}
           data={marketingImagesData}
-          renderItem={({item, index}) => this.renderItemMarketing(item, index)}
+          renderItem={({ item, index }) => this.renderItemMarketing(item, index)}
           sliderWidth={sizeWidth(96)}
           itemWidth={224}
           itemHeight={156}
@@ -910,20 +823,19 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   renderMarginPadding = () => {
-    return (
-      <View
-        style={{
-          marginVertical: 12,
-        }}></View>
-    );
+    return <View style={styles.bottomargins}></View>;
   };
 
-  showAlert = (message, type) => {
-    this.setState({alertMessage: message, alertType: type});
-    this.clearAlert = setTimeout(() => {
-      this.setState({alertMessage: '', alertType: -1});
+  timeoutCallback = () =>{
+    this.setState({ alertMessage: '', alertType: -1 });
+    if(this.clearAlert){
       clearTimeout(this.clearAlert);
-    }, 1000);
+    }
+  }
+
+  showAlert = (message, type) => {
+    this.setState({ alertMessage: message, alertType: type });
+    this.clearAlert = setTimeout(this.timeoutCallback, 3000);
   };
 
   renderBottomItem = (onPress, centerImage, title = 'home') => {
@@ -947,7 +859,7 @@ export default class NewHomeScreen extends React.PureComponent {
         style={styles.bottomtab}>
         <View
           styleName="horizontal v-center h-center space-between md-gutter"
-          style={{flex: 15}}>
+          style={styles.bottomContainers}>
           {this.renderBottomItem(
             () => this.navigateToPage('Home'),
             require('../../res/images/home/home.png'),
@@ -968,7 +880,7 @@ export default class NewHomeScreen extends React.PureComponent {
           )}
           <View style={styles.linedividers} />
           {this.renderBottomItem(
-            () => this.navigateToPage('Training', {name: 'Q-Learning'}),
+            () => this.navigateToPage('Training', { name: 'Q-Learning' }),
             require('../../res/images/home/knowledge.png'),
             'Q Learning',
           )}
@@ -989,25 +901,18 @@ export default class NewHomeScreen extends React.PureComponent {
     return (
       <View
         styleName="v-center horizontal md-gutter"
-        style={{
-          height: 48,
-          marginEnd: 16,
-          marginStart: 16,
-          backgroundColor: type === 0 ? '#d9534f' : '#5cb85c',
-          borderRadius: 12,
-          elevation: 1,
-          alignItems: 'center',
-          marginTop: 12,
-          marginBottom: 8,
-        }}>
+        style={StyleSheet.flatten([
+          styles.homealertContainer,
+          {
+            backgroundColor: type === 0 ? '#d9534f' : '#5cb85c',
+          },
+        ])}>
         <View style={styles.alertcirclecontainer}>
           <IconChooser
             name={type === 0 ? 'x' : 'check'}
             size={18}
             color={'#666666'}
-            style={{
-              alignSelf: 'center',
-            }}
+            style={styles.iconcenterstyle}
           />
         </View>
         <Title style={styles.alerttext}>{alertMessage}</Title>
@@ -1016,7 +921,14 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   notificationClose = () => {
-    this.setState({notifyVisible: false});
+    this.setState({ notifyVisible: false });
+  };
+
+  bannerShareitem = (item) => {
+    return this.shareableRender(
+      () => this.mailShareOffer(item),
+      () => this.shareOffer(item.imageshare, item),
+    );
   };
 
   render() {
@@ -1056,32 +968,37 @@ export default class NewHomeScreen extends React.PureComponent {
         body={
           <View styleName="vertical">
             {this.renderTopbar()}
-            {noBannerData
-              ? null
-              : bannerData.length > 0
-              ? this.renderBanner()
-              : this.renderLoader()}
+            {noBannerData ? null : bannerData.length > 0 ? (
+              <Banner
+                bannerData={bannerData}
+                shareChild={(item) => this.bannerShareitem(item)}
+              />
+            ) : (
+              this.renderLoader()
+            )}
+            {alertType === 2 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderManage()}
             {alertType === 0 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderProduct()}
             {alertType === 1 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderQuickLinks()}
-            {noVideoData
-              ? null
-              : videoData.length > 0
-              ? this.renderVideos()
-              : this.renderLoader()}
+            {noVideoData ? null : videoData.length > 0 ? (
+              <Videos videoData={videoData} />
+            ) : (
+              this.renderLoader()
+            )}
             {noMarketingImagesData
               ? null
               : marketingImagesData.length > 0
-              ? this.renderMarketingImages()
-              : this.renderLoader()}
+                ? this.renderMarketingImages()
+                : this.renderLoader()}
             {noTestimonialData
               ? null
               : testimonialData.length > 0
-              ? this.renderTestimonials()
-              : this.renderLoader()}
+                ? this.renderTestimonials()
+                : this.renderLoader()}
             {this.renderMarginPadding()}
+            {alertType === 3 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderBottom()}
           </View>
         }
@@ -1091,6 +1008,33 @@ export default class NewHomeScreen extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  bottomContainers: { flex: 15 },
+  sharecontainers: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    justifyContent: 'flex-end',
+    marginEnd: 16,
+  },
+  marketingcontiners: {
+    marginVertical: 4,
+  },
+  bottomargins: {
+    marginVertical: 12,
+  },
+  iconcenterstyle: {
+    alignSelf: 'center',
+  },
+  homealertContainer: {
+    height: 56,
+    marginEnd: 16,
+    marginStart: 16,
+    borderRadius: 12,
+    elevation: 1,
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 8,
+  },
   alerttext: {
     color: 'white',
     fontSize: 14,
@@ -1098,7 +1042,7 @@ const styles = StyleSheet.create({
     //letterSpacing: 0.5,
     lineHeight: 24,
     marginStart: 16,
-    padding: 4,
+    //paddingVertical:1
   },
   alertcirclecontainer: {
     width: 24,
@@ -1248,7 +1192,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
   },
-  productcontainer: {flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24},
+  productcontainer: { flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24 },
   producttitle: {
     color: 'white',
     fontSize: 13,
@@ -1312,7 +1256,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     elevation: 4,
   },
-  manage: {flex: 12, marginStart: 4, marginEnd: 4, marginTop: 16},
+  manage: { flex: 12, marginStart: 4, marginEnd: 4, marginTop: 16 },
   headings: {
     color: '#292929',
     fontSize: 16,
@@ -1322,11 +1266,11 @@ const styles = StyleSheet.create({
     marginStart: 16,
     marginBottom: 0,
   },
-  linedividers: {height: '100%', backgroundColor: '#eeeeee', width: 1},
+  linedividers: { height: '100%', backgroundColor: '#eeeeee', width: 1 },
   bannerImg: {
-    height: 200,
-    width: '100%',
-    resizeMode: 'cover',
+    height: width * ratio,
+    width: width,
+    resizeMode: 'contain',
     borderTopEndRadius: 12,
     borderTopStartRadius: 12,
     borderTopLeftRadius: 12,
@@ -1348,8 +1292,10 @@ const styles = StyleSheet.create({
     marginTop: -4,
     marginRight: -4,
   },
-  toolbarheight: {flexDirection: 'row'},
-  bannerView: {},
+  toolbarheight: { flexDirection: 'row' },
+  bannerView: {
+    flex: 0.96,
+  },
   applogo: {
     resizeMode: 'contain',
     width: 42,
@@ -1501,7 +1447,7 @@ const styles = StyleSheet.create({
     marginEnd: 12,
     marginTop: 8,
   },
-  roundtouch: {flex: 0.3},
+  roundtouch: { flex: 0.3 },
   gap: {
     marginHorizontal: 4,
   },

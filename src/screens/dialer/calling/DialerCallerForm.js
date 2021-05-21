@@ -47,8 +47,8 @@ export default class DialerCallerForm extends React.PureComponent {
 
   setupData = () => {
     //global variable to store dialer temperorary data
-    global.dialerCustomerItem = null;
-    global.dialerScreenName = '';
+    delete global.dialerCustomerItem;
+    delete global.dialerScreenName;
 
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
 
@@ -64,7 +64,7 @@ export default class DialerCallerForm extends React.PureComponent {
     //console.log('activeCallerItem', activeCallerItem);
     //console.log('editEnabled', editEnabled);
 
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
         const {id, tlid, pname} = userdatas[0].tc;
         activeCallerItem.team_id = tlid;
@@ -80,10 +80,10 @@ export default class DialerCallerForm extends React.PureComponent {
             activeCallerItem: activeCallerItem,
             progressLoader: false,
             isFollowup: isFollowup,
-          });
+          }, () => this.forceUpdate());
         });
       });
-    });
+    //});
 
     disableOffline();
     this.firebaseListerner = firebase
@@ -107,14 +107,22 @@ export default class DialerCallerForm extends React.PureComponent {
       });
   };
 
+  componentDidUpdate(){
+    const {navigation} = this.props;
+    const outside = navigation.getParam('outside', false);
+    if(outside != this.state.outside){
+      this.setupData();
+    }
+  }
+
   backClick = () => {
     const {outside} = this.state;
     if (outside === false) {
       NavigationActions.navigate('DialerCalling');
       return true;
     } else {
-      NavigationActions.navigate('Home');    
-      return false;
+      NavigationActions.goBack();    
+      return true;
     }
   };
 

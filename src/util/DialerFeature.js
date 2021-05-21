@@ -4,6 +4,7 @@ import FinproCallModule from '../../FinproCallModule';
 import * as Pref from './Pref';
 import moment from 'moment';
 import {firebase} from '@react-native-firebase/firestore';
+import NavigationActions from './NavigationActions';
 
 /**
  * ask permission and start Service
@@ -15,15 +16,16 @@ export const enableCallModule = (startService = false) => {
       if (data.length > 0 && Helper.nullCheck(data[0].tc) === false) {
         Helper.requestPermissionsDialer()
           .then(permissionResult =>{
+            console.log('permissionResult', permissionResult);
           if(permissionResult['android.permission.CALL_PHONE'] === 'granted'
           &&
           permissionResult['android.permission.READ_CONTACTS'] === 'granted'
           &&
           permissionResult['android.permission.WRITE_CONTACTS'] === 'granted'
+          // &&
+          // permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
           &&
-          permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
-          //&&
-          //permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
+          permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
           ){
             FinproCallModule.askPermission().then(result => {
               FinproCallModule.requestCallsPermission().then(op => {});
@@ -36,7 +38,8 @@ export const enableCallModule = (startService = false) => {
                 {
                   text: 'ok',
                   onPress:() =>{
-                    BackHandler.exitApp();
+                    NavigationActions.navigate('Home');
+                    //BackHandler.exitApp();
                   }
                 }],
             );

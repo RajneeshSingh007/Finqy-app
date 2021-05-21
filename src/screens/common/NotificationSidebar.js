@@ -4,15 +4,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableWithoutFeedback,
-  Linking,
 } from 'react-native';
-import {Title, View} from '@shoutem/ui';
-import {Colors} from 'react-native-paper';
+import { Title, View } from '@shoutem/ui';
+import { Colors } from 'react-native-paper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DrawerTop from '../component/DrawerTop';
 import * as Helper from '../../util/Helper';
 import NavigationActions from '../../util/NavigationActions';
-import Lodash from 'lodash';
 
 const COLOR = '#f9f8f1';
 
@@ -24,19 +22,55 @@ export default class NotificationSidebar extends React.PureComponent {
     StatusBar.setBarStyle('dark-content');
   }
 
+  notificationClick = (item) => {
+    const { list = [], backClicked } = this.props;
+    const { name } = item;
+    const ticketCheck = /ticket/g.test(name);
+    if (ticketCheck) {
+      backClicked();
+      NavigationActions.navigate('TrackQuery', {name:'Track My Query'})
+    }
+    const leadCheck = /Status/g.test(name);
+    const newLeadCheck = /generated/g.test(name);
+    if (leadCheck || newLeadCheck) {
+      backClicked();
+      NavigationActions.navigate('LeadList', {name:'Q-Leads'})
+    }
+    const finTrainCheck = /FinTrain/g.test(name);
+    if (finTrainCheck) {
+      backClicked();
+      NavigationActions.navigate('Training', {name:'Q-Train Learning'})
+    }
+    const finMarketing = /Marketing/g.test(name);
+    if (finMarketing) {
+      backClicked();
+      NavigationActions.navigate('MarketingTool',{name:'Q-Marketing Tool'})
+    }
+    const popularCheck = /Popular/g.test(name);
+    if (popularCheck) {
+      backClicked();
+      NavigationActions.navigate('PopularPlan',{name:'Q-Popular Plan'})
+    }
+    const offerCheck = /Offer/g.test(name);
+    if (offerCheck) {
+      backClicked();
+      NavigationActions.navigate('MyOffers',{name:'Q-Offers'})
+    }
+  }
+
   render() {
-    const {list = [], backClicked} = this.props;
+    const { list = [], backClicked } = this.props;
     const size = list.length;
     return (
       <View style={styles.cont}>
         <TouchableWithoutFeedback onPress={backClicked}>
-          <View style={{flex: 0.4, overflow: 'hidden', opactiy: 0}} />
+          <View style={{ flex: 0.3, overflow: 'hidden', opactiy: 0 }} />
         </TouchableWithoutFeedback>
         <View style={styles.mainContainer}>
           <DrawerTop backClicked={backClicked} />
           <View styleName="v-center h-center sm-gutter" style={styles.maiscons}>
             {list.length === 0 ? (
-              <View style={StyleSheet.flatten([styles.cont,{flex:0.7}])} styleName="vertical v-center h-center">
+              <View style={StyleSheet.flatten([styles.cont, { flex: 0.7 }])} styleName="vertical v-center h-center">
                 <Title styleName="wrap" style={styles.text}>
                   {`No notification found...`}
                 </Title>
@@ -49,11 +83,13 @@ export default class NotificationSidebar extends React.PureComponent {
                   {list.map((item, index) => {
                     return (
                       <>
-                        <View styleName="horizontal v-center h-center">
-                          <Title styleName="wrap" style={styles.text}>
-                            {item.name}
-                          </Title>
-                        </View>
+                        <TouchableWithoutFeedback onPress={() => this.notificationClick(item)}>
+                          <View styleName="horizontal v-center h-center">
+                            <Title styleName="wrap" style={styles.text}>
+                              {item.name}
+                            </Title>
+                          </View>
+                        </TouchableWithoutFeedback>
                         {index === size - 1 ? null : (
                           <View style={styles.line} />
                         )}
@@ -71,7 +107,7 @@ export default class NotificationSidebar extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
-  cont: {flex: 1, flexDirection: 'row'},
+  cont: { flex: 1, flexDirection: 'row' },
   maiscons: {
     flex: 1,
   },
@@ -92,14 +128,13 @@ const styles = StyleSheet.create({
     marginEnd: 16,
   },
   mainContainer: {
-    flex: 0.6,
+    flex: 0.7,
     backgroundColor: COLOR,
     elevation: 8,
   },
-  subMargin: {marginStart: 16},
+  subMargin: { marginStart: 16 },
   subtitle: {
     fontSize: 14,
-
     letterSpacing: 0.5,
     color: '#97948c',
     alignSelf: 'flex-start',
