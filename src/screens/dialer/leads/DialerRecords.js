@@ -10,7 +10,7 @@ import * as Helper from '../../../util/Helper';
 import * as Pref from '../../../util/Pref';
 import {ActivityIndicator, Searchbar, Portal} from 'react-native-paper';
 import {sizeHeight} from '../../../util/Size';
-import Lodash from 'lodash';
+import Lodash, {isArray} from 'lodash';
 import LeftHeaders from '../../common/CommonLeftHeader';
 import ListError from '../../common/ListError';
 import CommonTable from '../../common/CommonTable';
@@ -63,24 +63,24 @@ export default class DialerRecords extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    this.focusListener = navigation.addListener('didFocus', () => {
-      Pref.getVal(Pref.userData, userData => {
-        this.setState({
-          userData: userData,
-          active: active,
-          exportEnabled: exportEnabled,
-        });
-        Pref.getVal(Pref.USERTYPE, v => {
-          this.setState({type: v}, () => {
-            Pref.getVal(Pref.saveToken, value => {
-              this.setState({token: value}, () => {
-                this.fetchData();
-              });
+    //this.focusListener = navigation.addListener('didFocus', () => {
+    Pref.getVal(Pref.userData, (userData) => {
+      this.setState({
+        userData: userData,
+        active: active,
+        exportEnabled: exportEnabled,
+      });
+      Pref.getVal(Pref.USERTYPE, (v) => {
+        this.setState({type: v}, () => {
+          Pref.getVal(Pref.saveToken, (value) => {
+            this.setState({token: value}, () => {
+              this.fetchData();
             });
           });
         });
       });
     });
+    //});
   }
 
   backClick = () => {
@@ -107,7 +107,7 @@ export default class DialerRecords extends React.PureComponent {
   fetchData = () => {
     this.setState({loading: true});
     const {active, userData} = this.state;
-    Pref.getVal(Pref.DIALER_DATA, userdatas => {
+    Pref.getVal(Pref.DIALER_DATA, (userdatas) => {
       const {id, tlid, pname} = userdatas[0].tc;
       // const { team_id,id } = userData;
       const body = JSON.stringify({
@@ -122,13 +122,13 @@ export default class DialerRecords extends React.PureComponent {
         body,
         Pref.methodPost,
         this.state.token,
-        result => {
+        (result) => {
           const {data, status} = result;
           if (status) {
             if (data.length > 0) {
               const findUsername = Lodash.find(
                 data,
-                io => Helper.nullStringCheck(io.username) === false,
+                (io) => Helper.nullStringCheck(io.username) === false,
               );
               const sorting = data.sort((a, b) => {
                 const splita = a.updated_at.split(/\s/g);
@@ -159,7 +159,7 @@ export default class DialerRecords extends React.PureComponent {
                   'Remarks',
                   'Call Logs',
                 ];
-                widthArr = [60, 120, 110, 110, 70,120, 120, 140, 80];
+                widthArr = [60, 120, 110, 110, 70, 120, 120, 140, 80];
                 csvHeader = `Sr.No,Name,Number,Call Date,Duration,Status,Remarks\n`;
               } else {
                 tableHead = [
@@ -201,38 +201,42 @@ export default class DialerRecords extends React.PureComponent {
             this.setState({loading: false});
           }
         },
-        e => {
+        (e) => {
           this.setState({loading: false});
         },
       );
     });
   };
 
-  editLead = item => {
+  editLead = (item) => {
     NavigationActions.navigate('DialerCalling', {
       data: item,
       editEnabled: true,
     });
   };
 
-  logviewClick = item => {
+  logviewClick = (item) => {
     const {device_call_logs} = item;
-    const parse = JSON.parse(device_call_logs);
-    parse.map(io => {
-      io.time = io.dateTime;
-      if (io.duration === 0) {
-        io.duration = '0';
-      } else {
-        if (io.duration > 60) {
-          const callDur = Number(io.duration / 60).toPrecision(3);
-          io.duration = callDur;
+    if (isArray(device_call_logs)) {
+      const parse = JSON.parse(device_call_logs);
+      parse.map((io) => {
+        io.time = io.dateTime;
+        if (io.duration === 0) {
+          io.duration = '0';
+        } else {
+          if (io.duration > 60) {
+            const callDur = Number(io.duration / 60).toPrecision(3);
+            io.duration = callDur;
+          }
         }
-      }
-      return io;
-    });
-    this.setState({callLogData: parse, detailShow: true}, () => {
-      this.filterCallHistory('Today');
-    });
+        return io;
+      });
+      this.setState({callLogData: parse, detailShow: true}, () => {
+        this.filterCallHistory('Today');
+      });
+    } else {
+      Helper.showToastMessage('No call logs found...', 0);
+    }
   };
 
   filterCallHistory = (filterMode = 'Today') => {
@@ -242,17 +246,13 @@ export default class DialerRecords extends React.PureComponent {
     //today
     const today = moment().format(dateFormator);
     //yesterday
-    const yesterday = moment()
-      .subtract(1, 'days')
-      .format(dateFormator);
+    const yesterday = moment().subtract(1, 'days').format(dateFormator);
     //this month
-    const startOfMonth = moment()
-      .startOf('month')
-      .format(dateFormator);
+    const startOfMonth = moment().startOf('month').format(dateFormator);
 
     const splitStartOfMonth = startOfMonth.split('-');
 
-    const filter = Lodash.filter(callLogData, io => {
+    const filter = Lodash.filter(callLogData, (io) => {
       const parse = moment(io.dateTime).format(dateFormator);
       const parseSplit = parse.split('-');
       if (filterMode === 'Today' && today === parse) {
@@ -329,7 +329,7 @@ export default class DialerRecords extends React.PureComponent {
     );
   };
 
-  renderFilterView = title => {
+  renderFilterView = (title) => {
     const {filterMode} = this.state;
     return (
       <TouchableWithoutFeedback onPress={() => this.filterCallHistory(title)}>
@@ -408,7 +408,7 @@ export default class DialerRecords extends React.PureComponent {
               }
             }
 
-            const logView = value => (
+            const logView = (value) => (
               <TouchableWithoutFeedback
                 onPress={() => this.logviewClick(value)}>
                 <View>
@@ -468,7 +468,7 @@ export default class DialerRecords extends React.PureComponent {
       const date = moment().format('DD_MM_YYYY');
       const name = `${date}_CallRecords`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(csvHeader, data, finalFilePath, result => {
+      Helper.writeCSV(csvHeader, data, finalFilePath, (result) => {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
@@ -503,7 +503,7 @@ export default class DialerRecords extends React.PureComponent {
       const date = moment().format('DD_MM_YYYY');
       const name = `${date}_CallLogs`;
       const finalFilePath = `${FILEPATH}${name}.csv`;
-      Helper.writeCSV(csvHeader, parse, finalFilePath, result => {
+      Helper.writeCSV(csvHeader, parse, finalFilePath, (result) => {
         if (result) {
           RNFetchBlob.fs.scanFile([{path: finalFilePath, mime: 'text/csv'}]),
             RNFetchBlob.android.addCompleteDownload({
@@ -529,66 +529,30 @@ export default class DialerRecords extends React.PureComponent {
     });
   };
 
-  onChangeSearch = query => {
+  onChangeSearch = (query) => {
     this.setState({searchQuery: query});
     const {cloneList, itemSize} = this.state;
     if (cloneList.length > 0) {
-      const trimquery = String(query)
-        .trim()
-        .toLowerCase();
+      const trimquery = String(query).trim().toLowerCase();
       const clone = JSON.parse(JSON.stringify(cloneList));
-      const result = Lodash.filter(clone, it => {
+      const result = Lodash.filter(clone, (it) => {
         const {name, mobile, product} = it;
         if (Helper.nullCheck(it.username) === true) {
           return (
-            (name &&
-              name
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
-            (mobile &&
-              mobile
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
-            (product &&
-              product
-                .trim()
-                .toLowerCase()
-                .includes(trimquery))
+            (name && name.trim().toLowerCase().includes(trimquery)) ||
+            (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+            (product && product.trim().toLowerCase().includes(trimquery))
           );
         } else {
           return (
-            (name &&
-              name
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
-            (mobile &&
-              mobile
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
-            (product &&
-              product
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
+            (name && name.trim().toLowerCase().includes(trimquery)) ||
+            (mobile && mobile.trim().toLowerCase().includes(trimquery)) ||
+            (product && product.trim().toLowerCase().includes(trimquery)) ||
             (it.username &&
-              it.username
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
-            (it.mobile &&
-              it.mobile
-                .trim()
-                .toLowerCase()
-                .includes(trimquery)) ||
+              it.username.trim().toLowerCase().includes(trimquery)) ||
+            (it.mobile && it.mobile.trim().toLowerCase().includes(trimquery)) ||
             (it.refercode &&
-              it.refercode
-                .trim()
-                .toLowerCase()
-                .includes(trimquery))
+              it.refercode.trim().toLowerCase().includes(trimquery))
           );
         }
       });

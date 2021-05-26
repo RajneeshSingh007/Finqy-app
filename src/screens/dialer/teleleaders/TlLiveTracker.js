@@ -198,7 +198,7 @@ export default class TlLiveTracker extends React.PureComponent {
           userData.type = breaktime.length % 2 === 0 ? 'Resume' : 'Break';
           trackChanges = true;
         } else {
-          userData.break = 'Break';
+          userData.break = '';
           userData.type = '';
         }
 

@@ -154,7 +154,7 @@ export default class CallerForm extends React.PureComponent {
       this.restoreData(editItemRestore);
     }
 
-    //console.log('customerItem', customerItem, editEnabled);
+    console.log('customerItem', customerItem, editEnabled);
 
     Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
       this.serverDateTime = serverClientDateCheck(datetime, false);
@@ -224,51 +224,51 @@ export default class CallerForm extends React.PureComponent {
       });
     }
     if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
-        title: 'Permission Required',
-        message: 'We required to access your call logs',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      }).then((result) => {
-        if (result === 'granted') {
-          let numberArray = [];
-          if (Helper.nullStringCheck(mobile) === false) {
-            let trimnumber = mobile.trim();
-            numberArray.push(`+91${trimnumber}`);
-            numberArray.push(trimnumber);
-            numberArray.push(
-              `${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                5,
-                trimnumber.length,
-              )}`,
-            );
-            numberArray.push(`+91 ${trimnumber}`);
-            numberArray.push(
-              `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                5,
-                trimnumber.length,
-              )}`,
-            );
-            CallLogs.load(-1, {
-              phoneNumbers: numberArray,
-            }).then((c) => {
-              let callDur = 0;
-              if (c.length > 0) {
-                const {duration} = c[0];
-                if (callDur > 60) {
-                  callDur = Number(duration / 60).toPrecision(3);
-                } else {
-                  callDur = Number(duration);
-                }
-              }
-              this.setState({
-                callLogs: c,
-                callDur: callDur,
-              });
-            });
+      // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
+      //   title: 'Permission Required',
+      //   message: 'We required to access your call logs',
+      //   buttonNegative: 'Cancel',
+      //   buttonPositive: 'OK',
+      // }).then((result) => {
+      //   console.log('result', result);
+      //   if (result === 'granted') {
+
+      //   }
+      // });
+      let numberArray = [];
+      if (Helper.nullStringCheck(mobile) === false) {
+        let trimnumber = mobile.trim();
+        numberArray.push(`+91${trimnumber}`);
+        numberArray.push(trimnumber);
+        numberArray.push(
+          `${trimnumber.slice(0, 6)} ${trimnumber.slice(5, trimnumber.length)}`,
+        );
+        numberArray.push(`+91 ${trimnumber}`);
+        numberArray.push(
+          `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
+            5,
+            trimnumber.length,
+          )}`,
+        );
+        CallLogs.load(-1, {
+          phoneNumbers: numberArray,
+        }).then((c) => {
+          console.log('c', c);
+          let callDur = 0;
+          if (c.length > 0) {
+            const {duration} = c[0];
+            if (callDur > 60) {
+              callDur = Number(duration / 60).toPrecision(3);
+            } else {
+              callDur = Number(duration);
+            }
           }
-        }
-      });
+          this.setState({
+            callLogs: c,
+            callDur: callDur,
+          });
+        });
+      }
     }
   };
 

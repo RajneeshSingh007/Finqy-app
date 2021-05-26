@@ -114,7 +114,7 @@ public class CallerService extends Service implements CallPhoneListerner{
                 break;
         }
         lastState = state;
-        Log.e(TAG, "callStateChanged: "+lastState);
+        Log.e(TAG, "callStateChanged: "+lastState +" phoneNumber"+incomingNumber);
     }
 
     public void sendCallData(String phoneNumber, String state) {
