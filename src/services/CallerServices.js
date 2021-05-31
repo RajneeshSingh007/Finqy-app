@@ -18,6 +18,7 @@ const callerServiceHandler = async (data) => {
     global.dialerCustomerItem,
     global.dialerScreenName,
     Helper.nullCheck(global.dialerScreenName),
+    global.dialerFormSubmitted
   );
 
   let lowercase = String(state).toLowerCase();
@@ -28,7 +29,11 @@ const callerServiceHandler = async (data) => {
     Helper.nullCheck(global.dialerScreenName) &&
     (lowercase === 'offhook' || lowercase === 'disconnected')
   ) {
-    enableService();
+    if(Helper.nullCheck(global.dialerFormSubmitted)){
+      enableService();
+    }else{
+      stopService();
+    }
   } else {
     stopService();
   }
@@ -48,6 +53,7 @@ const callerServiceHandler = async (data) => {
 
   delete global.dialerCustomerItem;
   delete global.dialerScreenName;
+  delete global.dialerFormSubmitted;
 };
 
 AppRegistry.registerHeadlessTask(

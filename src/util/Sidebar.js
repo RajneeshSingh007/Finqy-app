@@ -560,6 +560,7 @@ export default class Sidebar extends React.Component {
     this.menuheaderClick = this.menuheaderClick.bind(this);
     this.menuSubHeaderClick = this.menuSubHeaderClick.bind(this);
     this.scrollMenu = -1;
+    this.userType = '';
     this.state = {
       userData: null,
       pic: '',
@@ -583,6 +584,7 @@ export default class Sidebar extends React.Component {
         },
         () => {
           Pref.getVal(Pref.USERTYPE, (v) => {
+            this.userType = v;
             if (v === `connector`) {
               this.teamMenuSet(ConnectorMenuList, parse);
             } else if (v === 'team') {
@@ -712,7 +714,72 @@ export default class Sidebar extends React.Component {
                 this.teamMenuSet(filter, parse);
               }
             } else {
-              this.teamMenuSet(MainMenuList, parse);
+              disableOffline();
+              this.firebaseListerner = firebase
+                .firestore()
+                .collection(Pref.COLLECTION_PARENT)
+                .doc(parse.id)
+                .onSnapshot((documentSnapshot) => {
+                  if (documentSnapshot.exists) {
+                    const {role} = documentSnapshot.data();
+                    if (role === 0) {
+                      const object = {
+                        data:documentSnapshot.data(),
+                        id:parse.id
+                      }        
+                      Pref.setVal(Pref.DIALER_DATA_PARTNER, object);
+                      let finalFilterList = [];
+                      const cloneobject = JSON.parse(
+                        JSON.stringify(MainMenuList),
+                      );
+                      finalFilterList.push(cloneobject[0]);
+                      finalFilterList.push(
+                        {
+                          name: `Dialer`,
+                          expand: false,
+                          heading: true,
+                          iconname: require('../res/images/dialercalls.png'),
+                          icontype: 2,
+                          sub: [
+                            {
+                              name: `Reports`,
+                              expand: false,
+                              click: '',
+                              heading: true,
+                              sub: [
+                                {
+                                  name: `Dataset Allocation Report`,
+                                  expand: false,
+                                  click: `FinorbitScreen`,
+                                  options: {},
+                                },
+                                {
+                                  name: `TC Allocation Report`,
+                                  expand: false,
+                                  click: `LinkSharingOption`,
+                                  options: {},
+                                },
+                              ],
+                            }
+                          ],
+                          click: '',
+                        });
+                      const lastpos = cloneobject.splice(
+                        1,
+                        cloneobject.length,
+                      );
+                      lastpos.map((item) => finalFilterList.push(item));
+                      
+                      //this.teamMenuSet(finalFilterList, parse);
+                      this.teamMenuSet(MainMenuList, parse);
+                    } else {
+                      this.teamMenuSet(MainMenuList, parse);
+                    }
+                  } else {
+                    this.teamMenuSet(MainMenuList, parse);
+                  }
+                });
+              //   
             }
           });
         },
@@ -761,6 +828,9 @@ export default class Sidebar extends React.Component {
       if (nm == 0) {
         item = Lodash.find(menuList, (io) => io.name === 'Q-Wallet');
         pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Wallet');
+      } else if (nm == 1 && this.userType == 'referral') {
+        item = Lodash.find(menuList, (io) => io.name === 'Dialer');
+        pos = Lodash.findIndex(menuList, (io) => io.name === 'Dialer');
       } else if (nm == 1) {
         item = Lodash.find(menuList, (io) => io.name === 'Q-Team Manager');
         pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Team Manager');

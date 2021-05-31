@@ -126,15 +126,22 @@ export default class NewHomeScreen extends React.PureComponent {
     this.fetchNofication(value);
 
     if (Helper.nullStringCheck(type) === false && type === 'team') {
-      this.checkDialerFeatures();
+      this.checkDialerFeatures(type);
+    }else if (Helper.nullStringCheck(type) === false && type === 'referral') {
+      this.checkDialerFeatures(type);
     }
   };
 
-  checkDialerFeatures = () => {
+  checkDialerFeatures = (userType) => {
     const { userData } = this.state;
-    const { leader } = userData;
-    const leaderData = leader[0];
-    const { id } = leaderData;
+    var id = -1;
+    if(userType == 'team'){
+      const { leader } = userData;
+      const leaderData = leader[0];
+      id  = leaderData.id;  
+    }else{
+      id = userData.id;
+    }
     const loggedMemberId = userData.id;
     disableOffline();
     this.firebaseListerner = firebase
@@ -200,7 +207,14 @@ export default class NewHomeScreen extends React.PureComponent {
                 });
               }
             }
-            if (existence) {
+            if(userType == 'referral'){
+              const object = {
+                data:documentSnapshot.data(),
+                id:id
+              }
+              Pref.setVal(Pref.DIALER_DATA_PARTNER, object);  
+              this.setState({ dialerActive: false });
+            }else if (existence) {
               Pref.setVal(Pref.DIALER_DATA, dialerData);
               this.setState({ dialerActive: true });
             }
@@ -486,9 +500,14 @@ export default class NewHomeScreen extends React.PureComponent {
   };
 
   dialerClick = () => {
-    const { dialerActive } = this.state;
+    const { dialerActive,type } = this.state;
+    console.log('dialerActive', dialerActive);
     if (dialerActive) {
-      this.navigateToPage('SwitchUser');
+      if(type == 'referral'){
+        this.openMenu(1);
+      }else{
+        this.navigateToPage('SwitchUser');
+      }
     } else {
       this.showAlert(
         'You do not have permission\nPlease, Contact administrator',

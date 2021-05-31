@@ -11,37 +11,37 @@ import NavigationActions from './NavigationActions';
  * @param {*} user_role
  */
 export const enableCallModule = (startService = false) => {
-  Pref.getVal(Pref.DIALER_DATA, data => {                 
-    if(Helper.nullCheck(data) === false){
+  Pref.getVal(Pref.DIALER_DATA, (data) => {
+    if (Helper.nullCheck(data) === false) {
       if (data.length > 0 && Helper.nullCheck(data[0].tc) === false) {
-        Helper.requestPermissionsDialer()
-          .then(permissionResult =>{
-            console.log('permissionResult', permissionResult);
-          if(permissionResult['android.permission.CALL_PHONE'] === 'granted'
-          &&
-          permissionResult['android.permission.READ_CONTACTS'] === 'granted'
-          &&
-          permissionResult['android.permission.WRITE_CONTACTS'] === 'granted'
-          // &&
-          // permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
-          &&
-          permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
-          ){
-            FinproCallModule.askPermission().then(result => {
-              FinproCallModule.requestCallsPermission().then(op => {});
+        Helper.requestPermissionsDialer().then((permissionResult) => {
+          console.log('permissionResult', permissionResult);
+          if (
+            permissionResult['android.permission.CALL_PHONE'] === 'granted' &&
+            permissionResult['android.permission.READ_CONTACTS'] ===
+              'granted' &&
+            permissionResult['android.permission.WRITE_CONTACTS'] ===
+              'granted'
+              // && permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
+    
+            && permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
+          ) {
+            FinproCallModule.askPermission().then((result) => {
+              FinproCallModule.requestCallsPermission().then((op) => {});
             });
-          }else{
+          } else {
             Alert.alert(
               'Permissions Denied',
               'Please, Grant Call Log, Phone, Contact permissions from setting',
               [
                 {
                   text: 'ok',
-                  onPress:() =>{
+                  onPress: () => {
                     NavigationActions.navigate('Home');
                     //BackHandler.exitApp();
-                  }
-                }],
+                  },
+                },
+              ],
             );
           }
         });
@@ -60,16 +60,16 @@ export const stopService = () => {
 /**
  * Start bubble service
  */
-export const enableService = () =>{
+export const enableService = () => {
   FinproCallModule.startService();
-}
+};
 
 /**
  * client and server date time check
- * @param {*} serverDate 
- * @returns 
+ * @param {*} serverDate
+ * @returns
  */
-export const serverClientDateCheck = (serverDate, checkClient = false) =>{
+export const serverClientDateCheck = (serverDate, checkClient = false) => {
   const splitServerTime = serverDate.split(/\s/g);
   const dateServerTime = splitServerTime[0].split(/-/g);
   const currentTime = moment().format('DD-MM-YYYY');
@@ -77,90 +77,98 @@ export const serverClientDateCheck = (serverDate, checkClient = false) =>{
   const daycheck = Number(dateServerTime[0]) === Number(splitUserTime[0]);
   const monthcheck = Number(dateServerTime[1]) === Number(splitUserTime[1]);
   const yearcheck = Number(dateServerTime[2]) === Number(splitUserTime[2]);
-  let serverDateTime = [splitServerTime[0], splitServerTime[1], splitServerTime[0].replace(/-/g, '')];
+  let serverDateTime = [
+    splitServerTime[0],
+    splitServerTime[1],
+    splitServerTime[0].replace(/-/g, ''),
+  ];
 
-  if(checkClient){
+  if (checkClient) {
     if (daycheck && monthcheck && yearcheck) {
       return serverDateTime;
-    }else{
+    } else {
       return [];
     }
-  }else{
+  } else {
     return serverDateTime;
   }
-}
+};
 
 /**
  * mobile number cleanup
- * @param {*} number 
- * @returns 
+ * @param {*} number
+ * @returns
  */
-export const mobileNumberCleanup = (number = '') =>{
-  if(Helper.nullStringCheck(number) === false){
+export const mobileNumberCleanup = (number = '') => {
+  if (Helper.nullStringCheck(number) === false) {
     let finalNumber = '';
     const cleanUpNumber = number.replace(/\s/g, '').replace(/\+91/g, '');
-    if(Number(cleanUpNumber.length) == 12){
+    if (Number(cleanUpNumber.length) == 12) {
       finalNumber = String(cleanUpNumber).substr(2, cleanUpNumber.length);
-    }else{
+    } else {
       finalNumber = cleanUpNumber;
     }
     return finalNumber;
   }
   return '';
-}
+};
 
-export const totalTimeinMinutes = (date, firstTime, secondTime) =>{
+export const totalTimeinMinutes = (date, firstTime, secondTime) => {
   const firstTimeSp = `${date} ${firstTime}`;
   const secondTimeSp = `${date} ${secondTime}`;
   const minutes = moment(firstTimeSp).getDate();
-}
+};
 
-export const disableOffline = () =>{
-  try{
-    firebase.firestore()
-    .settings({persistence:false});
-  }catch(e){
+export const disableOffline = () => {
+  try {
+    firebase.firestore().settings({persistence: false});
+  } catch (e) {
     //ignore
   }
-}
+};
 
 /**
  * start idle Service
- * @param {*} date 
+ * @param {*} date
  */
-export const enableIdleService = (date) =>{
-  const obj = {date:date};
-  FinproCallModule.startIdleService(obj).then(res =>{
-    //console.log(res)
-  }).catch(e =>{
-    console.log(e);
-  })
-}
+export const enableIdleService = (date) => {
+  const obj = {date: date};
+  FinproCallModule.startIdleService(obj)
+    .then((res) => {
+      //console.log(res)
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
 
 /**
  * stop idle Service
  */
- export const stopIdleService = () =>{
-  FinproCallModule.stopIdleService().then(res =>{
-    //console.log(res)
-  }).catch(e =>{
-    console.log(e);
-  })
-}
+export const stopIdleService = () => {
+  FinproCallModule.stopIdleService()
+    .then((res) => {
+      //console.log(res)
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
 
 /**
  * batter disable
  */
-export const askBatteryOptiDisable = ()  =>{
+export const askBatteryOptiDisable = () => {
   Alert.alert(
     'Battery Optimization',
     'Please, Disable battery optimization for Dialer',
     [
       {
         text: 'ok',
-        onPress:() =>{
+        onPress: () => {
           FinproCallModule.disableBatteryOff();
-        }
-      }],
+        },
+      },
+    ],
   );
-}
+};

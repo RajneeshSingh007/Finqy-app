@@ -144,6 +144,7 @@ export default class DialerCallerForm extends React.PureComponent {
   formResult = (status, message) => {
     const {editEnabled} = this.state;
     this.setState({progressLoader: false});
+    global.dialerFormSubmitted = true;
     if (editEnabled === true) {
       Helper.showToastMessage(message, status === true ? 1 : 0);
     } else {
@@ -155,6 +156,7 @@ export default class DialerCallerForm extends React.PureComponent {
   callerformsubmit = (value, leadConfirm) => {
     this.setState({progressLoader: value});
     if (leadConfirm === 0) {
+      global.dialerFormSubmitted = true;
       NavigationActions.navigate('DialerCalling');
     }
   };

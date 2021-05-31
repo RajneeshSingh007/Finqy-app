@@ -324,4 +324,20 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
             promise.resolve("idle");
         }
     }
+
+    @ReactMethod
+    public void killAllServices(){
+        //caller service
+        Intent callService = new Intent(getReactApplicationContext(), CallerService.class);
+        getReactApplicationContext().stopService(callService);
+
+        //idle service
+        Intent idleService = new Intent(getReactApplicationContext(),IdleService.class);
+        getReactApplicationContext().stopService(idleService);
+
+
+        //bubble service
+        Intent bubbleService = new Intent(getReactApplicationContext(),FloatingWidgetService.class);
+        getReactApplicationContext().stopService(bubbleService);
+    }
 }

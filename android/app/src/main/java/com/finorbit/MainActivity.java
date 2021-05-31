@@ -1,8 +1,11 @@
 package com.finorbit;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+
+import androidx.core.app.ActivityCompat;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -23,6 +26,10 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        ActivityCompat.requestPermissions(this,
+//                new String[]{Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG, Manifest.permission.CALL_PHONE, Manifest.permission.READ_PHONE_STATE, Manifest.permission.ANSWER_PHONE_CALLS},
+//                1000);
 
         appUpdateManager = AppUpdateManagerFactory.create(MainActivity.this);
         appUpdateManager

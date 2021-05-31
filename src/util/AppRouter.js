@@ -96,6 +96,8 @@ import TcDashboard from '../screens/dialer/telecallers/TcDashboard';
 import TcPerformance from '../screens/dialer/telecallers/TcPerformance';
 import TcTemplates from '../screens/dialer/telecallers/TcTemplates';
 import CallLogs from '../screens/dialer/telecallers/CallLogs';
+//import TcAllocationReport from '../screens/dialer/partner/TcAllocationReport';
+//import DatasetAllocationReport from '../screens/dialer/partner/DatasetAllocationReport';
 
 // dialer teleleader
 import TlTeam from '../screens/dialer/teleleaders/TlTeam';
@@ -310,7 +312,7 @@ const DialerNav = createStackNavigator({
   TlMemberList:{screen:TlMemberList},
   TlLiveTracker:{screen:TlLiveTracker},
   TlReport:{screen:TlReport},
-  DialerCallerForm:{screen:DialerCallerFormNav}
+  DialerCallerForm:{screen:DialerCallerFormNav},
 },
 {
   headerMode: 'none',
@@ -319,6 +321,16 @@ const DialerNav = createStackNavigator({
   transitionConfig: (nav) => handleCustomTransition(nav),
 })
 
+
+// const DialerNavPartner = createSwitchNavigator({
+//   TcAllocationReport:{screen:TcAllocationReport},
+//   DatasetAllocationReport:{screen:DatasetAllocationReport}
+// },
+// {
+//   headerMode: 'none',
+//   resetOnBlur:true,
+//   transitionConfig: (nav) => handleCustomTransition(nav),
+// })
 
 
 const PayInPayout = createStackNavigator({
@@ -381,6 +393,7 @@ const OtherNav = createDrawerNavigator(
     TicketNav:{screen:TicketNav},
     SalesNav:{screen:SalesNav},
     DialerNav:{screen: DialerNav},
+    //DialerNavPartner:{screen:DialerNavPartner}
   },
   {
     initialRouteName: 'Home',

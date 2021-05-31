@@ -107,10 +107,10 @@ export default class DialerCalling extends React.PureComponent {
             callTrack: 1,
           };
           if (global.dialerScreenName === 'DialerCalling') {
+            delete global.dialerCustomerItem;
+            delete global.dialerScreenName;  
             NavigationActions.navigate('DialerCallerForm', param);
           }
-          delete global.dialerCustomerItem;
-          delete global.dialerScreenName;
         }
       }
     });

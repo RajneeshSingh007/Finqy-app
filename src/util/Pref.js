@@ -15,6 +15,7 @@ export const USERTYPE = 'type';
 export const salespayoutUpdate = "salespayoutUpdate";
 export const DIALER_TEAM_LEADER = 'dialer_team_leader';
 export const DIALER_DATA = "dialer_data";
+export const DIALER_DATA_PARTNER = "dialer_data_partner";
 export const DIALER_SERVICE_ENABLED = "dialer_service_enabled";
 export const DIALER_TEMP_BUBBLE_NUMBER = 'dialer_temp_bubble_number';
 export const NEW_HOME_MENUPOSITION = 'scrollmenuposition';

@@ -1,6 +1,7 @@
 package com.finorbit.caller;
 
 import android.telephony.PhoneStateListener;
+import android.util.Log;
 
 public class CallPhoneStateListener extends PhoneStateListener {
 
@@ -13,6 +14,7 @@ public class CallPhoneStateListener extends PhoneStateListener {
     @Override
     public void onCallStateChanged(int state, String phoneNumber) {
         super.onCallStateChanged(state, phoneNumber);
+        Log.e("CallPhoneStateListener", "onCallStateChanged1: "+phoneNumber);
         callPhoneListerner.callStateChanged(state, phoneNumber);
     }
 

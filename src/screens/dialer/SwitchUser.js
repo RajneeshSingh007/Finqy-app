@@ -23,7 +23,7 @@ import {
   enableCallModule,
   serverClientDateCheck,
   disableOffline,
-  enableIdleService
+  enableIdleService,
 } from '../../util/DialerFeature';
 import FinproCallModule from '../../../FinproCallModule';
 
@@ -135,7 +135,6 @@ const TCDashboard = [
  * SwitchUser
  */
 export default class SwitchUser extends React.PureComponent {
-
   constructor(props) {
     super(props);
     this.checkInCheckoutRef = null;
@@ -337,7 +336,8 @@ export default class SwitchUser extends React.PureComponent {
               dataExist = true;
             }
             if (checkincheckout && checkincheckout.length > 0) {
-              evenoddcheckCheck = Number(checkincheckout.length) % 2 === 0 ? false : true;
+              evenoddcheckCheck =
+                Number(checkincheckout.length) % 2 === 0 ? false : true;
               dataExist = true;
             }
             let filterList = [];
@@ -369,7 +369,7 @@ export default class SwitchUser extends React.PureComponent {
             }
 
             let checkIn = false;
-            
+
             if (String(check).toLowerCase().includes('out')) {
               enableIdleService(`${id}${date}`);
               checkIn = true;
@@ -388,7 +388,6 @@ export default class SwitchUser extends React.PureComponent {
                 progressLoader: false,
               },
               () => {
-                
                 // //listen calls
                 // this.context.callListerner();
 
@@ -441,10 +440,9 @@ export default class SwitchUser extends React.PureComponent {
             .get()
             .then((result) => {
               if (result.exists) {
-                
                 let {checkincheckout} = result.data();
-                
-                if(checkincheckout === undefined){
+
+                if (checkincheckout === undefined) {
                   checkincheckout = [];
                 }
 
