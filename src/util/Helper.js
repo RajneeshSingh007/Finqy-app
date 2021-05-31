@@ -5,6 +5,7 @@ import { showMessage, hideMessage } from 'react-native-flash-message';
 import RNFetchBlob from 'rn-fetch-blob';
 import Lodash from 'lodash';
 import * as Pref from './Pref';
+import {checkMultiple,PERMISSIONS} from 'react-native-permissions';
 
 /**
  *
@@ -60,29 +61,16 @@ export const requestPermissions = async () => {
   try {
     if (Platform.OS === 'android') {
       const value = await PermissionsAndroid.requestMultiple([
-        //PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-        //PermissionsAndroid.PERMISSIONS.READ_SMS,
-        //PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        //PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        //PermissionsAndroid.PERMISSIONS.CAMERA,
       ]).then((result) => {
         if (
-          //result['android.permission.CALL_PHONE'] &&
-          //result['android.permission.READ_SMS'] &&
-          //result['android.permission.ACCESS_FINE_LOCATION'] &&
           result['android.permission.READ_EXTERNAL_STORAGE'] &&
-          //result['android.permission.CAMERA'] &&
           result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
         ) {
           //granted
         } else if (
-          //result['android.permission.CALL_PHONE'] ||
-          //result['android.permission.READ_SMS'] ||
-          //result['android.permission.ACCESS_FINE_LOCATION'] ||
           result['android.permission.READ_EXTERNAL_STORAGE'] ||
-          //result['android.permission.CAMERA'] ||
           result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
           'never_ask_again'
         ) {
@@ -108,17 +96,8 @@ export const requestPermissions = async () => {
  export const requestPermissionsDialer = async() => {
   try {
     if (Platform.OS === 'android') {
-      const value = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.CALL_PHONE,
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-        PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
-        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        PermissionsAndroid.PERMISSIONS.WRITE_CALL_LOG,
-         'android.permission.PROCESS_OUTGOING_CALLS',
-         'android.permission.ANSWER_PHONE_CALLS',
-       'android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'
-      ]);
-      return value;
+      const statuses = await checkMultiple([PERMISSIONS.ANDROID.CALL_PHONE, PERMISSIONS.ANDROID.READ_CALL_LOG, PERMISSIONS.ANDROID.WRITE_CALL_LOG, PERMISSIONS.ANDROID.READ_CONTACTS, PERMISSIONS.ANDROID.WRITE_CONTACTS, PERMISSIONS.ANDROID.READ_PHONE_STATE, PERMISSIONS.ANDROID.ANSWER_PHONE_CALLS, PERMISSIONS.ANDROID.PROCESS_OUTGOING_CALLS]);
+      return statuses;
     }else{
     }
   } catch (err) {

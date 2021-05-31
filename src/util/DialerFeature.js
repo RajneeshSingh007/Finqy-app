@@ -18,13 +18,10 @@ export const enableCallModule = (startService = false) => {
           console.log('permissionResult', permissionResult);
           if (
             permissionResult['android.permission.CALL_PHONE'] === 'granted' &&
-            permissionResult['android.permission.READ_CONTACTS'] ===
-              'granted' &&
-            permissionResult['android.permission.WRITE_CONTACTS'] ===
-              'granted'
-              // && permissionResult['android.permission.READ_CALL_LOG'] === 'granted'
-    
-            && permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
+            permissionResult['android.permission.READ_CONTACTS'] === 'granted' &&
+            permissionResult['android.permission.WRITE_CONTACTS'] === 'granted' && 
+            permissionResult['android.permission.READ_CALL_LOG'] === 'granted' && 
+            permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
           ) {
             FinproCallModule.askPermission().then((result) => {
               FinproCallModule.requestCallsPermission().then((op) => {});
@@ -172,3 +169,4 @@ export const askBatteryOptiDisable = () => {
     ],
   );
 };
+

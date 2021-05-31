@@ -47,7 +47,7 @@ class App extends React.PureComponent {
 
     this.onNotificationListener();
 
-    this.checkVersionForUpdate();
+    //this.checkVersionForUpdate();
 
     //dialer
     this.dialerCheck();
@@ -56,6 +56,7 @@ class App extends React.PureComponent {
   dialerCheck = () => {
     Pref.getVal(Pref.DIALER_SERVICE_ENABLED, value => {
       if (Helper.nullCheck(value) || value === false) {
+        delete global.dialerCheckIn;
         stopService();
         stopIdleService();
         FinproCallModule.stopCalling();

@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.finorbit.BuildConfig;
+import com.finorbit.Constants;
 import com.finorbit.MainActivity;
 import com.finorbit.R;
 
@@ -29,7 +30,6 @@ public class CallerService extends Service implements CallPhoneListerner{
 
     private static final String TAG = CallerService.class.getSimpleName();
 
-    public static final int FLOATING_WIDGET_NOTIFICATION_ID = 100;
     public static final String CHANNEL_ID = "FinqyServiceChannel";
     public static final String CHANNEL_NAME = "Finqy Service Channel";
 
@@ -40,7 +40,7 @@ public class CallerService extends Service implements CallPhoneListerner{
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(FLOATING_WIDGET_NOTIFICATION_ID, getCompatNotification());
+        startForeground(Constants.SERVICES_NOTIFICATION_ID, getCompatNotification());
         callPhoneStateListener = new CallPhoneStateListener(this);
         telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(callPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -68,7 +68,7 @@ public class CallerService extends Service implements CallPhoneListerner{
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.caller_active))
-                .setTicker("Floating Caller")
+                .setTicker("Dialer")
                 .setWhen(System.currentTimeMillis());
         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 1000, startIntent, 0);

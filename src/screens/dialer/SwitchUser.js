@@ -24,6 +24,8 @@ import {
   serverClientDateCheck,
   disableOffline,
   enableIdleService,
+  stopService,
+  stopIdleService
 } from '../../util/DialerFeature';
 import FinproCallModule from '../../../FinproCallModule';
 
@@ -376,6 +378,7 @@ export default class SwitchUser extends React.PureComponent {
               FinproCallModule.startCalling();
             } else {
               checkIn = false;
+              stopIdleService();
               FinproCallModule.stopCalling();
             }
 

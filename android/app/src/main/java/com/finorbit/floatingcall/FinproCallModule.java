@@ -2,6 +2,8 @@ package com.finorbit.floatingcall;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,24 +11,42 @@ import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.finorbit.Constants;
 import com.finorbit.caller.CallerService;
 import com.finorbit.idle.IdleService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 public class FinproCallModule extends ReactContextBaseJavaModule {
 
@@ -327,17 +347,140 @@ public class FinproCallModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void killAllServices(){
-        //caller service
-        Intent callService = new Intent(getReactApplicationContext(), CallerService.class);
-        getReactApplicationContext().stopService(callService);
+        try{
 
-        //idle service
-        Intent idleService = new Intent(getReactApplicationContext(),IdleService.class);
-        getReactApplicationContext().stopService(idleService);
+            //caller service
+            Intent callService = new Intent(getReactApplicationContext(), CallerService.class);
+            getReactApplicationContext().stopService(callService);
+
+            //idle service
+            Intent idleService = new Intent(getReactApplicationContext(),IdleService.class);
+            getReactApplicationContext().stopService(idleService);
 
 
-        //bubble service
-        Intent bubbleService = new Intent(getReactApplicationContext(),FloatingWidgetService.class);
-        getReactApplicationContext().stopService(bubbleService);
+            //bubble service
+            Intent bubbleService = new Intent(getReactApplicationContext(),FloatingWidgetService.class);
+            getReactApplicationContext().stopService(bubbleService);
+
+            NotificationManager notification = (NotificationManager) getReactApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            notification.cancel(Constants.SERVICES_NOTIFICATION_ID);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    ////////////// CALL LOGS ///////////////////////////////
+
+    @ReactMethod()
+    public void loadAll(Promise promise) {
+        load(-1, promise);
+    }
+
+    @ReactMethod()
+    public void load(int limit, Promise promise) {
+        loadWithFilter(limit, null, promise);
+    }
+
+    @ReactMethod()
+    public void loadWithFilter(int limit, @Nullable ReadableMap filter, Promise promise) {
+        try {
+            if (ActivityCompat.checkSelfPermission(getReactApplicationContext(), Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            Cursor cursor = getReactApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DATE + " DESC");
+
+            WritableArray result = Arguments.createArray();
+
+            if (cursor == null) {
+                promise.resolve(result);
+                return;
+            }
+
+            boolean nullFilter = filter == null;
+            String minTimestamp = !nullFilter && filter.hasKey("minTimestamp") ? filter.getString("minTimestamp") : "0";
+            String maxTimestamp = !nullFilter && filter.hasKey("maxTimestamp") ? filter.getString("maxTimestamp") : "-1";
+            String phoneNumbers = !nullFilter && filter.hasKey("phoneNumbers") ? filter.getString("phoneNumbers") : "[]";
+            JSONArray phoneNumbersArray= new JSONArray(phoneNumbers);
+
+            Set<String> phoneNumberSet = new HashSet<>(Arrays.asList(toStringArray(phoneNumbersArray)));
+
+            int callLogCount = 0;
+
+            final int NUMBER_COLUMN_INDEX = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+            final int TYPE_COLUMN_INDEX = cursor.getColumnIndex(CallLog.Calls.TYPE);
+            final int DATE_COLUMN_INDEX = cursor.getColumnIndex(CallLog.Calls.DATE);
+            final int DURATION_COLUMN_INDEX = cursor.getColumnIndex(CallLog.Calls.DURATION);
+            final int NAME_COLUMN_INDEX = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME);
+
+            boolean minTimestampDefined = minTimestamp != null && !minTimestamp.equals("0");
+            boolean minTimestampReached = false;
+
+            while (cursor.moveToNext() && this.shouldContinue(limit, callLogCount) && !minTimestampReached) {
+                String phoneNumber = cursor.getString(NUMBER_COLUMN_INDEX);
+                int duration = cursor.getInt(DURATION_COLUMN_INDEX);
+                String name = cursor.getString(NAME_COLUMN_INDEX);
+
+                String timestampStr = cursor.getString(DATE_COLUMN_INDEX);
+                minTimestampReached = minTimestampDefined && Long.parseLong(timestampStr) <= Long.parseLong(minTimestamp);
+
+                DateFormat df = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.MEDIUM, SimpleDateFormat.MEDIUM);
+                //DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String dateTime = df.format(new Date(Long.valueOf(timestampStr)));
+
+                String type = this.resolveCallType(cursor.getInt(TYPE_COLUMN_INDEX));
+
+                boolean passesPhoneFilter = phoneNumberSet == null || phoneNumberSet.isEmpty() || phoneNumberSet.contains(phoneNumber);
+                boolean passesMinTimestampFilter = minTimestamp == null || minTimestamp.equals("0") || Long.parseLong(timestampStr) >= Long.parseLong(minTimestamp);
+                boolean passesMaxTimestampFilter = maxTimestamp == null || maxTimestamp.equals("-1") || Long.parseLong(timestampStr) <= Long.parseLong(maxTimestamp);
+                boolean passesFilter = passesPhoneFilter&& passesMinTimestampFilter && passesMaxTimestampFilter;
+
+                if (passesFilter) {
+                    WritableMap callLog = Arguments.createMap();
+                    callLog.putString("phoneNumber", phoneNumber);
+                    callLog.putInt("duration", duration);
+                    callLog.putString("name", name);
+                    callLog.putString("timestamp", timestampStr);
+                    callLog.putString("dateTime", dateTime);
+                    callLog.putString("type", type);
+                    callLog.putInt("rawType", cursor.getInt(TYPE_COLUMN_INDEX));
+                    result.pushMap(callLog);
+                    callLogCount++;
+                }
+            }
+
+            cursor.close();
+
+            promise.resolve(result);
+        } catch (JSONException e) {
+            promise.reject(e);
+        }
+    }
+
+    public static String[] toStringArray(JSONArray array) {
+        if(array==null)
+            return null;
+
+        String[] arr=new String[array.length()];
+        for(int i=0; i<arr.length; i++) {
+            arr[i]=array.optString(i);
+        }
+        return arr;
+    }
+
+    private String resolveCallType(int callTypeCode) {
+        switch (callTypeCode) {
+            case CallLog.Calls.OUTGOING_TYPE:
+                return "OUTGOING";
+            case CallLog.Calls.INCOMING_TYPE:
+                return "INCOMING";
+            case CallLog.Calls.MISSED_TYPE:
+                return "MISSED";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    private boolean shouldContinue(int limit, int count) {
+        return limit < 0 || count < limit;
     }
 }

@@ -12,6 +12,8 @@ public class Constants {
     public static final String FIRESTORE_COLLECTION_UAT = "checkincheckout";
     public static final String FIRESTORE_COLLECTION_PRO = "live_checkincheckout";
 
+    public static final int SERVICES_NOTIFICATION_ID = 124;
+
 
     /**
      * return main Url

@@ -28,6 +28,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.finorbit.BuildConfig;
+import com.finorbit.Constants;
 import com.finorbit.MainActivity;
 import com.finorbit.R;
 
@@ -35,7 +36,6 @@ public class FloatingWidgetService extends Service {
 
     public static final String FLOATING_WIDGET_ID = BuildConfig.APPLICATION_ID + ".FloatingWidgetService";
 
-    public static final int FLOATING_WIDGET_NOTIFICATION_ID = 100;
     public static final String CHANNEL_ID = "FinqyServiceChannel";
     public static final String CHANNEL_NAME = "Finqy Service Channel";
 
@@ -70,7 +70,7 @@ public class FloatingWidgetService extends Service {
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.caller_active))
-                .setTicker("Floating Caller")
+                .setTicker("Dialer")
                 .setWhen(System.currentTimeMillis());
         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 1000, startIntent, 0);
@@ -87,7 +87,7 @@ public class FloatingWidgetService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        startForeground(FLOATING_WIDGET_NOTIFICATION_ID, getCompatNotification());
+        startForeground(Constants.SERVICES_NOTIFICATION_ID, getCompatNotification());
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         addFloatingWidgetView(inflater);

@@ -45,7 +45,6 @@ public class IdleService extends Service implements Runnable {
 
     public static final String IDLE_SERVICE_ID = BuildConfig.APPLICATION_ID + ".IdleService";
 
-    public static final int FLOATING_WIDGET_NOTIFICATION_ID = 100;
     public static final String CHANNEL_ID = "FinqyServiceChannel";
     public static final String CHANNEL_NAME = "Finqy Service Channel";
 
@@ -79,10 +78,11 @@ public class IdleService extends Service implements Runnable {
             notificationManager.createNotificationChannel(channel);
         }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+        builder
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.caller_active))
-                .setTicker("Floating Caller")
+                .setTicker("Dialer")
                 .setWhen(System.currentTimeMillis());
         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 1000, startIntent, 0);
@@ -102,7 +102,7 @@ public class IdleService extends Service implements Runnable {
         apiCallback = RetrofitClient.getInstance().create(ApiCallback.class);
         handler = new Handler();
         firebaseFirestore = FirebaseFirestore.getInstance();
-        startForeground(FLOATING_WIDGET_NOTIFICATION_ID, getCompatNotification());
+        startForeground(Constants.SERVICES_NOTIFICATION_ID, getCompatNotification());
     }
 
 
