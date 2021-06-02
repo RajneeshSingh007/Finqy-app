@@ -13,6 +13,7 @@ import {disableOffline} from '../../../util/DialerFeature';
 import {firebase} from '@react-native-firebase/firestore';
 import ListError from '../../common/ListError';
 import {ScrollView} from 'react-native-gesture-handler';
+import IconChooser from '../../common/IconChooser';
 
 export default class TlLiveTracker extends React.PureComponent {
   constructor(props) {
@@ -24,6 +25,7 @@ export default class TlLiveTracker extends React.PureComponent {
       dataList: [],
       teamUserList: [],
       teamUserListClone: [],
+      loading: true,
     };
   }
 
@@ -36,7 +38,7 @@ export default class TlLiveTracker extends React.PureComponent {
       });
 
       Pref.getVal(Pref.saveToken, (value) => {
-        this.setState({token: value});
+        this.setState({token: value, loading: true});
         this.fetchDashboard(value, '');
       });
     });
@@ -66,6 +68,13 @@ export default class TlLiveTracker extends React.PureComponent {
                   iz.teamName = team;
                   iz.tl = tl;
                   iz.tname = tname;
+                  iz.livedata = '';
+                  iz.livetype = '';
+                  iz.idle = '';
+                  iz.break = '';
+                  iz.type = '';
+                  iz.offline = -1;
+                  iz.viewType = -1;
                   teamUserList.push(iz);
                 });
               }
@@ -74,7 +83,8 @@ export default class TlLiveTracker extends React.PureComponent {
               {
                 teamUserListClone: teamUserList,
                 teamUserList: teamUserList,
-                dataList: [],
+                dataList: teamUserList,
+                loading: false,
               },
               () => {
                 this.setupLiveListerner();
@@ -113,14 +123,14 @@ export default class TlLiveTracker extends React.PureComponent {
         '',
       );
       const userID = Number(docpath.replace(patternRegex.source, ''));
-      const {teamUserList} = this.state;
+      const {dataList} = this.state;
       const findUserIndex = Lodash.findLastIndex(
-        teamUserList,
+        dataList,
         (io) => `${io.id}` === `${userID}`,
       );
       if (findUserIndex !== -1) {
         let trackChanges = false;
-        var userData = teamUserList[findUserIndex];
+        var userData = dataList[findUserIndex];
 
         if (
           Helper.nullCheck(checkincheckout) === false &&
@@ -136,53 +146,19 @@ export default class TlLiveTracker extends React.PureComponent {
           userData.livetype =
             checkincheckout.length % 2 === 0 ? 'checkout' : 'checkin';
           trackChanges = true;
+          if (
+            Helper.nullCheck(userData.checkincheckout) === false &&
+            userData.checkincheckout.length != checkincheckout.length
+          ) {
+            userData.viewType = 1;
+          } else {
+            userData.viewType = 1;
+          }
+          userData.checkincheckout = checkincheckout;
         } else {
           userData.livedata = '';
           userData.livetype = 'checkin';
-        }
-
-        // if (
-        //   Helper.nullStringCheck(checkin) === false &&
-        //   Helper.nullStringCheck(checkout)
-        // ) {
-        //   userData.type = 'Check In';
-        //   const spl = checkin.split(':');
-        //   const dateobj = new Date();
-        //   dateobj.setHours(Number(spl[0]));
-        //   dateobj.setMinutes(Number(spl[1]));
-        //   dateobj.setSeconds(Number(spl[2]));
-        //   const formatTime = moment(dateobj).format('hh:mm a');
-        //   userData.livedata = formatTime;
-        //   //checkin;
-        //   trackChanges = true;
-        // } else if (
-        //   Helper.nullStringCheck(checkin) === false &&
-        //   Helper.nullStringCheck(checkout) === false
-        // ) {
-        //   userData.type = 'Check Out';
-
-        //   const spl = checkout.split(':');
-        //   const dateobj = new Date();
-        //   dateobj.setHours(Number(spl[0]));
-        //   dateobj.setMinutes(Number(spl[1]));
-        //   dateobj.setSeconds(Number(spl[2]));
-        //   const formatTime = moment(dateobj).format('hh:mm a');
-        //   userData.livedata = formatTime;
-        //   //checkout;
-        //   trackChanges = true;
-        // }
-
-        //idle time
-        if (Helper.nullCheck(idle) === false && idle.length > 0) {
-          if (idle.length >= 60) {
-            const hrs = Number(idle.length / 60).toPrecision(3);
-            userData.idle = `${hrs}Hrs`;
-          } else {
-            userData.idle = `${idle.length}min`;
-          }
-          trackChanges = true;
-        } else {
-          userData.idle = '';
+          userData.checkincheckout = [];
         }
 
         //break
@@ -197,40 +173,74 @@ export default class TlLiveTracker extends React.PureComponent {
           //`${breaktime[breaktime.length - 1]}`;
           userData.type = breaktime.length % 2 === 0 ? 'Resume' : 'Break';
           trackChanges = true;
+          if (
+            Helper.nullCheck(userData.breaktime) === false &&
+            userData.breaktime.length != breaktime.length
+          ) {
+            userData.viewType = 3;
+          } else {
+            userData.viewType = 3;
+          }
+          userData.breaktime = breaktime;
         } else {
           userData.break = '';
           userData.type = '';
+          userData.breaktime = [];
+        }
+
+        //idle time
+        if (Helper.nullCheck(idle) === false && idle.length > 0) {
+          if (idle.length >= 60) {
+            const hrs = Number(idle.length / 60).toPrecision(3);
+            userData.idle = `${hrs}Hrs`;
+          } else {
+            userData.idle = `${idle.length}min`;
+          }
+          trackChanges = true;
+          if (
+            Helper.nullCheck(userData.idledata) === false &&
+            userData.idledata.length != idle.length
+          ) {
+            userData.viewType = 2;
+          }
+          userData.idledata = idle;
+        } else {
+          userData.idle = '';
+          userData.idledata = [];
         }
 
         //update
         if (trackChanges) {
           userData.isdata = false;
-          if (
-            Helper.nullStringCheck(userData.livedata) &&
-            Helper.nullStringCheck(userData.break) &&
-            Helper.nullStringCheck(userData.idle)
-          ) {
-            userData.showinList = false;
-          } else {
-            userData.showinList = true;
-          }
-          const cloneObj = JSON.parse(JSON.stringify(userData));
-          teamUserList[findUserIndex] = cloneObj;
-          this.setState(
-            {
-              dataList: teamUserList.map((item) => {
-                if (
-                  Helper.nullStringCheck(item.livedata) &&
-                  Helper.nullStringCheck(item.break) &&
-                  Helper.nullStringCheck(item.idle)
-                ) {
-                  item.showinList = false;
-                }
-                return item;
-              }),
-            },
-            () => this.forceUpdate(),
-          );
+          // if (
+          //   Helper.nullStringCheck(userData.livedata) &&
+          //   Helper.nullStringCheck(userData.break) &&
+          //   Helper.nullStringCheck(userData.idle)
+          // ) {
+          //   userData.showinList = false;
+          // } else {
+          //   userData.showinList = true;
+          // }
+          //const cloneObj = JSON.parse(JSON.stringify(userData));
+          userData.offline = 0;
+          dataList[findUserIndex] = userData;
+          this.setState({dataList: dataList}, () => this.forceUpdate());
+
+          // this.setState(
+          //   {
+          //     dataList: teamUserList.map((item) => {
+          //       if (
+          //         Helper.nullStringCheck(item.livedata) &&
+          //         Helper.nullStringCheck(item.break) &&
+          //         Helper.nullStringCheck(item.idle)
+          //       ) {
+          //         item.showinList = false;
+          //       }
+          //       return item;
+          //     }),
+          //   },
+          //   () => this.forceUpdate(),
+          // );
         }
 
         //lead update
@@ -269,9 +279,10 @@ export default class TlLiveTracker extends React.PureComponent {
                   cloneObj.dur = `${call_duration}sec`;
                   teamUserList.push(cloneObj);
                 }
-                this.setState({dataList: teamUserList}, () =>
-                  this.forceUpdate(),
-                );
+
+                // this.setState({dataList: teamUserList}, () =>
+                //   this.forceUpdate(),
+                // );
               },
               (error) => {},
             );
@@ -410,58 +421,16 @@ export default class TlLiveTracker extends React.PureComponent {
                 </View>
               </View>
             </View>
-          ) : (
-            <View styleName="horizontal v-center" style={{flex: 12}}>
-              <View styleName="horizontal v-center " style={{flex: 4}}>
-                <View
-                  style={StyleSheet.flatten([
-                    styles.dividercircle,
-                    {
-                      backgroundColor:
-                        rowData.livetype === 'checkin' ? '#1bd741' : Pref.RED,
-                    },
-                  ])}></View>
-                <Subtitle
-                  style={{
-                    fontSize: 14,
-                    color: '#555555',
-                    fontWeight: '700',
-                    marginStart: 10,
-                  }}>
-                  {rowData.livedata}
-                </Subtitle>
-              </View>
-              <View styleName="horizontal v-center" style={{flex: 4}}>
-                <>
-                  <View
-                    style={StyleSheet.flatten([
-                      styles.dividercircle,
-                      {
-                        backgroundColor: '#0270e3',
-                      },
-                    ])}></View>
-
-                  <Subtitle
-                    style={{
-                      fontSize: 14,
-                      color: '#555555',
-                      fontWeight: '700',
-                      marginStart: 10,
-                    }}>
-                    {rowData.idle}
-                  </Subtitle>
-                </>
-              </View>
-              <View styleName="horizontal v-center" style={{flex: 4}}>
-                <>
+          ) : rowData.offline == -1 ? null : (
+            <View styleName="horizontal v-center">
+              {rowData.viewType === 1 ? (
+                <View styleName="horizontal v-center">
                   <View
                     style={StyleSheet.flatten([
                       styles.dividercircle,
                       {
                         backgroundColor:
-                          rowData.type === 'Resume'
-                            ? Pref.HIPPIE_BLUE
-                            : Pref.CARROT_ORANGE,
+                          rowData.livetype === 'checkin' ? '#1bd741' : Pref.RED,
                       },
                     ])}></View>
                   <Subtitle
@@ -471,10 +440,56 @@ export default class TlLiveTracker extends React.PureComponent {
                       fontWeight: '700',
                       marginStart: 10,
                     }}>
-                    {rowData.break}
+                    {rowData.livedata}
                   </Subtitle>
-                </>
-              </View>
+                </View>
+              ) : rowData.viewType == 2 ? (
+                <View styleName="horizontal v-center">
+                  <>
+                    <View
+                      style={StyleSheet.flatten([
+                        styles.dividercircle,
+                        {
+                          backgroundColor: '#0270e3',
+                        },
+                      ])}></View>
+
+                    <Subtitle
+                      style={{
+                        fontSize: 14,
+                        color: '#555555',
+                        fontWeight: '700',
+                        marginStart: 10,
+                      }}>
+                      {rowData.idle}
+                    </Subtitle>
+                  </>
+                </View>
+              ) : rowData.viewType == 3 ? (
+                <View styleName="horizontal v-center">
+                  <>
+                    <View
+                      style={StyleSheet.flatten([
+                        styles.dividercircle,
+                        {
+                          backgroundColor:
+                            rowData.type === 'Resume'
+                              ? Pref.HIPPIE_BLUE
+                              : Pref.CARROT_ORANGE,
+                        },
+                      ])}></View>
+                    <Subtitle
+                      style={{
+                        fontSize: 14,
+                        color: '#555555',
+                        fontWeight: '700',
+                        marginStart: 10,
+                      }}>
+                      {rowData.break}
+                    </Subtitle>
+                  </>
+                </View>
+              ) : null}
             </View>
           )}
         </View>
@@ -528,7 +543,11 @@ export default class TlLiveTracker extends React.PureComponent {
                 {this.renderInfo('Resume', Pref.HIPPIE_BLUE)}
               </View>
             </ScrollView>
-            {dataList.length > 0 ? (
+            {this.state.loading ? (
+              <View style={styles.loader}>
+                <ActivityIndicator />
+              </View>
+            ) : dataList.length > 0 ? (
               <FlatList
                 style={{paddingBottom: sizeHeight(24)}}
                 data={dataList}
@@ -538,7 +557,9 @@ export default class TlLiveTracker extends React.PureComponent {
                 extraData={this.state}
               />
             ) : (
-              <View style={styles.emptycont}></View>
+              <View style={styles.emptycont}>
+                <ListError subtitle={'No teams found...'} />
+              </View>
             )}
           </View>
         }
@@ -585,6 +606,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mainTcontainer: {
+    position: 'relative',
     flex: 1,
     backgroundColor: '#fff',
     borderColor: '#bcbaa1',
