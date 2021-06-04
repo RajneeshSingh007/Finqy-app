@@ -473,6 +473,7 @@ export default class CallerForm extends React.PureComponent {
         Pref.methodPost,
         token,
         (result) => {
+          console.log('result', result);
           const {status, message, id} = result;
           if (status == true) {
             Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, '');

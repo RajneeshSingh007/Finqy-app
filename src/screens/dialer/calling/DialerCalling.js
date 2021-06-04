@@ -134,6 +134,7 @@ export default class DialerCalling extends React.PureComponent {
       tname: teamName,
       follow: isFollowup,
     });
+    //console.log('body', body);
     Helper.networkHelperTokenPost(
       Pref.DIALER_LEAD_RECORD,
       body,
@@ -141,6 +142,7 @@ export default class DialerCalling extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, status} = result;
+        //console.log('result', result);
         if (status === true) {
           if (data.length > 0) {
             let itemList = [];

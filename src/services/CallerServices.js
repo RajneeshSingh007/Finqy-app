@@ -12,16 +12,16 @@ import FinproCallModule from '../../FinproCallModule';
 const callerServiceHandler = async (data) => {
   const {phoneNumber, state} = data;
 
-  console.log(
-    'callerServiceHandler',
-    state,
-    data,
-    global.dialerCustomerItem,
-    global.dialerScreenName,
-    Helper.nullCheck(global.dialerScreenName),
-    global.dialerFormSubmitted,
-    global.dialerCheckIn,
-  );
+  // console.log(
+  //   'callerServiceHandler',
+  //   state,
+  //   data,
+  //   global.dialerCustomerItem,
+  //   global.dialerScreenName,
+  //   Helper.nullCheck(global.dialerScreenName),
+  //   global.dialerFormSubmitted,
+  //   global.dialerCheckIn,
+  // );
 
   let lowercase = String(state).toLowerCase();
 
@@ -31,10 +31,10 @@ const callerServiceHandler = async (data) => {
     Helper.nullCheck(global.dialerScreenName) &&
     (lowercase === 'offhook' || lowercase === 'disconnected')
   ) {
-    if (Helper.nullCheck(global.dialerFormSubmitted)) {
-      enableService();
-    } else {
+    if (Helper.nullCheck(global.dialerFormSubmitted) === false) {
       stopService();
+    } else {
+      enableService();
     }
   } else {
     stopService();

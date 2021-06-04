@@ -280,9 +280,9 @@ export default class TlLiveTracker extends React.PureComponent {
                   teamUserList.push(cloneObj);
                 }
 
-                // this.setState({dataList: teamUserList}, () =>
-                //   this.forceUpdate(),
-                // );
+                this.setState({dataList: teamUserList}, () =>
+                  this.forceUpdate(),
+                );
               },
               (error) => {},
             );

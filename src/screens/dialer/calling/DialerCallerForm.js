@@ -49,6 +49,7 @@ export default class DialerCallerForm extends React.PureComponent {
     //global variable to store dialer temperorary data
     delete global.dialerCustomerItem;
     delete global.dialerScreenName;
+    global.dialerFormSubmitted = true;
 
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
 

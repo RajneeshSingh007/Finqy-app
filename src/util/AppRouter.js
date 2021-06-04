@@ -33,7 +33,6 @@ import GetQuotesView from './../screens/finorbit/GetQuotesView';
 import ProfileScreen from './../screens/profile/ProfileScreen';
 import MyWallet from './../screens/profile/MyWallet';
 import Redeem from './../screens/profile/Redeem';
-import ReferEarn from './../screens/profile/ReferEarn';
 import Certificate from './../screens/profile/Certificate';
 import ChangePass from './../screens/profile/ChangePass';
 import Agreement from './../screens/profile/Agreement';
@@ -368,7 +367,6 @@ const OtherNav = createDrawerNavigator(
     OfferNav: OfferNav,
     OfferNav1: OfferNav1,
     OfferNav2: OfferNav2,
-    ReferEarn: { screen: ReferEarn },
     AddTeam: { screen: AddTeam },
     ViewTeam: { screen: ViewTeam },
     Manager: { screen: Manager },
