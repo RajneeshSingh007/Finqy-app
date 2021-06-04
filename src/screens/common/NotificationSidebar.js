@@ -11,6 +11,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DrawerTop from '../component/DrawerTop';
 import * as Helper from '../../util/Helper';
 import NavigationActions from '../../util/NavigationActions';
+import * as Pref from "../../util/Pref";
 
 const COLOR = '#f9f8f1';
 

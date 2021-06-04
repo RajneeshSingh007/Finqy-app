@@ -58,6 +58,7 @@ export default class NewHomeScreen extends React.PureComponent {
       noMarketingImagesData: false,
       notifyVisible: false,
       notificationData: [],
+      notificationCount:0
     };
 
     Pref.getVal(Pref.userData, (value) => {
@@ -272,9 +273,9 @@ export default class NewHomeScreen extends React.PureComponent {
       parseToken,
       (result) => {
         //console.log('result', result);
-        const { data } = result;
+        const { data,count } = result;
         if (data.length > 0) {
-          this.setState({ notificationData: data });
+          this.setState({ notificationData: data,notificationCount:count });
         }
       },
       (error) => { },
@@ -317,12 +318,34 @@ export default class NewHomeScreen extends React.PureComponent {
     );
   };
 
+  onNotificationBellClicked = () =>{
+    this.setState({ notifyVisible: true });
+    const { type, userData,token } = this.state;
+    const { id } = userData;
+    const body = JSON.stringify({
+      userid: `${id}`,
+      type: type,
+      update:'update'
+    });
+    Helper.networkHelperTokenPost(
+      Pref.NotificationUrl,
+      body,
+      Pref.methodPost,
+      token,
+      (result) => {
+        const { data,count } = result;
+        this.setState({ notificationCount: count });
+      },
+      (error) => { },
+    );
+  }
+
   renderTopbar = () => {
-    const { notificationData } = this.state;
+    const { notificationCount } = this.state;
     return (
       <HomeTopBar
-        notifyClicked={() => this.setState({ notifyVisible: true })}
-        counter={notificationData.length}
+        notifyClicked={() => this.onNotificationBellClicked()}
+        counter={notificationCount}
       />
     );
   };
@@ -978,6 +1001,8 @@ export default class NewHomeScreen extends React.PureComponent {
               <Portal>
                 <NotificationSidebar
                   list={notificationData}
+                  type={this.state.type}
+                  userData={this.state.userData}
                   backClicked={() => this.notificationClose()}
                 />
               </Portal>

@@ -55,6 +55,7 @@ export default class GetQuotes extends React.Component {
       formId: '',
       loading: true,
       editMode: false,
+      deductible:''
     };
   }
 
@@ -64,7 +65,8 @@ export default class GetQuotes extends React.Component {
     const formId = navigation.getParam('formId', null);
     const sumInsurred = navigation.getParam('sumin', 0);
     const editMode = navigation.getParam('editmode', false);
-    //console.log('sumInsurred', sumInsurred, formId)
+    const deductible = navigation.getParam('deductible', '');
+    //console.log('sumInsurred', sumInsurred, formId, deductible)
 
     this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
@@ -72,8 +74,10 @@ export default class GetQuotes extends React.Component {
         sumInsurred: `${Number(sumInsurred)}`,
         loading: true,
         editMode: editMode,
+        deductible:deductible
+      }, () =>{
+        this.fetchCompany(formId, Number(sumInsurred), true);
       });
-      this.fetchCompany(formId, Number(sumInsurred), true);
     });
   }
 
@@ -91,11 +95,12 @@ export default class GetQuotes extends React.Component {
 
   fetchCompany = (id, sum_insured, isFirstTime) => {
     //this.setState({ loading: true });
+    const {deductible} = this.state;
     const formData = new FormData();
     formData.append('id', id);
     formData.append('sum_insured', sum_insured);
     Helper.networkHelperContentType(
-      Pref.AjaxWithoutToken,
+      deductible === '' ? Pref.HealthQouteCompanyUrl : Pref.HealthTopupQouteCompanyUrl,
       formData,
       Pref.methodPost,
       (result) => {
@@ -333,7 +338,7 @@ export default class GetQuotes extends React.Component {
                             this.onChangeComp(value, k, i)
                           }
                           value={k.select === false ? '' : `${k.id}`}>
-                          <View styleName="horizontal">
+                          <View styleName="horizontal v-center" style={{marginVertical:6}}>
                             <RadioButton
                               value={`${k.id}`}
                               style={{
@@ -342,7 +347,7 @@ export default class GetQuotes extends React.Component {
                               }}
                             />
                             <Title
-                              styleName="v-center h-center"
+                              styleName="v-center"
                               style={styles.textopen}>{`${k.name}`}</Title>
                           </View>
                         </RadioButton.Group>
@@ -387,7 +392,7 @@ export default class GetQuotes extends React.Component {
                       }}>
                       {this.state.compTypeList.map((e) => {
                         return (
-                          <View style={{marginStart: 4, paddingVertical: 2}}>
+                          <View style={{marginStart: 4, paddingVertical: 2,marginEnd:8}}>
                             <RadioButton
                               value={`${e.value}`}
                               style={{

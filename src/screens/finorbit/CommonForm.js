@@ -582,7 +582,8 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === 'Health Insurance' || title === 'Term Insurance' ?
+        {/* title === 'Health Insurance' ||  */}
+        {title === 'Term Insurance' ?
           <NewDropDown
             list={qualificationList}
             placeholder={`Qualification`}

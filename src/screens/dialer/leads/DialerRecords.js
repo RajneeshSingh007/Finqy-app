@@ -63,7 +63,7 @@ export default class DialerRecords extends React.PureComponent {
     this.willfocusListener = navigation.addListener('willFocus', () => {
       this.setState({loading: true, dataList: []});
     });
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
     Pref.getVal(Pref.userData, (userData) => {
       this.setState({
         userData: userData,
@@ -80,7 +80,7 @@ export default class DialerRecords extends React.PureComponent {
         });
       });
     });
-    //});
+    });
   }
 
   backClick = () => {

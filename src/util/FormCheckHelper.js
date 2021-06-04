@@ -385,25 +385,33 @@ export const secondFormCheck = (title, specificForms) => {
   if (title === `Health Insurance` && specificForms.required_cover === '') {
     result = false;
     Helper.showToastMessage('Please, Select Required Cover', 0);
-  } else if (
+  } else if ( title !== `Health Insurance` &&
     specificForms.pancardNo !== '' &&
     !Helper.checkPanCard(specificForms.pancardNo)
   ) {
     result = false;
     Helper.showToastMessage('Invalid pan card number', 0);
-  } else if (
+  } else if (  title !== `Health Insurance` &&
     specificForms.aadharcardNo !== undefined &&
     specificForms.aadharcardNo !== '' &&
     specificForms.aadharcardNo.length < 12
   ) {
     result = false;
     Helper.showToastMessage('Invalid aadhar card number', 0);
-  } else if (title === `Health Insurance` && specificForms.lifestyle === '') {
+  } 
+  // else if (title === `Health Insurance` && specificForms.lifestyle === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Please, Select Smoker Type', 0);
+  // } else if (title === `Health Insurance` && specificForms.lifestyle2 === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
+  // } 
+  else if (
+    title === `Health Insurance` && specificForms.policy_type === `Top Up` &&
+    specificForms.deductible === ''
+  ) {
     result = false;
-    Helper.showToastMessage('Please, Select Smoker Type', 0);
-  } else if (title === `Health Insurance` && specificForms.lifestyle2 === '') {
-    result = false;
-    Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
+    Helper.showToastMessage('Select Deductible', 0);
   } else if (
     title === `Health Insurance` &&
     specificForms.existing_diseases === ''
@@ -419,14 +427,17 @@ export const secondFormCheck = (title, specificForms) => {
     Helper.showToastMessage('Please, Specify diseases', 0);
   } else if (title === `Health Insurance` && specificForms.claim_type === '') {
     result = false;
-    Helper.showToastMessage('Please, Select Type Of Insurance', 0);
+    Helper.showToastMessage('Please, Select Cover Type', 0);
   } else if (
     title === `Health Insurance` &&
     specificForms.claim_type === 'Family Floater'
   ) {
-    if (specificForms.family_floater === '') {
+    if (specificForms.family_floater_adult === '') {
       result = false;
-      Helper.showToastMessage('Please, Select Family Floater', 0);
+      Helper.showToastMessage('Please, Select Adult', 0);
+    }else if (specificForms.family_floater_child === '') {
+      result = false;
+      Helper.showToastMessage('Please, Select Child', 0);
     } else {
       if (
         specificForms !== null &&
@@ -2596,12 +2607,30 @@ export const constructObjEditLead = item => {
 
   let ccfather = '';
   let ccmother = '';
+  let deductible = '';
+  let hpolicyType = '';
+  let family_floater_adult = '', family_floater_child = '';
+
 
   if (Helper.nullCheck(alldata.father_name) === false) {
     ccfather = alldata.father_name;
   }
   if (Helper.nullCheck(alldata.mother_name) === false) {
     ccmother = alldata.mother_name;
+  }
+
+  if (Helper.nullCheck(alldata.deductible) === false) {
+    deductible = alldata.deductible;
+  }
+
+  if (Helper.nullCheck(alldata.policy_type) === false) {
+    hpolicyType = alldata.policy_type;
+  }
+
+  if (Helper.nullStringCheck(alldata.family_floater) === false) {
+    const ffSplit = alldata.family_floater.split(/\s/g);
+    family_floater_adult = `${ffSplit[0]} ${ffSplit[1]}`;
+    family_floater_child = `${ffSplit[2]} ${ffSplit[3]}`;
   }
 
 
@@ -2627,6 +2656,10 @@ export const constructObjEditLead = item => {
       residence_address: Helper.nullStringCheckWithReturn(alldata.residence_address)
     },
     second: {
+      family_floater_adult:family_floater_adult,
+      family_floater_child:family_floater_child,
+      deductible:deductible,
+      policy_type:hpolicyType,
       fresh_pop: Helper.nullStringCheckWithReturn(alldata.fresh_pop),
       eaadharcardNo: Helper.nullStringCheckWithReturn(eaadharcard),
       // current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),

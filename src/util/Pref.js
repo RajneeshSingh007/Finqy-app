@@ -2961,9 +2961,8 @@ export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
 export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
-
-
-//insurance
+export const HealthQouteCompanyUrl = `${FinURL}ajax.php`;
+export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 export const BuyInsurance = `${FinURL}hicif.php`;
 
@@ -3122,7 +3121,6 @@ export const NewFormPayment = `${FinURL}policy_premium.php`;
 //export const GroupFormPayment = `${LiveUrl}gp_payment.php`;
 export const VectorFormPayment = `${FinURL}vp_payment.php`;
 export const GroupFormPayment = `${FinURL}gp_payment.php`;
-export const AjaxWithoutToken = `${FinURL}ajax.php`;
 export const NewFormUrl = `${FinURL}aditya_birla_response.php`;
 export const FindCityState = `${FinURL}fetchcitystatebypin.php`;
 export const VectorFormUrl = `https://www.hpfashion.buzz/erb/app_test.php`;
