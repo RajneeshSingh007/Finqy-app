@@ -247,7 +247,7 @@ export default class TlLiveTracker extends React.PureComponent {
         if (Helper.nullCheck(liveSnapshot.data().lead) === false) {
           const {lead} = liveSnapshot.data();
           if (Number(lead) !== -1) {
-            const userData1 = teamUserList[findUserIndex];
+            const userData1 = dataList[findUserIndex];
             const jBody = JSON.stringify({
               teamid: userData1.tl,
               userid: userData1.id,
@@ -277,10 +277,10 @@ export default class TlLiveTracker extends React.PureComponent {
                   cloneObj.custnumber = mobile;
                   cloneObj.product = product;
                   cloneObj.dur = `${call_duration}sec`;
-                  teamUserList.push(cloneObj);
+                  dataList.push(cloneObj);
                 }
 
-                this.setState({dataList: teamUserList}, () =>
+                this.setState({dataList: dataList}, () =>
                   this.forceUpdate(),
                 );
               },

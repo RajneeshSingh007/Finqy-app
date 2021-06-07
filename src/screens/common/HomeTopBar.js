@@ -273,7 +273,7 @@ const HomeTopBar = (props) => {
                 notifyClicked();
               }}
               bottomChild={
-                // counter > 0  ?
+                counter > 0  ?
                 <View
                   style={styles.counter}
                   styleName="vertical v-center h-center">
@@ -286,7 +286,7 @@ const HomeTopBar = (props) => {
                     { counter >= 10 ? `9+` : `${counter}`}
                   </Title>
                 </View> 
-                // : null
+                : null
               }
               style={{
                 marginEnd: 4,
