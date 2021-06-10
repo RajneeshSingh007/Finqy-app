@@ -1097,6 +1097,63 @@ export const secondFormCheck = (title, specificForms) => {
 };
 
 /**
+ * tmp First Form check
+ * @param {*} param0 
+ * @returns 
+ */
+export const tmpFirstFormCheck = ({name, mobile, email,insType,insCompany,insPlan}) =>{
+  let result = false;
+  if (name === '') {
+    Helper.showToastMessage('Full Name empty', 0);
+  } else if (mobile === '') {
+    Helper.showToastMessage('Mobile Number empty', 0);
+  } else if (
+    Number(mobile.length) < 10 ||
+    mobile === '9876543210' ||
+    mobile === '1234567890'
+  ) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  } else if (mobile.match(/^[0-9]*$/g) === null) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  }else if (mobile.match(/^[0-9]*$/g) === null) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  }else if (
+    email !== '' &&
+    Helper.emailCheck(email) === false
+  ) {
+    Helper.showToastMessage('Invalid Email', 0);
+  }else if (insType == '') {
+    Helper.showToastMessage('Select Insurance Type', 0);
+  }else if (insCompany == '') {
+    Helper.showToastMessage('Select Company', 0);
+  }else if (insPlan == '') {
+    Helper.showToastMessage('Select Plan', 0);
+  }else {
+    result = true;
+  }
+  return result;
+}
+
+/**
+ * tmp Second Form check
+ * @param {*} param0 
+ * @returns 
+ */
+ export const tmpSecondFormCheck = ({sumAss, apremium, age}) =>{
+  let result = false;
+  if (sumAss === '') {
+    Helper.showToastMessage('Select Required Cover', 0);
+  } else if (apremium === '') {
+    Helper.showToastMessage('Annual premium empty', 0);
+  } else if (age === '') {
+    Helper.showToastMessage('Age empty', 0);
+  }else {
+    result = true;
+  }
+  return result;
+}
+
+/**
  * edit lead
  * @param {*} item
  */
@@ -2787,6 +2844,47 @@ export const constructObjEditSamadhan = item => {
     email: Helper.nullStringCheckWithReturn(email),
     complaint_type: Helper.nullStringCheckWithReturn(complaint_type),
     policy_type: Helper.nullStringCheckWithReturn(policy_type),
+    formid: id,
+  };
+};
+
+
+/**
+ * edit tmp
+ * @param {*} item
+ */
+ export const constructObjEditTmp = item => {
+  const {name, mobile, remark, alldata} = item;
+  let {required_cover, id, family_floater,company_name,file,plan_name,premium_amount, dob, email} = alldata;
+  let rCover = '';
+  if(Helper.nullStringCheck(required_cover) === false){
+    rCover = `${Number(required_cover)/100000}`;
+  }
+  let policyFile = '';
+  if(Helper.nullStringMultiCheck(file) === false){
+    policyFile = `${Pref.ErbFinorbitFormUrl}tmp_form/policy/${file}`
+  }
+  let floater  = '';
+  if(Helper.nullStringMultiCheck(family_floater) === false){
+    const split = family_floater.split(/\s/g);
+    if(split.length === 4){
+      floater = `${split[0].trim()} ${split[1].trim()} + ${split[2].trim()} ${split[3].trim()}`;
+    }else{
+      floater = family_floater;
+    }
+  }
+  return {
+    name: Helper.nullStringCheckWithReturn(name),
+    mobile: Helper.nullStringCheckWithReturn(mobile),
+    email: Helper.nullStringCheckWithReturn(email),
+    sumAss: rCover,
+    age: Helper.nullStringCheckWithReturn(dob),
+    remark: Helper.nullStringCheckWithReturn(remark),
+    insType: Helper.nullStringCheckWithReturn(floater),
+    insCompany: Helper.nullStringCheckWithReturn(company_name),
+    insPlan: Helper.nullStringCheckWithReturn(plan_name),
+    apremium: Helper.nullStringCheckWithReturn(premium_amount),
+    tmpPolicy:policyFile,
     formid: id,
   };
 };

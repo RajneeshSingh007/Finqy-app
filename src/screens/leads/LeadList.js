@@ -26,6 +26,7 @@ import NavigationActions from '../../util/NavigationActions';
 import {
   constructObjEditLead,
   constructObjEditSamadhan,
+  constructObjEditTmp
 } from '../../util/FormCheckHelper';
 import FileUploadForm from '../finorbit/FileUploadForm';
 import PaginationNumbers from '../component/PaginationNumbers';
@@ -118,6 +119,7 @@ export default class LeadList extends React.PureComponent {
       editSecond: null,
       activeRowData: null,
       quotemailType: -1,
+      tmpPolicy:null
     };
   }
 
@@ -273,6 +275,11 @@ export default class LeadList extends React.PureComponent {
         url: '',
         edit: true,
       });
+    }else if (product === 'Tmp') {
+      NavigationActions.navigate('TestMyPolicy', {
+        leadData: constructObjEditTmp(item),
+        edit: true,
+      });
     } else {
       NavigationActions.navigate('FinorbitForm', {
         leadData: constructObjEditLead(item),
@@ -286,7 +293,6 @@ export default class LeadList extends React.PureComponent {
   downloadFile = (item) => {
     const {product, quotes, policy, cif_file} = item;
     //policy, quote
-    //console.log('item', item)
     let pname = '';
     if (product === 'Mutual Fund') {
       pname = 'Mutual Fund';
@@ -317,7 +323,7 @@ export default class LeadList extends React.PureComponent {
       }
     }
     this.setState({
-      downloadFormTitle: pname,
+      downloadFormTitle: pname === 'Tmp' ? 'TMP' : pname,
       downloadModal: true,
       editThird: getAll.third,
       editSecond: getAll.second,
@@ -326,6 +332,7 @@ export default class LeadList extends React.PureComponent {
       policy: policy,
       activeRowData: item,
       cif: cif_file,
+      tmpPolicy: pname === 'TMP' ? constructObjEditTmp(item) : null
     });
   };
 
@@ -1037,6 +1044,7 @@ export default class LeadList extends React.PureComponent {
                         quoteWhatsappClicked={() => this.quoteWhatsappClicked()}
                         cifWhatsappClicked={() => this.cifWhatsappClicked()}
                         cifEmailClicked={() => this.quoteEmailClicked(2)}
+                        tmpPolicy={this.state.tmpPolicy}
                       />
                     </View>
                   }

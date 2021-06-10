@@ -1,16 +1,14 @@
-import {ScrollView} from 'react-native';
-import {Menu, TouchableRipple, useTheme, Searchbar} from 'react-native-paper';
-import React, {forwardRef, useEffect, useState} from 'react';
+import {Menu, Searchbar} from 'react-native-paper';
+import React, {} from 'react';
 import {StyleSheet} from 'react-native';
 import {Title, View} from '@shoutem/ui';
 import Icon from 'react-native-vector-icons/Feather';
-import * as Pref from '../../util/Pref';
-import {sizeWidth} from '../../util/Size';
+import * as Pref from '../../../util/Pref';
 import {FlatList, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import Lodash from 'lodash';
-import * as Helper from '../../util/Helper';
+import * as Helper from '../../../util/Helper';
 
-class NewDropDown extends React.Component {
+class DropDown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,7 +33,12 @@ class NewDropDown extends React.Component {
   }
 
 
-  openMenu = () => this.setState({visible: true});
+  openMenu = () => {
+    const {list = []} = this.props;
+    if(list.length > 0){
+      this.setState({visible: true})
+    }
+  };
 
   closeMenu = () => this.setState({visible: false});
 
@@ -125,33 +128,19 @@ class NewDropDown extends React.Component {
             onPress={this.openMenu}
             onLayout={this.onLayout}>
             <View pointerEvents={'none'}>
-              <View style={StyleSheet.flatten([styles.boxstyle, style])}>
+              <View style={styles.boxstyle}>
                 <Title
-                  style={StyleSheet.flatten([
-                    styles.passText,
-                    {
-                      fontSize: 14,
-                      color: '#555555',
-                    },
-                    textStyle,
-                    displayValue
-                      ? {
-                          fontWeight: '700',
-                          color: '#555555',
-                          fontSize: 14,
-                          fontFamily: Pref.getFontName(4),
-                        }
-                      : {},
-                  ])}>
+                  style={styles.passText}>
                   {this.getTitle()}
                 </Title>
                 <Icon
                   name={'chevron-down'}
                   size={24}
-                  color={'#292929'}
+                  color={Pref.RED}
                   style={{
                     padding: 4,
                     alignSelf: 'center',
+                    marginEnd:8
                   }}
                 />
               </View>
@@ -159,9 +148,11 @@ class NewDropDown extends React.Component {
           </TouchableWithoutFeedback>
         }
         style={{
-          maxWidth: width,
-          width: width,
-          marginTop: height,
+          maxWidth: (width-16),
+          width: '100%',
+          marginTop: (height-10),
+          marginStart:8,
+          marginEnd:8
         }}>
         {enableSearch ? (
           <Searchbar
@@ -195,7 +186,7 @@ class NewDropDown extends React.Component {
               </TouchableWithoutFeedback>
             )}
             ItemSeparatorComponent={() => (
-              <View style={{height: 1, backgroundColor: '#dedede'}} />
+              <View style={{height: 0.5, backgroundColor: '#dedede'}} />
             )}
             //stickyHeaderIndices={enableSearch ? [0] : []}
           />
@@ -221,7 +212,7 @@ class NewDropDown extends React.Component {
   }
 }
 
-export default NewDropDown;
+export default DropDown;
 
 const styles = StyleSheet.create({
   search: {
@@ -236,15 +227,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
   },
   passText: {
-    fontSize: 20,
-    letterSpacing: 0.5,
-    color: Pref.RED,
-    fontWeight: '700',
+    color: '#000',
+    fontSize: 14,
     lineHeight: 36,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-    paddingVertical: 16,
+    textAlign: 'left',
+    padding: 6,
+    ...Platform.select({
+      android: {
+        textAlignVertical: 'top',
+      },
+    }),
+    fontFamily: Pref.getFontName(4),
+    lineHeight:24,
+    letterSpacing:0.2
   },
   subtitle: {
     fontSize: 14,
@@ -272,21 +267,31 @@ const styles = StyleSheet.create({
   },
   boxstyle: {
     flexDirection: 'row',
-    height: 56,
+    height: 46,
     justifyContent: 'space-between',
-    borderColor: '#dedede',
-    borderWidth: 0.5,
+    borderColor: Pref.RED,
+    borderWidth: 1.1,
     borderRadius: 4,
+    marginHorizontal:8,
+    marginBottom:12,
+    marginTop:16
+  },
+  placeholder: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#000',
+    fontFamily: Pref.getFontName(5),
+    lineHeight:24,
+    letterSpacing:0.2
   },
   dotContainer: {
     backgroundColor: 'transparent',
   },
   title1: {
-    fontSize: 15,
-    fontFamily: 'Rubik',
-    color: '#555555',
+    fontSize: 14,
+    fontFamily: Pref.getFontName(0),
+    color: '#000',
     alignSelf: 'flex-start',
-    fontWeight: '500',
     marginHorizontal: 8,
     flex: 1,
   },

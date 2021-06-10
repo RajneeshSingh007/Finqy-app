@@ -28,6 +28,7 @@ import VectorForm from './../screens/finorbit/VectorForm';
 import VectorPayment from './../screens/finorbit/VectorPayment';
 import GetQuotes from './../screens/finorbit/GetQuotes';
 import GetQuotesView from './../screens/finorbit/GetQuotesView';
+import TestMyPolicy from './../screens/finorbit/forms/TestMyPolicy';
 
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
@@ -197,6 +198,7 @@ const FinOrbitNav = createStackNavigator(
     GetQuotes: { screen: GetQuotes },
     GetQuotesView: { screen: GetQuotesView },
     Samadhan: { screen: Samadhan },
+    TestMyPolicy:{screen:TestMyPolicy},
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {

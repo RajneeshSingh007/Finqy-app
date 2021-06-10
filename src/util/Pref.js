@@ -2536,6 +2536,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
+  {
+    name: 'Test My Policy',
+    url: require('./../res/images/autoloan.png'),
+  },
   // {
   //   name: 'Gold Loan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2816,6 +2820,10 @@ export const productListClone = [
   {
     name: 'Sabse Asaan Health Plan',
     url: require('./../res/images/sabseasan.png'),
+  },
+  {
+    name: 'Test My Policy',
+    url: require('./../res/images/autoloan.png'),
   },
 ];
 

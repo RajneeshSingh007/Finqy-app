@@ -174,11 +174,35 @@ export const networkHelperGet = (
  */
 export const getNetworkHelper = (
   url,
-  method,
   callback = (responseJson) => { },
   errorCallback = (error) => { },
 ) => {
   fetch(url)
+    .then((response) => response.text())
+    .then((responseJson) => {
+      callback(responseJson);
+    })
+    .catch((error) => {
+      errorCallback(error);
+    });
+};
+
+/**
+ * networkHelper
+ * @param url
+ * @param jsonData
+ * @param method
+ * @param isTokenPresent
+ * @param token
+ * @param callback
+ * @param errorCallback
+ */
+ export const getNetworkHelperTextPost = (
+  url,data,
+  callback = (responseJson) => { },
+  errorCallback = (error) => { },
+) => {
+  fetch(url,data)
     .then((response) => response.text())
     .then((responseJson) => {
       callback(responseJson);
@@ -966,6 +990,7 @@ export const productShareList = () =>{
     { value: 'Mutual Fund', url: `${Pref.FinURL}mf.php` },
     { value: 'Personal Loan', url: `${Pref.FinURL}pl.php` },
     { value: 'Term Insurance', url: `${Pref.FinURL}ti.php` },
+    { value: 'Test My Policy', url: `${Pref.FinURL}tmp_lead_form.php` },
     // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
     // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
     // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },

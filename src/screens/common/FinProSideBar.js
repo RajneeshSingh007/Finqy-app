@@ -46,7 +46,9 @@ export default class FinProSideBar extends React.PureComponent {
         title.includes('Asaan')
       ) {
         NavigationActions.navigate('NewForm', parseItem);
-      } else {
+      } else if(title === 'Test My Policy'){
+        NavigationActions.navigate('TestMyPolicy', parseItem);
+      }else {
         NavigationActions.navigate('FinorbitForm', parseItem);
       }
     }
