@@ -2891,6 +2891,64 @@ export const HealthCompany = [{ value: "Acko General Insurance Limited" },
 { value: "Others" },
 { value: "None" },]
 
+export const BankNameList = [{name:'ABFL',value:'ABFL'},
+{name:'AXIS Bank',value:'AXIS Bank'},
+{name:'Aditya Birla Finance Limited',value:'Aditya Birla Finance Limited'},
+{name:'Bajaj Finance Limited',value:'Bajaj Finance Limited'},
+{name:'Bandhan Bank',value:'Bandhan Bank'},
+{name:'Barclays Bank',value:'Barclays Bank'},
+{name:'CLIX Capital',value:'CLIX Capital'},
+{name:'CLIX Capital Services Ltd',value:'CLIX Capital Services Ltd'},
+{name:'CSB Bank',value:'CSB Bank'},
+{name:'Capital First Limited',value:'Capital First Limited'},
+{name:'Cholamandalam Investment and Finance Company Limited',value:'Cholamandalam Investment and Finance Company Limited'},
+{name:'Citibank',value:'Citibank'},
+{name:'City Union Bank',value:'City Union Bank'},
+{name:'Credila Financial Services',value:'Credila Financial Services'},
+{name:'DBS Bank',value:'DBS Bank'},
+{name:'DCB Bank',value:'DCB Bank'},
+{name:'Deutsche Bank',value:'Deutsche Bank'},
+{name:'Dhanlaxmi Bank',value:'Dhanlaxmi Bank'},
+{name:'Edelweiss Retail Finance Limited',value:'Edelweiss Retail Finance Limited'},
+{name:'Federal Bank',value:'Federal Bank'},
+{name:'Finnable Credit Pvt Ltd',value:'Finnable Credit Pvt Ltd'},
+{name:'HDB Financial Services Limited',value:'HDB Financial Services Limited'},
+{name:'HDFC Bank',value:'HDFC Bank'},
+{name:'HSBC Bank',value:'HSBC Bank'},
+{name:'Hero',value:'Hero'},
+{name:'Hero Financial Services Ltd',value:'Hero Financial Services Ltd'},
+{name:'ICICI Bank',value:'ICICI Bank'},
+{name:'IDBI Bank',value:'IDBI Bank'},
+{name:'IDFC FIRST Bank',value:'IDFC FIRST Bank'},
+{name:'INCRED Finance',value:'INCRED Finance'},
+{name:'Indiabulls Commercial Credit Limited',value:'Indiabulls Commercial Credit Limited'},
+{name:'IndusInd Bank',value:'IndusInd Bank'},
+{name:'J&K Bank',value:'J&K Bank'},
+{name:'JM Financial Credit Solutions Limited',value:'JM Financial Credit Solutions Limited'},
+{name:'Jammu & Kashmir Bank',value:'Jammu & Kashmir Bank'},
+{name:'Karnataka Bank',value:'Karnataka Bank'},
+{name:'Karur Vysya Bank',value:'Karur Vysya Bank'},
+{name:'Kotak Mahindra Bank',value:'Kotak Mahindra Bank'},
+{name:'L&T Finance Limited',value:'L&T Finance Limited'},
+{name:'Lakshmi Vilas Bank',value:'Lakshmi Vilas Bank'},
+{name:'Magma Fincorp Limited',value:'Magma Fincorp Limited'},
+{name:'Mahindra & Mahindra Financial Services Limited',value:'Mahindra & Mahindra Financial Services Limited'},
+{name:'Muthoot Finance Limited',value:'Muthoot Finance Limited'},
+{name:'PNB Housing Finance',value:'PNB Housing Finance'},
+{name:'Private Limited',value:'Private Limited'},
+{name:'RBL Bank',value:'RBL Bank'},
+{name:'Reliance Capital Limited',value:'Reliance Capital Limited'},
+{name:'Religare Finvest Limited',value:'Religare Finvest Limited'},
+{name:'Royal Bank of Scotland',value:'Royal Bank of Scotland'},
+{name:'Shreeram Finance',value:'Shreeram Finance'},
+{name:'South Indian Bank',value:'South Indian Bank'},
+{name:'State Bank Of India',value:'State Bank Of India'},
+{name:'Standard Chartered',value:'Standard Chartered'},
+{name:'Standard Chartered Bank',value:'Standard Chartered Bank'},
+{name:'Sundaram Finance Limited',value:'Sundaram Finance Limited'},
+{name:'Tata Capital Financial Services Limited',value:'Tata Capital Financial Services Limited'},
+{name:'YES Bank',value:'YES Bank'},]
+
 //placehodler profile pic
 export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars/normal/f244137353d6ae304c1513dca9ef2a50.jpg`;
 
@@ -2973,6 +3031,7 @@ export const HealthQouteCompanyUrl = `${FinURL}ajax.php`;
 export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 export const BuyInsurance = `${FinURL}hicif.php`;
+export const BuyPLInsurance = `${FinURL}plcif.php`;
 
 /////////////////////////////////////
 //  Code Push Key

@@ -174,11 +174,19 @@ export const networkHelperGet = (
  */
 export const getNetworkHelper = (
   url,
+  method,
   callback = (responseJson) => { },
   errorCallback = (error) => { },
 ) => {
-  fetch(url)
-    .then((response) => response.text())
+  fetch(url, {
+    method: method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': `application/json`,
+      'Cache-Control': 'no-cache'
+    },
+  })
+    .then((response) => response.json())
     .then((responseJson) => {
       callback(responseJson);
     })

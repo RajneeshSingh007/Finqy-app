@@ -10,6 +10,7 @@ import CommonFileUpload from '../common/CommonFileUpload';
 import Lodash from 'lodash';
 import NewDropDown from '../component/NewDropDown';
 import FilePicker from '../common/FilePicker';
+import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const currentAddressProofList = [
   {
@@ -1321,6 +1322,8 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard: '',
       fresh_pop: '',
       popitemList: lapPopList,
+      statement_bank:'',
+      bstatepass:''
     };
     // const {title} = props;
     // proofOfProprtyList = title.includes('Home')
@@ -1441,6 +1444,8 @@ export default class FileUploadForm extends React.PureComponent {
         Helper.nullStringCheckWithReturn(obj.existingcard),
         Helper.nullStringCheckWithReturn(obj.fresh_pop),
         Helper.nullCheck(obj.popitemList) === false ? obj.popitemList : [],
+        Helper.nullStringCheckWithReturn(obj.statement_bank),
+        Helper.nullStringCheckWithReturn(obj.bstatepass),
       );
       this.setState(obj, () => this.forceUpdate());
     }
@@ -1475,6 +1480,8 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard = '',
       fresh_pop = '',
       popitemList = [],
+      statement_bank = '',
+      bstatepass = '',
     } = this.props;
     //console.log('didmount', popitemList,fresh_pop);
     this.setuppop(
@@ -1485,6 +1492,8 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard,
       fresh_pop,
       popitemList,
+      statement_bank,
+      bstatepass
     );
     //console.log(filterList);
   }
@@ -1497,6 +1506,8 @@ export default class FileUploadForm extends React.PureComponent {
     existingcard = '',
     fresh_pop = '',
     popitemList = [],
+    statement_bank = '',
+    bstatepass = '',
   ) => {
     const {title} = this.props;
     var filterList = listoffiles;
@@ -1598,6 +1609,8 @@ export default class FileUploadForm extends React.PureComponent {
         existingcard: existingcard,
         exisitng_loan_doc: exisitng_loan_doc,
         current_add_proof: current_add_proof,
+        statement_bank:statement_bank,
+        bstatepass:bstatepass
         // proof_of_property: spx.length > 0 ? spx[0] : '',
         // proof_of_property1: spx.length > 1 ? spx[1] : '',
         // proof_of_property2: spx.length > 2 ? spx[2] : '',
@@ -2373,6 +2386,33 @@ export default class FileUploadForm extends React.PureComponent {
                 )}
               </>
             ) : null}
+            {title === 'Personal Loan' && truDownloadEnable === -1 ?   <>   
+            <NewDropDown
+              truncate
+              list={Pref.BankNameList}
+              placeholder={'Select Bank Name'}
+              starVisible
+              value={this.state.statement_bank}
+              selectedItem={(value) => this.setState({statement_bank:value})}
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            /> 
+          
+          <AnimatedInputBox
+            placeholder={'Bank Statement Password'}
+            showStarVisible={false}
+            onChangeText={(value) => {
+              if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
+                this.setState({bstatepass:value})
+              }
+            }}
+            value={this.state.bstatepass}
+            changecolor
+            containerstyle={styles.animatedInputCont}
+            returnKeyType={'next'}
+          />
+            </>
+            : null}
             {title !== 'Gold Loan' &&
             title !== 'Health Insurance' &&
             title !== 'Credit Card' ? (
@@ -2404,7 +2444,7 @@ export default class FileUploadForm extends React.PureComponent {
               truDownloadEnable={truDownloadEnable}
               downloadTitles={downloadTitles}
               mode={mode}
-              title={`${this.mandatoryName(`Pan Card`, title)} ${
+              title={`${this.mandatoryName(`Pan Card ${title === 'Personal Loan' && truDownloadEnable === -1 ? '*' : ''}`, title)} ${
                 truDownloadEnable === 1 ? '1' : ''
               }`}
               type={2}
@@ -2829,7 +2869,7 @@ export default class FileUploadForm extends React.PureComponent {
                           `${
                             title === 'Credit Card'
                               ? '1 Year Bank Statement'
-                              : `6 Month Bank Statement`
+                              : `6 Month Bank Statement ${title === 'Personal Loan' && truDownloadEnable === -1 ? '*' : ''}`
                           }`,
                           title,
                         )
@@ -3294,6 +3334,11 @@ export default class FileUploadForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
+  animatedInputCont: {
+    marginStart: 10,
+    marginEnd: 10,
+    paddingVertical: 10,
+  },
   popcont: {flex: 1, flexDirection: 'row'},
   newdropdowntextstyle: {
     color: '#6d6a57',

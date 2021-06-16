@@ -114,6 +114,8 @@ class NewDropDown extends React.Component {
       value = '',
       starVisible = false,
       truncate = false,
+      filterData = true,
+      searchQuery = (v) =>{}
     } = this.props;
     const {visible, finalList, width, height, displayValue, query} = this.state;
     return (
@@ -166,10 +168,20 @@ class NewDropDown extends React.Component {
         {enableSearch ? (
           <Searchbar
             placeholder="Search"
-            onChangeText={this.filterData}
+            onChangeText={(v) => {
+              if(filterData){
+                this.filterData(v);
+              }else{
+                this.setState({query: v});
+                searchQuery(v);
+              }
+            }}
             value={query}
             elevation={0}
             style={styles.search}
+            textContentType={{
+              fontSize:13
+            }}
           />
         ) : null}
         {finalList.length > 0 ? (
@@ -197,6 +209,8 @@ class NewDropDown extends React.Component {
             ItemSeparatorComponent={() => (
               <View style={{height: 1, backgroundColor: '#dedede'}} />
             )}
+            nestedScrollEnabled
+            keyboardShouldPersistTaps={'handled'}
             //stickyHeaderIndices={enableSearch ? [0] : []}
           />
         ) : enableSearch ? (
@@ -282,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   title1: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Rubik',
     color: '#555555',
     alignSelf: 'flex-start',

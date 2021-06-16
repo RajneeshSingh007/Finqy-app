@@ -790,7 +790,7 @@ export default class HealthInsurance extends React.PureComponent {
           url,
           Pref.methodGet,
           (result) => {
-            const {res_type, data} = JSON.parse(result);
+            const {res_type, data} = result;
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
               this.setState({
@@ -859,7 +859,7 @@ export default class HealthInsurance extends React.PureComponent {
           url,
           Pref.methodGet,
           (result) => {
-            const {res_type, data} = JSON.parse(result);
+            const {res_type, data} = result;
             //console.log(`result`, result, res_type);
             if (res_type === `error`) {
               this.setState({
@@ -924,7 +924,7 @@ export default class HealthInsurance extends React.PureComponent {
       Pref.GOLD_LOAN_DETAIL,
       Pref.methodGet,
       (result) => {
-        const {status, data} = JSON.parse(result);
+        const {res_type, data} = result;
         if (status) {
           this.setState({
             goldDetailList: data,

@@ -192,19 +192,19 @@ export default class CommonForm extends React.PureComponent {
       if (parse.length === 6) {
         this.setState({ pincode: parse });
         const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
-        //console.log(`url`, url);
+        console.log(`url`, url);
         Helper.getNetworkHelper(
           url,
           Pref.methodGet,
           (result) => {
-            const { res_type, data } = JSON.parse(result);
-            //console.log(`result`, result, res_type);
+            const { res_type, data } = result;
             if (res_type === `error`) {
               this.setState({ currentlocation: '', state: '', pincode: value });
             } else {
+              console.log(`result`, data);
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-                // //console.log('filterActive', filterActive)
+                console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
                 //      //console.log('state', city)
@@ -612,13 +612,7 @@ export default class CommonForm extends React.PureComponent {
             <View style={StyleSheet.flatten([styles.radiodownbox, {
               height: title === `Health Insurance` ? 90 : 56
             }])}>
-              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' || title === 'Auto Loan' || 
-              //title === 'Home Loan' || 
-              title === 'Loan Against Property' 
-              //|| title === 'Personal Loan' 
-              ? '' 
-              //returnAsterik() 
-              : ''}`}</Title>
+              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Personal Loan' ? returnAsterik() : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>

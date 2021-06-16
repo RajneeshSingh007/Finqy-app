@@ -322,7 +322,7 @@ export default class RaiseQueryForm extends React.Component {
         subject = `${productSelected} | ${body.nonitesubissue}`;
         type = 'Non-IT Issue';
         //console.log('body.nonitesubissue', body.nonitesubissue);
-       
+
         // if (
         //   body.nonitesubissue === 'Tax Related' ||
         //   body.nonitesubissue === 'Payout' ||
@@ -391,18 +391,25 @@ export default class RaiseQueryForm extends React.Component {
         // }
       }
 
-      const findTeam = lodash.find(agentList,io => {
+      const findTeam = lodash.find(agentList, io => {
         const replace = io.designation.replace(/\s/g, '_');
         const currentProduct = productSelected.replace(/\s/g, '_');
-        if(type === 'IT Issue'){
+        if (type === 'IT Issue') {
           return io.supportTeamId === '1';
-        }else if(body.nonitesubissue === 'Tax Related' || body.nonitesubissue === 'Payout' || body.nonitesubissue == 'Invoice'){
+        } else if (
+          body.nonitesubissue === 'Tax Related' ||
+          body.nonitesubissue === 'Payout' ||
+          body.nonitesubissue == 'Invoice'
+        ) {
           return io.supportTeamId === '3';
-        }else if(String(replace).toLowerCase() === String(currentProduct).toLowerCase()){
+        } else if (
+          String(replace).toLowerCase() === String(currentProduct).toLowerCase()
+        ) {
           return io;
         }
         return undefined;
       });
+
       //console.log('findTeamNT', findTeam);
       if (findTeam != undefined) {
         agentUserID = findTeam.user_id;
@@ -410,10 +417,10 @@ export default class RaiseQueryForm extends React.Component {
 
       //console.log('agentUserID', agentUserID)
 
-      if (agentUserID === -1) {
-        Helper.showToastMessage(`No team found, please try after some time`, 0);
-        return false;
-      }
+      // if (agentUserID === -1) {
+      //   Helper.showToastMessage(`No team found, please try after some time`, 0);
+      //   return false;
+      // }
 
       const formData = new FormData();
       formData.append('subject', subject);
@@ -489,9 +496,9 @@ export default class RaiseQueryForm extends React.Component {
                   );
                   NavigationActions.navigate('TrackQuery');
                 } else {
-                  if(result.description.includes('already assigned')){
+                  if (result.description.includes('already assigned')) {
                     Helper.showToastMessage('Ticket updated successfully');
-                  }else{
+                  } else {
                     Helper.showToastMessage(
                       editMode
                         ? `Failed to update ticket`
@@ -559,7 +566,7 @@ export default class RaiseQueryForm extends React.Component {
                 placeholder={`Select Ticket Type`}
                 starVisible
                 value={this.state.ticketissue}
-                selectedItem={(value) =>
+                selectedItem={value =>
                   this.setState({
                     ticketissue: value,
                     itissue: '',
@@ -577,7 +584,7 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Issue`}
                   starVisible
                   value={this.state.itissue}
-                  selectedItem={(value) => this.setState({itissue: value})}
+                  selectedItem={value => this.setState({itissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -589,7 +596,7 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Product`}
                   starVisible
                   value={this.state.nonitissue}
-                  selectedItem={(value) => this.setState({nonitissue: value})}
+                  selectedItem={value => this.setState({nonitissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -601,9 +608,7 @@ export default class RaiseQueryForm extends React.Component {
                   placeholder={`Select Issue`}
                   starVisible
                   value={this.state.nonitesubissue}
-                  selectedItem={(value) =>
-                    this.setState({nonitesubissue: value})
-                  }
+                  selectedItem={value => this.setState({nonitesubissue: value})}
                   style={styles.dropdowncontainers}
                   textStyle={styles.dropdowntextstyle}
                 />
@@ -613,14 +618,14 @@ export default class RaiseQueryForm extends React.Component {
                 list={priorityList}
                 placeholder={`Select Priority`}
                 value={this.state.priority}
-                selectedItem={(value) => this.setState({priority: value})}
+                selectedItem={value => this.setState({priority: value})}
                 style={styles.dropdowncontainers}
                 textStyle={styles.dropdowntextstyle}
               />
 
               <CustomForm
                 value={this.state.description}
-                onChange={(v) => this.setState({description: v})}
+                onChange={v => this.setState({description: v})}
                 label={`Short Description`}
                 placeholder={`Enter description`}
                 keyboardType={'text'}
@@ -630,7 +635,7 @@ export default class RaiseQueryForm extends React.Component {
 
               <CustomForm
                 value={this.state.remark}
-                onChange={(v) => this.setState({remark: v})}
+                onChange={v => this.setState({remark: v})}
                 label={`Remark`}
                 placeholder={`Enter remark`}
                 keyboardType={'text'}
