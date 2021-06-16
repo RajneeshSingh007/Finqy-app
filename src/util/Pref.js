@@ -2969,12 +2969,25 @@ export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bm
 // export const ApiDirUrl = `${MainUrl}partner/appapi/`;
 // export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
 // export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
+//export const BlogFileUrl = `${MainUrl}/super_admin/`;
 
-//test url
-export const MainUrl = `https://uat.erb.ai/`;
+//uat test url
+// export const MainUrl = `https://uat.erb.ai/`;
+// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
+// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
+//export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
+
+//dev url
+export const MainUrl = `https://dev.erb.ai/`;
 export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
+export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
+export const DialerMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+export const SalesMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+export const QRCMainUrl = `https://uat.erb.ai/ticketsystem/public`;
+export const QRCTicketMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
 
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
@@ -2982,8 +2995,6 @@ export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
 //forms directory
 export const FinURL = `${MainUrl}erbfinorbit/`;
 export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
-
-export const BlogFileUrl = `${MainUrl}/super_admin/`;
 
 export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
 export const NewDashBoardUrl = `${ApiDirUrl}tool_dashboard_api.php`;
@@ -3033,6 +3044,54 @@ export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 export const BuyInsurance = `${FinURL}hicif.php`;
 export const BuyPLInsurance = `${FinURL}plcif.php`;
 
+
+//////Sales API /////////
+export const PAYIN_URL = `${SalesMainUrl}sales/payin-default.php`;
+export const PARTNER_LIST = `${SalesMainUrl}sales/partner-data.php`;
+export const PARTNER_PAYOUT_URL = `${SalesMainUrl}sales/current-payout.php`;
+export const UPDATE_PAYOUT = `${SalesMainUrl}sales/update-payout.php`;
+
+//gold loan///
+export const GOLD_LOAN_DETAIL = `${FinorbitFormUrl}gold_detail.php`;
+
+//////////////////////////////////
+// UVDESK API
+/////////////////////////////////
+export const UVDESK_API = "SFFNVBU7LHDTLG7G7ZLARKYSFNTRR75POPSTG6SUZVWQWJDTBORBGCNCQHAF6GDA";
+export const UVDESK_IMAGE_URL = `${QRCMainUrl}`;
+export const UVDESK_TICKET_URL = `${QRCMainUrl}/api/v1/ticket`;
+export const UVDESK_ASSIGN_AGENT = `${QRCMainUrl}/api/v1/ticket/`;
+export const UVDESK_REPLY_THREAD = `${QRCMainUrl}/api/v1/ticket/`;
+export const UVDESK_UPDATE_STATUS = `${QRCMainUrl}/api/v1/ticket/`;
+export const UVDESK_THREAD_LIST = `${QRCMainUrl}/api/v1/tickets`;
+
+//////////////////////////////
+// Ticket API
+//////////////////////////////
+export const AGENTS_URL = `${QRCTicketMainUrl}ticketapi/get_agents.php`;
+export const TICKETS_LIST_URL = `${QRCTicketMainUrl}ticketapi/get_user_tickets.php`;
+export const SEND_MAIL_URL = `${QRCTicketMainUrl}ticketapi/send_mail.php`;
+
+////////////////////////////
+// Dialer API
+///////////////////////////
+export const DialerDirUrl = `${DialerMainUrl}dialerapi/`;
+export const DIALER_LOGIN = `${DialerDirUrl}post_login.php`
+export const DIALER_LEAD_RECORD = `${DialerDirUrl}tool_get_leads.php`
+export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
+export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
+export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
+export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
+export const DIALER_TC_PERFORMANCE = `${DialerDirUrl}tc_performance.php`;
+export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
+export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
+export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
+export const DILAER_TL_TEAM_MEMBERS=`${DialerDirUrl}get_member_list.php`;
+export const DIALER_TL_DASHBOARD = `${DialerDirUrl}tl_dashboard.php`;
+export const DIALER_LIVE_TRACK_DATA =`${DialerDirUrl}live_last_record.php`;
+export const DIALER_TL_TEAM_REPORT = `${DialerDirUrl}team_report.php`;
+export const SERVER_DATE_TIME = `${DialerDirUrl}servertime.php`;
+
 /////////////////////////////////////
 //  Code Push Key
 /////////////////////////////////////
@@ -3048,46 +3107,17 @@ export const SMSURL = `https://api.msg91.com/api/`;
 export const SMS_OTP = `${SMSURL}v5/otp`;
 export const SMS_SEND = `${SMSURL}sendhttp.php`;
 
-//////////////////////////////////
-// UVDESK API
-/////////////////////////////////
-export const UVDESK_API = "SFFNVBU7LHDTLG7G7ZLARKYSFNTRR75POPSTG6SUZVWQWJDTBORBGCNCQHAF6GDA";
-export const MAIN_SUPPORT_URL = `${MainUrl}ticketsystem/public/api/v1/`;
-export const UVDESK_IMAGE_URL = `${MainUrl}ticketsystem/public`;
-export const UVDESK_TICKET_URL = `${MAIN_SUPPORT_URL}ticket`;
-export const UVDESK_ASSIGN_AGENT = `${MAIN_SUPPORT_URL}ticket/`;
-export const UVDESK_REPLY_THREAD = `${MAIN_SUPPORT_URL}ticket/`;
-export const UVDESK_UPDATE_STATUS = `${MAIN_SUPPORT_URL}ticket/`;
-export const UVDESK_THREAD_LIST = `${MAIN_SUPPORT_URL}tickets`;
+///////firestore dialer ///////////
+export const COLLECTION_PARENT = 'parent';
+export const COLLECTION_PRODUCT = 'productlist';
+export const COLLECTION_CHECKIN = 'checkincheckout';
+export const COLLECTION_TEMPLATE = 'templates';
 
-//////////////////////////////
-// Ticket API
-//////////////////////////////
-export const AGENTS_URL = `${ApiDirUrl}ticketapi/get_agents.php`;
-export const TICKETS_LIST_URL = `${ApiDirUrl}ticketapi/get_user_tickets.php`;
-export const SEND_MAIL_URL = `${ApiDirUrl}ticketapi/send_mail.php`;
-
-////////////////////////////
-// Dialer API
-///////////////////////////
-export const DialerDirUrl = `${ApiDirUrl}dialerapi/`;
-export const DIALER_LOGIN = `${DialerDirUrl}post_login.php`
-export const DIALER_LEAD_RECORD = `${DialerDirUrl}tool_get_leads.php`
-export const DIALER_GET_PRODUCTS = `${DialerDirUrl}get_products.php`
-export const DIALER_LEAD_UPDATE = `${DialerDirUrl}tool_leads_update.php`
-export const DIALER_GET_MEMBERS =`${DialerDirUrl}get_all_members.php`;
-export const DIALER_TC_DASHBOARD = `${DialerDirUrl}tc_dashboard.php`;
-export const DIALER_TC_PERFORMANCE = `${DialerDirUrl}tc_performance.php`;
-export const DIALER_TC_Follow = `${DialerDirUrl}tc_followup_check.php`;
-export const DIALER_TC_CallLogs = `${DialerDirUrl}tc_call_logs.php`;
-export const DIALER_TL_TEAMS = `${DialerDirUrl}get_tl_teams.php`;
-export const DILAER_TL_TEAM_MEMBERS=`${DialerDirUrl}get_member_list.php`;
-export const DIALER_TL_DASHBOARD = `${DialerDirUrl}tl_dashboard.php`;
-export const DIALER_LIVE_TRACK_DATA =`${DialerDirUrl}live_last_record.php`;
-export const DIALER_TL_TEAM_REPORT = `${DialerDirUrl}team_report.php`;
-
-//server date time
-export const SERVER_DATE_TIME = `${DialerDirUrl}servertime.php`;
+///////production firestore dialer ///////////
+// export const COLLECTION_PARENT = 'live_parent';
+// export const COLLECTION_PRODUCT = 'live_productlist';
+// export const COLLECTION_CHECKIN = 'live_checkincheckout';
+// export const COLLECTION_TEMPLATE = 'live_templates';
 
 ///update dialog show
 export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;
@@ -3100,28 +3130,6 @@ export const LIMIT_FILE_SIZE = 10485760;
 
 //max file pick in finorbit forms
 export const MAX_FILE_PICK_LIMIT = 5;
-
-//////Sales API /////////
-export const PAYIN_URL = `${ApiDirUrl}sales/payin-default.php`;
-export const PARTNER_LIST = `${ApiDirUrl}sales/partner-data.php`;
-export const PARTNER_PAYOUT_URL = `${ApiDirUrl}sales/current-payout.php`;
-export const UPDATE_PAYOUT = `${ApiDirUrl}sales/update-payout.php`;
-
-//gold loan///
-export const GOLD_LOAN_DETAIL = `${FinorbitFormUrl}gold_detail.php`;
-
-
-///////firestore dialer ///////////
-export const COLLECTION_PARENT = 'parent';
-export const COLLECTION_PRODUCT = 'productlist';
-export const COLLECTION_CHECKIN = 'checkincheckout';
-export const COLLECTION_TEMPLATE = 'templates';
-
-///////production firestore dialer ///////////
-// export const COLLECTION_PARENT = 'live_parent';
-// export const COLLECTION_PRODUCT = 'live_productlist';
-// export const COLLECTION_CHECKIN = 'live_checkincheckout';
-// export const COLLECTION_TEMPLATE = 'live_templates';
 
 /**
  * Set Val

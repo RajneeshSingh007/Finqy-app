@@ -128,8 +128,10 @@ export default class FinorbitForm extends React.PureComponent {
     });
 
     // NavigationActions.navigate("GetQuotes", {
-    //   formId: 1420,
+    //   formId: 1945,
     //   sumin:10,
+    //   deductible:3,
+    //   editmode:false
     // });
   }
 
@@ -516,10 +518,17 @@ export default class FinorbitForm extends React.PureComponent {
           }
 
           formData.append('frommobile', 'frommobile');
+          
 
-          const formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
+          var formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-          console.log('formData', formData);
+          // if(title === 'Health Insurance'){
+          //   formUrls = `https://dev.erb.ai/corporate_tool/Apis/finorbitx/${uniq}.php`;
+          // }else if(title === 'Personal Loan'){
+          //   formUrls = `https://dev.erb.ai/corporate_tool/Apis/finorbitx/${uniq}.php`;
+          // }
+
+          //console.log('formData', formUrls);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -527,7 +536,7 @@ export default class FinorbitForm extends React.PureComponent {
             Pref.methodPost,
             this.state.token,
             (result) => {
-              console.log('result', result);
+              //console.log('result', result);
               
               const {response_header} = result;
               const {res_type, res} = response_header;
@@ -555,19 +564,14 @@ export default class FinorbitForm extends React.PureComponent {
                   Helper.nullCheck(res.id) === false &&
                   res.id !== ''
                 ) {
-                  const {id} = res;
-                  const {deductible} = response_header;
-                  if (Helper.nullStringCheck(deductible) === false) {
-                    this.finishForm();
-                  } else {
-                    const cov = Number(specificForms.required_cover);
-                    NavigationActions.navigate('GetQuotes', {
-                      formId: id,
-                      sumin: cov,
-                      editmode: this.state.editMode,
-                      deductible: deductible,
-                    });
-                  }
+                  const {id, deductible} = res;
+                  const cov = Number(specificForms.required_cover);
+                  NavigationActions.navigate('GetQuotes', {
+                    formId: id,
+                    sumin: cov,
+                    editmode: this.state.editMode,
+                    deductible: deductible,
+                  });
                 } else {
                   this.finishForm();
                 }

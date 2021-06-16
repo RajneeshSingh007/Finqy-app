@@ -40,6 +40,7 @@ export default class DefaultPayin extends React.PureComponent {
     const pleaseNote = navigation.getParam('pn', null);
     const exData = navigation.getParam('ex', null);
     const width = navigation.getParam('width', []);
+    
     //console.log('exData', exData)
 
     this.focusListener = navigation.addListener('didFocus', () => {

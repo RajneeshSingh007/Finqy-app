@@ -39,7 +39,7 @@ export default class PayoutForm extends React.PureComponent {
     const pleaseNote = navigation.getParam('pn', null);
     const exData = navigation.getParam('ex', null);
     const width = navigation.getParam('width', []);
-    //console.log('exData', exData)
+    //console.log('exData', data)
 
     this.focusListener = navigation.addListener('didFocus', () => {
       let widthArr = [],

@@ -150,10 +150,14 @@ export default class GetQuotesView extends React.PureComponent {
       };
       NavigationActions.navigate('FinorbitForm', item);
     } else {
-      const healthByLink = `${Pref.BuyInsurance}?unq_no=${formId}`;
+      //https://dev.erb.ai/erbfinorbit/hicif.php?unq_no=626&com=HDFC%20ERGO%20General%20Insurance%20Co.Ltd.
+      //const healthByLink = `${Pref.BuyInsurance}?unq_no=${formId}`;
+     
+      const healthByLink = `https://dev.erb.ai/erbfinorbit/hicif.php?unq_no=${formId}&com=${value}`;
       Linking.openURL(healthByLink);
-      //NavigationActions.navigate('WebComp', { url: healthByLink });
       this.hideDialog();
+      
+      //NavigationActions.navigate('WebComp', { url: healthByLink });
     }
   };
 
@@ -176,8 +180,8 @@ export default class GetQuotesView extends React.PureComponent {
                       {companyList.map((item) => {
                         return (
                           <View
-                            styleName="horizontal"
-                            style={{marginVertical: 4}}>
+                            styleName="horizontal v-center h-center"
+                            style={{marginVertical: 6}}>
                             <RadioButton
                               value={item.name}
                               style={{alignSelf: 'center'}}

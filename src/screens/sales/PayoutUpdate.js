@@ -225,7 +225,7 @@ export default class PayoutUpdate extends React.PureComponent {
 
   backClick = () => {
     //const {refercode} = this.state;
-    console.log('refercode', this.refercode);
+    //console.log('refercode', this.refercode);
     NavigationActions.navigate('PayinProducts', {
       screenName: 'PayoutUpdate',
       showUpdateButton: true,

@@ -55,7 +55,7 @@ export default class GetQuotes extends React.Component {
       formId: '',
       loading: true,
       editMode: false,
-      deductible:''
+      deductible:-1
     };
   }
 
@@ -65,7 +65,7 @@ export default class GetQuotes extends React.Component {
     const formId = navigation.getParam('formId', null);
     const sumInsurred = navigation.getParam('sumin', 0);
     const editMode = navigation.getParam('editmode', false);
-    const deductible = navigation.getParam('deductible', '');
+    const deductible = navigation.getParam('deductible', -1);
     //console.log('sumInsurred', sumInsurred, formId, deductible)
 
     this.focusListener = navigation.addListener('didFocus', () => {
@@ -98,13 +98,15 @@ export default class GetQuotes extends React.Component {
     const {deductible} = this.state;
     const formData = new FormData();
     formData.append('id', id);
-    formData.append('sum_insured', sum_insured);
+    formData.append('sum_insured', sum_insured);  
+    //console.log(formData);
     Helper.networkHelperContentType(
-      deductible === '' ? Pref.HealthQouteCompanyUrl : Pref.HealthTopupQouteCompanyUrl,
+      deductible === -1 ? Pref.HealthQouteCompanyUrl : Pref.HealthTopupQouteCompanyUrl,
       formData,
       Pref.methodPost,
       (result) => {
         const {type, company} = result;
+        //console.log(result, deductible,id,sum_insured);
         if (type === 'success') {
           if (company.length > 0) {
             const list = company.map((e, index) => {
@@ -119,8 +121,7 @@ export default class GetQuotes extends React.Component {
                 og: e,
                 id: index + 1,
                 select: false,
-                select:
-                  isFirstTime === true ? (index < 3 ? true : false) : false,
+                select: isFirstTime === true ? (index < 3 ? true : false) : false,
               };
             });
             //console.log('list',list)
@@ -143,7 +144,7 @@ export default class GetQuotes extends React.Component {
   }
 
   submitt = () => {
-    const {companyList, sumInsurred, formId} = this.state;
+    const {companyList, sumInsurred, formId,deductible} = this.state;
     if (companyList.length === 0) {
       Helper.showToastMessage('Failed to find quote', 0);
       return false;
@@ -157,16 +158,33 @@ export default class GetQuotes extends React.Component {
       Helper.showToastMessage('Please, Select maximum 3 companies', 0);
       return false;
     }
+    let startUrl = '';
     if (map.length === 1) {
       const compId = `${map[0]['companyid']}`;
-      finalUrl = `${Pref.FinURL}/download_quote1.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      if(deductible > 0){
+        startUrl = `${Pref.FinURL}/download_quoted1.php`;
+      }else{
+        startUrl = `${Pref.FinURL}/download_quote1.php`;     
+      }
+      finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 2) {
       const compId = `${map[0]['companyid']}$$${map[1]['companyid']}`;
-      finalUrl = `${Pref.FinURL}/download_quote2.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      if(deductible > 0){
+        startUrl = `${Pref.FinURL}/download_quoted2.php`;
+      }else{
+        startUrl = `${Pref.FinURL}/download_quote2.php`;     
+      }
+      finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 3) {
       const compId = `${map[0]['companyid']}$$${map[1]['companyid']}$$${map[2]['companyid']}`;
-      finalUrl = `${Pref.FinURL}/download_quote3.php?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
+      if(deductible > 0){
+        startUrl = `${Pref.FinURL}/download_quoted3.php`;
+      }else{
+        startUrl = `${Pref.FinURL}/download_quote3.php`;     
+      }
+      finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }
+    //console.log('finalUrl', finalUrl);
     NavigationActions.navigate('GetQuotesView', {
       editmode: this.state.editMode,
       url: finalUrl,
