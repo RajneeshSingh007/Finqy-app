@@ -2988,6 +2988,7 @@ export const DialerMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
 export const SalesMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
 export const QRCMainUrl = `https://uat.erb.ai/ticketsystem/public`;
 export const QRCTicketMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
 
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;

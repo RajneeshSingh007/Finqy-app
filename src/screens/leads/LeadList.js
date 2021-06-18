@@ -611,7 +611,7 @@ export default class LeadList extends React.PureComponent {
         ? userData.rcontact
         : userData.mobile;
     const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${sp[0]}
-    \n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
+    \n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
     const options = Platform.select({
       ios: {
         activityItemSources: [
@@ -699,7 +699,7 @@ export default class LeadList extends React.PureComponent {
       Helper.nullCheck(userData.rcontact) === false
         ? userData.rcontact
         : userData.mobile;
-    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the Quotation as desired.\n\n${quoteLink}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the Quotation as desired.\n\n${quoteLink}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
     const shareOptions = {
       title: '',
       message: content,
@@ -724,7 +724,7 @@ export default class LeadList extends React.PureComponent {
       Helper.nullCheck(userData.rcontact) === false
         ? userData.rcontact
         : userData.mobile;
-    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${cif_file}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${cif_file}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
     const shareOptions = {
       title: '',
       message: content,

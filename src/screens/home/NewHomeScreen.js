@@ -463,6 +463,13 @@ export default class NewHomeScreen extends React.PureComponent {
     );
   };
 
+  tmponClick = () =>{
+    const { userData } = this.state;
+    const { refercode } = userData;
+    //const url = `${Pref.TMPUrl}?ref=${refercode}`;
+    //const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below Test My Policy Link. ${url}`;
+    NavigationActions.navigate('WebComp', { url: `${Pref.TMPUrl}?ref=${refercode}` })
+  }
 
   renderProduct = () => {
     return (
@@ -470,7 +477,8 @@ export default class NewHomeScreen extends React.PureComponent {
         styleName="horizontal space-between"
         style={styles.productcontainer}>
         {this.renderProductItem(
-          () => this.showAlert('Coming Soon!', 0),
+          () => this.tmponClick(),
+          //this.showAlert('Coming Soon!', 0),
           require('../../res/images/home/tmp.png'),
           'Test My Policy',
           '#eb1d27',
@@ -524,7 +532,7 @@ export default class NewHomeScreen extends React.PureComponent {
 
   dialerClick = () => {
     const { dialerActive,type } = this.state;
-    console.log('dialerActive', dialerActive);
+    //console.log('dialerActive', dialerActive);
     if (dialerActive) {
       if(type == 'referral'){
         this.openMenu(1);
@@ -571,8 +579,7 @@ export default class NewHomeScreen extends React.PureComponent {
             'Q-Marketing',
           )}
           {this.renderQuickItem(
-            () =>
-              this.navigateToPage('LinkSharingOption', { name: 'Link Sharing' }),
+            () => this.navigateToPage('LinkSharingOption', { name: 'Link Sharing' }),
             require('../../res/images/home/qlinks.png'),
             'Link-Share',
           )}
