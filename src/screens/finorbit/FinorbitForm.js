@@ -158,6 +158,16 @@ export default class FinorbitForm extends React.PureComponent {
   }
 
   backNav = (jumped = false, position = 0) => {
+    if(this.state.title === 'Personal Loan' && this.state.currentPosition === 2){
+      this.restoreList[2] = JSON.parse(
+        JSON.stringify(this.FileUploadFormRef.current.state),
+      );
+      this.restoreList[3] =  JSON.parse(JSON.stringify(this.ApptFormRef.current.state));
+    }else if(this.state.title === 'Health Insurance' && this.state.currentPosition === 1){
+      this.restoreList[1] = JSON.parse(
+        JSON.stringify(this.specificFormRef.current.state),
+      );
+    }
     const {currentPosition} = this.state;
     if (currentPosition === 0) {
       this.setState({scrollReset: true});
@@ -214,6 +224,9 @@ export default class FinorbitForm extends React.PureComponent {
     } else if (currentPosition === 3 && title !== 'Health Insurance') {
       commons = JSON.parse(JSON.stringify(this.ApptFormRef.current.state));
       this.restoreList[3] = commons;
+    }else if (currentPosition === 2 && title === 'Personal Loan') {
+      commons = JSON.parse(JSON.stringify(this.ApptFormRef.current.state));
+      this.restoreList[3] = commons;
     }
     // let result = false;
     // if (commons !== null) {
@@ -244,7 +257,9 @@ export default class FinorbitForm extends React.PureComponent {
     } else if (title === 'Loan Against Property') {
       uniq = 'loan_against_property';
     }
-    //console.log(`uniq`, uniq, title);
+    
+    console.log(`uniq`, uniq, this.restoreList[3]);
+    
     formData.append(uniq, uniq);
 
     if (commonForms !== undefined && this.state.currentPosition === 0) {
@@ -271,16 +286,17 @@ export default class FinorbitForm extends React.PureComponent {
     let allfileslist = [];
     if (fileListForms && this.state.currentPosition === 2 && title === 'Personal Loan') {
       allfileslist = fileListForms.fileList;
-      checkData = thirdFormFileCheck(title, allfileslist, fileListForms);
+      checkData = thirdFormFileCheck(title, allfileslist, fileListForms,editMode);
+      dateForm = this.restoreList[3];
     }else if (fileListForms) {
       allfileslist = fileListForms.fileList;
-      checkData = thirdFormFileCheck(title, allfileslist, fileListForms);
+      checkData = thirdFormFileCheck(title, allfileslist, fileListForms,true);
     }
 
     //console.log('checkData', checkData);
     if (checkData) {
       const limit =
-        title === 'Insure Check' || title == 'Health Insurance' ? 1 : 3;
+        title === 'Insure Check' || title == 'Health Insurance' ? 1 : title === 'Personal Loan' ? 2 : 3;
       if (currentPosition < limit) {
         if (
           this.state.title === 'Insure Check' ||
@@ -307,10 +323,14 @@ export default class FinorbitForm extends React.PureComponent {
                 this.commonFormRef.current.restoreData(this.restoreList[0]);
               } else if (this.state.currentPosition === 1) {
                 this.specificFormRef.current.restoreData(this.restoreList[1]);
+              }else if (this.state.currentPosition === 2 && title === 'Personal Loan') {
+                this.FileUploadFormRef.current.restoreData(this.restoreList[2]);
+                this.ApptFormRef.current.restoreData(this.restoreList[3]);    
               }
             },
           );
         } else {
+          console.log('c');
           this.setState(
             (prevState) => {
               // let btnText = 'Next';
@@ -334,6 +354,9 @@ export default class FinorbitForm extends React.PureComponent {
                 this.specificFormRef.current.restoreData(this.restoreList[1]);
               } else if (this.state.currentPosition === 2) {
                 this.FileUploadFormRef.current.restoreData(this.restoreList[2]);
+                if(this.state.title === 'Personal Loan'){
+                  this.ApptFormRef.current.restoreData(this.restoreList[3]);    
+                }
               } else if (this.state.currentPosition === 3) {
                 this.ApptFormRef.current.restoreData(this.restoreList[3]);
               }
@@ -346,6 +369,7 @@ export default class FinorbitForm extends React.PureComponent {
           this.setState({progressLoader: true, disableClick: 1}, () => {
             this.forceUpdate();
           });
+
           const {refercode} = this.state.userData;
           formData.append('ref', refercode);
 
@@ -485,7 +509,7 @@ export default class FinorbitForm extends React.PureComponent {
           }
 
           //forth
-          if (dateForm && this.state.currentPosition === 3) {
+          if ((dateForm && this.state.currentPosition === 3) || (dateForm && title === 'Personal Loan' && this.state.currentPosition === 2)) {
             // if (dateForm.baa === "") {
             //checkData = false;
             //Helper.showToastMessage("Please, Select Appointment Date", 0);
@@ -519,16 +543,9 @@ export default class FinorbitForm extends React.PureComponent {
 
           formData.append('frommobile', 'frommobile');
           
-
           var formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-          // if(title === 'Health Insurance'){
-          //   formUrls = `https://dev.erb.ai/corporate_tool/Apis/finorbitx/${uniq}.php`;
-          // }else if(title === 'Personal Loan'){
-          //   formUrls = `https://dev.erb.ai/corporate_tool/Apis/finorbitx/${uniq}.php`;
-          // }
-
-          //console.log('formData', formUrls);
+          console.log('formData', formData);
 
           Helper.networkHelperTokenContentType(
             formUrls,
@@ -554,7 +571,7 @@ export default class FinorbitForm extends React.PureComponent {
                   response_header.res_id !== ''
                 ) {
                   if(isPlCif){
-                    const plCifLink = `${Pref.BuyPLInsurance}?unq_no=${Number(response_header.res_id)}`;
+                    const plCifLink = `${Pref.PLCifUrl}?unq_no=${Number(response_header.res_id)}`;
                     Linking.openURL(plCifLink);              
                   }else{
                     this.finishForm();                  
@@ -618,6 +635,8 @@ export default class FinorbitForm extends React.PureComponent {
         btnText = currentPosition === 2 ? 'Submit' : 'Next';
       } else if (title === 'Health Insurance') {
         btnText = currentPosition === 1 ? 'Submit' : 'Next';
+      } else if (title === 'Personal Loan') {
+        btnText = currentPosition === 2 ? 'Submit' : 'Next';
       } else {
         btnText = currentPosition === 3 ? 'Submit' : 'Next';
       }
@@ -719,9 +738,9 @@ export default class FinorbitForm extends React.PureComponent {
               <StepIndicator
                 activeCounter={this.state.currentPosition}
                 stepCount={
-                  this.state.title === 'Insure Check' ||
+                  title === 'Insure Check' ||
                   title == 'Health Insurance'
-                    ? 2
+                    ? 2 : title === 'Personal Loan' ? 3
                     : 4
                 }
                 positionClicked={(pos) => {
@@ -780,6 +799,7 @@ export default class FinorbitForm extends React.PureComponent {
                       )}
                     </>
                   ) : this.state.currentPosition === 2 ? (
+                    <>
                     <FileUploadForm
                       ref={this.FileUploadFormRef}
                       title={this.state.title}
@@ -868,11 +888,19 @@ export default class FinorbitForm extends React.PureComponent {
                       bstatepass={editMode ?  editThird && editThird.bstatepass : this.restoreList[2] &&
                         this.restoreList[2].bstatepass}
                     />
+                    {title === 'Personal Loan' ? <ApptForm
+                      ref={this.ApptFormRef}
+                      title={this.state.title}
+                      editItemRestore={editFour}
+                      editMode={this.state.editMode}
+                    /> : null}
+                    </>
                   ) : this.state.currentPosition === 3 ? (
                     <ApptForm
                       ref={this.ApptFormRef}
                       title={this.state.title}
                       editItemRestore={editFour}
+                      editMode={this.state.editMode}
                     />
                   ) : null}
                 </View>
@@ -920,7 +948,7 @@ export default class FinorbitForm extends React.PureComponent {
                   </Button>
                 </View>
             
-                {title === 'Personal Loan' && this.state.currentPosition === 3 ? <View
+                {title === 'Personal Loan' && this.state.editMode === false && this.state.currentPosition === 2 ? <View
                   styleName={`horizontal space-between md-gutter v-center h-center`}>                
                 <Button
                     mode={'flat'}

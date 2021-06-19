@@ -191,6 +191,7 @@ export default class GetQuotes extends React.Component {
       company: map,
       formId: formId,
       sumInsurred: sumInsurred,
+      deductible:deductible
     });
   };
 

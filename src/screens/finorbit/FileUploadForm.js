@@ -2444,7 +2444,7 @@ export default class FileUploadForm extends React.PureComponent {
               truDownloadEnable={truDownloadEnable}
               downloadTitles={downloadTitles}
               mode={mode}
-              title={`${this.mandatoryName(`Pan Card ${title === 'Personal Loan' && truDownloadEnable === -1 ? '*' : ''}`, title)} ${
+              title={`${this.mandatoryName(`Pan Card ${title === 'Personal Loan' && truDownloadEnable === -1 && editMode === false ? '*' : ''}`, title)} ${
                 truDownloadEnable === 1 ? '1' : ''
               }`}
               type={2}
@@ -2869,7 +2869,7 @@ export default class FileUploadForm extends React.PureComponent {
                           `${
                             title === 'Credit Card'
                               ? '1 Year Bank Statement'
-                              : `6 Month Bank Statement ${title === 'Personal Loan' && truDownloadEnable === -1 ? '*' : ''}`
+                              : `6 Month Bank Statement ${title === 'Personal Loan' && truDownloadEnable === -1 && editMode === false ? '*' : ''}`
                           }`,
                           title,
                         )
@@ -3297,7 +3297,7 @@ export default class FileUploadForm extends React.PureComponent {
         {title === 'TMP' ? (
           <FilePicker
             truDownloadEnable={truDownloadEnable}
-            title={'Policy'}
+            title={tmpPolicy === null ? 'Policy' : 'Policy Issued'}
             type={2}
             totalFile={6}
             downloadList={[tmpPolicy]}

@@ -2970,25 +2970,34 @@ export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bm
 // export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
 // export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
 //export const BlogFileUrl = `${MainUrl}/super_admin/`;
+//export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
+//export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
+//export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
+//export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
 
 //uat test url
-// export const MainUrl = `https://uat.erb.ai/`;
-// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
-// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
-//export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
-
-//dev url
-export const MainUrl = `https://dev.erb.ai/`;
+export const MainUrl = `https://uat.erb.ai/`;
 export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
 export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
-export const DialerMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
-export const SalesMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
-export const QRCMainUrl = `https://uat.erb.ai/ticketsystem/public`;
-export const QRCTicketMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
+export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
+export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
+export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
 export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
+
+//dev url
+// export const MainUrl = `https://dev.erb.ai/`;
+// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
+// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
+// export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
+// export const DialerMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+// export const SalesMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+// export const QRCMainUrl = `https://uat.erb.ai/ticketsystem/public`;
+// export const QRCTicketMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
+// export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
 
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
@@ -3042,8 +3051,8 @@ export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
 export const HealthQouteCompanyUrl = `${FinURL}ajax.php`;
 export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
-export const BuyInsurance = `${FinURL}hicif.php`;
-export const BuyPLInsurance = `${FinURL}plcif.php`;
+export const HLCifUrl = `${FinURL}hicif.php`;
+export const PLCifUrl = `${FinURL}plcif.php`;
 
 
 //////Sales API /////////

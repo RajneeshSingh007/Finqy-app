@@ -85,7 +85,7 @@ export default class LeadList extends React.PureComponent {
         160,
         100,
         140,
-        100,
+        120,
         140,
         //80,
         100,
@@ -205,6 +205,7 @@ export default class LeadList extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, response_header} = result;
+        //console.log('data', data);
         const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
@@ -332,7 +333,8 @@ export default class LeadList extends React.PureComponent {
       policy: policy,
       activeRowData: item,
       cif: cif_file,
-      tmpPolicy: pname === 'TMP' ? constructObjEditTmp(item) : null
+      tmpPolicy: policy
+      //pname === 'TMP' ? constructObjEditTmp(item) : null
     });
   };
 

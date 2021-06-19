@@ -6,6 +6,7 @@ import {
   Pressable,
   TouchableWithoutFeedback,
   Dimensions,
+  Linking
 } from 'react-native';
 import * as Helper from '../../util/Helper';
 import { sizeWidth, sizeHeight } from '../../util/Size';
@@ -465,10 +466,10 @@ export default class NewHomeScreen extends React.PureComponent {
 
   tmponClick = () =>{
     const { userData } = this.state;
-    const { refercode } = userData;
-    //const url = `${Pref.TMPUrl}?ref=${refercode}`;
-    //const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below Test My Policy Link. ${url}`;
-    NavigationActions.navigate('WebComp', { url: `${Pref.TMPUrl}?ref=${refercode}` })
+    const { refercode,id } = userData;
+    const url = `${Pref.TMPUrl}?ref=${refercode}&id=${id}`;
+    Linking.openURL(url);
+    //NavigationActions.navigate('WebComp', { url: `${Pref.TMPUrl}?ref=${refercode}`, title:`Test My Policy` })
   }
 
   renderProduct = () => {

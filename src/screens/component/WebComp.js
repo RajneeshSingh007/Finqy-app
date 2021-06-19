@@ -15,7 +15,8 @@ export default class WebComp extends React.PureComponent {
     this.backClick = this.backClick.bind(this);
     this.state = {
       url: null,
-      navState: null
+      navState: null,
+      title:''
     };
   }
 
@@ -23,8 +24,9 @@ export default class WebComp extends React.PureComponent {
     BackHandler.addEventListener("hardwareBackPress", this.backClick);
     const { navigation } = this.props;
     const url = navigation.getParam("url", null);
+    const title = navigation.getParam("title", '');
     if (url !== null) {
-      this.setState({ url: url });
+      this.setState({ url: url,title:title });
     }
   }
 
@@ -54,7 +56,7 @@ export default class WebComp extends React.PureComponent {
         scrollEnable={false}
         body={
           <>
-            <LeftHeaders showBack title={`Test My Policy`} backClicked={() => this.backClick()} />
+            <LeftHeaders showBack title={this.state.title} backClicked={() => this.backClick()} />
             <View style={{ backgroundColor: "white", flex: 1 }}>
               {this.state.url !== null ? (
                 <WebView
@@ -71,6 +73,7 @@ export default class WebComp extends React.PureComponent {
                   javaScriptEnabled
                   allowsBackForwardNavigationGestures={false}
                   onNavigationStateChange={navState => {
+                    console.log(navState);
                     this.setState({ navState: navState });
                   }}
                 />

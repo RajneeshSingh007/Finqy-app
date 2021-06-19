@@ -2882,10 +2882,10 @@ export const constructObjEditTmp = item => {
   if (Helper.nullStringCheck(required_cover) === false) {
     rCover = `${Number(required_cover) / 100000}`;
   }
-  let policyFile = '';
-  if (Helper.nullStringMultiCheck(file) === false) {
-    policyFile = `${Pref.ErbFinorbitFormUrl}tmp_form/policy/${file}`;
-  }
+  // let policyFile = '';
+  // if (Helper.nullStringMultiCheck(file) === false) {
+  //   policyFile = `${Pref.ErbFinorbitFormUrl}tmp_form/policy/${file}`;
+  // }
   let floater = '';
   if (Helper.nullStringMultiCheck(family_floater) === false) {
     const split = family_floater.split(/\s/g);
@@ -2906,7 +2906,7 @@ export const constructObjEditTmp = item => {
     insCompany: Helper.nullStringCheckWithReturn(company_name),
     insPlan: Helper.nullStringCheckWithReturn(plan_name),
     apremium: Helper.nullStringCheckWithReturn(premium_amount),
-    tmpPolicy: policyFile,
+    //tmpPolicy: policyFile,
     formid: id,
   };
 };
@@ -2916,10 +2916,10 @@ export const constructObjEditTmp = item => {
  * @param {} title
  * @param {*} allfileslist
  */
-export const thirdFormFileCheck = (title, allfileslist, stateObj = {}) => {
+export const thirdFormFileCheck = (title, allfileslist, stateObj = {}, editMode = false) => {
   let result = true;
   let existence = '';
-  if (title === 'Personal Loan') {
+  if (title === 'Personal Loan' && editMode === false) {
     if (stateObj.statement_bank == '') {
       Helper.showToastMessage('Please, Select Bank Name', 0);
     } else {

@@ -78,7 +78,7 @@ class NewDropDown extends React.Component {
       return truncate
         ? Lodash.truncate(value, {
             separator: '...',
-            length: 12,
+            length: 30,
           })
         : value;
     } else if (Helper.nullStringCheck(displayValue) === false) {
