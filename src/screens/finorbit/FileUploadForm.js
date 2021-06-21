@@ -1855,7 +1855,8 @@ export default class FileUploadForm extends React.PureComponent {
       cifEmailClicked = () => {},
       itrdoc = null,
       employ = '',
-      tmpPolicy = null,     
+      tmpPolicy = null, 
+      tmpPolicyIssued = null,    
     } = this.props;
 
     const {
@@ -1918,6 +1919,17 @@ export default class FileUploadForm extends React.PureComponent {
             type={2}
             enableDownloads={this.checkurl(0, policy)}
             downloadUrl={this.checkurl(1, policy)}
+          />
+        ) : null}
+                {truDownloadEnable !== -1 && tmpPolicyIssued !== null ? (
+          <CommonFileUpload
+            truDownloadEnable={truDownloadEnable}
+            downloadTitles={downloadTitles}
+            mode={mode}
+            title={`Policy Issued`}
+            type={2}
+            enableDownloads={this.checkurl(0, tmpPolicyIssued)}
+            downloadUrl={this.checkurl(1, tmpPolicyIssued)}
           />
         ) : null}
         {loanCheck ? (
@@ -3294,7 +3306,7 @@ export default class FileUploadForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {title === 'TMP' ? (
+        {/* {title === 'TMP' ? (
           <FilePicker
             truDownloadEnable={truDownloadEnable}
             title={tmpPolicy === null ? 'Policy' : 'Policy Issued'}
@@ -3324,7 +3336,20 @@ export default class FileUploadForm extends React.PureComponent {
               }
             }}
           />
-        ) : null}
+        ) : null} */}
+        {title === 'TMP' ? <CommonFileUpload
+        type={-1}
+                title={tmpPolicy === null ? 'Policy' : 'Policy Issued'}
+              pickedTitle={this.findFileName(`tmp_file_upload`)}
+              pickedCallback={(selected, res) => {
+                this.state.fileList.push({tmp_file_upload: res});
+              }}
+              enableDownloads={tmpPolicy != null && this.checkurl(0, tmpPolicy)}
+              downloadUrl={this.checkurl(1, tmpPolicy)}
+              mode={mode}
+              downloadTitles={downloadTitles}
+              truDownloadEnable={truDownloadEnable}
+            /> : null}
       </View>
     );
   }

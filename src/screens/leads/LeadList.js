@@ -119,7 +119,8 @@ export default class LeadList extends React.PureComponent {
       editSecond: null,
       activeRowData: null,
       quotemailType: -1,
-      tmpPolicy:null
+      tmpPolicy:null,
+      tmpPolicyIssued:null
     };
   }
 
@@ -269,6 +270,7 @@ export default class LeadList extends React.PureComponent {
     } else {
       pname = product;
     }
+    //console.log('product', product);
     if (product === 'Insurance Samadhan') {
       NavigationActions.navigate('Samadhan', {
         leadData: constructObjEditSamadhan(item),
@@ -276,7 +278,7 @@ export default class LeadList extends React.PureComponent {
         url: '',
         edit: true,
       });
-    }else if (product === 'Tmp') {
+    }else if (product === 'Tmp' || product === 'Test My Policy') {
       NavigationActions.navigate('TestMyPolicy', {
         leadData: constructObjEditTmp(item),
         edit: true,
@@ -292,7 +294,7 @@ export default class LeadList extends React.PureComponent {
   };
 
   downloadFile = (item) => {
-    const {product, quotes, policy, cif_file} = item;
+    const {product, quotes, policy,policyissued, cif_file} = item;
     //policy, quote
     let pname = '';
     if (product === 'Mutual Fund') {
@@ -333,7 +335,8 @@ export default class LeadList extends React.PureComponent {
       policy: policy,
       activeRowData: item,
       cif: cif_file,
-      tmpPolicy: policy
+      tmpPolicy: policy,
+      tmpPolicyIssued:policyissued
       //pname === 'TMP' ? constructObjEditTmp(item) : null
     });
   };
@@ -1047,6 +1050,7 @@ export default class LeadList extends React.PureComponent {
                         cifWhatsappClicked={() => this.cifWhatsappClicked()}
                         cifEmailClicked={() => this.quoteEmailClicked(2)}
                         tmpPolicy={this.state.tmpPolicy}
+                        tmpPolicyIssued={this.state.tmpPolicyIssued}
                       />
                     </View>
                   }

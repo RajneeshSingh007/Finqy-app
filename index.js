@@ -47,6 +47,7 @@ function Main() {
       <PaperProvider theme={theme}>
         <App />
       </PaperProvider>
+      
     </Provider>
   );
 }

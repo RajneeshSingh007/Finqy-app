@@ -344,7 +344,7 @@ class FilePicker extends React.PureComponent {
   };
 
   moreFilePickClicked = () => {
-    //const {visible, pickedFile} = this.state;
+    const {visible, pickedFile} = this.state;
     //this.props.pickedCallback(pickedFile);
     this.setState({visible: !visible});
   };

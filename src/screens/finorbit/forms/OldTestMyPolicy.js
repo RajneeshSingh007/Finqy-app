@@ -6,12 +6,12 @@ import * as Pref from '../../../util/Pref';
 import {Colors, Button} from 'react-native-paper';
 import {sizeHeight, sizeWidth} from '../../../util/Size';
 import Lodash from 'lodash';
-import AnimatedInputBox from '../../component/AnimatedInputBox';
-import NewDropDown from '../../component/NewDropDown';
+import InputBox from '../../component/formComponent/InputBox';
+import DropDown from '../../component/formComponent/DropDown';
 import CScreen from '../../component/CScreen';
-import StepIndicator from '../../component/StepIndicator';
+import FormStepIndicator from '../../component/formComponent/FormStepIndicator';
 import Loader from '../../../util/Loader';
-import LeftHeaders from '../../common/CommonLeftHeader';
+import TopHeader from '../../common/TopHeader';
 import FileUploadForm from '../FileUploadForm';
 import {
   tmpFirstFormCheck,
@@ -120,15 +120,6 @@ export default class TestMyPolicy extends React.PureComponent {
         });
       });
     });
-
-    // NavigationActions.navigate('GetQuotesView', {
-    //   formId: 646,
-    //   sumin: -1,
-    //   editmode: false,
-    //   deductible:-1,
-    //   url:'https://uat.erb.ai/tmp/filter_26.php?id=639.pdf'
-    // });
-
   }
 
   componentWillUnMount() {
@@ -296,7 +287,6 @@ export default class TestMyPolicy extends React.PureComponent {
         );
 
         if (disableClick === 0) {
-         
           this.setState({progressLoader: true, disableClick: 1}, () => {
             this.forceUpdate();
           });
@@ -341,7 +331,7 @@ export default class TestMyPolicy extends React.PureComponent {
             this.token,
             (result) => {
               const {response_header} = result;
-              const {res_type} = response_header;
+              const {res_type, res} = response_header;
               this.setState({progressLoader: false});
               if (res_type === 'success') {
                 Helper.showToastMessage(
@@ -350,16 +340,14 @@ export default class TestMyPolicy extends React.PureComponent {
                     : 'Form updated successfully',
                   1,
                 );
-
                 this.finishForm();
-                
                 // if (Helper.nullCheck(res.id) === false && res.id !== '') {
                 //   const {id} = res;
-                  // NavigationActions.navigate('GetQuotes', {
-                  //   formId: id,
-                  //   sumin: cov,
-                  //   editmode: this.state.editMode,
-                  // });
+                //   NavigationActions.navigate('GetQuotes', {
+                //     formId: id,
+                //     sumin: cov,
+                //     editmode: this.state.editMode,
+                //   });
                 // } else {
                 //   this.finishForm();
                 // }
@@ -373,7 +361,6 @@ export default class TestMyPolicy extends React.PureComponent {
               Helper.showToastMessage('Something went wrong', 0);
             },
           );
-        
         }
       }
     }
@@ -407,7 +394,7 @@ export default class TestMyPolicy extends React.PureComponent {
   renderFirstPart = () => {
     return (
       <View>
-        <AnimatedInputBox
+        <InputBox
           onChangeText={(value) => {
             if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
               this.setState({name: value});
@@ -421,7 +408,7 @@ export default class TestMyPolicy extends React.PureComponent {
           containerstyle={styles.animatedInputCont}
         />
 
-        <AnimatedInputBox
+        <InputBox
           placeholder={`Mobile Number`}
           changecolor
           showStarVisible
@@ -439,7 +426,7 @@ export default class TestMyPolicy extends React.PureComponent {
           returnKeyType={'next'}
         />
 
-        <AnimatedInputBox
+        <InputBox
           placeholder={`Email`}
           changecolor
           showStarVisible
@@ -450,7 +437,7 @@ export default class TestMyPolicy extends React.PureComponent {
           keyboardType={'email'}
         />
 
-        <NewDropDown
+        <DropDown
           list={floaterList}
           placeholder={'Select Insurance Type'}
           starVisible
@@ -460,7 +447,7 @@ export default class TestMyPolicy extends React.PureComponent {
           textStyle={styles.newdropdowntextstyle}
         />
 
-        <NewDropDown
+        <DropDown
           list={this.state.companyList}
           placeholder={'Select Company'}
           starVisible
@@ -470,7 +457,7 @@ export default class TestMyPolicy extends React.PureComponent {
           textStyle={styles.newdropdowntextstyle}
         />
 
-        <NewDropDown
+        <DropDown
           list={this.state.planList}
           placeholder={'Select Plan'}
           starVisible
@@ -486,7 +473,7 @@ export default class TestMyPolicy extends React.PureComponent {
   renderSecondPart = () => {
     return (
       <View>
-        <NewDropDown
+        <DropDown
           list={healthRequiredCover}
           placeholder={'Select Required Cover'}
           starVisible
@@ -503,7 +490,7 @@ export default class TestMyPolicy extends React.PureComponent {
           textStyle={styles.newdropdowntextstyle}
         />
 
-        <AnimatedInputBox
+        <InputBox
           placeholder={`Annual Premium`}
           changecolor
           showStarVisible
@@ -520,7 +507,7 @@ export default class TestMyPolicy extends React.PureComponent {
           enableWords
         />
 
-        <AnimatedInputBox
+        <InputBox
           placeholder={`Age of the Eldest Person`}
           changecolor
           showStarVisible
@@ -544,7 +531,7 @@ export default class TestMyPolicy extends React.PureComponent {
           editMode={this.state.editMode}
         />
 
-        <AnimatedInputBox
+        <InputBox
           placeholder={`Remark`}
           changecolor
           containerstyle={styles.animatedInputCont}
@@ -574,7 +561,7 @@ export default class TestMyPolicy extends React.PureComponent {
         }
         body={
           <>
-            <LeftHeaders
+            <TopHeader
               backClicked={this.backClick}
               showBack
               title={!editMode ? `Add New Lead` : `Edit Lead`}
@@ -589,7 +576,7 @@ export default class TestMyPolicy extends React.PureComponent {
                 fontSize: 20,
               }}
             />
-            <StepIndicator
+            <FormStepIndicator
               activeCounter={this.state.currentPosition}
               stepCount={2}
               positionClicked={(pos) => {
