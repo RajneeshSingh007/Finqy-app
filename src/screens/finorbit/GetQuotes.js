@@ -4,6 +4,8 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   BackHandler,
+  ScrollView,
+  FlatList
 } from 'react-native';
 import {Title, Subtitle, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
@@ -68,7 +70,7 @@ export default class GetQuotes extends React.Component {
     const deductible = navigation.getParam('deductible', -1);
     //console.log('sumInsurred', sumInsurred, formId, deductible)
 
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
         formId: formId,
         sumInsurred: `${Number(sumInsurred)}`,
@@ -78,7 +80,7 @@ export default class GetQuotes extends React.Component {
       }, () =>{
         this.fetchCompany(formId, Number(sumInsurred), true);
       });
-    });
+    //});
   }
 
   backClick = () => {
@@ -94,12 +96,12 @@ export default class GetQuotes extends React.Component {
   };
 
   fetchCompany = (id, sum_insured, isFirstTime) => {
-    //this.setState({ loading: true });
+    this.setState({ loading: true });
     const {deductible} = this.state;
     const formData = new FormData();
     formData.append('id', id);
     formData.append('sum_insured', sum_insured);  
-    //console.log(formData);
+    console.log(formData);
     Helper.networkHelperContentType(
       deductible === -1 ? Pref.HealthQouteCompanyUrl : Pref.HealthTopupQouteCompanyUrl,
       formData,
@@ -132,7 +134,7 @@ export default class GetQuotes extends React.Component {
         }
       },
       (error) => {
-        //console.log("er", error);
+        console.log("er", error);
         this.setState({companyList: [], loading: false});
       },
     );
@@ -249,6 +251,7 @@ export default class GetQuotes extends React.Component {
     const {formId, sumInsurred, loading} = this.state;
     return (
       <CScreen
+      showRefreshControl={false}
         absolute={
           <>
             <Modal
@@ -345,21 +348,20 @@ export default class GetQuotes extends React.Component {
               showBack
             />
 
-            <View styleName="md-gutter">
+            <View styleName="md-gutter" style={{flex:1, flexDirection:'column'}}>
               <View style={styles.radiocont}>
                 <Title style={styles.bbstyle}>{`Company Selection`}</Title>
                 {this.state.companyList.length > 0 ? (
-                  <View styleName="vertical" style={{marginBottom: 8}}>
-                    {this.state.companyList.map((k, i) => {
-                      return (
+                  <FlatList showsVerticalScrollIndicator={false} style={{maxHeight:250}} nestedScrollEnabled data={this.state.companyList} renderItem={({item, index}) =>{
+                      return                     <View styleName="vertical" style={{marginEnd: 8,marginBottom: 4}}>
                         <RadioButton.Group
                           onValueChange={(value) =>
-                            this.onChangeComp(value, k, i)
+                            this.onChangeComp(value, item, index)
                           }
-                          value={k.select === false ? '' : `${k.id}`}>
+                          value={item.select === false ? '' : `${item.id}`}>
                           <View styleName="horizontal v-center" style={{marginVertical:6}}>
                             <RadioButton
-                              value={`${k.id}`}
+                              value={`${item.id}`}
                               style={{
                                 alignSelf: 'center',
                                 justifyContent: 'center',
@@ -367,13 +369,12 @@ export default class GetQuotes extends React.Component {
                             />
                             <Title
                               styleName="v-center"
-                              style={styles.textopen}>{`${k.name}`}</Title>
+                              style={styles.textopen}>{`${item.name}`}</Title>
                           </View>
                         </RadioButton.Group>
-                      );
-                    })}
                   </View>
-                ) : loading === false ? (
+                    }} />
+                ) : this.state.loading === false ? (
                   <Title
                     styleName="v-start h-start"
                     style={StyleSheet.flatten([
@@ -565,8 +566,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   radiocont: {
-    marginStart: 10,
-    marginEnd: 10,
+    flex:0.5,
+    marginStart: 8,
+    marginEnd: 8,
     borderBottomWidth: 1.3,
     borderBottomColor: '#f2f1e6',
     alignContent: 'center',

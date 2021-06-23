@@ -2378,7 +2378,12 @@ export default class HealthInsurance extends React.PureComponent {
                 </Title>
 
                 <RadioButton.Group
-                  onValueChange={(value) => this.setState({claim_type: value})}
+                  onValueChange={(value) => {
+                    this.setState({claim_type: value,                  
+                    family_floater_child: 'Select Child',
+                    family_floater_adult: 'Select Adult',
+                    floaterItemList: [],})}
+                  }
                   value={this.state.claim_type}>
                   <View styleName="horizontal" style={{marginBottom: 8}}>
                     <View
@@ -2594,7 +2599,7 @@ export default class HealthInsurance extends React.PureComponent {
               value={this.state.family_floater_adult}
               selectedItem={(value) => {
                 this.setState({
-                  family_floater_child: '',
+                  family_floater_child: 'Select Child',
                   family_floater_adult: value,
                   floaterItemList: [],
                 });
@@ -2622,7 +2627,7 @@ export default class HealthInsurance extends React.PureComponent {
               value={this.state.family_floater_child}
               selectedItem={(value) => {
                 const finalFloater = `${this.state.family_floater_adult} ${value}`;
-                console.log('finalFloater', finalFloater);
+                //console.log('finalFloater', finalFloater);
                 const clone = JSON.parse(JSON.stringify(floatCloneList));
                 if (
                   finalFloater === `2 Adult` ||

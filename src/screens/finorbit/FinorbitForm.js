@@ -128,9 +128,9 @@ export default class FinorbitForm extends React.PureComponent {
     });
 
     // NavigationActions.navigate("GetQuotes", {
-    //   formId: 1945,
+    //   formId: 1956,
     //   sumin:10,
-    //   deductible:3,
+    //   deductible:-1,
     //   editmode:false
     // });
   }
@@ -364,11 +364,11 @@ export default class FinorbitForm extends React.PureComponent {
           );
         }
       } else {
-        if (disableClick === 0) {
+        // if (disableClick === 0) {
           
-          this.setState({progressLoader: true, disableClick: 1}, () => {
-            this.forceUpdate();
-          });
+        //   this.setState({progressLoader: true, disableClick: 1}, () => {
+        //     this.forceUpdate();
+        //   });
 
           const {refercode} = this.state.userData;
           formData.append('ref', refercode);
@@ -509,7 +509,7 @@ export default class FinorbitForm extends React.PureComponent {
           }
 
           //forth
-          if ((dateForm && this.state.currentPosition === 3) || (dateForm && title === 'Personal Loan' && this.state.currentPosition === 2)) {
+          if ((dateForm && this.state.currentPosition === 3) || (dateForm && title === 'Personal Loan' && this.state.currentPosition === 2) && title !== 'Health Insurance') {
             // if (dateForm.baa === "") {
             //checkData = false;
             //Helper.showToastMessage("Please, Select Appointment Date", 0);
@@ -547,63 +547,63 @@ export default class FinorbitForm extends React.PureComponent {
 
           console.log('formData', formData);
 
-          Helper.networkHelperTokenContentType(
-            formUrls,
-            formData,
-            Pref.methodPost,
-            this.state.token,
-            (result) => {
-              //console.log('result', result);
+          // Helper.networkHelperTokenContentType(
+          //   formUrls,
+          //   formData,
+          //   Pref.methodPost,
+          //   this.state.token,
+          //   (result) => {
+          //     //console.log('result', result);
               
-              const {response_header} = result;
-              const {res_type, res} = response_header;
-              this.setState({progressLoader: false});
-              if (res_type === 'success') {
-                Helper.showToastMessage(
-                  editMode === false
-                    ? 'Form submitted successfully'
-                    : 'Form updated successfully',
-                  1,
-                );
-                if (
-                  title === `Personal Loan` &&
-                  Helper.nullCheck(response_header.res_id) === false &&
-                  response_header.res_id !== ''
-                ) {
-                  if(isPlCif){
-                    const plCifLink = `${Pref.PLCifUrl}?unq_no=${Number(response_header.res_id)}`;
-                    Linking.openURL(plCifLink);              
-                  }else{
-                    this.finishForm();                  
-                  }
-                }else if (
-                  title === `Health Insurance` &&
-                  Helper.nullCheck(res.id) === false &&
-                  res.id !== ''
-                ) {
-                  const {id, deductible} = res;
-                  const cov = Number(specificForms.required_cover);
-                  NavigationActions.navigate('GetQuotes', {
-                    formId: id,
-                    sumin: cov,
-                    editmode: this.state.editMode,
-                    deductible: deductible,
-                  });
-                } else {
-                  this.finishForm();
-                }
-              } else {
-                Helper.showToastMessage('Failed to submit form', 0);
-              }
-            },
-            (e) => {
-              console.log(e);
-              this.setState({progressLoader: false});
-              Helper.showToastMessage('Something went wrong', 0);
-            },
-          );
+          //     const {response_header} = result;
+          //     const {res_type, res} = response_header;
+          //     this.setState({progressLoader: false});
+          //     if (res_type === 'success') {
+          //       Helper.showToastMessage(
+          //         editMode === false
+          //           ? 'Form submitted successfully'
+          //           : 'Form updated successfully',
+          //         1,
+          //       );
+          //       if (
+          //         title === `Personal Loan` &&
+          //         Helper.nullCheck(response_header.res_id) === false &&
+          //         response_header.res_id !== ''
+          //       ) {
+          //         if(isPlCif){
+          //           const plCifLink = `${Pref.PLCifUrl}?unq_no=${Number(response_header.res_id)}`;
+          //           Linking.openURL(plCifLink);              
+          //         }else{
+          //           this.finishForm();                  
+          //         }
+          //       }else if (
+          //         title === `Health Insurance` &&
+          //         Helper.nullCheck(res.id) === false &&
+          //         res.id !== ''
+          //       ) {
+          //         const {id, deductible} = res;
+          //         const cov = Number(specificForms.required_cover);
+          //         NavigationActions.navigate('GetQuotes', {
+          //           formId: id,
+          //           sumin: cov,
+          //           editmode: this.state.editMode,
+          //           deductible: deductible,
+          //         });
+          //       } else {
+          //         this.finishForm();
+          //       }
+          //     } else {
+          //       Helper.showToastMessage('Failed to submit form', 0);
+          //     }
+          //   },
+          //   (e) => {
+          //     console.log(e);
+          //     this.setState({progressLoader: false});
+          //     Helper.showToastMessage('Something went wrong', 0);
+          //   },
+          // );
 
-        }
+        //}
       }
     }
   };

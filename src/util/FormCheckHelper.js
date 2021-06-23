@@ -437,10 +437,10 @@ export const secondFormCheck = (title, specificForms) => {
     title === `Health Insurance` &&
     specificForms.claim_type === 'Family Floater'
   ) {
-    if (specificForms.family_floater_adult === '') {
+    if (specificForms.family_floater_adult === '' || specificForms.family_floater_adult === 'Select Adult') {
       result = false;
       Helper.showToastMessage('Please, Select Adult', 0);
-    } else if (specificForms.family_floater_child === '') {
+    } else if (specificForms.family_floater_child === '' || specificForms.family_floater_child === 'Select Child') {
       result = false;
       Helper.showToastMessage('Please, Select Child', 0);
     } else {
@@ -1125,10 +1125,10 @@ export const tmpFirstFormCheck = ({
     mobile === '1234567890'
   ) {
     Helper.showToastMessage('Invalid mobile number', 0);
-  } else if (mobile.match(/^[0-9]*$/g) === null) {
+  }else if (mobile.match(/^[0-9]*$/g) === null) {
     Helper.showToastMessage('Invalid mobile number', 0);
-  } else if (mobile.match(/^[0-9]*$/g) === null) {
-    Helper.showToastMessage('Invalid mobile number', 0);
+  } else if (email === '') {
+    Helper.showToastMessage('Email empty', 0);
   } else if (email !== '' && Helper.emailCheck(email) === false) {
     Helper.showToastMessage('Invalid Email', 0);
   } else if (insType == '') {

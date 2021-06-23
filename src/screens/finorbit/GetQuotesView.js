@@ -42,7 +42,7 @@ export default class GetQuotesView extends React.PureComponent {
     const editMode = navigation.getParam("editmode", false);
     const deductible = navigation.getParam("deductible", -1);
     //console.log('url', url,sumInsurred,formId);
-    this.focusListener = navigation.addListener("didFocus", () => {
+    //this.focusListener = navigation.addListener("didFocus", () => {
       Pref.getVal(Pref.userData, data => {
         //console.log('data', data)
         this.setState({
@@ -54,7 +54,7 @@ export default class GetQuotesView extends React.PureComponent {
         });
         this.fetchData(url, data);
       });
-    });
+    //});
   }
 
   fetchData = (url, data) => {

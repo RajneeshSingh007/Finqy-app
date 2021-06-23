@@ -90,7 +90,8 @@ export default class CScreen extends React.Component {
       absolute = null,
       showfooter = true,
       bgColor = Pref.WHITE,
-      showScrollToTop = true
+      showScrollToTop = true,
+      showRefreshControl = true
     } = this.props;
     return (
       <SafeAreaView
@@ -128,10 +129,10 @@ export default class CScreen extends React.Component {
                 flexGrow: 1,
               }}
               refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this.onRefreshed}
-                />
+                showRefreshControl ? <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefreshed}
+              /> : null
               }>
               {body}
               {showfooter === true ? (
