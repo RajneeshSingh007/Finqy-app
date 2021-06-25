@@ -12,6 +12,8 @@ import FinproCallModule from '../../FinproCallModule';
 const callerServiceHandler = async (data) => {
   const {phoneNumber, state} = data;
 
+  global.dialerCallDisconnected = 1;
+
   // console.log(
   //   'callerServiceHandler',
   //   state,
@@ -38,6 +40,10 @@ const callerServiceHandler = async (data) => {
     }
   } else {
     stopService();
+  }
+
+  if(lowercase === 'disconnected'){
+    global.dialerCallDisconnected = 2;
   }
 
   if (Helper.nullCheck(global.dialerCustomerItem) === false) {

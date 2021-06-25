@@ -37,6 +37,7 @@ export default class NewHomeScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.navigateToPage = this.navigateToPage.bind(this);
+    this.dialerClick = this.dialerClick.bind(this);
     this.state = {
       fullLoader: false,
       loading: false,
@@ -404,18 +405,24 @@ export default class NewHomeScreen extends React.PureComponent {
         <Title style={styles.headings}>{'Manage'}</Title>
         <View styleName="horizontal" style={styles.manage}>
           {this.renderManageItem(
-            () => this.navigateToPage('FinorbitScreen'),
+            () => {
+              this.navigateToPage('FinorbitScreen')
+            },
             require('../../res/images/home/newlead.png'),
             'New Lead',
           )}
           {this.renderManageItem(
-            () => this.navigateToPage('LeadList', { name: 'Q-Leads' }),
+            () => {
+              this.navigateToPage('LeadList', { name: 'Q-Leads' })
+            },
             require('../../res/images/home/mylead.png'),
             'Q-Leads',
           )}
 
           {this.renderManageItem(
-            () => this.navigateToPage('Dashboard'),
+            () => {
+              this.navigateToPage('Dashboard')
+            },
             require('../../res/images/home/dashboard.png'),
             'Dashboard',
           )}
@@ -427,7 +434,9 @@ export default class NewHomeScreen extends React.PureComponent {
           )} */}
 
           {this.renderManageItem(
-            () => this.openMenu(1),
+            () => {
+              this.openMenu(1);
+            },
             require('../../res/images/home/myteam.png'),
             'My Team',
           )}
@@ -575,17 +584,23 @@ export default class NewHomeScreen extends React.PureComponent {
             'Dialer',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('MarketingTool', { name: 'Q-Marketing' }),
+            () => {
+              this.navigateToPage('MarketingTool', { name: 'Q-Marketing' });
+            },
             require('../../res/images/home/mark.png'),
             'Q-Marketing',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('LinkSharingOption', { name: 'Link Sharing' }),
+            () => {
+              this.navigateToPage('LinkSharingOption', { name: 'Link Sharing' });
+            },
             require('../../res/images/home/qlinks.png'),
             'Link-Share',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('Blogs', { name: 'Q-News' }),
+            () => {
+              this.navigateToPage('Blogs', { name: 'Q-News' });
+            },
             require('../../res/images/home/qnews.png'),
             'Q-News',
           )}
@@ -594,7 +609,9 @@ export default class NewHomeScreen extends React.PureComponent {
           styleName="horizontal space-between"
           style={{ flex: 12, marginStart: 4, marginEnd: 4, marginTop: 24 }}>
           {this.renderQuickItem(
-            () => this.openMenu(0),
+            () => {
+              this.openMenu(0);
+            },
             require('../../res/images/home/qwallet.png'),
             'Q-Wallet',
           )}
@@ -604,12 +621,16 @@ export default class NewHomeScreen extends React.PureComponent {
             'Calculator',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('MyOffers', { name: 'Q-Offers' }),
+            () => {
+              this.navigateToPage('MyOffers', { name: 'Q-Offers' });
+            },
             require('../../res/images/home/offers.png'),
             'Q-Offers',
           )}
           {this.renderQuickItem(
-            () => this.navigateToPage('Payout', { name: 'Payout Structure' }),
+            () => {
+              this.navigateToPage('Payout', { name: 'Payout Structure' })
+            },
             require('../../res/images/home/pay.png'),
             'Payout Structure',
           )}
@@ -911,7 +932,9 @@ export default class NewHomeScreen extends React.PureComponent {
           styleName="horizontal v-center h-center space-between md-gutter"
           style={styles.bottomContainers}>
           {this.renderBottomItem(
-            () => this.navigateToPage('Home'),
+            () => {
+              this.navigateToPage('Home');
+            },
             require('../../res/images/home/home.png'),
             'Home\n',
           )}
@@ -930,7 +953,9 @@ export default class NewHomeScreen extends React.PureComponent {
           )}
           <View style={styles.linedividers} />
           {this.renderBottomItem(
-            () => this.navigateToPage('Training', { name: 'Q-Learning' }),
+            () => {
+              this.navigateToPage('Training', { name: 'Q-Learning' });
+            },
             require('../../res/images/home/knowledge.png'),
             'Q Learning',
           )}

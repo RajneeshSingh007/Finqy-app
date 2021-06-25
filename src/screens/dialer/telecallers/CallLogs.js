@@ -103,14 +103,7 @@ export default class CallLogs extends React.PureComponent {
         if (status === true) {
           const callLogData = Lodash.map(data, (io) => {
             io.time = io.dateTime;
-            if (io.duration === 0) {
-              io.duration = '0';
-            } else {
-              if (io.duration > 60) {
-                const callDur = Number(io.duration / 60).toPrecision(3);
-                io.duration = callDur;
-              }
-            }
+            io.duration = Helper.getMinutesSecond(io.duration);
             return io;
           });
           this.setState(
@@ -204,15 +197,13 @@ export default class CallLogs extends React.PureComponent {
           <View styleName="horizontal" style={{flex: 1, flexDirection: 'row'}}>
             <View
               style={{
-                flex: 0.4,
-                alignItems: 'center',
-                justifyContent: 'center',
+                flex: 0.5,
               }}>
               <Title style={styles.tlphone}>{rowData.phoneNumber}</Title>
             </View>
-            <View
+            {/* <View
               style={{
-                flex: 0.4,
+                flex: 0.3,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
@@ -224,19 +215,16 @@ export default class CallLogs extends React.PureComponent {
                 }}>
                 {Lodash.capitalize(rowData.type)}
               </Subtitle>
-            </View>
+            </View> */}
             <View
               style={{
-                flex: 0.2,
-                alignItems: 'center',
-                justifyContent: 'center',
+                flex: 0.5,
               }}>
               <Subtitle
                 style={{
                   fontSize: 13,
                   color: 'grey',
-                  alignSelf: 'center',
-                }}>{`${rowData.duration}s`}</Subtitle>
+                }}>{`${rowData.duration}`}</Subtitle>
             </View>
           </View>
         </View>

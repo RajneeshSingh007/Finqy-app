@@ -159,7 +159,7 @@ export default class DialerRecords extends React.PureComponent {
                   'Remarks',
                   'Call Logs',
                 ];
-                widthArr = [60, 120, 110, 110, 70, 120, 120, 140, 80];
+                widthArr = [60, 120, 110, 110, 70, 120, 120, 140, 120];
                 csvHeader = `Sr.No,Name,Number,Call Date,Duration,Status,Remarks\n`;
               } else {
                 tableHead = [
@@ -216,19 +216,13 @@ export default class DialerRecords extends React.PureComponent {
   };
 
   logviewClick = (item) => {
-    const {device_call_logs} = item;
-    if (isArray(device_call_logs)) {
-      const parse = JSON.parse(device_call_logs);
+    //const {device_call_logs} = item;
+    //console.log(device_call_logs);
+    if (Helper.nullCheck(item.device_call_logs) === false) {
+      const parse = JSON.parse(item.device_call_logs);
       parse.map((io) => {
         io.time = io.dateTime;
-        if (io.duration === 0) {
-          io.duration = '0';
-        } else {
-          if (io.duration > 60) {
-            const callDur = Number(io.duration / 60).toPrecision(3);
-            io.duration = callDur;
-          }
-        }
+        io.duration = Helper.getMinutesSecond(io.duration);
         return io;
       });
       this.setState({callLogData: parse, detailShow: true}, () => {
@@ -313,8 +307,8 @@ export default class DialerRecords extends React.PureComponent {
                 fontSize: 13,
                 color: 'grey',
                 marginStart: 16,
-              }}>{`Duration: ${rowData.duration}s`}</Subtitle>
-            <Subtitle
+              }}>{`Duration: ${rowData.duration}`}</Subtitle>
+            {/* <Subtitle
               style={{
                 fontSize: 13,
                 color: 'grey',
@@ -322,7 +316,7 @@ export default class DialerRecords extends React.PureComponent {
                 marginStart: 16,
               }}>
               {Lodash.capitalize(rowData.type)}
-            </Subtitle>
+            </Subtitle> */}
           </View>
         </View>
       </View>

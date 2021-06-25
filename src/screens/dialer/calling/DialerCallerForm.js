@@ -27,7 +27,14 @@ export default class DialerCallerForm extends React.PureComponent {
     this.backClick = this.backClick.bind(this);
     this.backClick1 = this.backClick1.bind(this);
     this.apiToken = '';
-    this.state = {
+    this.state = this.initialState();
+    Pref.getVal(Pref.saveToken, (value) => {
+      this.apiToken = value;
+    });
+  }
+
+  initialState = () =>{
+    return {
       activeCallerItem: activeCallerPlaceholderJSON,
       callTrack: -1,
       productList: [],
@@ -36,9 +43,6 @@ export default class DialerCallerForm extends React.PureComponent {
       teamName: '',
       whatsappMode: false,
     };
-    Pref.getVal(Pref.saveToken, (value) => {
-      this.apiToken = value;
-    });
   }
 
   componentDidMount() {
@@ -144,7 +148,7 @@ export default class DialerCallerForm extends React.PureComponent {
 
   formResult = (status, message) => {
     const {editEnabled} = this.state;
-    this.setState({progressLoader: false});
+    this.setState(this.initialState());
     global.dialerFormSubmitted = true;
     if (editEnabled === true) {
       Helper.showToastMessage(message, status === true ? 1 : 0);
@@ -157,6 +161,7 @@ export default class DialerCallerForm extends React.PureComponent {
   callerformsubmit = (value, leadConfirm) => {
     this.setState({progressLoader: value});
     if (leadConfirm === 0) {
+      this.setState(this.initialState());
       global.dialerFormSubmitted = true;
       NavigationActions.navigate('DialerCalling');
     }
@@ -171,6 +176,7 @@ export default class DialerCallerForm extends React.PureComponent {
             bottomText={'Please do not press back button'}
           />
         }
+        showRefreshControl={false}
         body={
           <>
             <LeftHeaders

@@ -998,7 +998,7 @@ export const productShareList = () =>{
     { value: 'Mutual Fund', url: `${Pref.FinURL}mf.php` },
     { value: 'Personal Loan', url: `${Pref.FinURL}pl.php` },
     { value: 'Term Insurance', url: `${Pref.FinURL}ti.php` },
-    { value: 'Test My Policy', url: `${Pref.FinURL}tmp_lead_form.php` },
+    { value: 'Test My Policy', url: `${Pref.TMPUrl}` },
     // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
     // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
     // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
@@ -1025,5 +1025,24 @@ export const getScreenName = (props = undefined, title = '') =>{
     return props.navigation.getParam('name', '');
   }else{
     return title;
+  }
+}
+
+/**
+ * min seconds
+ * @param {*} time 
+ * @returns 
+ */
+export const getMinutesSecond = (time) =>{
+  if(time === 0){
+    return `${time}sec`;
+  }else if(time < 60){
+    return `${time}sec`;
+  }else if(time === 60){
+    return `1min`;
+  }else{
+    const minutes = Math.floor(time / 60);
+    const seconds = time - minutes * 60;
+    return `${minutes}min ${seconds}sec`;
   }
 }

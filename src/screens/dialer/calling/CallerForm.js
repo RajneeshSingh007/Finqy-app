@@ -1,62 +1,63 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   PermissionsAndroid,
   Platform,
   TouchableWithoutFeedback,
-} from 'react-native';
-import {Title, View} from '@shoutem/ui';
-import * as Helper from '../../../util/Helper';
-import * as Pref from '../../../util/Pref';
-import {Colors, Button, Portal} from 'react-native-paper';
-import {sizeHeight, sizeWidth} from '../../../util/Size';
-import moment from 'moment';
-import AnimatedInputBox from '../../component/AnimatedInputBox';
-import NewDropDown from '../../component/NewDropDown';
-import OptionsDialog from '../../component/OptionsDialog';
-import CallLogs from 'react-native-call-log';
-import NavigationActions from '../../../util/NavigationActions';
-import FlashMessage from 'react-native-flash-message';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from 'react-native-vector-icons/Feather';
-import ModalDialog from '../../component/ModalDialog';
-import {firebase} from '@react-native-firebase/firestore';
+} from "react-native";
+import { Title, View } from "@shoutem/ui";
+import * as Helper from "../../../util/Helper";
+import * as Pref from "../../../util/Pref";
+import { Colors, Button, Portal } from "react-native-paper";
+import { sizeHeight, sizeWidth } from "../../../util/Size";
+import moment from "moment";
+import AnimatedInputBox from "../../component/AnimatedInputBox";
+import NewDropDown from "../../component/NewDropDown";
+import OptionsDialog from "../../component/OptionsDialog";
+import CallLogs from "react-native-call-log";
+import NavigationActions from "../../../util/NavigationActions";
+import FlashMessage from "react-native-flash-message";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Icon from "react-native-vector-icons/Feather";
+import ModalDialog from "../../component/ModalDialog";
+import { firebase } from "@react-native-firebase/firestore";
 import {
   disableOffline,
-  serverClientDateCheck,
-} from '../../../util/DialerFeature';
+  enableCallModule,
+  serverClientDateCheck
+} from "../../../util/DialerFeature";
 
 let trackTypeList = [
   {
-    value: 'Contactable',
+    value: "Contactable"
   },
   {
-    value: 'Non-Contactable',
-  },
+    value: "Non-Contactable"
+  }
 ];
 
 let trackTypeDetailContactableList = [
   {
-    value: 'Interested',
+    value: "Interested"
   },
   {
-    value: 'Not Interested',
+    value: "Not Interested"
   },
   {
-    value: 'Follow-up',
-  },
+    value: "Follow-up"
+  }
 ];
 
 let trackTypeDetailNonContactableList = [
   {
-    value: 'Ringing',
+    value: "Ringing"
   },
   {
-    value: 'Not Reachable',
+    value: "Not Reachable"
   },
   {
-    value: 'Wrong Number',
-  },
+    value: "Wrong Number"
+  }
 ];
 
 export default class CallerForm extends React.PureComponent {
@@ -65,50 +66,58 @@ export default class CallerForm extends React.PureComponent {
     this.statusSelection = this.statusSelection.bind(this);
     this.productSelection = this.productSelection.bind(this);
     this.onChange = this.onChange.bind(this);
-    const currentdate = moment().toDate();
-    const maxDate = moment().add(1, 'months').toDate();
     this.serverDateTime = [];
     this.flashMessage = React.createRef();
     this.formSubmit = this.formSubmit.bind(this);
     this.contactDialogClicked = this.contactDialogClicked.bind(this);
     this.noncontactDialogClicked = this.noncontactDialogClicked.bind(this);
     this.outsideAgainsetup = false;
-    this.state = {
-      name: '',
-      mobile: '',
-      email: '',
-      dob: '',
-      pincode: '',
-      trackingType: '',
-      trackingDetail: '',
-      product: '',
-      remarks: '',
+    this.currentdate = moment().toDate();
+    this.maxDate = moment().add(1, "months").toDate();
+    this.state = this.initialState();
+  }
+
+  /**
+   * initial state
+   * @returns
+   */
+  initialState = () => {
+    return {
+      name: "",
+      mobile: "",
+      email: "",
+      dob: "",
+      pincode: "",
+      trackingType: "",
+      trackingDetail: "",
+      product: "",
+      remarks: "",
       showContactDialog: false,
       showNonContactDialog: false,
       clickedBtn: 0,
       callLogs: [],
       callDur: 0,
       showCalendar: false,
-      currentDate: currentdate,
-      showdatesx: currentdate,
-      maxDates: maxDate,
-      mode: 'date',
-      currentTime: '',
-      followup_date_time: '',
+      currentDate: this.currentdate,
+      showdatesx: this.currentdate,
+      maxDates: this.maxDate,
+      mode: "date",
+      currentTime: "",
+      followup_date_time: "",
       editable: false,
-      confirmModal: false,
+      confirmModal: false
     };
-  }
+  };
 
   onChange = (event, selectedDate) => {
     if (selectedDate !== undefined && selectedDate !== null) {
-      if (this.state.mode == 'date') {
-        const current = moment(selectedDate).format('DD-MM-YYYY');
+      if (this.state.mode == "date") {
+        const current = moment(selectedDate).format("DD-MM-YYYY");
         this.setState({
           showdatesx: selectedDate,
-          mode: 'time',
+          mode: "time",
           intervaltime: 30,
-          followup_date_time: current,
+          followup_date_time: current
           //showCalendar: false,
         });
       } else {
@@ -117,12 +126,12 @@ export default class CallerForm extends React.PureComponent {
         //if (hours >= 10 && hours <= 18) {
         this.state.showdatesx.setHours(hours, time, 0, 0);
         const current = moment(this.state.showdatesx).format(
-          'DD-MM-YYYY hh:mm A',
+          "DD-MM-YYYY hh:mm A"
         );
         this.setState({
           followup_date_time: current,
-          mode: 'date',
-          showCalendar: false,
+          mode: "date",
+          showCalendar: false
         });
         // } else {
         //   alert('Please, select time between 10AM - 7PM');
@@ -130,7 +139,7 @@ export default class CallerForm extends React.PureComponent {
         // }
       }
     } else {
-      this.setState({showCalendar: false, mode: 'date'});
+      this.setState({ showCalendar: false, mode: "date" });
     }
   };
 
@@ -144,11 +153,15 @@ export default class CallerForm extends React.PureComponent {
     this.setupData();
   }
 
+  callDisconnectEvent = value => {
+    console.log("callDisconnectEvent", value);
+  };
+
   setupData = () => {
     const {
       editItemRestore = null,
       editEnabled = false,
-      customerItem,
+      customerItem
     } = this.props;
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
@@ -156,17 +169,17 @@ export default class CallerForm extends React.PureComponent {
 
     //console.log('customerItem', customerItem, editEnabled);
 
-    Helper.networkHelperGet(Pref.SERVER_DATE_TIME, (datetime) => {
+    Helper.networkHelperGet(Pref.SERVER_DATE_TIME, datetime => {
       this.serverDateTime = serverClientDateCheck(datetime, false);
     });
 
     const {
-      mobile = '',
-      name = '',
+      mobile = "",
+      name = "",
       editable = false,
-      email = '',
-      dob = '',
-      pincode = '',
+      email = "",
+      dob = "",
+      pincode = ""
     } = customerItem;
 
     //ask permissions
@@ -181,25 +194,25 @@ export default class CallerForm extends React.PureComponent {
         email: email,
         dob: dob,
         pincode: pincode,
-        trackingType: '',
-        trackingDetail: '',
-        product: '',
-        remarks: '',
+        trackingType: "",
+        trackingDetail: "",
+        product: "",
+        remarks: ""
       });
     } else {
-      let trackingType = '';
-      let trackingDetail = '';
-      let product = '';
-      let remarks = '';
+      let trackingType = "";
+      let trackingDetail = "";
+      let product = "";
+      let remarks = "";
       if (Helper.nullStringCheck(customerItem.tracking_type_detail) === false) {
         trackingDetail = customerItem.tracking_type_detail;
       }
 
       if (Helper.nullStringCheck(customerItem.tracking_type) === false) {
         trackingType =
-          customerItem.tracking_type === '0'
-            ? 'Contactable'
-            : 'Non-Contactable';
+          customerItem.tracking_type === "0"
+            ? "Contactable"
+            : "Non-Contactable";
       }
 
       if (Helper.nullStringCheck(customerItem.product) === false) {
@@ -220,65 +233,19 @@ export default class CallerForm extends React.PureComponent {
         trackingType: trackingType,
         trackingDetail: trackingDetail,
         product: product,
-        remarks: remarks,
-      });
-    }
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG, {
-        title: 'Permission Required',
-        message: 'We required to access your call logs',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      }).then((result) => {
-        //console.log('result', result);
-        if (result === 'granted') {
-          let numberArray = [];
-          if (Helper.nullStringCheck(mobile) === false) {
-            let trimnumber = mobile.trim();
-            numberArray.push(`+91${trimnumber}`);
-            numberArray.push(trimnumber);
-            numberArray.push(
-              `${trimnumber.slice(0, 6)} ${trimnumber.slice(5, trimnumber.length)}`,
-            );
-            numberArray.push(`+91 ${trimnumber}`);
-            numberArray.push(
-              `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
-                5,
-                trimnumber.length,
-              )}`,
-            );
-            CallLogs.load(-1, {
-              phoneNumbers: numberArray,
-            }).then((c) => {
-              console.log('c', c);
-              let callDur = 0;
-              if (c.length > 0) {
-                const {duration} = c[0];
-                if (callDur > 60) {
-                  callDur = Number(duration / 60).toPrecision(3);
-                } else {
-                  callDur = Number(duration);
-                }
-              }
-              this.setState({
-                callLogs: c,
-                callDur: callDur,
-              });
-            });
-          }
-        }
+        remarks: remarks
       });
     }
   };
 
   componentDidUpdate() {
-    const {customerItem} = this.props;
+    const { customerItem } = this.props;
     const cItem = this.state;
-    if (customerItem.mobile != '' && cItem.mobile === '') {
+    if (customerItem.mobile != "" && cItem.mobile === "") {
       this.setupData();
     } else if (
-      customerItem.mobile != '' &&
-      cItem.mobile !== '' &&
+      customerItem.mobile != "" &&
+      cItem.mobile !== "" &&
       customerItem.mobile !== cItem.mobile
     ) {
       this.setupData();
@@ -294,24 +261,24 @@ export default class CallerForm extends React.PureComponent {
     }
   }
 
-  contactDialogClicked = (value) => {
+  contactDialogClicked = value => {
     //console.log(value);
-    this.setState({trackingDetail: value, showContactDialog: false});
+    this.setState({ trackingDetail: value, showContactDialog: false });
   };
 
-  noncontactDialogClicked = (value) => {
-    this.setState({trackingDetail: value, showNonContactDialog: false});
+  noncontactDialogClicked = value => {
+    this.setState({ trackingDetail: value, showNonContactDialog: false });
   };
 
-  showalertMessage = (msg) => {
+  showalertMessage = msg => {
     if (this.flashMessage.current && this.flashMessage.current.showMessage) {
       this.flashMessage.current.showMessage({
         message: msg,
-        type: 'danger',
-        icon: 'danger',
+        type: "danger",
+        icon: "danger",
         duration: 7000,
         animated: true,
-        floating: true,
+        floating: true
       });
     }
   };
@@ -322,19 +289,19 @@ export default class CallerForm extends React.PureComponent {
       token,
       userData,
       editEnabled = false,
-      teamName = '',
+      teamName = ""
     } = this.props;
     if ((customerItem === null || token == null, userData == null)) {
-      this.showalertMessage('Something went wrong!');
+      this.showalertMessage("Something went wrong!");
       return false;
     }
-    let id = '',
-      team_id = '',
-      user_id = '';
+    let id = "",
+      team_id = "",
+      user_id = "";
     if (Helper.nullCheck(customerItem.user_id) === true) {
       user_id = userData.id;
-      team_id = '';
-      id = '';
+      team_id = "";
+      id = "";
     } else {
       id = customerItem.id;
       team_id = customerItem.team_id;
@@ -346,49 +313,49 @@ export default class CallerForm extends React.PureComponent {
       trackingType,
       clickedBtn,
       trackingDetail,
-      callLogs,
-      callDur,
+      //callLogs,
+      //callDur,
       name,
       mobile,
       followup_date_time,
       dob,
       email,
-      pincode,
+      pincode
     } = this.state;
 
     //console.log('product', product);
 
     let checkData = true;
-    if (name === '') {
+    if (name === "") {
       checkData = false;
-      this.showalertMessage('Name empty');
+      this.showalertMessage("Name empty");
       //alert('Name empty');
-    } else if (mobile === '') {
+    } else if (mobile === "") {
       checkData = false;
-      this.showalertMessage('Mobile empty');
+      this.showalertMessage("Mobile empty");
     } else if (
       mobile.length < 10 ||
       //|| mobile === '9876543210' ||
-      mobile === '0000000000'
+      mobile === "0000000000"
       //|| mobile === '1234567890'
     ) {
       errorData = false;
-      this.showalertMessage('Invalid mobile number');
-    } else if (trackingType === '') {
+      this.showalertMessage("Invalid mobile number");
+    } else if (trackingType === "") {
       checkData = false;
-      this.showalertMessage('Please, Select Status');
+      this.showalertMessage("Please, Select Status");
     }
     //trackingType == 'Contactable' && trackingDetail === 'Interested' &&
-    else if (product === '') {
+    else if (product === "") {
       checkData = false;
-      this.showalertMessage('Please, Select Product');
+      this.showalertMessage("Please, Select Product");
     } else if (
-      trackingType == 'Contactable' &&
-      trackingDetail === 'Follow-up' &&
-      followup_date_time === ''
+      trackingType == "Contactable" &&
+      trackingDetail === "Follow-up" &&
+      followup_date_time === ""
     ) {
       checkData = false;
-      this.showalertMessage('Please, Enter Appointment Date & Time');
+      this.showalertMessage("Please, Enter Appointment Date & Time");
     }
     // else if (remarks === '') {
     //   checkData = false;
@@ -396,172 +363,246 @@ export default class CallerForm extends React.PureComponent {
     // }
 
     if (checkData && clickedBtn == 0) {
-      this.setState({clickedBtn: 1});
-      this.props.startLoader(true, -1);
+      if (
+        Helper.nullCheck(global.dialerCallDisconnected) === false &&
+        global.dialerCallDisconnected === 2
+      ) {
+        if (Platform.OS === "android") {
+          PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+            {
+              title: "Permission Required",
+              message: "We required to access your call logs",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          ).then(result => {
+            //console.log('result', result);
+            if (result === "granted") {
+              this.setState({ clickedBtn: 1 });
 
-      let body = JSON.parse(JSON.stringify(this.state));
-      delete body.showContactDialog;
-      delete body.showNonContactDialog;
-      delete body.showCalendar;
-      delete body.currentDate;
-      delete body.showdatesx;
-      delete body.maxDates;
-      delete body.mode;
-      delete body.currentTime;
-      delete body.confirmModal;
+              this.props.startLoader(true, -1);      
+              let numberArray = [];
+              if (Helper.nullStringCheck(mobile) === false) {
+                let trimnumber = mobile.trim();
+                numberArray.push(`+91${trimnumber}`);
+                numberArray.push(trimnumber);
+                numberArray.push(
+                  `${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                    5,
+                    trimnumber.length
+                  )}`
+                );
+                numberArray.push(`+91 ${trimnumber}`);
+                numberArray.push(
+                  `+91 ${trimnumber.slice(0, 6)} ${trimnumber.slice(
+                    5,
+                    trimnumber.length
+                  )}`
+                );
+                CallLogs.load(-1, {
+                  phoneNumbers: numberArray
+                }).then(callLogs => {
+                  //console.log('callslogs', callLogs);
+                  
+                  let callDur = 0;
+                  if (callLogs.length > 0) {
+                    const { duration } = callLogs[0];
+                    callDur = Number(duration);
+                  }
 
-      const dates = new Date();
-      const dateFormat = moment(dates).format('DD-MM-YYYY HH:mm:ss');
+                  let body = JSON.parse(JSON.stringify(this.state));
+                  delete body.showContactDialog;
+                  delete body.showNonContactDialog;
+                  delete body.showCalendar;
+                  delete body.currentDate;
+                  delete body.showdatesx;
+                  delete body.maxDates;
+                  delete body.mode;
+                  delete body.currentTime;
+                  delete body.confirmModal;
 
-      body.active = 1;
+                  const dates = new Date();
+                  const dateFormat = moment(dates).format(
+                    "DD-MM-YYYY HH:mm:ss"
+                  );
 
-      let leadConfirm = -1;
+                  body.active = 1;
 
-      if (trackingType == 'Contactable') {
-        body.trackingType = 0;
-      } else {
-        body.trackingType = 1;
-        body.active = 0;
-      }
+                  let leadConfirm = -1;
 
-      if (trackingType == 'Contactable' && trackingDetail === 'Interested') {
-        leadConfirm = 1;
-      }
+                  if (trackingType == "Contactable") {
+                    body.trackingType = 0;
+                  } else {
+                    body.trackingType = 1;
+                    body.active = 0;
+                  }
 
-      body.leadConfirm = leadConfirm;
-      body.callDate = dateFormat;
-      body.customerId = id;
-      body.teamID = team_id;
-      body.userID = user_id;
-      body.callLogs = callLogs;
-      body.callDur = callDur;
-      body.name = name;
-      body.mobile = mobile;
-      body.editmode = editEnabled === true ? '1' : '0';
-      body.followup_date_time = followup_date_time;
-      body.tname = teamName;
-      if (body.customerId == undefined) {
-        body.customerId = '';
-      }
-      if (callLogs.length == 0) {
-        body.callLogs = '';
-      }
+                  if (
+                    trackingType == "Contactable" &&
+                    trackingDetail === "Interested"
+                  ) {
+                    leadConfirm = 1;
+                  }
 
-      // let formName = product.trim().toLowerCase().replace(/\s/g, '_');
+                  body.leadConfirm = leadConfirm;
+                  body.callDate = dateFormat;
+                  body.customerId = id;
+                  body.teamID = team_id;
+                  body.userID = user_id;
+                  body.callLogs = callLogs;
+                  body.callDur = callDur;
+                  body.name = name;
+                  body.mobile = mobile;
+                  body.editmode = editEnabled === true ? "1" : "0";
+                  body.followup_date_time = followup_date_time;
+                  body.tname = teamName;
 
-      // const formUrls = `${Pref.FinorbitFormUrl}${formName}.php`;
+                  if (body.customerId == undefined) {
+                    body.customerId = "";
+                  }
 
-      // const formData = new FormData();
-      // formData.append(formName, formName);
-      // formData.append('formid', '');
-      // formData.append('name', name);
-      // formData.append('mobile', mobile);
-      // formData.append('remark', remarks);
+                  if (callLogs.length == 0) {
+                    body.callLogs = "";
+                  }
 
-      // if (Helper.nullCheck(userData.refercode) === false) {
-      //   const {refercode} = userData;
-      //   formData.append('ref', refercode);
-      // }
+                  // let formName = product.trim().toLowerCase().replace(/\s/g, '_');
 
-      //console.log('formData', formData, formUrls);
+                  // const formUrls = `${Pref.FinorbitFormUrl}${formName}.php`;
 
-      //console.log(body);
+                  // const formData = new FormData();
+                  // formData.append(formName, formName);
+                  // formData.append('formid', '');
+                  // formData.append('name', name);
+                  // formData.append('mobile', mobile);
+                  // formData.append('remark', remarks);
 
-      Helper.networkHelperTokenPost(
-        Pref.DIALER_LEAD_UPDATE,
-        JSON.stringify(body),
-        Pref.methodPost,
-        token,
-        (result) => {
-          console.log('result', result);
-          const {status, message, id} = result;
-          if (status == true) {
-            Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, '');
-            //live update
-            if (this.serverDateTime.length > 0) {
-              if (Helper.nullStringCheck(id) === false) {
-                disableOffline();
-                firebase
-                  .firestore()
-                  .collection(Pref.COLLECTION_CHECKIN)
-                  .doc(`${user_id}${this.serverDateTime[2]}`)
-                  .set({lead: Number(id)}, {merge: true});
+                  // if (Helper.nullCheck(userData.refercode) === false) {
+                  //   const {refercode} = userData;
+                  //   formData.append('ref', refercode);
+                  // }
+
+                  //console.log('formData', formData, formUrls);
+
+                  Helper.networkHelperTokenPost(
+                    Pref.DIALER_LEAD_UPDATE,
+                    JSON.stringify(body),
+                    Pref.methodPost,
+                    token,
+                    result => {
+                      global.dialerCallDisconnected = -1;
+                      //console.log("result", result);
+                      const { status, message, id } = result;
+                      if (status == true) {
+                        Pref.setVal(Pref.DIALER_TEMP_BUBBLE_NUMBER, "");
+
+                        // if (this.serverDateTime.length > 0) {
+                        //   if (Helper.nullStringCheck(id) === false) {
+                        //     disableOffline();
+                        //     firebase
+                        //       .firestore()
+                        //       .collection(Pref.COLLECTION_CHECKIN)
+                        //       .doc(`${user_id}${this.serverDateTime[2]}`)
+                        //       .set({lead: Number(id)}, {merge: true});
+                        //   }
+                        // }
+
+                        if (leadConfirm === 1) {
+                          this.setState(this.initialState());
+                          //navigate to finorbit form
+                          const lower = String(product).toLowerCase();
+                          let formScreenKey =
+                            lower === "test my policy" ||
+                            lower === "test_my_policy"
+                              ? "TestMyPolicy"
+                              : "FinorbitForm";
+
+                          NavigationActions.navigate(formScreenKey, {
+                            title: product,
+                            dialerMobile: mobile,
+                            dialerName: name,
+                            dialerDob: dob,
+                            dialerEmail: email,
+                            dialerPincode: pincode
+                          });
+
+                          // Helper.networkHelperTokenContentType(
+                          //   formUrls,
+                          //   formData,
+                          //   Pref.methodPost,
+                          //   token,
+                          //   result => {
+                          //     console.log('results', result);
+                          //     const {response_header} = result;
+                          //     const {res_type} = response_header;
+                          //     if (res_type === 'success') {
+                          //       this.props.startLoader(false, 0);
+                          //       NavigationActions.navigate('Finish', {
+                          //         top:
+                          //           editEnabled === true
+                          //             ? 'Edit Details'
+                          //             : 'Customer Details',
+                          //         red: 'Success',
+                          //         grey: `Lead ${
+                          //           editEnabled === true ? 'updated' : 'uploaded'
+                          //         } successfully`,
+                          //         blue: 'Go back',
+                          //         back:
+                          //           editEnabled === true
+                          //             ? 'DialerRecords'
+                          //             : 'DialerCalling',
+                          //         options: editEnabled === true ? {active: -1} : {},
+                          //       });
+                          //     } else {
+                          //       this.props.startLoader(false, -1);
+                          //       this.props.formResult(false, 'Failed to submit form');
+                          //     }
+                          //   },
+                          //   e => {
+                          //     console.log(e);
+                          //     this.props.startLoader(false, -1);
+                          //     this.props.formResult(false, 'Something went wrong!');
+                          //   },
+                          // );
+                        } else {
+                          this.setState(this.initialState());
+                          this.props.startLoader(false, -1);
+                          this.props.formResult(status, message);
+                        }
+                        // this.props.startLoader(false, -1);
+                        // this.props.formResult(status, message);
+                      } else {
+                        this.setState(this.initialState());
+                        this.props.startLoader(false, -1);
+                        this.props.formResult(status, message);
+                      }
+                    },
+                    e => {
+                      global.dialerCallDisconnected = -1;
+                      //console.log(e);
+                      this.setState(this.initialState());
+                      this.props.startLoader(false, -1);
+                      this.props.formResult(false, "Something went wrong!");
+                    }
+                  );
+                });
               }
+            }else{
+              this.showalertMessage("Please, Enable Call log permission to submit form");
+              enableCallModule(false);
             }
-
-            if (leadConfirm === 1) {
-              //navigate to finorbit form
-              NavigationActions.navigate('FinorbitForm', {
-                title: product,
-                dialerMobile: mobile,
-                dialerName: name,
-                dialerDob: dob,
-                dialerEmail: email,
-                dialerPincode: pincode,
-              });
-
-              // Helper.networkHelperTokenContentType(
-              //   formUrls,
-              //   formData,
-              //   Pref.methodPost,
-              //   token,
-              //   result => {
-              //     console.log('results', result);
-              //     const {response_header} = result;
-              //     const {res_type} = response_header;
-              //     if (res_type === 'success') {
-              //       this.props.startLoader(false, 0);
-              //       NavigationActions.navigate('Finish', {
-              //         top:
-              //           editEnabled === true
-              //             ? 'Edit Details'
-              //             : 'Customer Details',
-              //         red: 'Success',
-              //         grey: `Lead ${
-              //           editEnabled === true ? 'updated' : 'uploaded'
-              //         } successfully`,
-              //         blue: 'Go back',
-              //         back:
-              //           editEnabled === true
-              //             ? 'DialerRecords'
-              //             : 'DialerCalling',
-              //         options: editEnabled === true ? {active: -1} : {},
-              //       });
-              //     } else {
-              //       this.props.startLoader(false, -1);
-              //       this.props.formResult(false, 'Failed to submit form');
-              //     }
-              //   },
-              //   e => {
-              //     console.log(e);
-              //     this.props.startLoader(false, -1);
-              //     this.props.formResult(false, 'Something went wrong!');
-              //   },
-              // );
-            } else {
-              this.props.startLoader(false, -1);
-              this.props.formResult(status, message);
-            }
-            // this.props.startLoader(false, -1);
-            // this.props.formResult(status, message);
-          } else {
-            this.props.startLoader(false, -1);
-            this.props.formResult(status, message);
-          }
-        },
-        (e) => {
-          console.log(e);
-          this.props.startLoader(false, -1);
-          this.props.formResult(false, 'Something went wrong!');
-        },
-      );
+          });
+        }
+      } else {
+        this.showalertMessage("Please, Disconnect call to submit form");
+      }
     }
   };
 
-  productSelection = (value) => {
-    const {trackingDetail} = this.state;
-    if (trackingDetail === 'Interested') {
-      this.setState({confirmModal: true, product: value});
+  productSelection = value => {
+    const { trackingDetail } = this.state;
+    if (trackingDetail === "Interested") {
+      this.setState({ confirmModal: true, product: value });
       // Alert.alert('Confirm', 'Please, Confirm before proceeding', [
       //   {
       //     text: 'Yes',
@@ -578,53 +619,54 @@ export default class CallerForm extends React.PureComponent {
       //   },
       // ]);
     } else {
-      this.setState({product: value});
+      this.setState({ product: value });
     }
   };
 
-  statusSelection = (value) => {
+  statusSelection = value => {
     let val = false;
-    if (value === 'Contactable') {
+    if (value === "Contactable") {
       val = true;
     }
     this.setState({
       trackingType: value,
       showContactDialog: val,
-      showNonContactDialog: !val,
+      showNonContactDialog: !val
     });
   };
 
   render() {
-    const {remarks, name, mobile, editable} = this.state;
-    const {customerItem, productList} = this.props;
+    const { remarks, name, mobile, editable } = this.state;
+    const { customerItem, productList } = this.props;
+
     return (
       <>
         <View styleName="md-gutter">
           <AnimatedInputBox
-            onChangeText={(value) => this.setState({name: value})}
+            onChangeText={value => this.setState({ name: value })}
             showStarVisible
             value={name}
-            placeholder={'Name'}
-            returnKeyType={'next'}
+            placeholder={"Name"}
+            returnKeyType={"next"}
             editable={editable}
             disabled={!editable}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
           <AnimatedInputBox
-            onChangeText={(value) => {
+            onChangeText={value => {
               if (String(value).match(/^[0-9]*$/g) !== null) {
-                this.setState({mobile: value});
+                this.setState({ mobile: value });
               }
             }}
             showStarVisible
             value={mobile}
-            placeholder={'Mobile'}
-            returnKeyType={'next'}
+            placeholder={"Mobile"}
+            returnKeyType={"next"}
             editable={editable}
             disabled={!editable}
             maxLength={10}
-            keyboardType={'number-pad'}
+            keyboardType={"number-pad"}
             changecolor
             containerstyle={styles.animatedInputCont}
           />
@@ -647,11 +689,11 @@ export default class CallerForm extends React.PureComponent {
             textStyle={styles.dropdowntextstyle}
           />
           <AnimatedInputBox
-            onChangeText={(value) => this.setState({remarks: value})}
+            onChangeText={value => this.setState({ remarks: value })}
             showStarVisible={false}
             value={remarks}
-            placeholder={'Remarks'}
-            returnKeyType={'next'}
+            placeholder={"Remarks"}
+            returnKeyType={"next"}
             multiLine
             changecolor
             maxLength={150}
@@ -671,38 +713,40 @@ export default class CallerForm extends React.PureComponent {
             onClicked={this.noncontactDialogClicked}
           />
 
-          {this.state.trackingDetail === 'Follow-up' ? (
+          {this.state.trackingDetail === "Follow-up" ? (
             <View>
               <View style={styles.radiocont}>
                 <TouchableWithoutFeedback
                   onPress={() =>
                     this.setState({
-                      showCalendar: true,
+                      showCalendar: true
                     })
-                  }>
+                  }
+                >
                   <View style={styles.dropdownbox}>
                     <Title
                       style={{
                         fontSize: 14,
-                        fontWeight: '700',
+                        fontWeight: "700",
                         lineHeight: 20,
-                        alignSelf: 'center',
+                        alignSelf: "center",
                         color:
                           this.state.followup_date_time === ``
-                            ? '#6d6a57'
+                            ? "#6d6a57"
                             : `#555555`,
-                        alignSelf: 'center',
-                      }}>
-                      {this.state.followup_date_time === ''
+                        alignSelf: "center"
+                      }}
+                    >
+                      {this.state.followup_date_time === ""
                         ? `Schedule an Appointment *`
                         : this.state.followup_date_time}
                     </Title>
                     <Icon
-                      name={'calendar'}
+                      name={"calendar"}
                       size={24}
-                      color={'#6d6a57'}
+                      color={"#6d6a57"}
                       style={{
-                        alignSelf: 'center',
+                        alignSelf: "center"
                       }}
                     />
                   </View>
@@ -720,19 +764,21 @@ export default class CallerForm extends React.PureComponent {
               mode={this.state.mode}
               is24Hour={false}
               //minimumDate={date}
-              display={'spinner'}
+              display={"spinner"}
             />
           ) : null}
 
           <View
-            styleName={`horizontal space-between md-gutter v-center h-center`}>
+            styleName={`horizontal space-between md-gutter v-center h-center`}
+          >
             <Button
-              mode={'flat'}
+              mode={"flat"}
               uppercase={false}
               dark={true}
               loading={false}
               style={styles.loginButtonStyle}
-              onPress={this.formSubmit}>
+              onPress={() => this.formSubmit()}
+            >
               <Title style={styles.btntext}>{`Submit`}</Title>
             </Button>
           </View>
@@ -747,16 +793,16 @@ export default class CallerForm extends React.PureComponent {
         </Portal>
         <ModalDialog
           visiblity={this.state.confirmModal}
-          content={'Please, Confirm before proceeding'}
+          content={"Please, Confirm before proceeding"}
           cancelClicked={() =>
             this.setState({
-              confirmModal: false,
+              confirmModal: false
               //product: '',
               //trackingDetail: '',
               //trackingType: '',
             })
           }
-          okClicked={this.formSubmit}
+          okClicked={() => this.formSubmit()}
         />
       </>
     );
@@ -768,146 +814,146 @@ export default class CallerForm extends React.PureComponent {
  */
 const styles = StyleSheet.create({
   dropdowntextstyle: {
-    color: '#6d6a57',
+    color: "#6d6a57",
     fontSize: 14,
-    fontFamily: Pref.getFontName(4),
+    fontFamily: Pref.getFontName(4)
   },
   dropdowncontainers: {
     borderRadius: 0,
-    borderBottomColor: '#f2f1e6',
+    borderBottomColor: "#f2f1e6",
     borderBottomWidth: 1.3,
     borderWidth: 0,
     marginStart: 10,
     marginEnd: 10,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   radiocont: {
     marginStart: 10,
     marginEnd: 10,
     borderBottomWidth: 1.3,
-    borderBottomColor: '#f2f1e6',
-    alignContent: 'center',
+    borderBottomColor: "#f2f1e6",
+    alignContent: "center"
   },
   animatedInputCont: {
     marginStart: 8,
     marginEnd: 8,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   line: {
     backgroundColor: Pref.RED,
     height: 1.2,
     marginHorizontal: sizeWidth(3),
     marginTop: 4,
-    marginBottom: 4,
+    marginBottom: 4
   },
   subtitle: {
     fontSize: 14,
-    fontFamily: 'Rubik',
-    fontFamily: 'bold',
+    fontFamily: "Rubik",
+    fontFamily: "bold",
     letterSpacing: 1,
-    color: '#555555',
-    alignSelf: 'center',
+    color: "#555555",
+    alignSelf: "center"
   },
   title: {
     fontSize: 17,
     fontFamily: Pref.getFontName(4),
-    color: '#292929',
-    alignSelf: 'center',
-    marginVertical: 8,
+    color: "#292929",
+    alignSelf: "center",
+    marginVertical: 8
   },
   inputStyle: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#555555',
-    borderBottomColor: '#dedede',
-    fontFamily: 'Rubik',
+    backgroundColor: "white",
+    color: "#555555",
+    borderBottomColor: "#dedede",
+    fontFamily: "Rubik",
     fontSize: 16,
     borderBottomWidth: 1,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
-    letterSpacing: 1,
+    letterSpacing: 1
   },
   inputPassStyle: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#555555',
+    backgroundColor: "white",
+    color: "#555555",
     borderBottomColor: Colors.grey300,
-    fontFamily: 'Rubik',
+    fontFamily: "Rubik",
     fontSize: 16,
     borderBottomWidth: 0.6,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
-    marginVertical: sizeHeight(1),
+    marginVertical: sizeHeight(1)
   },
   inputPass1Style: {
     height: sizeHeight(8),
-    backgroundColor: 'white',
-    color: '#555555',
-    fontFamily: 'Rubik',
+    backgroundColor: "white",
+    color: "#555555",
+    fontFamily: "Rubik",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     marginHorizontal: sizeWidth(3),
     letterSpacing: 1,
-    marginTop: -7,
+    marginTop: -7
   },
   loginButtonStyle: {
-    color: 'white',
+    color: "white",
     backgroundColor: Pref.RED,
-    textAlign: 'center',
+    textAlign: "center",
     elevation: 0,
     borderRadius: 0,
     letterSpacing: 0.5,
     borderRadius: 48,
-    width: '40%',
+    width: "40%",
     paddingVertical: 4,
-    fontWeight: '700',
-    marginTop: 24,
+    fontWeight: "700",
+    marginTop: 24
   },
   dropdownbox: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 56,
-    justifyContent: 'space-between',
-    paddingVertical: 10,
+    justifyContent: "space-between",
+    paddingVertical: 10
   },
   radiodownbox: {
-    flexDirection: 'column',
+    flexDirection: "column",
     height: 56,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingVertical: 10,
-    marginBottom: 16,
+    marginBottom: 16
   },
   boxsubtitle: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#6d6a57',
+    fontWeight: "700",
+    color: "#6d6a57",
     lineHeight: 20,
-    alignSelf: 'center',
-    marginStart: 4,
+    alignSelf: "center",
+    marginStart: 4
   },
   textopen: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#555555',
+    fontWeight: "700",
+    color: "#555555",
     lineHeight: 20,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginStart: 4,
-    letterSpacing: 0.5,
+    letterSpacing: 0.5
   },
   downIcon: {
-    alignSelf: 'center',
+    alignSelf: "center"
   },
   bbstyle: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#6d6a57',
+    fontWeight: "700",
+    color: "#6d6a57",
     lineHeight: 20,
-    marginStart: 4,
+    marginStart: 4
   },
   btntext: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
     letterSpacing: 0.5,
-    fontWeight: '700',
-  },
+    fontWeight: "700"
+  }
 });

@@ -5,7 +5,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from 'react-native';
-import {Title, View, Subtitle} from '@shoutem/ui';
+import {Title, View, Subtitle, Image,Lightbox} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {ActivityIndicator} from 'react-native-paper';
@@ -39,7 +39,7 @@ export default class MyOffers extends React.PureComponent {
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
+    //this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.USERTYPE, (v) => {
         this.setState({utype: v});
         Pref.getVal(Pref.userData, (parseda) => {
@@ -53,7 +53,7 @@ export default class MyOffers extends React.PureComponent {
           });
         });
       });
-    });
+    //});
   }
 
   componentWillUnMount() {
@@ -176,6 +176,7 @@ export default class MyOffers extends React.PureComponent {
    * @param {*} item 
    */
   shareOffer = (id, image, index, item) => {
+    console.log('item', item);
     this.setState({fullLoader: true});
     Helper.networkHelperGet(
       `${Pref.BASEImageUrl}?url=${image}`,
@@ -394,6 +395,7 @@ export default class MyOffers extends React.PureComponent {
                 <ListError subtitle={'No offers found...'} url={''} />
               </View>
             )}
+
           </>
         }
       />

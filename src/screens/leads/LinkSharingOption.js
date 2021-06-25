@@ -45,10 +45,10 @@ export default class LinkSharingOption extends React.PureComponent {
 
   shareApp = (value, productName) => {
     const userData = this.state.userData;
-    const { refercode } = userData;
+    const { refercode,id } = userData;
     const url = ``;
     const title = 'ERB Referral';
-    const finalUrl = `${value}?ref=${refercode}`
+    const finalUrl = `${value}?ref=${refercode}&id=${id}`
     const username =
     Helper.nullCheck(userData.rname) === false
       ? userData.rname
