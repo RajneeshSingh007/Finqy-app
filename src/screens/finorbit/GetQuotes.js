@@ -70,7 +70,7 @@ export default class GetQuotes extends React.Component {
     const deductible = navigation.getParam('deductible', -1);
     //console.log('sumInsurred', sumInsurred, formId, deductible)
 
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       this.setState({
         formId: formId,
         sumInsurred: `${Number(sumInsurred)}`,
@@ -80,7 +80,7 @@ export default class GetQuotes extends React.Component {
       }, () =>{
         this.fetchCompany(formId, Number(sumInsurred), true);
       });
-    //});
+    });
   }
 
   backClick = () => {
@@ -101,7 +101,7 @@ export default class GetQuotes extends React.Component {
     const formData = new FormData();
     formData.append('id', id);
     formData.append('sum_insured', sum_insured);  
-    console.log(formData);
+    //console.log(formData);
     Helper.networkHelperContentType(
       deductible === -1 ? Pref.HealthQouteCompanyUrl : Pref.HealthTopupQouteCompanyUrl,
       formData,
@@ -134,7 +134,7 @@ export default class GetQuotes extends React.Component {
         }
       },
       (error) => {
-        console.log("er", error);
+        //console.log("er", error);
         this.setState({companyList: [], loading: false});
       },
     );
@@ -164,25 +164,25 @@ export default class GetQuotes extends React.Component {
     if (map.length === 1) {
       const compId = `${map[0]['companyid']}`;
       if(deductible > 0){
-        startUrl = `${Pref.FinURL}/download_quoted1.php`;
+        startUrl = `${Pref.FinURL}download_quoted1.php`;
       }else{
-        startUrl = `${Pref.FinURL}/download_quote1.php`;     
+        startUrl = `${Pref.FinURL}download_quote1.php`;     
       }
       finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 2) {
       const compId = `${map[0]['companyid']}$$${map[1]['companyid']}`;
       if(deductible > 0){
-        startUrl = `${Pref.FinURL}/download_quoted2.php`;
+        startUrl = `${Pref.FinURL}download_quoted2.php`;
       }else{
-        startUrl = `${Pref.FinURL}/download_quote2.php`;     
+        startUrl = `${Pref.FinURL}download_quote2.php`;     
       }
       finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     } else if (map.length === 3) {
       const compId = `${map[0]['companyid']}$$${map[1]['companyid']}$$${map[2]['companyid']}`;
       if(deductible > 0){
-        startUrl = `${Pref.FinURL}/download_quoted3.php`;
+        startUrl = `${Pref.FinURL}download_quoted3.php`;
       }else{
-        startUrl = `${Pref.FinURL}/download_quote3.php`;     
+        startUrl = `${Pref.FinURL}download_quote3.php`;     
       }
       finalUrl = `${startUrl}?id=${formId}&product_id=${compId}&sum_insured=${sumInsurred}`;
     }

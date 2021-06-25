@@ -11,6 +11,8 @@ const Download = (prop) => {
     leftIconClick = () => {},
     showLeft = false,
     style,
+    centerIconClick = () =>{},
+    showCenter = false,
   } = prop;
 
   const rightClicked = () =>{
@@ -53,6 +55,16 @@ const Download = (prop) => {
           ) : null}
         </View>
       </TouchableWithoutFeedback>
+      {showCenter ? <TouchableWithoutFeedback onPress={() => centerIconClick()}>
+        <View style={styles.circle}>
+          <IconChooser
+            name={'save'}
+            size={24}
+            color={'white'}
+            style={styles.icon}
+          />
+        </View>
+      </TouchableWithoutFeedback> : null}
       <TouchableWithoutFeedback onPress={() => rightClicked()}>
         <View style={styles.circle}>
           <IconChooser

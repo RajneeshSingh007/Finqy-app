@@ -12,6 +12,7 @@ import * as Helper from "../../util/Helper";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import NavigationActions from "../../util/NavigationActions";
 import { Dialog, Portal, RadioButton } from "react-native-paper";
+import Loader from '../../util/Loader';
 
 export default class GetQuotesView extends React.PureComponent {
   constructor(props) {
@@ -28,7 +29,8 @@ export default class GetQuotesView extends React.PureComponent {
       referCode: "",
       companyList: [],
       showDialog: false,
-      company: ""
+      company: "",
+      progressLoader: false,
     };
   }
 
@@ -42,7 +44,7 @@ export default class GetQuotesView extends React.PureComponent {
     const editMode = navigation.getParam("editmode", false);
     const deductible = navigation.getParam("deductible", -1);
     //console.log('url', url,sumInsurred,formId);
-    //this.focusListener = navigation.addListener("didFocus", () => {
+    this.focusListener = navigation.addListener("didFocus", () => {
       Pref.getVal(Pref.userData, data => {
         //console.log('data', data)
         this.setState({
@@ -54,7 +56,7 @@ export default class GetQuotesView extends React.PureComponent {
         });
         this.fetchData(url, data);
       });
-    //});
+    });
   }
 
   fetchData = (url, data) => {
@@ -173,12 +175,23 @@ export default class GetQuotesView extends React.PureComponent {
     Linking.openURL(healthByLink);
   };
 
+  saveQuotes = () =>{
+    this.setState({progressLoader:true})
+    Helper.networkHelperGet(this.state.pdfurl,result =>{
+      Helper.showToastMessage("Quotes saved successfully", 1);
+      this.setState({progressLoader:false})
+    }, error =>{
+      this.setState({progressLoader:false})
+    })
+  }
+
   render() {
     const { companyList } = this.state;
     return (
       <CScreen
         absolute={
-          companyList.length > 0 ? (
+          <>
+          {companyList.length > 0 ? (
             <Portal>
               <Dialog
                 visible={this.state.showDialog}
@@ -215,7 +228,14 @@ export default class GetQuotesView extends React.PureComponent {
                 </Dialog.Content>
               </Dialog>
             </Portal>
-          ) : null
+          ) : null}
+
+          <Loader
+              isShow={this.state.progressLoader}
+              bottomText={'Please do not press back button'}
+            />
+
+          </>
         }
         scrollEnable={false}
         body={
@@ -225,7 +245,7 @@ export default class GetQuotesView extends React.PureComponent {
               showBack
               backClicked={() => this.navigateToBack()}
             />
-            <View style={{ flex: 0.02 }}></View>
+            {/* <View style={{ flex: 0.01 }}></View> */}
             <Pdf
               source={{
                 uri: this.state.pdfurl,
@@ -239,9 +259,13 @@ export default class GetQuotesView extends React.PureComponent {
               fitPolicy={0}
               enablePaging
               scale={1}
+              onPressLink={(uri) =>{
+                Linking.openURL(uri)
+                //console.log(`Link presse: ${uri}`)
+              }}
             />
 
-            <TouchableWithoutFeedback onPress={this.buyNow}>
+            {/* <TouchableWithoutFeedback onPress={this.buyNow}>
               <View
                 style={{
                   backgroundColor: "#f9f8f1"
@@ -249,20 +273,22 @@ export default class GetQuotesView extends React.PureComponent {
               >
                 <Title style={styles.belowtext}>{`Buy Now`}</Title>
               </View>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback> */}
 
             <Download
               rightIconClick={() => {
                 Helper.downloadFileWithFileName(
                   `${this.state.pdfurl}.pdf`,
-                  `${this.state.sumInsurred}`,
-                  `${this.state.sumInsurred}.pdf`,
+                  `${this.state.formId}-Qoute`,
+                  `${this.state.formId}-Qoute.pdf`,
                   "application/pdf"
                 );
               }}
               style={{ flex: 0.09 }}
               showLeft
-              leftIconClick={this.shareFile}
+              leftIconClick={() => this.shareFile()}
+              showCenter
+              centerIconClick={() => this.saveQuotes()}
             />
           </View>
         }

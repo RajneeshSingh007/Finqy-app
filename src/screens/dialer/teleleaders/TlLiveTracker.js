@@ -243,51 +243,52 @@ export default class TlLiveTracker extends React.PureComponent {
           // );
         }
 
-        //lead update
-        if (Helper.nullCheck(liveSnapshot.data().lead) === false) {
-          const {lead} = liveSnapshot.data();
-          if (Number(lead) !== -1) {
-            const userData1 = dataList[findUserIndex];
-            const jBody = JSON.stringify({
-              teamid: userData1.tl,
-              userid: userData1.id,
-              tname: userData1.tname,
-            });
+        //lead update      
+        // if (Helper.nullCheck(liveSnapshot.data().lead) === false) {
+        //   const {lead} = liveSnapshot.data();
+        //   if (Number(lead) !== -1) {
+        //     const userData1 = dataList[findUserIndex];
+        //     const jBody = JSON.stringify({
+        //       teamid: userData1.tl,
+        //       userid: userData1.id,
+        //       tname: userData1.tname,
+        //     });
 
-            Helper.networkHelperTokenPost(
-              Pref.DIALER_LIVE_TRACK_DATA,
-              jBody,
-              Pref.methodPost,
-              this.state.token,
-              (result) => {
-                const {status, data} = result;
-                const cloneObj = JSON.parse(JSON.stringify(userData1));
-                cloneObj.isdata = status;
-                if (status && data.length > 0) {
-                  const {
-                    call_duration,
-                    name,
-                    mobile,
-                    product,
-                    tracking_type_detail,
-                  } = data[0];
+        //     Helper.networkHelperTokenPost(
+        //       Pref.DIALER_LIVE_TRACK_DATA,
+        //       jBody,
+        //       Pref.methodPost,
+        //       this.state.token,
+        //       (result) => {
+        //         const {status, data} = result;
+        //         const cloneObj = JSON.parse(JSON.stringify(userData1));
+        //         cloneObj.isdata = status;
+        //         if (status && data.length > 0) {
+        //           const {
+        //             call_duration,
+        //             name,
+        //             mobile,
+        //             product,
+        //             tracking_type_detail,
+        //           } = data[0];
 
-                  cloneObj.status = tracking_type_detail;
-                  cloneObj.name = name;
-                  cloneObj.custnumber = mobile;
-                  cloneObj.product = product;
-                  cloneObj.dur = `${call_duration}sec`;
-                  dataList.push(cloneObj);
-                }
+        //           cloneObj.status = tracking_type_detail;
+        //           cloneObj.name = name;
+        //           cloneObj.custnumber = mobile;
+        //           cloneObj.product = product;
+        //           cloneObj.dur = `${call_duration}sec`;
+        //           dataList.push(cloneObj);
+        //         }
 
-                this.setState({dataList: dataList}, () =>
-                  this.forceUpdate(),
-                );
-              },
-              (error) => {},
-            );
-          }
-        }
+        //         this.setState({dataList: dataList}, () =>
+        //           this.forceUpdate(),
+        //         );
+        //       },
+        //       (error) => {},
+        //     );
+        //   }
+        // }
+
       }
     }
   };

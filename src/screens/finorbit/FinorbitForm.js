@@ -258,7 +258,7 @@ export default class FinorbitForm extends React.PureComponent {
       uniq = 'loan_against_property';
     }
     
-    console.log(`uniq`, uniq, this.restoreList[3]);
+    //console.log(`uniq`, uniq, this.restoreList[3]);
     
     formData.append(uniq, uniq);
 
@@ -330,7 +330,7 @@ export default class FinorbitForm extends React.PureComponent {
             },
           );
         } else {
-          console.log('c');
+          //console.log('c');
           this.setState(
             (prevState) => {
               // let btnText = 'Next';
@@ -364,11 +364,11 @@ export default class FinorbitForm extends React.PureComponent {
           );
         }
       } else {
-        // if (disableClick === 0) {
+        if (disableClick === 0) {
           
-        //   this.setState({progressLoader: true, disableClick: 1}, () => {
-        //     this.forceUpdate();
-        //   });
+          this.setState({progressLoader: true, disableClick: 1}, () => {
+            this.forceUpdate();
+          });
 
           const {refercode} = this.state.userData;
           formData.append('ref', refercode);
@@ -545,65 +545,65 @@ export default class FinorbitForm extends React.PureComponent {
           
           var formUrls = `${Pref.FinorbitFormUrl}${uniq}.php`;
 
-          console.log('formData', formData);
+          //console.log('formData', formData);
 
-          // Helper.networkHelperTokenContentType(
-          //   formUrls,
-          //   formData,
-          //   Pref.methodPost,
-          //   this.state.token,
-          //   (result) => {
-          //     //console.log('result', result);
+          Helper.networkHelperTokenContentType(
+            formUrls,
+            formData,
+            Pref.methodPost,
+            this.state.token,
+            (result) => {
+              //console.log('result', result);
               
-          //     const {response_header} = result;
-          //     const {res_type, res} = response_header;
-          //     this.setState({progressLoader: false});
-          //     if (res_type === 'success') {
-          //       Helper.showToastMessage(
-          //         editMode === false
-          //           ? 'Form submitted successfully'
-          //           : 'Form updated successfully',
-          //         1,
-          //       );
-          //       if (
-          //         title === `Personal Loan` &&
-          //         Helper.nullCheck(response_header.res_id) === false &&
-          //         response_header.res_id !== ''
-          //       ) {
-          //         if(isPlCif){
-          //           const plCifLink = `${Pref.PLCifUrl}?unq_no=${Number(response_header.res_id)}`;
-          //           Linking.openURL(plCifLink);              
-          //         }else{
-          //           this.finishForm();                  
-          //         }
-          //       }else if (
-          //         title === `Health Insurance` &&
-          //         Helper.nullCheck(res.id) === false &&
-          //         res.id !== ''
-          //       ) {
-          //         const {id, deductible} = res;
-          //         const cov = Number(specificForms.required_cover);
-          //         NavigationActions.navigate('GetQuotes', {
-          //           formId: id,
-          //           sumin: cov,
-          //           editmode: this.state.editMode,
-          //           deductible: deductible,
-          //         });
-          //       } else {
-          //         this.finishForm();
-          //       }
-          //     } else {
-          //       Helper.showToastMessage('Failed to submit form', 0);
-          //     }
-          //   },
-          //   (e) => {
-          //     console.log(e);
-          //     this.setState({progressLoader: false});
-          //     Helper.showToastMessage('Something went wrong', 0);
-          //   },
-          // );
+              const {response_header} = result;
+              const {res_type, res} = response_header;
+              this.setState({progressLoader: false});
+              if (res_type === 'success') {
+                Helper.showToastMessage(
+                  editMode === false
+                    ? 'Form submitted successfully'
+                    : 'Form updated successfully',
+                  1,
+                );
+                if (
+                  title === `Personal Loan` &&
+                  Helper.nullCheck(response_header.res_id) === false &&
+                  response_header.res_id !== ''
+                ) {
+                  if(isPlCif){
+                    const plCifLink = `${Pref.PLCifUrl}?unq_no=${Number(response_header.res_id)}`;
+                    Linking.openURL(plCifLink);              
+                  }else{
+                    this.finishForm();                  
+                  }
+                }else if (
+                  title === `Health Insurance` &&
+                  Helper.nullCheck(res.id) === false &&
+                  res.id !== ''
+                ) {
+                  const {id, deductible} = res;
+                  const cov = Number(specificForms.required_cover);
+                  NavigationActions.navigate('GetQuotes', {
+                    formId: id,
+                    sumin: cov,
+                    editmode: this.state.editMode,
+                    deductible: deductible,
+                  });
+                } else {
+                  this.finishForm();
+                }
+              } else {
+                Helper.showToastMessage('Failed to submit form', 0);
+              }
+            },
+            (e) => {
+              console.log(e);
+              this.setState({progressLoader: false});
+              Helper.showToastMessage('Something went wrong', 0);
+            },
+          );
 
-        //}
+        }
       }
     }
   };
