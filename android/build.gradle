@@ -1,4 +1,9 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext {
+    releasejks = "D:\\AndroidDevelopment\\ErbGoregaon\\FinPro\\android\\erberb.jks"
+    releasealias = 'erberb'
+    releasekey="erberb"
+    releasepass="erberb"
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     ext {

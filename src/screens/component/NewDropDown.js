@@ -81,7 +81,7 @@ class NewDropDown extends React.Component {
             length: 30,
           })
         : value;
-    } else if (Helper.nullStringCheck(displayValue) === false) {
+    } else if (Helper.nullStringCheck(value) == false && Helper.nullStringCheck(displayValue) === false) {
       return displayValue;
     } else if (Helper.nullStringCheck(placeholder) === false) {
       if (starVisible === true) {

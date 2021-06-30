@@ -143,19 +143,15 @@ export default class CallerForm extends React.PureComponent {
     }
   };
 
-  //static contextType = CallContext;
-
-  componentDidMount() {
-    //this.context.dialerCallback('', null, false, false);
-
-    //Pref.setVal(Pref.DIALER_TEMP_CUSTOMER_DATA, null);
-
-    this.setupData();
-  }
-
-  callDisconnectEvent = value => {
-    console.log("callDisconnectEvent", value);
-  };
+  // componentWillReceiveProps(nextProps){
+  //   //console.log('componentWillReceiveProps', nextProps);
+  //   const productList = nextProps['productList'];
+  //   if(productList.length > 0){
+  //     this.setupData();
+  //   }else {
+  //     this.setState(this.initialState(), () => this.forceUpdate())
+  //   }
+  // }
 
   setupData = () => {
     const {
@@ -163,6 +159,7 @@ export default class CallerForm extends React.PureComponent {
       editEnabled = false,
       customerItem
     } = this.props;
+    
     if (Helper.nullCheck(editItemRestore) === false) {
       this.restoreData(editItemRestore);
     }

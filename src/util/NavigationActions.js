@@ -42,6 +42,15 @@ const resetPage = (routeName, params) => {
   );
 };
 
+const popPage = (routeName) =>{
+  _navigator.dispatch(
+    StackActions.pop({
+      immediate:true,
+      key:routeName
+    })
+  );
+}
+
 const toggleDrawer = () => {
   _navigator.dispatch(DrawerActions.toggleDrawer());
 };
