@@ -85,10 +85,7 @@ export const requestPermissions = async () => {
 };
 
 
-/**
- * Ask permission on android for dialer
- * @returns {Promise<void>}
- */
+
 /**
  * Ask permission on android for dialer
  * @returns {Promise<void>}
@@ -96,8 +93,19 @@ export const requestPermissions = async () => {
  export const requestPermissionsDialer = async() => {
   try {
     if (Platform.OS === 'android') {
-      const statuses = await checkMultiple([PERMISSIONS.ANDROID.CALL_PHONE, PERMISSIONS.ANDROID.READ_CALL_LOG, PERMISSIONS.ANDROID.WRITE_CALL_LOG, PERMISSIONS.ANDROID.READ_CONTACTS, PERMISSIONS.ANDROID.WRITE_CONTACTS, PERMISSIONS.ANDROID.READ_PHONE_STATE, PERMISSIONS.ANDROID.ANSWER_PHONE_CALLS, PERMISSIONS.ANDROID.PROCESS_OUTGOING_CALLS]);
-      return statuses;
+      const value = await PermissionsAndroid.requestMultiple([
+       'android.permission.READ_CONTACTS',
+       'android.permission.WRITE_CONTACTS',
+       'android.permission.READ_PHONE_STATE',
+       'android.permission.CALL_PHONE',
+       'android.permission.READ_CALL_LOG',
+       'android.permission.WRITE_CALL_LOG',
+       'android.permission.PROCESS_OUTGOING_CALLS',
+       'android.permission.ANSWER_PHONE_CALLS'
+      ]);
+      return value;
+      // const value = await checkMultiple([PERMISSIONS.ANDROID.CALL_PHONE, PERMISSIONS.ANDROID.READ_CALL_LOG, PERMISSIONS.ANDROID.WRITE_CALL_LOG, PERMISSIONS.ANDROID.READ_CONTACTS, PERMISSIONS.ANDROID.WRITE_CONTACTS, PermissionsAndroid.PERMISSIONS.ANDROID.READ_PHONE_STATE, "android.permission.ANSWER_PHONE_CALLS", "android.permission.PROCESS_OUTGOING_CALLS"]);
+      // return value;
     }else{
     }
   } catch (err) {
@@ -998,7 +1006,7 @@ export const productShareList = () =>{
     { value: 'Mutual Fund', url: `${Pref.FinURL}mf.php` },
     { value: 'Personal Loan', url: `${Pref.FinURL}pl.php` },
     { value: 'Term Insurance', url: `${Pref.FinURL}ti.php` },
-    { value: 'Test My Policy', url: `${Pref.TMPUrl}` },
+    // { value: 'Test My Policy', url: `${Pref.TMPUrl}` },
     // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
     // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
     // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },

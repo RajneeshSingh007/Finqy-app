@@ -3,6 +3,8 @@ import React, {useState, useRef} from 'react';
 import {StyleSheet, Platform, Dimensions} from 'react-native';
 import {sizeWidth, sizeHeight} from '../../../util/Size';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import NavigationActions from "../../../util/NavigationActions";
 
 const {width} = Dimensions.get('window');
 
@@ -13,13 +15,19 @@ const Banner = (props) => {
   const [bannerActiveIndex, setBannerActiveIndex] = useState(0);
   const crousalRef = useRef();
 
+  const navigate = (item) =>{
+    NavigationActions.navigate('MyOffers', {name:'Q-Offers'});
+  }
+
   const renderItem = (item, index) => {
     return (
       <>
+        <TouchableWithoutFeedback onPress={() => navigate(item)}>
         <Image
           source={{uri: item.banner}}
           style={styles.bannerImg}
         />
+        </TouchableWithoutFeedback>
         {shareChild(item)}
       </>
     );

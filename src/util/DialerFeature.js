@@ -14,16 +14,16 @@ export const enableCallModule = (startService = false) => {
   Pref.getVal(Pref.DIALER_DATA, (data) => {
     if (Helper.nullCheck(data) === false) {
       if (data.length > 0 && Helper.nullCheck(data[0].tc) === false) {
-        Helper.requestPermissionsDialer().then((permissionResult) => {
-          console.log('permissionResult', permissionResult);
+        Helper.requestPermissionsDialer().then((result) => {
+          //console.log('permissionResult', result);
           if (
-            permissionResult['android.permission.CALL_PHONE'] === 'granted' &&
-            permissionResult['android.permission.READ_CONTACTS'] === 'granted' &&
-            permissionResult['android.permission.WRITE_CONTACTS'] === 'granted' && 
-            permissionResult['android.permission.READ_CALL_LOG'] === 'granted' && 
-            permissionResult['android.permission.WRITE_CALL_LOG'] === 'granted'
+            result['android.permission.CALL_PHONE'] === 'granted' &&
+            result['android.permission.READ_CONTACTS'] === 'granted' &&
+            result['android.permission.WRITE_CONTACTS'] === 'granted' && 
+            result['android.permission.READ_CALL_LOG'] === 'granted' && 
+            result['android.permission.WRITE_CALL_LOG'] === 'granted'
           ) {
-            FinproCallModule.askPermission().then((result) => {
+            FinproCallModule.askPermission().then((v) => {
               FinproCallModule.requestCallsPermission().then((op) => {});
             });
           } else {

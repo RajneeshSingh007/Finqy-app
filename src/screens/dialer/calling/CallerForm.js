@@ -336,7 +336,7 @@ export default class CallerForm extends React.PureComponent {
       mobile === "0000000000"
       //|| mobile === '1234567890'
     ) {
-      errorData = false;
+      checkData = false;
       this.showalertMessage("Invalid mobile number");
     } else if (trackingType === "") {
       checkData = false;

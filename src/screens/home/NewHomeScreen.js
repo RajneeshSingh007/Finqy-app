@@ -487,8 +487,9 @@ export default class NewHomeScreen extends React.PureComponent {
         styleName="horizontal space-between"
         style={styles.productcontainer}>
         {this.renderProductItem(
-          () => this.tmponClick(),
-          //this.showAlert('Coming Soon!', 0),
+          () => 
+          //this.tmponClick(),
+          this.showAlert('Coming Soon!', 0),
           require('../../res/images/home/tmp.png'),
           'Test My Policy',
           '#eb1d27',
