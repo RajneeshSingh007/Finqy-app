@@ -192,7 +192,7 @@ export default class CommonForm extends React.PureComponent {
       if (parse.length === 6) {
         this.setState({ pincode: parse });
         const url = `${Pref.PostalCityUrl}?pincode=${parse}`;
-        console.log(`url`, url);
+        //console.log(`url`, url);
         Helper.getNetworkHelper(
           url,
           Pref.methodGet,
@@ -446,7 +446,7 @@ export default class CommonForm extends React.PureComponent {
                     ? ''
                     //returnAsterik()
                      : ''}` : this.state.dob} */}
-                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' ? ' *' : ''}` : this.state.dob}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' || title === 'Personal Loan' ? ' *' : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}

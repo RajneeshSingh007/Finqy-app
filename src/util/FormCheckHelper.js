@@ -329,6 +329,7 @@ export const firstFormCheck = (title, commons) => {
   // }
   else if (
     title === 'Health Insurance' &&
+    title === 'Personal Loan' &&
     (commons.dob === '' ||
       commons.dob === `Date of Birth *` ||
       commons.dob === `Date of Birth`)
