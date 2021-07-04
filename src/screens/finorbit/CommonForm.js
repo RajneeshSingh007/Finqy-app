@@ -197,14 +197,14 @@ export default class CommonForm extends React.PureComponent {
           url,
           Pref.methodGet,
           (result) => {
+            //console.log(`result`, result, res_type);
             const { res_type, data } = result;
             if (res_type === `error`) {
               this.setState({ currentlocation: '', state: '', pincode: value });
             } else {
-              console.log(`result`, data);
               if (data.length > 0) {
                 const filterActive = Lodash.filter(data, io => io.status === 'Active');
-                console.log('filterActive', filterActive)
+                // //console.log('filterActive', filterActive)
                 const state = String(filterActive[0]['State']).trim();
                 const city = String(filterActive[0]['City']).trim();
                 //      //console.log('state', city)
@@ -446,7 +446,7 @@ export default class CommonForm extends React.PureComponent {
                     ? ''
                     //returnAsterik()
                      : ''}` : this.state.dob} */}
-                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' || title === 'Personal Loan' ? ' *' : ''}` : this.state.dob}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' ? ' *' : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -582,8 +582,7 @@ export default class CommonForm extends React.PureComponent {
           </View>
         ) : null}
 
-        {/* title === 'Health Insurance' ||  */}
-        {title === 'Term Insurance' ?
+        {title === 'Health Insurance' || title === 'Term Insurance' ?
           <NewDropDown
             list={qualificationList}
             placeholder={`Qualification`}
@@ -612,7 +611,13 @@ export default class CommonForm extends React.PureComponent {
             <View style={StyleSheet.flatten([styles.radiodownbox, {
               height: title === `Health Insurance` ? 90 : 56
             }])}>
-              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Personal Loan' ? returnAsterik() : ''}`}</Title>
+              <Title style={styles.bbstyle}>{`Select Employment Type ${title === 'Credit Card' || title === 'Term Insurance' || title === 'Health Insurance' || title === 'Auto Loan' || 
+              //title === 'Home Loan' || 
+              title === 'Loan Against Property' 
+              //|| title === 'Personal Loan' 
+              ? '' 
+              //returnAsterik() 
+              : ''}`}</Title>
               <RadioButton.Group
                 onValueChange={(value) => this.setState({ employ: value })}
                 value={this.state.employ}>

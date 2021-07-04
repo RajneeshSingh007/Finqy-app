@@ -47,7 +47,7 @@ class App extends React.PureComponent {
 
     this.onNotificationListener();
 
-    //this.checkVersionForUpdate();
+    this.checkVersionForUpdate();
 
     //dialer
     this.dialerCheck();

@@ -94,7 +94,7 @@ export default class DialerCalling extends React.PureComponent {
   }
 
   _handleAppStateChange = (nextState) => {
-    console.log(nextState);
+    //console.log(nextState);
     FinproCallModule.whatsAppCallMode().then((result) => {
       //&& this.whatsappClicked
       if (result === 'Voip') {

@@ -224,6 +224,7 @@ export default class PayoutForm extends React.PureComponent {
                     </Title>
                   </View>
                 ) : null}
+                {Helper.nullStringCheck(tc) === false  ?
                 <View styleName="vertical v-start h-start sm-gutter">
                   <Title
                     style={StyleSheet.flatten([
@@ -260,6 +261,7 @@ export default class PayoutForm extends React.PureComponent {
                     {tc}
                   </Title>
                 </View>
+                : null}
               </>
             ) : (
               <View style={styles.emptycont}>

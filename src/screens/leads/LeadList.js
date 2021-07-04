@@ -26,7 +26,6 @@ import NavigationActions from '../../util/NavigationActions';
 import {
   constructObjEditLead,
   constructObjEditSamadhan,
-  constructObjEditTmp
 } from '../../util/FormCheckHelper';
 import FileUploadForm from '../finorbit/FileUploadForm';
 import PaginationNumbers from '../component/PaginationNumbers';
@@ -85,7 +84,7 @@ export default class LeadList extends React.PureComponent {
         160,
         100,
         140,
-        120,
+        100,
         140,
         //80,
         100,
@@ -119,8 +118,6 @@ export default class LeadList extends React.PureComponent {
       editSecond: null,
       activeRowData: null,
       quotemailType: -1,
-      tmpPolicy:null,
-      tmpPolicyIssued:null
     };
   }
 
@@ -206,7 +203,6 @@ export default class LeadList extends React.PureComponent {
       this.state.token,
       (result) => {
         const {data, response_header} = result;
-        //console.log('data', data);
         const {res_type} = response_header;
         if (res_type === `success`) {
           if (data.length > 0) {
@@ -270,17 +266,11 @@ export default class LeadList extends React.PureComponent {
     } else {
       pname = product;
     }
-    //console.log('product', product);
     if (product === 'Insurance Samadhan') {
       NavigationActions.navigate('Samadhan', {
         leadData: constructObjEditSamadhan(item),
         title: pname,
         url: '',
-        edit: true,
-      });
-    }else if (product === 'Tmp' || product === 'Test My Policy') {
-      NavigationActions.navigate('TestMyPolicy', {
-        leadData: constructObjEditTmp(item),
         edit: true,
       });
     } else {
@@ -294,8 +284,9 @@ export default class LeadList extends React.PureComponent {
   };
 
   downloadFile = (item) => {
-    const {product, quotes, policy,policyissued, cif_file} = item;
+    const {product, quotes, policy, cif_file} = item;
     //policy, quote
+    //console.log('item', item)
     let pname = '';
     if (product === 'Mutual Fund') {
       pname = 'Mutual Fund';
@@ -326,7 +317,7 @@ export default class LeadList extends React.PureComponent {
       }
     }
     this.setState({
-      downloadFormTitle: pname === 'Tmp' ? 'TMP' : pname,
+      downloadFormTitle: pname,
       downloadModal: true,
       editThird: getAll.third,
       editSecond: getAll.second,
@@ -335,9 +326,6 @@ export default class LeadList extends React.PureComponent {
       policy: policy,
       activeRowData: item,
       cif: cif_file,
-      tmpPolicy: policy,
-      tmpPolicyIssued:policyissued
-      //pname === 'TMP' ? constructObjEditTmp(item) : null
     });
   };
 
@@ -616,7 +604,7 @@ export default class LeadList extends React.PureComponent {
         ? userData.rcontact
         : userData.mobile;
     const message = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${sp[0]}
-    \n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
+    \n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
     const options = Platform.select({
       ios: {
         activityItemSources: [
@@ -704,7 +692,7 @@ export default class LeadList extends React.PureComponent {
       Helper.nullCheck(userData.rcontact) === false
         ? userData.rcontact
         : userData.mobile;
-    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the Quotation as desired.\n\n${quoteLink}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the Quotation as desired.\n\n${quoteLink}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
     const shareOptions = {
       title: '',
       message: content,
@@ -729,7 +717,7 @@ export default class LeadList extends React.PureComponent {
       Helper.nullCheck(userData.rcontact) === false
         ? userData.rcontact
         : userData.mobile;
-    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${cif_file}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam Finqy`;
+    const content = `Dear Customer,\n\nGreeting for the day :)\n\nPlease find below the CIF as desired.\n\n${cif_file}\n\nFor further details contact:\n\nRP name : ${username}\n\nMobile no : ${mobile}\n\nRegards\n\nTeam ERB`;
     const shareOptions = {
       title: '',
       message: content,
@@ -1049,8 +1037,6 @@ export default class LeadList extends React.PureComponent {
                         quoteWhatsappClicked={() => this.quoteWhatsappClicked()}
                         cifWhatsappClicked={() => this.cifWhatsappClicked()}
                         cifEmailClicked={() => this.quoteEmailClicked(2)}
-                        tmpPolicy={this.state.tmpPolicy}
-                        tmpPolicyIssued={this.state.tmpPolicyIssued}
                       />
                     </View>
                   }

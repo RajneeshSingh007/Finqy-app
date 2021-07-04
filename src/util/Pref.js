@@ -2965,27 +2965,28 @@ export const API_TOKEN_POST_DATA = JSON.stringify({
 export const API_TOKEN = `WE1aOU5LejRoc2hNV2RIUkdzbnRPdVJrWjZzVG8yNUNxK1hlRFA0bmxqUE1BWWZoY3NoamtlQi91RFFpMDlydkNseFJ3ZVltY3BoQUE0VVgrS0tzR1E9PQ==`;
 
 //production url
-// export const MainUrl = `https://finqy.ai/`;
-// export const ApiDirUrl = `${MainUrl}partner/appapi/`;
-// export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
-// export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
-//export const BlogFileUrl = `${MainUrl}/super_admin/`;
-//export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
-//export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
-//export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
-//export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
+export const MainUrl = `https://finqy.ai/`;
+export const ApiDirUrl = `${MainUrl}partner/appapi/`;
+export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
+export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
+export const BlogFileUrl = `${MainUrl}/super_admin/`;
+export const DialerMainUrl = `${MainUrl}partner/appapi/`;
+export const SalesMainUrl = `${MainUrl}partner/appapi/`;
+export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
+export const QRCTicketMainUrl = `${MainUrl}partner/appapi/`;
+export const TMPUrl = `https://testmypolicy.com/new/index_demo.php`;
 
 //uat test url
-export const MainUrl = `https://uat.erb.ai/`;
-export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
-export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
-export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
-export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
-export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
-export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
-export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
-export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
+// export const MainUrl = `https://uat.erb.ai/`;
+// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
+// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
+// export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
+// export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
+// export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
+// export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
 
 //dev url
 // export const MainUrl = `https://dev.erb.ai/`;
@@ -3048,9 +3049,11 @@ export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
 export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
+export const QouteAjaxUrl = `${FinURL}ajax.php`;
 export const HealthQouteCompanyUrl = `${FinURL}ajax_de.php`;
 export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
+export const BuyInsurance = `${FinURL}hicif.php`;
 export const HLCifUrl = `${FinURL}hicif.php`;
 export const PLCifUrl = `${FinURL}plcif.php`;
 
@@ -3118,16 +3121,16 @@ export const SMS_OTP = `${SMSURL}v5/otp`;
 export const SMS_SEND = `${SMSURL}sendhttp.php`;
 
 ///////firestore dialer ///////////
-export const COLLECTION_PARENT = 'parent';
-export const COLLECTION_PRODUCT = 'productlist';
-export const COLLECTION_CHECKIN = 'checkincheckout';
-export const COLLECTION_TEMPLATE = 'templates';
+// export const COLLECTION_PARENT = 'parent';
+// export const COLLECTION_PRODUCT = 'productlist';
+// export const COLLECTION_CHECKIN = 'checkincheckout';
+// export const COLLECTION_TEMPLATE = 'templates';
 
 ///////production firestore dialer ///////////
-// export const COLLECTION_PARENT = 'live_parent';
-// export const COLLECTION_PRODUCT = 'live_productlist';
-// export const COLLECTION_CHECKIN = 'live_checkincheckout';
-// export const COLLECTION_TEMPLATE = 'live_templates';
+export const COLLECTION_PARENT = 'live_parent';
+export const COLLECTION_PRODUCT = 'live_productlist';
+export const COLLECTION_CHECKIN = 'live_checkincheckout';
+export const COLLECTION_TEMPLATE = 'live_templates';
 
 ///update dialog show
 export const UPDATE_DIALOG = `${ApiDirUrl}force_update.php`;

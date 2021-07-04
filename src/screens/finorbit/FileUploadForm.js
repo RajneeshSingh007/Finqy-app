@@ -9,8 +9,6 @@ import moment from 'moment';
 import CommonFileUpload from '../common/CommonFileUpload';
 import Lodash from 'lodash';
 import NewDropDown from '../component/NewDropDown';
-import FilePicker from '../common/FilePicker';
-import AnimatedInputBox from '../component/AnimatedInputBox';
 
 const currentAddressProofList = [
   {
@@ -1301,7 +1299,6 @@ export default class FileUploadForm extends React.PureComponent {
     this.renderpop = this.renderpop.bind(this);
     this.onChange = this.onChange.bind(this);
     this.state = {
-      restoreFileList:{},
       fileList: [],
       multipleFilesList: listoffiles,
       exisitng_loan_doc: '',
@@ -1322,8 +1319,6 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard: '',
       fresh_pop: '',
       popitemList: lapPopList,
-      statement_bank:'',
-      bstatepass:''
     };
     // const {title} = props;
     // proofOfProprtyList = title.includes('Home')
@@ -1349,7 +1344,7 @@ export default class FileUploadForm extends React.PureComponent {
   optionsSelected = (item, index, value) => {
     const {popitemList} = this.state;
     //const current  = popitemList[index];
-    const filter = Lodash.filter(item.options, (io) => io.value === value);
+    const filter = Lodash.filter(item.options, io => io.value === value);
     item.options = filter;
     item.value = value;
     popitemList[index] = item;
@@ -1362,7 +1357,7 @@ export default class FileUploadForm extends React.PureComponent {
         if (elmet.value != '') {
           const find = Lodash.findLastIndex(
             nextoptions,
-            (io) => io.value === elmet.value,
+            io => io.value === elmet.value,
           );
           if (find !== -1) {
             nextoptions.splice(find, 1);
@@ -1387,7 +1382,7 @@ export default class FileUploadForm extends React.PureComponent {
               list={item.options}
               placeholder={'Select One'}
               value={item.value}
-              selectedItem={(value) => this.optionsSelected(item, index, value)}
+              selectedItem={value => this.optionsSelected(item, index, value)}
               style={styles.newdropdowncontainers}
               textStyle={styles.newdropdowntextstyle}
             />
@@ -1422,8 +1417,7 @@ export default class FileUploadForm extends React.PureComponent {
 
   restoreData(obj) {
     const {title, fresh_pop} = this.props;
-    //console.log(obj);
-    if (obj !== null && obj !== undefined) {
+    if (obj !== undefined) {
       // var popitemList = [];
       // if (obj.fresh_pop !== undefined && obj.fresh_pop === 'Builder Purchase') {
       //   popitemList = freshPopListBuild;
@@ -1444,8 +1438,6 @@ export default class FileUploadForm extends React.PureComponent {
         Helper.nullStringCheckWithReturn(obj.existingcard),
         Helper.nullStringCheckWithReturn(obj.fresh_pop),
         Helper.nullCheck(obj.popitemList) === false ? obj.popitemList : [],
-        Helper.nullStringCheckWithReturn(obj.statement_bank),
-        Helper.nullStringCheckWithReturn(obj.bstatepass),
       );
       this.setState(obj, () => this.forceUpdate());
     }
@@ -1480,8 +1472,6 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard = '',
       fresh_pop = '',
       popitemList = [],
-      statement_bank = '',
-      bstatepass = '',
     } = this.props;
     //console.log('didmount', popitemList,fresh_pop);
     this.setuppop(
@@ -1492,8 +1482,6 @@ export default class FileUploadForm extends React.PureComponent {
       existingcard,
       fresh_pop,
       popitemList,
-      statement_bank,
-      bstatepass
     );
     //console.log(filterList);
   }
@@ -1506,8 +1494,6 @@ export default class FileUploadForm extends React.PureComponent {
     existingcard = '',
     fresh_pop = '',
     popitemList = [],
-    statement_bank = '',
-    bstatepass = '',
   ) => {
     const {title} = this.props;
     var filterList = listoffiles;
@@ -1547,10 +1533,10 @@ export default class FileUploadForm extends React.PureComponent {
       Helper.nullCheck(multipleFilesList) === false &&
       multipleFilesList.length > 0
     ) {
-      filterList = Lodash.map(multipleFilesList, (io) => {
+      filterList = Lodash.map(multipleFilesList, io => {
         const {downloadUrl} = io;
         let isproof = false;
-        const filters = Lodash.filter(downloadUrl, (file) => {
+        const filters = Lodash.filter(downloadUrl, file => {
           if (Helper.extCheckReg(file)) {
             if (file.includes('pop_electricity')) {
               isproof = true;
@@ -1609,8 +1595,6 @@ export default class FileUploadForm extends React.PureComponent {
         existingcard: existingcard,
         exisitng_loan_doc: exisitng_loan_doc,
         current_add_proof: current_add_proof,
-        statement_bank:statement_bank,
-        bstatepass:bstatepass
         // proof_of_property: spx.length > 0 ? spx[0] : '',
         // proof_of_property1: spx.length > 1 ? spx[1] : '',
         // proof_of_property2: spx.length > 2 ? spx[2] : '',
@@ -1649,11 +1633,11 @@ export default class FileUploadForm extends React.PureComponent {
     //   });
   };
 
-  findFileName = (input) => {
+  findFileName = input => {
     //console.log('input', input);
     const {fileList} = this.state;
     if (Helper.nullStringCheck(input) === false && fileList.length > 0) {
-      let find = Lodash.find(fileList, (io) => {
+      let find = Lodash.find(fileList, io => {
         if (Helper.nullCheck(io[input]) === false) {
           return io[input];
         } else {
@@ -1684,7 +1668,7 @@ export default class FileUploadForm extends React.PureComponent {
     return `${name}`;
   };
 
-  insertValueFormultipleFilePick = (position) => {
+  insertValueFormultipleFilePick = position => {
     const {multipleFilesList} = this.state;
     const oldercount = multipleFilesList[position].count;
     if (oldercount < Pref.MAX_FILE_PICK_LIMIT) {
@@ -1717,13 +1701,11 @@ export default class FileUploadForm extends React.PureComponent {
     if (withIndex) {
       obj[`${key}${index + 1}`] = res;
       findPositionExisting = this.state.fileList.findIndex(
-        (io) => io[`${key}${index + 1}`],
+        io => io[`${key}${index + 1}`],
       );
     } else {
       obj[`${key}`] = res;
-      findPositionExisting = this.state.fileList.findIndex(
-        (io) => io[`${key}`],
-      );
+      findPositionExisting = this.state.fileList.findIndex(io => io[`${key}`]);
     }
     if (findPositionExisting !== -1) {
       this.state.fileList.splice(findPositionExisting);
@@ -1849,14 +1831,12 @@ export default class FileUploadForm extends React.PureComponent {
       quotes = null,
       policy = null,
       cif = null,
-      quoteEmailClicked = () => {},
-      quoteWhatsappClicked = () => {},
-      cifWhatsappClicked = () => {},
-      cifEmailClicked = () => {},
+      quoteEmailClicked = () =>{},
+      quoteWhatsappClicked = () =>{},
+      cifWhatsappClicked = () =>{},
+      cifEmailClicked = () =>{},
       itrdoc = null,
-      employ = '',
-      tmpPolicy = null, 
-      tmpPolicyIssued = null,    
+      employ = ''
     } = this.props;
 
     const {
@@ -1873,10 +1853,10 @@ export default class FileUploadForm extends React.PureComponent {
         title === 'Home Loan' ||
         title === 'Auto Loan' ||
         title === 'Gold Loan' ||
-        title === 'Health Insurance' ||
-        title === 'Credit Card')
+        title === 'Health Insurance' || title ==='Credit Card')
         ? true
         : false;
+
 
     return (
       <View>
@@ -1895,7 +1875,7 @@ export default class FileUploadForm extends React.PureComponent {
             whatsppClicked={quoteWhatsappClicked}
           />
         ) : null}
-        {truDownloadEnable !== -1 && cif !== null ? (
+      {truDownloadEnable !== -1 && cif !== null ? (
           <CommonFileUpload
             truDownloadEnable={truDownloadEnable}
             downloadTitles={downloadTitles}
@@ -1903,7 +1883,7 @@ export default class FileUploadForm extends React.PureComponent {
             title={`CIF`}
             type={2}
             email
-            emailClicked={cifEmailClicked}
+            emailClicked = {cifEmailClicked}
             whatsapp
             whatsppClicked={cifWhatsappClicked}
             enableDownloads={this.checkurl(0, cif)}
@@ -1921,27 +1901,14 @@ export default class FileUploadForm extends React.PureComponent {
             downloadUrl={this.checkurl(1, policy)}
           />
         ) : null}
-                {truDownloadEnable !== -1 && tmpPolicyIssued !== null ? (
-          <CommonFileUpload
-            truDownloadEnable={truDownloadEnable}
-            downloadTitles={downloadTitles}
-            mode={mode}
-            title={`Policy Issued`}
-            type={2}
-            enableDownloads={this.checkurl(0, tmpPolicyIssued)}
-            downloadUrl={this.checkurl(1, tmpPolicyIssued)}
-          />
-        ) : null}
         {loanCheck ? (
           <>
-            {truDownloadEnable === -1 &&
-            title !== 'Health Insurance' &&
-            title !== 'Credit Card' ? (
+            {truDownloadEnable === -1 && (title !== 'Health Insurance' && title !== 'Credit Card') ? (
               <NewDropDown
                 list={currentAddressProofList}
                 placeholder={'Select Residence Proof'}
                 value={this.state.current_add_proof}
-                selectedItem={(value) =>
+                selectedItem={value =>
                   this.setState({current_add_proof: value})
                 }
                 style={styles.newdropdowncontainers}
@@ -1968,7 +1935,7 @@ export default class FileUploadForm extends React.PureComponent {
                     list={existingLoanDocumentList}
                     placeholder={'Existing Loan Document'}
                     value={this.state.exisitng_loan_doc}
-                    selectedItem={(value) =>
+                    selectedItem={value =>
                       this.setState({exisitng_loan_doc: value})
                     }
                     style={styles.newdropdowncontainers}
@@ -2398,36 +2365,7 @@ export default class FileUploadForm extends React.PureComponent {
                 )}
               </>
             ) : null}
-            {title === 'Personal Loan' && truDownloadEnable === -1 ?   <>   
-            <NewDropDown
-              truncate
-              list={Pref.BankNameList}
-              placeholder={'Select Bank Name'}
-              starVisible
-              value={this.state.statement_bank}
-              selectedItem={(value) => this.setState({statement_bank:value})}
-              style={styles.newdropdowncontainers}
-              textStyle={styles.newdropdowntextstyle}
-            /> 
-          
-          <AnimatedInputBox
-            placeholder={'Bank Statement Password'}
-            showStarVisible={false}
-            onChangeText={(value) => {
-              if (String(value).match(/^[a-z, A-Z]*$/g) !== null) {
-                this.setState({bstatepass:value})
-              }
-            }}
-            value={this.state.bstatepass}
-            changecolor
-            containerstyle={styles.animatedInputCont}
-            returnKeyType={'next'}
-          />
-            </>
-            : null}
-            {title !== 'Gold Loan' &&
-            title !== 'Health Insurance' &&
-            title !== 'Credit Card' ? (
+            {title !== 'Gold Loan' && title !== 'Health Insurance' && title !== 'Credit Card' ? (
               <CommonFileUpload
                 truDownloadEnable={truDownloadEnable}
                 title={'Passport Size Photo'}
@@ -2446,9 +2384,7 @@ export default class FileUploadForm extends React.PureComponent {
           </>
         ) : null}
 
-        {title !== 'TMP' && title !== 'Motor Insurance' ||
-        title === 'Health Insurance' ||
-        title === 'Credit Card' ? (
+        {title !== 'Motor Insurance' || title === 'Health Insurance' || title === 'Credit Card' ? (
           <>
             <CommonFileUpload
               //showPlusIcon={title !== 'Profile'}
@@ -2456,7 +2392,7 @@ export default class FileUploadForm extends React.PureComponent {
               truDownloadEnable={truDownloadEnable}
               downloadTitles={downloadTitles}
               mode={mode}
-              title={`${this.mandatoryName(`Pan Card ${title === 'Personal Loan' && truDownloadEnable === -1 && editMode === false ? '*' : ''}`, title)} ${
+              title={`${this.mandatoryName(`Pan Card`, title)} ${
                 truDownloadEnable === 1 ? '1' : ''
               }`}
               type={2}
@@ -2812,7 +2748,7 @@ export default class FileUploadForm extends React.PureComponent {
 
         {loanCheck ? (
           <View>
-            {title !== 'Gold Loan' && title !== 'Health Insurance' ? (
+            {title !== 'Gold Loan' && title !== 'Health Insurance'   ? (
               <>
                 <CommonFileUpload
                   showPlusIcon={true}
@@ -2881,7 +2817,7 @@ export default class FileUploadForm extends React.PureComponent {
                           `${
                             title === 'Credit Card'
                               ? '1 Year Bank Statement'
-                              : `6 Month Bank Statement ${title === 'Personal Loan' && truDownloadEnable === -1 && editMode === false ? '*' : ''}`
+                              : `6 Month Bank Statement`
                           }`,
                           title,
                         )
@@ -2978,9 +2914,7 @@ export default class FileUploadForm extends React.PureComponent {
                 );
               })}
 
-            {title === 'Health Insurance' ||
-            (title === 'Credit Card' &&
-              this.state.existingcard.includes('Yes')) ? (
+            {title === 'Health Insurance' || (title === 'Credit Card' && this.state.existingcard.includes('Yes')) ? (
               <>
                 <CommonFileUpload
                   showPlusIcon={true}
@@ -2988,12 +2922,7 @@ export default class FileUploadForm extends React.PureComponent {
                   title={
                     truDownloadEnable === 1
                       ? `Existing 1`
-                      : this.mandatoryName(
-                          title === 'Credit Card'
-                            ? `Existing Card Documents`
-                            : `Existing`,
-                          title,
-                        )
+                      : this.mandatoryName(title === 'Credit Card' ? `Existing Card Documents` : `Existing`, title)
                   }
                   type={2}
                   pickedTitle={this.findFileName(`existing`)}
@@ -3036,9 +2965,7 @@ export default class FileUploadForm extends React.PureComponent {
               </>
             ) : null}
 
-            {title === 'Credit Card' &&
-            employ !== '' &&
-            employ === 'Self Employed' ? (
+            {title === 'Credit Card' &&  employ !== '' && employ === 'Self Employed' ? (
               <>
                 <CommonFileUpload
                   showPlusIcon={true}
@@ -3088,16 +3015,11 @@ export default class FileUploadForm extends React.PureComponent {
                   })}
               </>
             ) : null}
+            
           </View>
         ) : null}
 
-        {loanCheck === false &&
-        title !== 'Profile' &&
-        title !== 'Motor Insurance' &&
-        title !== 'Term Insurance' &&
-        title !== 'Fixed Deposit' &&
-        !title.includes('Life') &&
-        !title.includes('Mutual') && title !== 'TMP' ? (
+        {loanCheck === false && title !== 'Profile' && title !== 'Motor Insurance' && title !== 'Term Insurance' && title !== 'Fixed Deposit' && !title.includes('Life')  && !title.includes('Mutual') ? (
           <View>
             {truDownloadEnable === 1 ? (
               <View
@@ -3305,51 +3227,6 @@ export default class FileUploadForm extends React.PureComponent {
             />
           </View>
         ) : null}
-
-        {/* {title === 'TMP' ? (
-          <FilePicker
-            truDownloadEnable={truDownloadEnable}
-            title={tmpPolicy === null ? 'Policy' : 'Policy Issued'}
-            type={2}
-            totalFile={6}
-            downloadList={[tmpPolicy]}
-            restoreFileList={this.state.restoreFileList['tmp_file_upload']}
-            pickedCallback={(pickedFiles) => {
-              if(pickedFiles.length > 0){
-                pickedFiles.map((obj,index) =>{
-                  const filePickedObj = {};
-                  const keyName = index === 0 ? `tmp_file_upload` : `tmp_file_upload${index+1}`;
-                  filePickedObj[keyName] = obj;
-                  const findIndex = Lodash.findLastIndex(this.state.fileList, io =>{
-                    const finditem = io[keyName];
-                    return finditem;
-                  });
-                  if(findIndex >= 0){
-                    this.state.fileList[findIndex] = filePickedObj;
-                  }else{
-                    this.state.fileList.push(filePickedObj);
-                  }
-                });
-                const store = this.state.restoreFileList;
-                store['tmp_file_upload'] = pickedFiles;
-                this.setState({restoreFileList:store});
-              }
-            }}
-          />
-        ) : null} */}
-        {title === 'TMP' ? <CommonFileUpload
-        type={-1}
-                title={tmpPolicy === null ? 'Policy' : 'Policy Issued'}
-              pickedTitle={this.findFileName(`tmp_file_upload`)}
-              pickedCallback={(selected, res) => {
-                this.state.fileList.push({tmp_file_upload: res});
-              }}
-              enableDownloads={tmpPolicy != null && this.checkurl(0, tmpPolicy)}
-              downloadUrl={this.checkurl(1, tmpPolicy)}
-              mode={mode}
-              downloadTitles={downloadTitles}
-              truDownloadEnable={truDownloadEnable}
-            /> : null}
       </View>
     );
   }
@@ -3359,11 +3236,6 @@ export default class FileUploadForm extends React.PureComponent {
  * styles
  */
 const styles = StyleSheet.create({
-  animatedInputCont: {
-    marginStart: 10,
-    marginEnd: 10,
-    paddingVertical: 10,
-  },
   popcont: {flex: 1, flexDirection: 'row'},
   newdropdowntextstyle: {
     color: '#6d6a57',

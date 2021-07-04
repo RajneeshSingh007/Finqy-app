@@ -6,7 +6,6 @@ import {
   stopService,
   mobileNumberCleanup,
 } from '../util/DialerFeature';
-import FinproCallModule from '../../FinproCallModule';
 
 //Caller Service Handler
 const callerServiceHandler = async (data) => {
@@ -14,37 +13,34 @@ const callerServiceHandler = async (data) => {
 
   global.dialerCallDisconnected = 1;
 
-  // console.log(
-  //   'callerServiceHandler',
-  //   state,
-  //   data,
-  //   global.dialerCustomerItem,
-  //   global.dialerScreenName,
-  //   Helper.nullCheck(global.dialerScreenName),
-  //   global.dialerFormSubmitted,
-  //   global.dialerCheckIn,
-  // );
-
   let lowercase = String(state).toLowerCase();
 
   global.dialerTempNumber = mobileNumberCleanup(phoneNumber);
 
-  if (
-    Helper.nullCheck(global.dialerScreenName) &&
-    (lowercase === 'offhook' || lowercase === 'disconnected')
-  ) {
-    if (Helper.nullCheck(global.dialerFormSubmitted) === false) {
+  console.log(global.dialerFormSubmitted, global.dialerScreenName, global.dialerCallDisconnected);
+
+  if(lowercase === 'disconnected'){
+    global.dialerCallDisconnected = 2;
+  }
+
+  if (lowercase === 'disconnected' || lowercase === 'offhook') {
+    if (Helper.nullCheck(global.dialerScreenName) === false) {
       stopService();
     } else {
-      enableService();
+      if(global.dialerCallDisconnected === 1){
+        enableService();
+      }else{
+        stopService();       
+      }
     }
   } else {
     stopService();
   }
 
-  if(lowercase === 'disconnected'){
-    global.dialerCallDisconnected = 2;
+  if(global.dialerCallDisconnected === 2){
+    stopService();  
   }
+
 
   if (Helper.nullCheck(global.dialerCustomerItem) === false) {
     if (global.dialerScreenName === 'DialerCalling') {
@@ -61,7 +57,6 @@ const callerServiceHandler = async (data) => {
 
   delete global.dialerCustomerItem;
   delete global.dialerScreenName;
-  delete global.dialerFormSubmitted;
 };
 
 AppRegistry.registerHeadlessTask(

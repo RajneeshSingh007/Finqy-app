@@ -359,6 +359,9 @@ export default class CallerForm extends React.PureComponent {
     //   alert('Remark Empty');
     // }
 
+    delete global.dialerFormSubmitted;
+    delete global.dialerScreenName;
+
     if (checkData && clickedBtn == 0) {
       if (
         Helper.nullCheck(global.dialerCallDisconnected) === false &&

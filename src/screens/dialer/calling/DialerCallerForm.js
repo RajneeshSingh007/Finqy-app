@@ -58,8 +58,6 @@ export default class DialerCallerForm extends React.PureComponent {
   setupData = () => {
     //global variable to store dialer temperorary data
     delete global.dialerCustomerItem;
-    delete global.dialerScreenName;
-    global.dialerFormSubmitted = true;
 
     BackHandler.addEventListener("hardwareBackPress", this.backClick);
 
@@ -167,7 +165,6 @@ export default class DialerCallerForm extends React.PureComponent {
   formResult = (status, message) => {
     const { editEnabled } = this.state;
     this.setState(this.initialState(), () => this.forceUpdate());
-    global.dialerFormSubmitted = true;
     if (editEnabled === true) {
       Helper.showToastMessage(message, status === true ? 1 : 0);
     } else {
@@ -180,7 +177,6 @@ export default class DialerCallerForm extends React.PureComponent {
     this.setState({ progressLoader: value });
     if (leadConfirm === 0) {
       this.setState(this.initialState(), () => this.forceUpdate());
-      global.dialerFormSubmitted = true;
       NavigationActions.navigate("DialerCalling");
     }
   };

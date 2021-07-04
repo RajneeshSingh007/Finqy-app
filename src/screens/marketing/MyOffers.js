@@ -39,7 +39,7 @@ export default class MyOffers extends React.PureComponent {
 
   componentDidMount() {
     const {navigation} = this.props;
-    //this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('didFocus', () => {
       Pref.getVal(Pref.USERTYPE, (v) => {
         this.setState({utype: v});
         Pref.getVal(Pref.userData, (parseda) => {
@@ -53,7 +53,7 @@ export default class MyOffers extends React.PureComponent {
           });
         });
       });
-    //});
+    });
   }
 
   componentWillUnMount() {

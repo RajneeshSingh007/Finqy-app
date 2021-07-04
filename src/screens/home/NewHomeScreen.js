@@ -802,6 +802,7 @@ export default class NewHomeScreen extends React.PureComponent {
    * @param {*} param0
    */
   whatsappSharing = (item, result) => {
+    //console.log('item', item);
     const message = this.getMessageFromProduct(item);
     const shareOptions = {
       title: '',
