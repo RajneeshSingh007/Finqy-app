@@ -99,7 +99,7 @@ export const requestPermissions = async () => {
        'android.permission.READ_PHONE_STATE',
        'android.permission.CALL_PHONE',
        'android.permission.READ_CALL_LOG',
-       'android.permission.WRITE_CALL_LOG',
+       //'android.permission.WRITE_CALL_LOG',
        'android.permission.PROCESS_OUTGOING_CALLS',
        'android.permission.ANSWER_PHONE_CALLS'
       ]);

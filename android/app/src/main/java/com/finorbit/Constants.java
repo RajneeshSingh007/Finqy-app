@@ -2,7 +2,7 @@ package com.finorbit;
 
 public class Constants {
 
-    private static final boolean isProduction = true;
+    private static final boolean isProduction = false;
     public static final String UAT_BASE_URL = "https://uat.erb.ai/";
     public static final String PRO_BASE_URL = "https://finqy.ai/";
 

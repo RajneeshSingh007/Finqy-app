@@ -20,8 +20,8 @@ export const enableCallModule = (startService = false) => {
             result['android.permission.CALL_PHONE'] === 'granted' &&
             result['android.permission.READ_CONTACTS'] === 'granted' &&
             result['android.permission.WRITE_CONTACTS'] === 'granted' && 
-            result['android.permission.READ_CALL_LOG'] === 'granted' && 
-            result['android.permission.WRITE_CALL_LOG'] === 'granted'
+            result['android.permission.READ_CALL_LOG'] === 'granted' 
+           // && result['android.permission.WRITE_CALL_LOG'] === 'granted'
           ) {
             FinproCallModule.askPermission().then((v) => {
               FinproCallModule.requestCallsPermission().then((op) => {});

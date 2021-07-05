@@ -2988,18 +2988,6 @@ export const TMPUrl = `https://testmypolicy.com/new/index_demo.php`;
 // export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
 // export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
 
-//dev url
-// export const MainUrl = `https://dev.erb.ai/`;
-// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
-// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
-// export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
-// export const DialerMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
-// export const SalesMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
-// export const QRCMainUrl = `https://uat.erb.ai/ticketsystem/public`;
-// export const QRCTicketMainUrl = `https://uat.erb.ai/corporate_tool/Apis/`;
-// export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
-
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
 
