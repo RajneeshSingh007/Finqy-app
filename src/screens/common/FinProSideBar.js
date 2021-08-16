@@ -48,7 +48,11 @@ export default class FinProSideBar extends React.PureComponent {
         NavigationActions.navigate('NewForm', parseItem);
       } else if(title === 'Test My Policy'){
         NavigationActions.navigate('TestMyPolicy', parseItem);
-      }else {
+      }
+      //else if(title === 'Motor Insurance'){
+        //NavigationActions.navigate('MotorInsurance', parseItem);
+      //}
+      else {
         NavigationActions.navigate('FinorbitForm', parseItem);
       }
     }

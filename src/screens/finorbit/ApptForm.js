@@ -33,6 +33,7 @@ export default class ApptForm extends React.PureComponent {
       currentTime: '',
       baa: '',
       remark: '',
+      editMode:false
     };
   }
 
@@ -72,6 +73,8 @@ export default class ApptForm extends React.PureComponent {
       }
       obj.maxDates = maxDate;
       obj.showCalendar=false;
+      const {editMode} = this.props;
+      obj.editMode = editMode;
       this.setState(obj);
     }
   }
@@ -128,7 +131,7 @@ export default class ApptForm extends React.PureComponent {
         </View>
         <View style={styles.line} /> */}
 
-        <View style={styles.radiocont}>
+        {this.state.editMode === false ? <View style={styles.radiocont}>
           <TouchableWithoutFeedback
             onPress={() =>
               this.setState({
@@ -162,7 +165,7 @@ export default class ApptForm extends React.PureComponent {
               />
             </View>
           </TouchableWithoutFeedback>
-        </View>
+        </View> : null}
 
         <CustomForm
           value={this.state.remark}

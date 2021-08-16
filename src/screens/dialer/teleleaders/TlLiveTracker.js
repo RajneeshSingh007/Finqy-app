@@ -222,6 +222,10 @@ export default class TlLiveTracker extends React.PureComponent {
           //   userData.showinList = true;
           // }
           //const cloneObj = JSON.parse(JSON.stringify(userData));
+
+          if(liveSnapshot.data()['mode'] !== undefined && liveSnapshot.data()['mode'] !== null){
+            userData.viewType = liveSnapshot.data()['mode'];
+          }
           userData.offline = 0;
           dataList[findUserIndex] = userData;
           this.setState({dataList: dataList}, () => this.forceUpdate());

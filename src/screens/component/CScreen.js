@@ -39,17 +39,19 @@ export default class CScreen extends React.Component {
   };
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.addEventListener('hardwareBackPress', this.backClick);
     this.scrollToTop();
   }
 
   backClick = () => {
+    //console.log('c');
     this.scrollToTop();
+    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
     return false;
   };
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backClick);
+    //BackHandler.removeEventListener('hardwareBackPress', this.backClick);
   }
 
   componentWillReceiveProps(nextProps) {

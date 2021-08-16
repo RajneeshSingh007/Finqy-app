@@ -478,7 +478,6 @@ export default class NewHomeScreen extends React.PureComponent {
     const { refercode,id } = userData;
     const url = `${Pref.TMPUrl}?ref=${refercode}&id=${id}`;
     Linking.openURL(url);
-    //NavigationActions.navigate('WebComp', { url: `${Pref.TMPUrl}?ref=${refercode}`, title:`Test My Policy` })
   }
 
   renderProduct = () => {
@@ -488,8 +487,8 @@ export default class NewHomeScreen extends React.PureComponent {
         style={styles.productcontainer}>
         {this.renderProductItem(
           () => 
-          //this.tmponClick(),
-          this.showAlert('Coming Soon!', 0),
+          this.tmponClick(),
+          //this.showAlert('Coming Soon!', 0),
           require('../../res/images/home/tmp.png'),
           'Test My Policy',
           '#eb1d27',
@@ -802,7 +801,6 @@ export default class NewHomeScreen extends React.PureComponent {
    * @param {*} param0
    */
   whatsappSharing = (item, result) => {
-    //console.log('item', item);
     const message = this.getMessageFromProduct(item);
     const shareOptions = {
       title: '',

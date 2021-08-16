@@ -402,6 +402,7 @@ export default class SwitchUser extends React.PureComponent {
           }
         } else {
           docRef.set({
+             mode: 0,
             checkincheckout: [],
             checkin: [],
             checkout: [],
@@ -453,6 +454,7 @@ export default class SwitchUser extends React.PureComponent {
 
                 const obj = {};
                 obj.checkincheckout = checkincheckout;
+                obj.mode = 1;
 
                 firebase
                   .firestore()
@@ -510,6 +512,7 @@ export default class SwitchUser extends React.PureComponent {
                   const obj = {};
                   breaktime.push(checkClientServer[1]);
                   obj.breaktime = breaktime;
+                  obj.mode = 3;
                   firebase
                     .firestore()
                     .collection(Pref.COLLECTION_CHECKIN)

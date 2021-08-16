@@ -139,6 +139,8 @@ public class IdleService extends Service implements Runnable {
                         ArrayList<String> timeArray = new ArrayList<String>();
                         timeArray.add(split[1]);
                         obj.put("idle",timeArray);
+                        Map<String, Integer> modeobj = new HashMap<>();
+                        modeobj.put("mode", 3);
                         DocumentReference reference = firebaseFirestore
                                 .collection(Constants.getFirestoreCollection())
                                 .document(docName);
@@ -162,18 +164,22 @@ public class IdleService extends Service implements Runnable {
                                                             Map<String, ArrayList<String>> objex = new HashMap<>();
                                                             objex.put("idle", existingList);
                                                             reference.set(objex, SetOptions.merge());
+                                                            reference.set(modeobj, SetOptions.merge());
                                                             handler.postDelayed(IdleService.this, TIME);
                                                         } else {
+                                                            reference.set(modeobj, SetOptions.merge());
                                                             reference.set(obj, SetOptions.merge());
                                                             handler.postDelayed(IdleService.this, TIME);
                                                         }
                                                     }
                                                 }
                                             }else{
+                                                reference.set(modeobj, SetOptions.merge());
                                                 reference.set(obj, SetOptions.merge());
                                                 handler.postDelayed(IdleService.this, TIME);
                                             }
                                         }else{
+                                            reference.set(modeobj, SetOptions.merge());
                                             reference.set(obj, SetOptions.merge());
                                             handler.postDelayed(IdleService.this, TIME);
                                         }

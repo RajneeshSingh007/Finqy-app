@@ -4,7 +4,6 @@ import {Subtitle, View} from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
 import {sizeWidth} from '../../util/Size';
-import moment from 'moment';
 import CommonFileUpload from '../common/CommonFileUpload';
 import Lodash from 'lodash';
 

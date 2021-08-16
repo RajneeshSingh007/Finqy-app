@@ -2536,10 +2536,10 @@ export const productList = [
     name: 'Auto Loan',
     url: require('./../res/images/autoloan.png'),
   },
-  // {
-  //   name: 'Test My Policy',
-  //   url: require('./../res/images/autoloan.png'),
-  // },
+  {
+    name: 'Test My Policy',
+    url: require('./../res/images/autoloan.png'),
+  },
   // {
   //   name: 'Gold Loan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2955,7 +2955,6 @@ export const profileDefaultPic = `https://cdn.dribbble.com/users/1971922/avatars
 /**
  * API url
  */
-
 export const API_TOKEN_POST_DATA = JSON.stringify({
   username: `ERBFinPro`,
   product: `FinPro App`,
@@ -2974,10 +2973,11 @@ export const DialerMainUrl = `${MainUrl}partner/appapi/`;
 export const SalesMainUrl = `${MainUrl}partner/appapi/`;
 export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
 export const QRCTicketMainUrl = `${MainUrl}partner/appapi/`;
-export const TMPUrl = `https://testmypolicy.com/new/index_demo.php`;
+export const TMPUrl = `https://www.testmypolicy.com/`;
+
 
 //uat test url
-// export const MainUrl = `https://uat.erb.ai/`;
+// export const MainUrl = `https://dev.erb.ai/`;
 // export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
 // export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
 // export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
@@ -2993,7 +2993,6 @@ export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
 
 //forms directory
 export const FinURL = `${MainUrl}erbfinorbit/`;
-export const ErbFinorbitFormUrl = `${MainUrl}erbfinorbit/`;
 
 export const DashBoardUrl = `${ApiDirUrl}tool_dashboard.php`;
 export const NewDashBoardUrl = `${ApiDirUrl}tool_dashboard_api.php`;
@@ -3037,11 +3036,9 @@ export const DisclaimerUrl = `${MainUrl}/Disclaimer.pdf`;
 export const TermOfUseUrl = `${MainUrl}/Terms%20of%20Use%20ERB.pdf`;
 export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
-export const QouteAjaxUrl = `${FinURL}ajax.php`;
 export const HealthQouteCompanyUrl = `${FinURL}ajax_de.php`;
 export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
-export const BuyInsurance = `${FinURL}hicif.php`;
 export const HLCifUrl = `${FinURL}hicif.php`;
 export const PLCifUrl = `${FinURL}plcif.php`;
 

@@ -328,7 +328,8 @@ export const firstFormCheck = (title, commons) => {
   //     Helper.showToastMessage("Date of Birth empty", 0);
   // }
   else if (
-    title === 'Health Insurance' &&
+   (title === 'Health Insurance' ||
+    title === 'Personal Loan' ) &&
     (commons.dob === '' ||
       commons.dob === `Date of Birth *` ||
       commons.dob === `Date of Birth`)
@@ -353,23 +354,10 @@ export const firstFormCheck = (title, commons) => {
   //     commons.qualification === ""
   // ) {
   //     Helper.showToastMessage("Please, Select Qualification", 0);
-  // } else if (
-  //     title !== `Personal Loan` &&
-  //     title !== "Fixed Deposit" &&
-  //     title !== "Business Loan" &&
-  //     title !== `Motor Insurance` &&
-  //     title !== `Mutual Fund` &&
-  //     title !== `Vector Plus` &&
-  //     title !== `Home Loan` &&
-  //     //title !== `Loan Against Property` &&
-  //     //title !== `Auto Loan` &&
-  //     title !== `Life Cum Invt. Plan` &&
-  //     title !== `Insure Check` &&
-  //     commons.employ === ""
-  // ) {
-  //     Helper.showToastMessage("Please, Select Employment Type", 0);
   // }
-  else {
+  else if (title === `Personal Loan` && commons.employ === '') {
+    Helper.showToastMessage('Please, Select Employment Type', 0);
+  } else {
     result = true;
   }
   return result;
@@ -385,25 +373,53 @@ export const secondFormCheck = (title, specificForms) => {
   if (title === `Health Insurance` && specificForms.required_cover === '') {
     result = false;
     Helper.showToastMessage('Please, Select Required Cover', 0);
-  } else if (
+  } 
+  // else if (title === 'Personal Loan' && specificForms.plcompany === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Please, Select Company Name', 0);
+  // } else if (title === 'Personal Loan' && specificForms.plcompany === 'Others' && specificForms.company === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Company name empty', 0);
+  // } else if (title === 'Personal Loan' && specificForms.turnover === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Net Income (Monthly) empty', 0);
+  // } else if (title === 'Personal Loan' && specificForms.amount === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Desired Amount empty', 0);
+  // } else if (title === 'Personal Loan' && specificForms.pancardNo === '') {
+  //   result = false;
+  //   Helper.showToastMessage('PAN Card Number empty', 0);
+  // }
+  else if (
+    title !== `Health Insurance` &&
     specificForms.pancardNo !== '' &&
     !Helper.checkPanCard(specificForms.pancardNo)
   ) {
     result = false;
     Helper.showToastMessage('Invalid pan card number', 0);
   } else if (
+    title !== `Health Insurance` &&
     specificForms.aadharcardNo !== undefined &&
     specificForms.aadharcardNo !== '' &&
     specificForms.aadharcardNo.length < 12
   ) {
     result = false;
     Helper.showToastMessage('Invalid aadhar card number', 0);
-  } else if (title === `Health Insurance` && specificForms.lifestyle === '') {
+  }
+  // else if (title === `Health Insurance` && specificForms.lifestyle === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Please, Select Smoker Type', 0);
+  // } else if (title === `Health Insurance` && specificForms.lifestyle2 === '') {
+  //   result = false;
+  //   Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
+  // }
+  else if (
+    title === `Health Insurance` &&
+    specificForms.policy_type === `Top Up` &&
+    specificForms.deductible === ''
+  ) {
     result = false;
-    Helper.showToastMessage('Please, Select Smoker Type', 0);
-  } else if (title === `Health Insurance` && specificForms.lifestyle2 === '') {
-    result = false;
-    Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
+    Helper.showToastMessage('Select Deductible', 0);
   } else if (
     title === `Health Insurance` &&
     specificForms.existing_diseases === ''
@@ -419,15 +435,20 @@ export const secondFormCheck = (title, specificForms) => {
     Helper.showToastMessage('Please, Specify diseases', 0);
   } else if (title === `Health Insurance` && specificForms.claim_type === '') {
     result = false;
-    Helper.showToastMessage('Please, Select Type Of Insurance', 0);
+    Helper.showToastMessage('Please, Select Cover Type', 0);
   } else if (
     title === `Health Insurance` &&
     specificForms.claim_type === 'Family Floater'
   ) {
-    if (specificForms.family_floater === '') {
+    if (specificForms.family_floater_adult === '' || specificForms.family_floater_adult === 'Select Adult') {
       result = false;
-      Helper.showToastMessage('Please, Select Family Floater', 0);
-    } else {
+      Helper.showToastMessage('Please, Select Adult', 0);
+    } 
+	//else if (specificForms.family_floater_child === '' || specificForms.family_floater_child === 'Select Child') {
+      //result = false;
+      //Helper.showToastMessage('Please, Select Child', 0);
+    //} 
+	else {
       if (
         specificForms !== null &&
         specificForms.floaterItemList !== undefined &&
@@ -1081,6 +1102,131 @@ export const secondFormCheck = (title, specificForms) => {
       result = false;
       Helper.showToastMessage('Invalid pan card number', 0);
     }
+  }
+  return result;
+};
+
+/**
+ * motor First Form check
+ * @param {*} param0
+ * @returns
+ */
+ export const motorFirstFormCheck = ({
+  name,
+  mobile,
+  reg_number,
+  registration_type,
+  claim_type,
+  policy_expiry_type,
+  noclaim_bonus_type,
+  vehicle_type
+}) => {
+  let result = false;
+  if (name === '') {
+    Helper.showToastMessage('Full Name empty', 0);
+  } else if (mobile === '') {
+    Helper.showToastMessage('Mobile Number empty', 0);
+  } else if (
+    Number(mobile.length) < 10 ||
+    mobile === '9876543210' ||
+    mobile === '1234567890'
+  ) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  }else if (mobile.match(/^[0-9]*$/g) === null) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  } else if (reg_number === '') {
+    Helper.showToastMessage('Registration Number empty', 0);
+  } else if (registration_type == '') {
+    Helper.showToastMessage('Select Owner Type', 0);
+  } else if (claim_type == '') {
+    Helper.showToastMessage('Select Any Claim Made Recently', 0);
+  } else if (policy_expiry_type == '') {
+    Helper.showToastMessage('Select Policy Expiry', 0);
+  } else if (noclaim_bonus_type == '') {
+    Helper.showToastMessage('Select No Claim Bonus', 0);
+  } else if (vehicle_type == '') {
+    Helper.showToastMessage('Select Vehicle Type', 0);
+  } else {
+    result = true;
+  }
+  return result;
+};
+
+/**
+ * motor Second Form check
+ * @param {*} param0
+ * @returns
+ */
+ export const motorSecondFormCheck = ({insurance, expiry_date}) => {
+  let result = false;
+  if (insurance === '') {
+    Helper.showToastMessage('Select Policy Type', 0);
+  }else if (expiry_date === 'Previous Policy Expiry Date *') {
+    Helper.showToastMessage('Expiry Date Empty', 0);
+  } else {
+    result = true;
+  }
+  return result;
+};
+
+
+/**
+ * tmp First Form check
+ * @param {*} param0
+ * @returns
+ */
+export const tmpFirstFormCheck = ({
+  name,
+  mobile,
+  email,
+  insType,
+  insCompany,
+  insPlan,
+}) => {
+  let result = false;
+  if (name === '') {
+    Helper.showToastMessage('Full Name empty', 0);
+  } else if (mobile === '') {
+    Helper.showToastMessage('Mobile Number empty', 0);
+  } else if (
+    Number(mobile.length) < 10 ||
+    mobile === '9876543210' ||
+    mobile === '1234567890'
+  ) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  }else if (mobile.match(/^[0-9]*$/g) === null) {
+    Helper.showToastMessage('Invalid mobile number', 0);
+  } else if (email === '') {
+    Helper.showToastMessage('Email empty', 0);
+  } else if (email !== '' && Helper.emailCheck(email) === false) {
+    Helper.showToastMessage('Invalid Email', 0);
+  } else if (insType == '') {
+    Helper.showToastMessage('Select Insurance Type', 0);
+  } else if (insCompany == '') {
+    Helper.showToastMessage('Select Company', 0);
+  } else if (insPlan == '') {
+    Helper.showToastMessage('Select Plan', 0);
+  } else {
+    result = true;
+  }
+  return result;
+};
+
+/**
+ * tmp Second Form check
+ * @param {*} param0
+ * @returns
+ */
+export const tmpSecondFormCheck = ({sumAss, apremium, age}) => {
+  let result = false;
+  if (sumAss === '') {
+    Helper.showToastMessage('Select Required Cover', 0);
+  } else if (apremium === '') {
+    Helper.showToastMessage('Annual premium empty', 0);
+  } else if (age === '') {
+    Helper.showToastMessage('Age empty', 0);
+  } else {
+    result = true;
   }
   return result;
 };
@@ -2277,7 +2423,7 @@ export const constructObjEditLead = item => {
     },
   ];
 
-  const fileurls = `${Pref.ErbFinorbitFormUrl}${formname}`;
+  const fileurls = `${Pref.FinURL}${formname}`;
 
   let Pancard = null;
   if (Helper.nullCheck(pan_card) === false) {
@@ -2571,7 +2717,7 @@ export const constructObjEditLead = item => {
 
   var popitemList = [];
   let proofList = [];
-  
+
   if (product.includes('Against')) {
     if (popitemList.length > 0) {
       popitemList = returneditPop(lapPopList, proofList);
@@ -2596,6 +2742,10 @@ export const constructObjEditLead = item => {
 
   let ccfather = '';
   let ccmother = '';
+  let deductible = '';
+  let hpolicyType = '';
+  let family_floater_adult = '',
+    family_floater_child = '';
 
   if (Helper.nullCheck(alldata.father_name) === false) {
     ccfather = alldata.father_name;
@@ -2604,6 +2754,19 @@ export const constructObjEditLead = item => {
     ccmother = alldata.mother_name;
   }
 
+  if (Helper.nullCheck(alldata.deductible) === false) {
+    deductible = alldata.deductible;
+  }
+
+  if (Helper.nullCheck(alldata.policy_type) === false) {
+    hpolicyType = alldata.policy_type;
+  }
+
+  if (Helper.nullStringCheck(alldata.family_floater) === false) {
+    const ffSplit = alldata.family_floater.split(/\s/g);
+    family_floater_adult = `${ffSplit[0]} ${ffSplit[1]}`;
+    family_floater_child = `${ffSplit[2]} ${ffSplit[3]}`;
+  }
 
   const convertedjsonObj = {
     first: {
@@ -2624,15 +2787,22 @@ export const constructObjEditLead = item => {
       emailTypeCd: '',
       contactTypeCd: '',
       state: Helper.nullStringCheckWithReturn(state),
-      residence_address: Helper.nullStringCheckWithReturn(alldata.residence_address)
+      residence_address: Helper.nullStringCheckWithReturn(
+        alldata.residence_address,
+      ),
     },
     second: {
+      family_floater_adult: family_floater_adult,
+      family_floater_child: family_floater_child,
+      deductible: deductible,
+      policy_type: hpolicyType,
       fresh_pop: Helper.nullStringCheckWithReturn(alldata.fresh_pop),
       eaadharcardNo: Helper.nullStringCheckWithReturn(eaadharcard),
       // current_add_proof: Helper.nullStringCheckWithReturn(current_add_proof),
       // exisitng_loan_doc: Helper.nullStringCheckWithReturn(exisitng_loan_doc),
       // proof_of_property: Helper.nullStringCheckWithReturn(proof_of_property),
       company: Helper.nullStringCheckWithReturn(company),
+      plcompany: Helper.nullStringCheckWithReturn(company),
       amount: Helper.nullStringCheckWithReturn(damount),
       companylocation: companyLocation,
       ccity: ccity,
@@ -2687,8 +2857,8 @@ export const constructObjEditLead = item => {
       floaterItemList: floaterItemList,
       type_loan: Helper.nullStringCheckWithReturn(loan_type),
       homestate: Helper.nullStringCheckWithReturn(lpstate),
-      ccfather:Helper.nullStringCheckWithReturn(ccfather),
-      ccmother:Helper.nullStringCheckWithReturn(ccmother),
+      ccfather: Helper.nullStringCheckWithReturn(ccfather),
+      ccmother: Helper.nullStringCheckWithReturn(ccmother),
     },
     third: {
       popitemList: popitemList,
@@ -2711,22 +2881,24 @@ export const constructObjEditLead = item => {
       policycopy: Policycopy,
       multipleFilesList: multipleFilesList,
       existing: Existing,
-      itrdoc:Itrdoc
+      itrdoc: Itrdoc,
+      statement_bank:Helper.nullStringCheckWithReturn(alldata.statement_bank),
+      bstatepass:Helper.nullStringCheckWithReturn(alldata.bankstatepass)
     },
     // third: {
-    //     panCard: Helper.nullCheck(pan_card) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/pancard/${pan_card}` : null,
-    //     aadharCard: Helper.nullCheck(aadhar_card) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/aadharcard/${aadhar_card}` : null,
-    //     rcCopy: Helper.nullCheck(rc_copy) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/rcbookcopy/${rc_copy}` : null,
-    //     oldInsCopy: Helper.nullCheck(old_insc_copy) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/oldinsurancecopy/${old_insc_copy}` : null,
-    //     pucCopy: Helper.nullCheck(puc_copy) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/puccopy/${puc_copy}` : null,
-    //     policycopy: Helper.nullCheck(policycopy) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/policycopy/${policycopy}` : null,
-    //     salarySlip: Helper.nullCheck(salarySlip) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip}` : null,
-    //     salarySlip1: Helper.nullCheck(salarySlip1) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip1}` : null,
-    //     salarySlip2: Helper.nullCheck(salarySlip2) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip2}` : null,
-    //     salarySlip3: Helper.nullCheck(salarySlip3) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip3}` : null,
-    //     salarySlip4: Helper.nullCheck(salarySlip4) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip4}` : null,
-    //     salarySlip5: Helper.nullCheck(salarySlip5) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/salaryslip/${salarySlip5}` : null,
-    //     bankState: Helper.nullCheck(bank_state) === false ? `${Pref.ErbFinorbitFormUrl}${formname}/bankstate/${bank_state}` : null
+    //     panCard: Helper.nullCheck(pan_card) === false ? `${Pref.FinURL}${formname}/pancard/${pan_card}` : null,
+    //     aadharCard: Helper.nullCheck(aadhar_card) === false ? `${Pref.FinURL}${formname}/aadharcard/${aadhar_card}` : null,
+    //     rcCopy: Helper.nullCheck(rc_copy) === false ? `${Pref.FinURL}${formname}/rcbookcopy/${rc_copy}` : null,
+    //     oldInsCopy: Helper.nullCheck(old_insc_copy) === false ? `${Pref.FinURL}${formname}/oldinsurancecopy/${old_insc_copy}` : null,
+    //     pucCopy: Helper.nullCheck(puc_copy) === false ? `${Pref.FinURL}${formname}/puccopy/${puc_copy}` : null,
+    //     policycopy: Helper.nullCheck(policycopy) === false ? `${Pref.FinURL}${formname}/policycopy/${policycopy}` : null,
+    //     salarySlip: Helper.nullCheck(salarySlip) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip}` : null,
+    //     salarySlip1: Helper.nullCheck(salarySlip1) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip1}` : null,
+    //     salarySlip2: Helper.nullCheck(salarySlip2) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip2}` : null,
+    //     salarySlip3: Helper.nullCheck(salarySlip3) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip3}` : null,
+    //     salarySlip4: Helper.nullCheck(salarySlip4) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip4}` : null,
+    //     salarySlip5: Helper.nullCheck(salarySlip5) === false ? `${Pref.FinURL}${formname}/salaryslip/${salarySlip5}` : null,
+    //     bankState: Helper.nullCheck(bank_state) === false ? `${Pref.FinURL}${formname}/bankstate/${bank_state}` : null
     // },
     four: {
       mode: 'date',
@@ -2759,247 +2931,159 @@ export const constructObjEditSamadhan = item => {
 };
 
 /**
+ * edit motor
+ * @param {*} item
+ */
+ export const constructObjEditMotor = item => {
+  const {name, mobile, remark, alldata} = item;
+  let {
+    id,
+    expiry_date,
+    file,
+    noclaim_bonus_type,
+    premium_amount,
+    insurance,
+    claim_type,
+    vehicle_type
+  } = alldata;
+  return {
+    name: Helper.nullStringCheckWithReturn(name),
+    mobile: Helper.nullStringCheckWithReturn(mobile),
+    registration_type: Helper.nullStringCheckWithReturn(registration_type),
+    claim_type: Helper.nullStringCheckWithReturn(claim_type),
+    insurance: Helper.nullStringCheckWithReturn(insurance),
+    vehicle_type: Helper.nullStringCheckWithReturn(vehicle_type),
+    expiry_date: Helper.nullStringCheckWithReturn(expiry_date),
+    noclaim_bonus_type: Helper.nullStringCheckWithReturn(noclaim_bonus_type),
+    apremium: Helper.nullStringCheckWithReturn(premium_amount),
+    //tmpPolicy: policyFile,
+    formid: id,
+  };
+};
+
+/**
+ * edit tmp
+ * @param {*} item
+ */
+export const constructObjEditTmp = item => {
+  const {name, mobile, remark, alldata} = item;
+  let {
+    required_cover,
+    id,
+    family_floater,
+    company_name,
+    file,
+    plan_name,
+    premium_amount,
+    dob,
+    email,
+  } = alldata;
+  let rCover = '';
+  if (Helper.nullStringCheck(required_cover) === false) {
+    rCover = `${Number(required_cover) / 100000}`;
+  }
+  // let policyFile = '';
+  // if (Helper.nullStringMultiCheck(file) === false) {
+  //   policyFile = `${Pref.FinURL}tmp_form/policy/${file}`;
+  // }
+  let floater = '';
+  if (Helper.nullStringMultiCheck(family_floater) === false) {
+    const split = family_floater.split(/\s/g);
+    if (split.length === 4) {
+      floater = `${split[0].trim()} ${split[1].trim()} + ${split[2].trim()} ${split[3].trim()}`;
+    } else {
+      floater = family_floater;
+    }
+  }
+  return {
+    name: Helper.nullStringCheckWithReturn(name),
+    mobile: Helper.nullStringCheckWithReturn(mobile),
+    email: Helper.nullStringCheckWithReturn(email),
+    sumAss: rCover,
+    age: Helper.nullStringCheckWithReturn(dob),
+    remark: Helper.nullStringCheckWithReturn(remark),
+    insType: Helper.nullStringCheckWithReturn(floater),
+    insCompany: Helper.nullStringCheckWithReturn(company_name),
+    insPlan: Helper.nullStringCheckWithReturn(plan_name),
+    apremium: Helper.nullStringCheckWithReturn(premium_amount),
+    //tmpPolicy: policyFile,
+    formid: id,
+  };
+};
+
+/**
  * files check 3rd form
  * @param {} title
  * @param {*} allfileslist
  */
-export const thirdFormFileCheck = (title, allfileslist) => {
+export const thirdFormFileCheck = (title, allfileslist, stateObj = {}, editMode = false) => {
   let result = true;
-  return result;
-
   let existence = '';
-  //console.log('allfileslist', allfileslist)
-  if (Helper.nullCheck(allfileslist) === false && allfileslist.length > 0) {
-    // const loops = Lodash.map(allfileslist, (ele) => {
-    //   let parseJs = JSON.parse(JSON.stringify(ele));
-    //   for (var key in parseJs) {
-    //     const value = parseJs[key];
-    //     if (value !== undefined) {
-    //       if (Array.isArray(value) === false) {
-    //         formData.append(key, parseJs[key]);
-    //       }
-    //     }
-    //   }
-    // });
-    if (title === 'Motor Insurance') {
-      const rcCopy = Lodash.find(allfileslist, io => {
-        if ('rcbookcopy' in io) {
-          io.key = 'rcbookcopy';
+  return true;
+  if (title === 'Personal Loan' && editMode === false) {
+    if (stateObj.statement_bank == '') {
+      Helper.showToastMessage('Please, Select Bank Name', 0);
+    } else {
+      const pancard = Lodash.find(allfileslist, io => {
+        if ('pancard' in io) {
+          io.key = 'pancard';
           return io;
         } else {
           return undefined;
         }
       });
-      if (rcCopy !== undefined) {
-        const {key} = rcCopy;
-        const {name} = rcCopy[key];
+      if (pancard !== undefined) {
+        const {key} = pancard;
+        const {name} = pancard[key];
         if (
-          String(key) === `rcbookcopy` &&
+          String(key) === `pancard` &&
           name !== undefined &&
           String(name).length === 0
         ) {
           existence = key;
         }
       } else {
-        existence = 'rcbookcopy';
+        existence = 'pancard';
       }
 
-      const oldInCopy = Lodash.find(allfileslist, io => {
-        if ('policycopy' in io) {
-          io.key = 'policycopy';
+      const bankstate = Lodash.find(allfileslist, io => {
+        if ('bankstate' in io) {
+          io.key = 'bankstate';
           return io;
         } else {
           return undefined;
         }
       });
       if (existence === '') {
-        if (oldInCopy !== undefined) {
-          const {key} = oldInCopy;
-          const {name} = oldInCopy[key];
+        if (bankstate !== undefined) {
+          const {key} = bankstate;
+          const {name} = bankstate[key];
           if (
-            String(key) === `policycopy` &&
+            String(key) === `bankstate` &&
             name !== undefined &&
             String(name).length === 0
           ) {
             existence = key;
           }
         } else {
-          existence = 'policycopy';
+          existence = 'bankstate';
         }
       }
-    }
-    // else if (title === 'Business Loan') {
-    //   //|| title === 'Personal Loan'
-    //   //title === 'Auto Loan' ||
-    //   //pan card
-    //   const pancard = Lodash.find(allfileslist, io => {
-    //     if ('pancard' in io) {
-    //       io.key = 'pancard';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (pancard !== undefined) {
-    //     const { key } = pancard;
-    //     const { name } = pancard[key];
-    //     if (String(key) === `pancard` && name !== undefined && String(name).length === 0) {
-    //       existence = key;
-    //     }
-    //   } else {
-    //     existence = "pancard";
-    //   }
 
-    //   //aadhar card
-    //   const aadharcard = Lodash.find(allfileslist, io => {
-    //     if ('aadharcard' in io) {
-    //       io.key = 'aadharcard';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (existence === "") {
-    //     if (aadharcard !== undefined) {
-    //       const { key } = aadharcard;
-    //       const { name } = aadharcard[key];
-    //       if (String(key) === `aadharcard` && name !== undefined && String(name).length === 0) {
-    //         existence = key;
-    //       }
-    //     } else {
-    //       existence = "aadharcard";
-    //     }
-    //   }
-
-    //   //salary slip
-    //   const salaryslip = Lodash.find(allfileslist, io => {
-    //     if ('salaryslip' in io) {
-    //       io.key = 'salaryslip';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (existence === "") {
-
-    //     if (salaryslip !== undefined) {
-    //       const { key } = salaryslip;
-    //       const { name } = salaryslip[key];
-    //       if (String(key) === `salaryslip` && name !== undefined && String(name).length === 0) {
-    //         existence = key;
-    //       }
-    //     } else {
-    //       existence = "salaryslip";
-    //     }
-    //   }
-
-    //   //salary slip 1
-    //   const salaryslip1 = Lodash.find(allfileslist, io => {
-    //     if ('salaryslip1' in io) {
-    //       io.key = 'salaryslip1';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (existence === "") {
-
-    //     if (salaryslip1 !== undefined) {
-    //       const { key } = salaryslip1;
-    //       const { name } = salaryslip1[key];
-    //       if (String(key) === `salaryslip1` && name !== undefined && String(name).length === 0) {
-    //         existence = key;
-    //       }
-    //     } else {
-    //       existence = "salaryslip1";
-    //     }
-    //   }
-
-    //   //salary slip 2
-    //   const salaryslip2 = Lodash.find(allfileslist, io => {
-    //     if ('salaryslip2' in io) {
-    //       io.key = 'salaryslip2';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (existence === "") {
-
-    //     if (salaryslip2 !== undefined) {
-    //       const { key } = salaryslip2;
-    //       const { name } = salaryslip2[key];
-    //       if (String(key) === `salaryslip2` && name !== undefined && String(name).length === 0) {
-    //         existence = key;
-    //       }
-    //     } else {
-    //       existence = "salaryslip2";
-    //     }
-    //   }
-    //   //3month bank statement
-    //   const bankstate = Lodash.find(allfileslist, io => {
-    //     if ('bankstate' in io) {
-    //       io.key = 'bankstate';
-    //       return io;
-    //     } else {
-    //       return undefined;
-    //     }
-    //   });
-    //   if (existence === "") {
-
-    //     if (bankstate !== undefined) {
-    //       const { key } = bankstate;
-    //       const { name } = bankstate[key];
-    //       if (String(key) === `bankstate` && name !== undefined && String(name).length === 0) {
-    //         existence = key;
-    //       }
-    //     } else {
-    //       existence = "bankstate";
-    //     }
-    //   }
-    // }
-  } else {
-    if (title == 'Motor Insurance') {
-      existence = 'rcbookcopy';
-    }
-    // else if (title == 'Auto Loan' || title === 'Business Loan' || title === 'Personal Loan') {
-    //   existence = "pancard";
-    // }
-  }
-  //console.log('existence', existence)
-  if (this.state.currentPosition === 2) {
-    if (title === `Motor Insurance`) {
-      if (existence === 'rcbookcopy') {
+      if (existence === 'pancard') {
         result = false;
-        Helper.showToastMessage('Please, Select RC Book', 0);
-      } else if (existence === 'policycopy') {
+        Helper.showToastMessage('Please,Upload Pancard File', 0);
+      } else if (existence === 'bankstate') {
         result = false;
-        Helper.showToastMessage('Please, Select Policy', 0);
+        Helper.showToastMessage('Please,Upload Bank statment File', 0);
+      } else {
+        result = true;
       }
+      return result;
     }
-    // else if (title === `Auto Loan` || title === 'Business Loan' || title === 'Personal Loan') {
-    //   if (existence === 'pancard') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Pancard', 0);
-    //   } else if (existence === 'aadharcard') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Aadhar Card', 0);
-    //   } else if (existence === 'salaryslip') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Salary Slip 1', 0);
-    //   } else if (existence === 'salaryslip1') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Salary Slip 2', 0);
-    //   } else if (existence === 'salaryslip2') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Salary Slip 3', 0);
-    //   } else if (existence === 'bankstate') {
-    //     result = false;
-    //     Helper.showToastMessage('Please, Select Bank Statement', 0);
-    //   }
-    // }
+  } else {
+    return result;
   }
-  return result;
 };
 
 /**
