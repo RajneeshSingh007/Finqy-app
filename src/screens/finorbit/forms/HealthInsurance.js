@@ -1218,7 +1218,7 @@ export default class HealthInsurance extends React.PureComponent {
             />
             <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
-                <Title style={styles.bbstyle}>{`Policy Type`}</Title>
+                <Title style={styles.bbstyle}>{`Policy Type *`}</Title>
 
                 <RadioButton.Group
                   onValueChange={(value) => this.setState({policy_type: value})}
@@ -2598,10 +2598,17 @@ export default class HealthInsurance extends React.PureComponent {
               starVisible={false}
               value={this.state.family_floater_adult}
               selectedItem={(value) => {
+                let clone = JSON.parse(JSON.stringify(floatCloneList));
+                if (value === `2 Adult` || value === `2 Adults`) {
+                  clone.length = 1;
+                }else{
+                  clone = [];
+                }
+                //console.log('clone', clone);
                 this.setState({
                   family_floater_child: 'Select Child',
                   family_floater_adult: value,
-                  floaterItemList: [],
+                  floaterItemList: clone,
                 });
               }}
               style={{

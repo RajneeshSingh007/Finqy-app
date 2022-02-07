@@ -1,11 +1,11 @@
-import { Dimensions, PermissionsAndroid, Platform } from 'react-native';
-import { NavigationActions, StackActions } from 'react-navigation';
-import NavigationAction from './../util/NavigationActions';
-import { showMessage, hideMessage } from 'react-native-flash-message';
-import RNFetchBlob from 'rn-fetch-blob';
-import Lodash from 'lodash';
-import * as Pref from './Pref';
-import {checkMultiple,PERMISSIONS} from 'react-native-permissions';
+import { Dimensions, PermissionsAndroid, Platform } from "react-native";
+import { NavigationActions, StackActions } from "react-navigation";
+import NavigationAction from "./../util/NavigationActions";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import RNFetchBlob from "rn-fetch-blob";
+import Lodash from "lodash";
+import * as Pref from "./Pref";
+import { checkMultiple, PERMISSIONS } from "react-native-permissions";
 
 /**
  *
@@ -20,7 +20,7 @@ export const closeCurrentPage = (props) => {
  * @param props
  */
 export const backClick = (props) => {
-  NavigationAction.navigate('Home');
+  NavigationAction.navigate("Home");
 };
 
 /**
@@ -42,7 +42,7 @@ export const passParamItemClick = (props, val, data) => {
  * @returns {*}
  */
 export const deviceWidth = () => {
-  return Dimensions.get('window').width;
+  return Dimensions.get("window").width;
 };
 
 /**
@@ -50,7 +50,7 @@ export const deviceWidth = () => {
  * @returns {*}
  */
 export const deviceHeight = () => {
-  return Dimensions.get('window').height;
+  return Dimensions.get("window").height;
 };
 
 /**
@@ -59,20 +59,20 @@ export const deviceHeight = () => {
  */
 export const requestPermissions = async () => {
   try {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       const value = await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       ]).then((result) => {
         if (
-          result['android.permission.READ_EXTERNAL_STORAGE'] &&
-          result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
+          result["android.permission.READ_EXTERNAL_STORAGE"] &&
+          result["android.permission.WRITE_EXTERNAL_STORAGE"] === "granted"
         ) {
           //granted
         } else if (
-          result['android.permission.READ_EXTERNAL_STORAGE'] ||
-          result['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-          'never_ask_again'
+          result["android.permission.READ_EXTERNAL_STORAGE"] ||
+          result["android.permission.WRITE_EXTERNAL_STORAGE"] ===
+            "never_ask_again"
         ) {
           //ignore
         }
@@ -84,32 +84,29 @@ export const requestPermissions = async () => {
   }
 };
 
-
-
 /**
  * Ask permission on android for dialer
  * @returns {Promise<void>}
  */
- export const requestPermissionsDialer = async() => {
+export const requestPermissionsDialer = async () => {
   try {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       const value = await PermissionsAndroid.requestMultiple([
-       'android.permission.READ_CONTACTS',
-       'android.permission.WRITE_CONTACTS',
-       'android.permission.READ_PHONE_STATE',
-       'android.permission.CALL_PHONE',
-       'android.permission.READ_CALL_LOG',
-       //'android.permission.WRITE_CALL_LOG',
-       'android.permission.PROCESS_OUTGOING_CALLS',
-       'android.permission.ANSWER_PHONE_CALLS'
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.READ_PHONE_STATE",
+        "android.permission.CALL_PHONE",
+        "android.permission.READ_CALL_LOG",
+        //'android.permission.WRITE_CALL_LOG',
+        "android.permission.PROCESS_OUTGOING_CALLS",
+        "android.permission.ANSWER_PHONE_CALLS",
       ]);
       return value;
       // const value = await checkMultiple([PERMISSIONS.ANDROID.CALL_PHONE, PERMISSIONS.ANDROID.READ_CALL_LOG, PERMISSIONS.ANDROID.WRITE_CALL_LOG, PERMISSIONS.ANDROID.READ_CONTACTS, PERMISSIONS.ANDROID.WRITE_CONTACTS, PermissionsAndroid.PERMISSIONS.ANDROID.READ_PHONE_STATE, "android.permission.ANSWER_PHONE_CALLS", "android.permission.PROCESS_OUTGOING_CALLS"]);
       // return value;
-    }else{
+    } else {
     }
-  } catch (err) {
-  }
+  } catch (err) {}
 };
 
 /**
@@ -126,15 +123,15 @@ export const networkHelper = (
   url,
   jsonData,
   method,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
     method: method,
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
     },
     body: jsonData,
   })
@@ -155,11 +152,11 @@ export const networkHelper = (
  */
 export const networkHelperGet = (
   url,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
-    method: 'GET',
+    method: "GET",
   })
     .then((response) => response.text())
     .then((responseJson) => {
@@ -183,15 +180,15 @@ export const networkHelperGet = (
 export const getNetworkHelper = (
   url,
   method,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
     method: method,
     headers: {
-      Accept: 'application/json',
-      'Content-Type': `application/json`,
-      'Cache-Control': 'no-cache'
+      Accept: "application/json",
+      "Content-Type": `application/json`,
+      "Cache-Control": "no-cache",
     },
   })
     .then((response) => response.json())
@@ -213,12 +210,13 @@ export const getNetworkHelper = (
  * @param callback
  * @param errorCallback
  */
- export const getNetworkHelperTextPost = (
-  url,data,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+export const getNetworkHelperTextPost = (
+  url,
+  data,
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
-  fetch(url,data)
+  fetch(url, data)
     .then((response) => response.text())
     .then((responseJson) => {
       callback(responseJson);
@@ -242,15 +240,15 @@ export const networkHelperContentType = (
   url,
   jsonData,
   method,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
     method: method,
     headers: {
-      Accept: 'application/json',
-      'Content-Type': `multipart/form-data`,
-      'Cache-Control': 'no-cache'
+      Accept: "application/json",
+      "Content-Type": `multipart/form-data`,
+      "Cache-Control": "no-cache",
     },
     body: jsonData,
   })
@@ -279,16 +277,16 @@ export const networkHelperTokenContentType = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   const options = {
     method: method,
     headers: {
-      Authorization: 'Bearer ' + token,
-      Accept: 'application/json',
-      'Content-Type': `multipart/form-data`,
-      'Cache-Control': 'no-cache'
+      Authorization: "Bearer " + token,
+      Accept: "application/json",
+      "Content-Type": `multipart/form-data`,
+      "Cache-Control": "no-cache",
     },
     body: jsonData,
   };
@@ -316,16 +314,16 @@ export const networkHelperToken = (
   url,
   method,
   token,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
     method: method,
     headers: {
-      Authorization: 'Bearer ' + token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      Authorization: "Bearer " + token,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
     },
   })
     .then((response) => {
@@ -353,16 +351,16 @@ export const networkHelperTokenPost = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   fetch(url, {
     method: method,
     headers: {
-      Authorization: 'Bearer ' + token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      Authorization: "Bearer " + token,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
     },
     body: jsonData,
   })
@@ -373,7 +371,7 @@ export const networkHelperTokenPost = (
       callback(responseJson);
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log("error", error);
       errorCallback(error);
     });
 };
@@ -403,7 +401,7 @@ export const removeQuotes = (text) => {
     }
     return text;
   } else {
-    return '';
+    return "";
   }
 };
 
@@ -411,14 +409,14 @@ export const removeQuotes = (text) => {
  * check if json is object or string
  */
 export const checkJson = (item) => {
-  item = typeof item !== 'string' ? JSON.stringify(item) : item;
+  item = typeof item !== "string" ? JSON.stringify(item) : item;
 
   try {
     item = JSON.parse(item);
   } catch (e) {
     return false;
   }
-  if (typeof item === 'object' && item !== null) {
+  if (typeof item === "object" && item !== null) {
     return true;
   }
   return false;
@@ -431,7 +429,7 @@ export const checkJson = (item) => {
  */
 export const subslongText = (name, length) => {
   const size = name.length;
-  return size > length ? name.substring(0, length) + '...' : name;
+  return size > length ? name.substring(0, length) + "..." : name;
 };
 
 export const showToastMessage = (message, type = 0) => {
@@ -439,28 +437,28 @@ export const showToastMessage = (message, type = 0) => {
     message: message,
     type:
       type === 0
-        ? 'danger'
+        ? "danger"
         : type === 1
-          ? 'success'
-          : type === 2
-            ? 'info'
-            : 'default',
+        ? "success"
+        : type === 2
+        ? "info"
+        : "default",
     icon:
       type === 0
-        ? 'danger'
+        ? "danger"
         : type === 1
-          ? 'success'
-          : type === 2
-            ? 'info'
-            : 'default',
+        ? "success"
+        : type === 2
+        ? "info"
+        : "default",
     duration: 5000,
-    animated:true,
-    floating:true,
+    animated: true,
+    floating: true,
   });
 };
 
 export const isSpecialChar = (text) => {
-  return text.includes('<>@!#$%^&*()_+[]{}?:;|\'"\\,./~`-=');
+  return text.includes("<>@!#$%^&*()_+[]{}?:;|'\"\\,./~`-=");
 };
 
 export const checkPanCard = (text) => {
@@ -474,11 +472,11 @@ export const checkPanCard = (text) => {
  * @param {*} data
  * @param {*} callback
  */
-export const writeCSV = (HEADER, data, FILEPATH, callback = (bool) => { }) => {
+export const writeCSV = (HEADER, data, FILEPATH, callback = (bool) => {}) => {
   try {
     const csvString = `${HEADER}${convertToCSV(data)}`;
     RNFetchBlob.fs
-      .writeFile(FILEPATH, csvString, 'utf8')
+      .writeFile(FILEPATH, csvString, "utf8")
       .then(() => callback(true))
       .catch((error) => callback(false));
   } catch (error) {
@@ -508,22 +506,21 @@ export const convertToCSV = (objArray) => {
   //   }
   //   str += line + '\r\n';
   // }
-  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-  var str = '';
+  var array = typeof objArray != "object" ? JSON.parse(objArray) : objArray;
+  var str = "";
 
   for (var i = 0; i < array.length; i++) {
-    var line = '';
+    var line = "";
     for (var index in array[i]) {
-      if (line != '') line += ','
-      if (typeof array[i][index] === 'object') {
-        line += '';
+      if (line != "") line += ",";
+      if (typeof array[i][index] === "object") {
+        line += "";
       } else {
         line += array[i][index];
-
       }
     }
 
-    str += line + '\r\n';
+    str += line + "\r\n";
   }
   return str;
 };
@@ -534,12 +531,12 @@ export const convertToCSV = (objArray) => {
  * @param {*} name
  */
 export const downloadFile = (url, name) => {
-  showToastMessage('Download Started', 1);
-  const sp = url.split('/');
+  showToastMessage("Download Started", 1);
+  const sp = url.split("/");
   let lsp = sp[sp.length - 1];
   const { config, fs } = RNFetchBlob;
   let DownloadDir = fs.dirs.DownloadDir;
-  let filePath = `${DownloadDir}/${lsp.replace('.php', '')}`;
+  let filePath = `${DownloadDir}/${lsp.replace(".php", "")}`;
   let options = {
     fileCache: true,
     addAndroidDownloads: {
@@ -547,16 +544,17 @@ export const downloadFile = (url, name) => {
       useDownloadManager: true,
       notification: true,
       path: filePath,
-      description: name || '',
+      description: name || "",
     },
   };
   config(options)
-    .fetch('GET', `${url}`)
+    .fetch("GET", `${url}`)
     .then((res) => {
-      RNFetchBlob.fs.exists(filePath)
+      RNFetchBlob.fs
+        .exists(filePath)
         .then((exist) => {
           if (exist) {
-            showToastMessage('Download Complete', 1);
+            showToastMessage("Download Complete", 1);
           }
         })
         .catch((err) => {
@@ -570,9 +568,16 @@ export const downloadFile = (url, name) => {
  * @param {*} url
  * @param {*} name
  */
-export const downloadFileWithFileName = (url, name, fileName, mime, notification = true, addext = true) => {
+export const downloadFileWithFileName = (
+  url,
+  name,
+  fileName,
+  mime,
+  notification = true,
+  addext = true
+) => {
   if (notification) {
-    showToastMessage('Download Started', 1);
+    showToastMessage("Download Started", 1);
   }
   const filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
   const { config, fs } = RNFetchBlob;
@@ -585,45 +590,52 @@ export const downloadFileWithFileName = (url, name, fileName, mime, notification
       useDownloadManager: true,
       notification: true,
       path: filePath,
-      description: name || '',
+      description: name || "",
     },
   };
   let finalUrl = url;
   if (addext) {
-    if (url.includes('.pdf')) {
+    if (url.includes(".pdf")) {
       //finalUrl = url.replace('.pdf', '');
     } else {
       //finalUrl = url;
-      finalUrl += '.pdf';
+      finalUrl += ".pdf";
     }
   }
   //console.log('finalUrl', finalUrl)
   config(options)
-    .fetch('GET', `${finalUrl}`)
+    .fetch("GET", `${finalUrl}`)
     .then((res) => {
       //console.log(`res`, res);
       RNFetchBlob.fs.scanFile([{ path: filePath, mime: mime }]);
       if (notification) {
-        RNFetchBlob.fs.exists(filePath)
-        .then((exist) => {
-          if (exist) {
-            showToastMessage('Download Complete', 1);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        RNFetchBlob.fs
+          .exists(filePath)
+          .then((exist) => {
+            if (exist) {
+              showToastMessage("Download Complete", 1);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     });
 };
-
 
 /**
  *
  * @param {*} url
  * @param {*} name
  */
-export const silentDownloadFileWithFileName = (url, name, fileName, mime, notification = true, addext = true) => {
+export const silentDownloadFileWithFileName = (
+  url,
+  name,
+  fileName,
+  mime,
+  notification = true,
+  addext = true
+) => {
   const filePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
   const { config } = RNFetchBlob;
   let options = {
@@ -632,21 +644,20 @@ export const silentDownloadFileWithFileName = (url, name, fileName, mime, notifi
   };
   let finalUrl = url;
   if (addext) {
-    if (url.includes('.pdf')) {
+    if (url.includes(".pdf")) {
       //finalUrl = url.replace('.pdf', '');
     } else {
       //finalUrl = url;
-      finalUrl += '.pdf';
+      finalUrl += ".pdf";
     }
   }
   //console.log('finalUrl', finalUrl)
   config(options)
-    .fetch('GET', `${finalUrl}`)
+    .fetch("GET", `${finalUrl}`)
     .then((res) => {
       //console.log(`res`, res);
     });
 };
-
 
 /**
  *
@@ -654,24 +665,25 @@ export const silentDownloadFileWithFileName = (url, name, fileName, mime, notifi
  * @param {*} name
  */
 export const saveFile = (url, name) => {
-  showToastMessage('Download Started', 1);
-  var Base64Code = url.split('data:image/png;base64,');
+  showToastMessage("Download Started", 1);
+  var Base64Code = url.split("data:image/png;base64,");
   const dirs = RNFetchBlob.fs.dirs;
-  var path = dirs.DownloadDir + `/${name.replace(' ', '_')}.png`;
-  RNFetchBlob.fs.writeFile(path, Base64Code[1], 'base64').then((res) => {
+  var path = dirs.DownloadDir + `/${name.replace(" ", "_")}.png`;
+  RNFetchBlob.fs.writeFile(path, Base64Code[1], "base64").then((res) => {
     if (res > 0) {
       RNFetchBlob.android.addCompleteDownload({
         title: name,
-        description: name || '',
-        mime: 'image/png',
+        description: name || "",
+        mime: "image/png",
         path: path,
         showNotification: true,
         notification: true,
       });
-      RNFetchBlob.fs.exists(path)
+      RNFetchBlob.fs
+        .exists(path)
         .then((exist) => {
           if (exist) {
-            showToastMessage('Download Complete', 1);
+            showToastMessage("Download Complete", 1);
           }
         })
         .catch((err) => {
@@ -728,13 +740,13 @@ export const maxminDateMonth = (minMonth = 3, maxAge = 25) => {
  * @param {*} url
  */
 export const base64Imageencode = (url) => {
-  let imagePath = '';
+  let imagePath = "";
   RNFetchBlob.config({
     fileCache: true,
   })
-    .fetch('GET', `${url}`)
+    .fetch("GET", `${url}`)
     .then((resp) => {
-      return resp.readFile('base64');
+      return resp.readFile("base64");
     })
     .then((base64Data) => {
       imagePath = base64Data;
@@ -756,29 +768,36 @@ export const nullCheck = (data) => {
  * @param {*} data
  */
 export const nullStringCheck = (data) => {
-  return data === undefined || data === null || data == '' ? true : false;
+  return data === undefined || data === null || data == "" ? true : false;
 };
 
 export const arrayObjCheck = (data, checkObject) => {
   if (checkObject) {
-    return data !== undefined && Array.isArray(data) === false && typeof data !== 'object' ? true : false
+    return data !== undefined &&
+      Array.isArray(data) === false &&
+      typeof data !== "object"
+      ? true
+      : false;
   } else {
-    return data !== undefined && Array.isArray(data) === false ? true : false
+    return data !== undefined && Array.isArray(data) === false ? true : false;
   }
-}
+};
 
 /**
  * string check with return data
  * @param {*} data
  */
 export const nullStringCheckWithReturn = (data) => {
-  return data === undefined || data === null || data == '' ? '' :     
-      data.split(/ /g).map(word =>
-        `${word.substring(0,1).toUpperCase()}${word.substring(1)}`)
-    .join(" ") 
+  return data === undefined || data === null || data == ""
+    ? ""
+    : data
+        .split(/ /g)
+        .map(
+          (word) => `${word.substring(0, 1).toUpperCase()}${word.substring(1)}`
+        )
+        .join(" ");
   //Lodash.capitalize(data);
 };
-
 
 /**
  * string check
@@ -788,7 +807,7 @@ export const nullStringMultiCheck = (...data) => {
   let result = false;
   for (let index = 0; index < data.length; index++) {
     const element = data[index];
-    if (element === undefined || element === null || element == '') {
+    if (element === undefined || element === null || element == "") {
       result = true;
       break;
     }
@@ -803,7 +822,7 @@ export const nullStringMultiCheck = (...data) => {
  */
 export const dateObj = (dt, delimeter) => {
   if (nullStringCheck(dt) === false) {
-    let sp = dt.split('-');
+    let sp = dt.split("-");
     const db = new Date();
     db.setFullYear(Number(sp[2]), Number(sp[1]) - 1, Number(sp[0]));
     return db;
@@ -813,31 +832,85 @@ export const dateObj = (dt, delimeter) => {
 };
 
 /*
-*/
+ */
 export const emailCheck = (mail) => {
   ///^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+.[a-zA-Z0-9-]*$/
   ///^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ old;
-  if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+.[a-zA-Z0-9-]*$/.test(mail)) {
+  if (
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+.[a-zA-Z0-9-]*$/.test(
+      mail
+    )
+  ) {
     return true;
   } else {
     return false;
   }
-}
-
+};
 
 export const inWords = (value) => {
-  var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
-  var b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-  const n = ('000000000' + value).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-  if (!n) return ''; var str = '';
-  str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
-  str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
-  str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
-  str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
-  str += (n[5] != 0) ? ((str != '') ? 'And ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'Only ' : '';
+  var a = [
+    "",
+    "one ",
+    "two ",
+    "three ",
+    "four ",
+    "five ",
+    "six ",
+    "seven ",
+    "eight ",
+    "nine ",
+    "ten ",
+    "eleven ",
+    "twelve ",
+    "thirteen ",
+    "fourteen ",
+    "fifteen ",
+    "sixteen ",
+    "seventeen ",
+    "eighteen ",
+    "nineteen ",
+  ];
+  var b = [
+    "",
+    "",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+  ];
+  const n = ("000000000" + value)
+    .substr(-9)
+    .match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+  if (!n) return "";
+  var str = "";
+  str +=
+    n[1] != 0
+      ? (a[Number(n[1])] || b[n[1][0]] + " " + a[n[1][1]]) + "Crore "
+      : "";
+  str +=
+    n[2] != 0
+      ? (a[Number(n[2])] || b[n[2][0]] + " " + a[n[2][1]]) + "Lakh "
+      : "";
+  str +=
+    n[3] != 0
+      ? (a[Number(n[3])] || b[n[3][0]] + " " + a[n[3][1]]) + "Thousand "
+      : "";
+  str +=
+    n[4] != 0
+      ? (a[Number(n[4])] || b[n[4][0]] + " " + a[n[4][1]]) + "Hundred "
+      : "";
+  str +=
+    n[5] != 0
+      ? (str != "" ? "And " : "") +
+        (a[Number(n[5])] || b[n[5][0]] + " " + a[n[5][1]]) +
+        "Only "
+      : "";
   return Lodash.startCase(str);
-}
-
+};
 
 /**
  * networkHelper
@@ -854,16 +927,16 @@ export const networkHelperHelpDeskTicket = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   const options = {
     method: method,
     headers: {
-      Authorization: 'Basic ' + token,
-      Accept: 'application/json',
-      'Content-Type': `multipart/form-data`,
-      'Cache-Control': 'no-cache'
+      Authorization: "Basic " + token,
+      Accept: "application/json",
+      "Content-Type": `multipart/form-data`,
+      "Cache-Control": "no-cache",
     },
     body: jsonData,
   };
@@ -894,15 +967,15 @@ export const networkHelperHelpDeskTicketGet = (
   jsonData,
   method,
   token,
-  callback = (responseJson) => { },
-  errorCallback = (error) => { },
+  callback = (responseJson) => {},
+  errorCallback = (error) => {}
 ) => {
   const options = {
     method: method,
     headers: {
-      Authorization: 'Basic ' + token,
-      Accept: 'application/json',
-      'Cache-Control': 'no-cache'
+      Authorization: "Basic " + token,
+      Accept: "application/json",
+      "Cache-Control": "no-cache",
     },
   };
   fetch(url, options)
@@ -921,136 +994,139 @@ export const networkHelperHelpDeskTicketGet = (
  * unique user identifier
  */
 export const getUID = () => {
-  var chars = '0123456789abcdef'.split('');
+  var chars = "0123456789abcdef".split("");
   var uuid = [],
     rnd = Math.random,
     r;
-  uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-  uuid[14] = '4';
+  uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
+  uuid[14] = "4";
   for (var i = 0; i < 36; i++) {
     if (!uuid[i]) {
       r = 0 | (rnd() * 16);
       uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r & 0xf];
     }
   }
-  return uuid.join('');
+  return uuid.join("");
 };
-
 
 /**
  * pagination range
- * @param {*} page 
- * @param {*} pageCount 
+ * @param {*} page
+ * @param {*} pageCount
  */
-export const pageRange = (page, pageCount)  =>{
-  var start = page - 2, end = page + 2;
+export const pageRange = (page, pageCount) => {
+  var start = page - 2,
+    end = page + 2;
   if (end > pageCount) {
-      start -= (end - pageCount);
-      end = pageCount;
+    start -= end - pageCount;
+    end = pageCount;
   }
   if (start <= 0) {
-      end += ((start - 1) * (-1));
-      start = 1;
+    end += (start - 1) * -1;
+    start = 1;
   }
   end = end > pageCount ? pageCount : end;
   return {
-      start: start,
-      end: end
+    start: start,
+    end: end,
   };
-}
+};
 
 /**
- * 
- * @param {*} title 
+ *
+ * @param {*} title
  */
-export const extCheckReg = (title) =>{
-  if(nullStringCheck(title) === true){
+export const extCheckReg = (title) => {
+  if (nullStringCheck(title) === true) {
     return false;
   }
-  return (/\.(png|jpeg|jpg|jpe|jfif|pdf|)$/i).test(title);
-}
-
-
-/**
- * 
- * @param {*} title 
- */
-export const separatorReg = (data) =>{
-  return (/,/g).test(data);
-}
+  return /\.(png|jpeg|jpg|jpe|jfif|pdf|)$/i.test(title);
+};
 
 /**
- * 
- * @param {*} word 
+ *
+ * @param {*} title
  */
-export const lowercaseWithDashWord = (word) =>{
-  return word.toLowerCase().replace(/\s/g, '_');
-}
- 
+export const separatorReg = (data) => {
+  return /,/g.test(data);
+};
+
+/**
+ *
+ * @param {*} word
+ */
+export const lowercaseWithDashWord = (word) => {
+  return word.toLowerCase().replace(/\s/g, "_");
+};
+
 /**
  * product Share List
  */
-export const productShareList = () =>{
+export const productShareList = () => {
   const list = [
-    { value: 'Auto Loan', url: `${Pref.FinURL}al.php` },
-    { value: 'Business Loan', url: `${Pref.FinURL}bl.php` },
-    { value: 'Credit Card', url: `${Pref.FinURL}cc.php` },
-    { value: 'Fixed Deposit', url: `${Pref.FinURL}fd.php` },
-    { value: 'Home Loan', url: `${Pref.FinURL}hl.php` },
-    { value: 'Health Insurance', url: `${Pref.FinURL}hi.php` },
-    { value: 'Insurance Samadhan', url: `${Pref.FinURL}is.php` },
-    { value: 'Insure Check', url: `${Pref.FinURL}ic.php` },
-    { value: 'Loan Against Property', url: `${Pref.FinURL}lap.php` },
-    { value: 'Life Cum Investment', url: `${Pref.FinURL}lci.php` },
-    { value: 'Motor Insurance', url: `${Pref.FinURL}mi.php` },
-    { value: 'Mutual Fund', url: `${Pref.FinURL}mf.php` },
-    { value: 'Personal Loan', url: `${Pref.FinURL}pl.php` },
-    { value: 'Term Insurance', url: `${Pref.FinURL}ti.php` },
-    { value: 'Test My Policy', url: `${Pref.TMPUrl}` },
+    { value: "Auto Loan", url: `${Pref.FinURL}al.php` },
+    { value: "Business Loan", url: `${Pref.FinURL}bl.php` },
+    { value: "Credit Card", url: `${Pref.FinURL}cc.php` },
+    { value: "Fixed Deposit", url: `${Pref.FinURL}fd.php` },
+    { value: "Home Loan", url: `${Pref.FinURL}hl.php` },
+    { value: "Health Insurance", url: `${Pref.FinURL}hi.php` },
+    { value: "Insurance Samadhan", url: `${Pref.FinURL}is.php` },
+    { value: "Insure Check", url: `${Pref.FinURL}ic.php` },
+    { value: "Loan Against Property", url: `${Pref.FinURL}lap.php` },
+    { value: "Life Cum Investment", url: `${Pref.FinURL}lci.php` },
+    { value: "Motor Insurance", url: `${Pref.FinURL}mi.php` },
+    { value: "Mutual Fund", url: `${Pref.FinURL}mf.php` },
+    { value: "Personal Loan", url: `${Pref.FinURL}pl.php` },
+    {
+      value: "SBI Credit Card",
+      url: `${Pref.FinURL}sbi_credit_card_form.php`,
+    },
+    { value: "Term Insurance", url: `${Pref.FinURL}ti.php` },
+    { value: "Test My Policy", url: `${Pref.TMPUrl}` },
     // { value: 'Hello Doctor Policy', url: `${Pref.FinURL}hp.php` },
     // { value: 'Asaan Health Policy', url: `${Pref.FinURL}shp.php` },
     // { value: 'Sabse Asaan Health Plan', url: `${Pref.FinURL}sahp.php` },
     // { value: 'MCD Policy', url: `${Pref.FinURL}religare_form.php` },
   ];
   return list;
-}
+};
 
 /**
- * 
- * @param {*} title 
+ *
+ * @param {*} title
  */
-export const replacetext = title => {
-  return Lodash.startCase(title.replace(/_/g, ' '));
+export const replacetext = (title) => {
+  return Lodash.startCase(title.replace(/_/g, " "));
 };
 
 /**
  * screen Name
- * @param {*} props 
- * @returns 
+ * @param {*} props
+ * @returns
  */
-export const getScreenName = (props = undefined, title = '') =>{
-  if(props){
-    return props.navigation.getParam('name', '');
-  }else{
+export const getScreenName = (props = undefined, title = "") => {
+  if (props) {
+    return props.navigation.getParam("name", "");
+  } else {
     return title;
   }
-}
+};
 
 /**
  * min seconds
- * @param {*} time 
- * @returns 
+ * @param {*} time
+ * @returns
  */
-export const getMinutesSecond = (time) =>{
-  if(time === 0){
+export const getMinutesSecond = (time) => {
+  if (time === 0) {
     return `${time}sec`;
-  }else if(time < 60){
+  } else if (time < 60) {
     return `${time}sec`;
-  }else if(time === 60){
+  } else if (time === 60) {
     return `1min`;
-  }else{
+  } else {
     const minutes = Math.floor(time / 60);
     const seconds = time - minutes * 60;
     return `${minutes}min ${seconds}sec`;
   }
-}
+};

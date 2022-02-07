@@ -20,6 +20,7 @@ export const DIALER_SERVICE_ENABLED = "dialer_service_enabled";
 export const DIALER_TEMP_BUBBLE_NUMBER = 'dialer_temp_bubble_number';
 export const NEW_HOME_MENUPOSITION = 'scrollmenuposition';
 export const DIALER_TEMP_CUSTOMER_DATA = 'dialer_temp_customer_data';
+export const WEBVIEW_FORMS = 'webview_form_link';
 
 //network
 export const methodPost = 'POST';
@@ -2540,6 +2541,10 @@ export const productList = [
     name: 'Test My Policy',
     url: require('./../res/images/autoloan.png'),
   },
+   {
+    name: 'SBI Credit Card',
+    url: require('./../res/images/autoloan.png'),
+  },
   // {
   //   name: 'Gold Loan',
   //   url: require('./../res/images/autoloan.png'),
@@ -2825,6 +2830,10 @@ export const productListClone = [
     name: 'Test My Policy',
     url: require('./../res/images/autoloan.png'),
   },
+  {
+    name: 'SBI Credit Card',
+    url: require('./../res/images/autoloan.png'),
+  },
 ];
 
 export const LifeCompany = [{ value: 'Aegon Life Insurance Co. Ltd.' },
@@ -2973,20 +2982,19 @@ export const DialerMainUrl = `${MainUrl}partner/appapi/`;
 export const SalesMainUrl = `${MainUrl}partner/appapi/`;
 export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
 export const QRCTicketMainUrl = `${MainUrl}partner/appapi/`;
-export const TMPUrl = `https://www.testmypolicy.com/`;
+export const TMPUrl = `https://www.testmypolicy.com/index.php`;
 
-
-//uat test url
-// export const MainUrl = `https://dev.erb.ai/`;
-// export const ApiDirUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const FinorbitFormUrl = `${ApiDirUrl}finorbitx/`;
-// export const PayoutPolicy = `${MainUrl}/Finprond/Payout%20Policy.pdf`;
-// export const BlogFileUrl = `${MainUrl}/erevbay_admin/`;
-// export const DialerMainUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const SalesMainUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
-// export const QRCTicketMainUrl = `${MainUrl}corporate_tool/Apis/`;
-// export const TMPUrl = `https://uat.testmypolicy.com/new/index_demo.php`;
+//uat url
+//export const MainUrl = `https://uat.erb.ai/`;
+//export const ApiDirUrl = `${MainUrl}partner/appapi/`;
+//export const FinorbitFormUrl = `${ApiDirUrl}finorbit/`;
+//export const PayoutPolicy = `${MainUrl}/partner/Payout%20Policy.pdf`;
+//export const BlogFileUrl = `${MainUrl}/super_admin/`;
+//export const DialerMainUrl = `${MainUrl}partner/appapi/`;
+//export const SalesMainUrl = `${MainUrl}partner/appapi/`;
+//export const QRCMainUrl = `${MainUrl}ticketsystem/public`;
+//export const QRCTicketMainUrl = `${MainUrl}partner/appapi/`;
+//export const TMPUrl = `https://www.testmypolicy.com/index.php`;
 
 //corporate_user link for quote,cif files
 export const CORP_USER_QLINK = `${MainUrl}corporate_user/quotes/`;
@@ -3038,6 +3046,8 @@ export const BASEImageUrl = `${ApiDirUrl}getbase64.php`
 export const PostalCityUrl = `${ApiDirUrl}tool_view_pincode.php`;
 export const HealthQouteCompanyUrl = `${FinURL}ajax_de.php`;
 export const HealthTopupQouteCompanyUrl = `${FinURL}ajax_topup.php`;
+export const HealthQuickQouteCompanyUrl = `${FinURL}ajax_de_app.php`;
+export const HealthQuickTopupQouteCompanyUrl = `${FinURL}ajax_topup_app.php`;
 //export const BuyInsurance = `https://forms.gle/LDNnpXDHGwERhhbS9`;
 export const HLCifUrl = `${FinURL}hicif.php`;
 export const PLCifUrl = `${FinURL}plcif.php`;
@@ -3104,6 +3114,20 @@ export const STAGING_CODE_PUSH_IOS = 'LN76mRmKlDMJ2xjWZZI9RsvR3W7KuDrXKrm6g';
 export const SMSURL = `https://api.msg91.com/api/`;
 export const SMS_OTP = `${SMSURL}v5/otp`;
 export const SMS_SEND = `${SMSURL}sendhttp.php`;
+
+//////Motor Insurance////////
+//export const ASSURE_KIT_API = `https://app.uat.assurecore.in/api/v1/gate/one-time-url`;
+//export const TWO_WHEELER_Client_ID = "client2-client-id";
+//export const TWO_WHEELER_Client_Secret = "client2-client-secret";
+//export const FOUR_WHEELER_Client_ID = "fcd8f2c2-bb07-4c48-ad90-8545e7e8a238";
+//export const FOUR_WHEELER_Client_Secret = "943c00ac-48c2-422a-8a8e-0658567f4f59";
+
+////Producation Motor Insurance////////
+export const ASSURE_KIT_API = `https://app.assurecore.in/api/v1/gate/one-time-url`;
+export const TWO_WHEELER_Client_ID = "5c23cd85-96d1-4b2b-a036-5b643cc00857";
+export const TWO_WHEELER_Client_Secret = "91a24478-2fe2-45a4-b755-116b43f5951a";
+export const FOUR_WHEELER_Client_ID = "ab6b83a9-ba10-428b-bab1-9b82c3d1a29e";
+export const FOUR_WHEELER_Client_Secret = "98da5739-280d-4e51-a84e-5d32bc777b32";
 
 ///////firestore dialer ///////////
 // export const COLLECTION_PARENT = 'parent';

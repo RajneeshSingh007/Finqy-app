@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar,Linking } from 'react-native';
 import { View } from '@shoutem/ui';
 import * as Helper from '../../util/Helper';
 import * as Pref from '../../util/Pref';
@@ -60,8 +60,7 @@ export default class Certificate extends React.PureComponent {
             remoteFileUrl: cert,
             referCode: refercode
           }, () => {
-            Helper.silentDownloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
-
+            //  Helper.silentDownloadFileWithFileName(`${this.state.pdfurl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
           });
         }
       })
@@ -74,7 +73,7 @@ export default class Certificate extends React.PureComponent {
           referCode: refercode
 
         }, () => {
-          Helper.silentDownloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+          // Helper.silentDownloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
 
         });
       });
@@ -111,7 +110,8 @@ export default class Certificate extends React.PureComponent {
             />
             <Download
               rightIconClick={() => {
-                Helper.downloadFileWithFileName(`${this.state.remoteFileUrl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
+                Linking.openURL(this.state.pdfurl);
+                // Helper.downloadFileWithFileName(`${this.state.pdfurl}`, `${this.state.referCode}_MyCertificate`, `${this.state.referCode}_MyCertificate.pdf`, 'application/pdf');
               }}
               style={{ flex: 0.09 }}
             />

@@ -31,6 +31,10 @@ import GetQuotesView from './../screens/finorbit/GetQuotesView';
 import TestMyPolicy from './../screens/finorbit/forms/TestMyPolicy';
 import MotorInsurance from './../screens/finorbit/forms/MotorInsurance';
 
+//web forms
+import WebForm  from '../screens/common/WebForm';
+
+
 //profile
 import ProfileScreen from './../screens/profile/ProfileScreen';
 import MyWallet from './../screens/profile/MyWallet';
@@ -201,6 +205,7 @@ const FinOrbitNav = createStackNavigator(
     Samadhan: { screen: Samadhan },
     TestMyPolicy:{screen:TestMyPolicy},
     MotorInsurance:{screen:MotorInsurance},
+	  WebForm:{screen:WebForm},
     transitionConfig: (nav) => handleCustomTransition(nav),
   },
   {

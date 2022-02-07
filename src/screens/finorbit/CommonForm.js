@@ -239,6 +239,7 @@ export default class CommonForm extends React.PureComponent {
       title,
       editable = true,
       disabled = false,
+      quickLeads = false
     } = this.props;
     const newform =
       title &&
@@ -304,25 +305,8 @@ export default class CommonForm extends React.PureComponent {
         />
 
         <AnimatedInputBox
-          placeholder={
-            `Email`
-            // //title === 
-            // //title === 'Fixed Deposit' ||
-            //   // title === 'Health Insurance' ||
-            //   //title === `Life Cum Invt. Plan` ||
-            //   //title === `Motor Insurance` ||
-            //   //title === `Mutual Fund` ||
-            //   title === `Profile`
-            //   || title === 'Home Loan' 
-            //   //|| title === 'Loan Against Property' 
-            //   //|| title === 'Personal Loan' 
-            //   //|| title === 'Business Loan' 
-            //   //|| title === 'Term Insurance' 
-            //   //|| title == 'Fixed Deposit' 
-            //   //|| title === 'Motor Insurance'
-            //   ? 'Email'
-            //   : `Email ${returnAsterik()}`
-          }
+          placeholder={`Email`}
+          showStarVisible={quickLeads || title === 'Health Insurance'}
           changecolor
           containerstyle={styles.animatedInputCont}
           onChangeText={(value) => this.setState({ email: value })}
@@ -390,7 +374,7 @@ export default class CommonForm extends React.PureComponent {
             keyboardType={'number-pad'}
             value={this.state.pincode}
             //placeholder={'Current Residence Pincode'}
-            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Gold Loan' ? returnAsterik() : ''}`}
+            placeholder={`Current Residence Pincode ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === 'Motor Insurance' || title === 'Insure Check' || title === 'Auto Loan' || title === 'Business Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Personal Loan' || title === 'Gold Loan' || quickLeads ? returnAsterik() : ''}`}
             editable={editable}
             disabled={disabled}
             returnKeyType={'next'}
@@ -446,7 +430,7 @@ export default class CommonForm extends React.PureComponent {
                     ? ''
                     //returnAsterik()
                      : ''}` : this.state.dob} */}
-                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' || title === 'Personal Loan' ? ' *' : ''}` : this.state.dob}
+                    {this.state.dob === '' ? `Date of Birth ${title === 'Health Insurance' || title === 'Personal Loan' || quickLeads ? ' *' : ''}` : this.state.dob}
                   </Title>
                   <Icon
                     name={'calendar'}
@@ -537,7 +521,7 @@ export default class CommonForm extends React.PureComponent {
               </View>
             ) : null}
 
-            {title !== 'Insure Check' && title !== 'Motor Insurance' ? <View style={styles.radiocont}>
+{title !== 'Insure Check' && title !== 'Motor Insurance' && !quickLeads ? <View style={styles.radiocont}>
               <View style={styles.radiodownbox}>
                 <Title style={styles.bbstyle}>{`Select Gender ${title === 'Credit Card' || title === 'Term Insurance' || title === `Life Cum Invt. Plan` || title === 'Fixed Deposit' || title === 'Mutual Fund' || title === 'Health Insurance' || title === "Vector Plus" || title === 'Religare Group Plan' || title === 'Auto Loan' || title === 'Home Loan' || title === 'Loan Against Property' || title === 'Business Loan' || title === 'Personal Loan' ? returnAsterik() : ''}`}</Title>
                 <RadioButton.Group

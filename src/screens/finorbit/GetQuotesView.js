@@ -79,7 +79,7 @@ export default class GetQuotesView extends React.PureComponent {
   navigateToBack = () => {
     NavigationActions.navigate("GetQuotes", {
       formId: this.state.formId,
-      sumInsurred: this.state.sumInsurred,
+      sumin: this.state.sumInsurred,
       editMode: this.state.editMode
     });
   };

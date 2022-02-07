@@ -286,7 +286,8 @@ export default class CallerForm extends React.PureComponent {
       token,
       userData,
       editEnabled = false,
-      teamName = ""
+      teamName = "",
+	  formLinks = { sbi_form: "", pl_form: "" },
     } = this.props;
     if ((customerItem === null || token == null, userData == null)) {
       this.showalertMessage("Something went wrong!");
@@ -516,15 +517,31 @@ export default class CallerForm extends React.PureComponent {
                             lower === "test_my_policy"
                               ? "TestMyPolicy"
                               : "FinorbitForm";
-
-                          NavigationActions.navigate(formScreenKey, {
-                            title: product,
-                            dialerMobile: mobile,
-                            dialerName: name,
-                            dialerDob: dob,
-                            dialerEmail: email,
-                            dialerPincode: pincode
-                          });
+                          const { refercode = "" } = userData;
+                          if (lower.includes("sbi")) {
+                            const { sbi_form = "" } = formLinks;
+                            NavigationActions.navigate("WebForm", {
+                              url: `${sbi_form}ref=${refercode}&mobile=${mobile}&name=${name}&dob=${dob}&email=${email}&pincode=${pincode}`,
+                              title: "SBI Credit Card",
+                              redirect: "thank",
+                            });
+                          } else if (lower.includes("personal")) {
+                            const { pl_form = "" } = formLinks;
+                            NavigationActions.navigate("WebForm", {
+                              url: `${pl_form}ref=${refercode}&mobile=${mobile}&name=${name}&dob=${dob}&email=${email}&pincode=${pincode}`,
+                              title: "Personal Loan",
+                              redirect: "thank",
+                            });
+                          } else {
+                            NavigationActions.navigate(formScreenKey, {
+                              title: product,
+                              dialerMobile: mobile,
+                              dialerName: name,
+                              dialerDob: dob,
+                              dialerEmail: email,
+                              dialerPincode: pincode,
+                            });
+                          }
 
                           // Helper.networkHelperTokenContentType(
                           //   formUrls,

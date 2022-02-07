@@ -11,6 +11,7 @@ import {Colors} from 'react-native-paper';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import DrawerTop from '../component/DrawerTop';
 import * as Helper from '../../util/Helper';
+import * as Pref from "../../util/Pref";
 import NavigationActions from '../../util/NavigationActions';
 import Lodash from 'lodash';
 
@@ -22,13 +23,26 @@ export default class FinProSideBar extends React.PureComponent {
     changeNavigationBarColor(COLOR, true, true);
     StatusBar.setBackgroundColor(COLOR, false);
     StatusBar.setBarStyle('dark-content');
+	  this.formLinks = null;
+    this.userData = null;
   }
+  
+  componentDidMount() {
+    Pref.getVal(Pref.WEBVIEW_FORMS, (value) => {
+      this.formLinks = value;
+    });
+    Pref.getVal(Pref.userData, (userData) => {
+      this.userData = userData;
+    });
+  }
+
 
   itemClick = (title, item) => {
     const {backClicked} = this.props;
+    const {refercode = ""} = this.userData;
     backClicked();
     const parseItem = {
-      title: item.name,
+      title: item.name === 'Other Credit Card' ? 'Credit Card' : item.name,
       url: item.url,
     };
     if (title === 'Fast Tag') {
@@ -49,9 +63,23 @@ export default class FinProSideBar extends React.PureComponent {
       } else if(title === 'Test My Policy'){
         NavigationActions.navigate('TestMyPolicy', parseItem);
       }
-      //else if(title === 'Motor Insurance'){
-        //NavigationActions.navigate('MotorInsurance', parseItem);
-      //}
+      else if(title === 'Motor Insurance'){
+        NavigationActions.navigate('MotorInsurance', parseItem);
+      }else if (title === "SBI Credit Card") {
+        const { sbi_form = "" } = this.formLinks;
+        NavigationActions.navigate("WebForm", {
+          url: `${sbi_form}ref=${refercode}`,
+          title: "SBI Credit Card",
+          redirect: "thank",
+        });
+      }  else if (title === "Personal Loan") {
+        const { pl_form = "" } = this.formLinks;
+        NavigationActions.navigate("WebForm", {
+          url: `${pl_form}ref=${refercode}`,
+          title: "Personal Loan",
+          redirect: "thank",
+        });
+      }
       else {
         NavigationActions.navigate('FinorbitForm', parseItem);
       }
@@ -64,7 +92,7 @@ export default class FinProSideBar extends React.PureComponent {
       return null;
     }
     const size = list.length;
-    const sort = Lodash.sortBy(list, ['name']);
+    //const sort = Lodash.sortBy(list, ['name']);
     return (
       <View style={{flex: 1, flexDirection: 'row'}}>
         <TouchableWithoutFeedback onPress={backClicked}>
@@ -77,7 +105,7 @@ export default class FinProSideBar extends React.PureComponent {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}>
               <View styleName="v-center h-center sm-gutter">
-                {sort.map((item, index) => {
+                {list.map((item, index) => {
                   return (
                                       // item.name === 'Vector Plus' ? null :
                     <>

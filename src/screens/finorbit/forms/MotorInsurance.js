@@ -101,12 +101,15 @@ export default class MotorInsurance extends React.PureComponent {
       apremium: "",
       formid: "",
       oldInsCopy: null,
+      quickQuotes: false,
     };
   }
 
   componentDidMount() {
     BackHandler.addEventListener("hardwareBackPress", this.backClick);
     const { navigation } = this.props;
+    const quickQuotes = navigation.getParam("quickQuotes", false);
+    console.log('quickQuotes', quickQuotes);
     const editMode = navigation.getParam("edit", false);
     const editLeadData = navigation.getParam("leadData", null);
     //dialer data
@@ -144,6 +147,7 @@ export default class MotorInsurance extends React.PureComponent {
           state.dialerName = dialerName;
           state.currentPosition = 0;
           state.dialerMobile = dialerMobile;
+          state.quickQuotes = quickQuotes;
           this.storeState = state;
           this.setState(state);
         });
@@ -158,6 +162,10 @@ export default class MotorInsurance extends React.PureComponent {
 
   backClick = () => {
     const { editMode, dialerMobile } = this.state;
+    if(this.state.quickQuotes){
+      NavigationActions.navigate("Home");
+      return true;
+    }
     if (Helper.nullStringCheck(dialerMobile) === false) {
       return false;
     } else {
@@ -210,7 +218,7 @@ export default class MotorInsurance extends React.PureComponent {
 
     if (currentPosition === 0) {
       checkData = motorFirstFormCheck(this.state);
-    } else if (currentPosition === 1) {
+    } else if (currentPosition === 1 && this.state.quickQuotes === false) {
       checkData = motorSecondFormCheck(this.state);
     }
 
@@ -256,6 +264,7 @@ export default class MotorInsurance extends React.PureComponent {
           delete this.state.maxDate;
           delete this.state.rcCopy;
           delete this.state.oldInsCopy;
+          delete this.state.currentDate;
 
           let parseJs = JSON.parse(JSON.stringify(this.state));
           Object.entries(parseJs).forEach(([key, value]) => {
@@ -264,7 +273,7 @@ export default class MotorInsurance extends React.PureComponent {
             }
           });
 
-          if (currentPosition === 1) {
+          if (currentPosition === 1 && this.state.quickQuotes === false) {
             this.fileState = JSON.parse(
               JSON.stringify(this.fileUploadFormRef.current.state)
             );
@@ -281,7 +290,11 @@ export default class MotorInsurance extends React.PureComponent {
                     Helper.arrayObjCheck(value, false) &&
                     (key === "oldinsurancecopy" || key === "rcbookcopy")
                   ) {
-                    formData.append(key, value);
+                    let val = value;
+                    if(value === 'Previous Policy Expiry Date *'){
+                      val = value.replace('Previous Policy Expiry Date *', '');
+                    }
+                    formData.append(key, val);
                   }
                 });
               });
@@ -301,23 +314,24 @@ export default class MotorInsurance extends React.PureComponent {
               const { response_header } = result;
               const { res_type } = response_header;
               if (res_type === "success") {
+                const {vehicle_type} = this.state;
                 if (
-                  this.state.vehicle_type === "Two Wheeler" ||
-                  this.state.vehicle_type === "Four Wheeler"
+                  vehicle_type === "Two Wheeler" ||
+                  vehicle_type === "Four Wheeler"
                 ) {
                   let client_id = "",
                     client_secret = "";
-                  if (this.state.vehicle_type == "Two Wheeler") {
-                    client_id = "client2-client-id";
-                    client_secret = "client2-client-secret";
+                  if (vehicle_type == "Two Wheeler") {
+                    client_id = Pref.TWO_WHEELER_Client_ID;
+                    client_secret = Pref.TWO_WHEELER_Client_Secret;
                   } else {
-                    client_id = "fcd8f2c2-bb07-4c48-ad90-8545e7e8a238";
-                    client_secret = "943c00ac-48c2-422a-8a8e-0658567f4f59";
+                    client_id = Pref.FOUR_WHEELER_Client_ID;
+                    client_secret = Pref.FOUR_WHEELER_Client_Secret;
                   }
 
                   const body = {
-                    client_id: client_id,
-                    client_secret: client_secret,
+                    clientId: client_id,
+                    clientSecret: client_secret,
                     payload: {
                       registrationNo: this.state.reg_number,
                       policyIsExpired:
@@ -330,26 +344,25 @@ export default class MotorInsurance extends React.PureComponent {
                     },
                   };
 
-                  console.log("body", body);
+                  //console.log("body", body);
 
                   Helper.networkHelper(
-                    `https://demo.assurekit.com/api/v1/clients/getCode`,
+                    Pref.ASSURE_KIT_API,
                     JSON.stringify(body),
                     Pref.methodPost,
                     (result) => {
                       this.setState({ progressLoader: false });
-                      console.log(result);
-                      const { code } = result;
+                      //console.log(result);
+                      const { url = "" } = result;
                       Helper.showToastMessage(
                         editMode === false
                           ? "Form submitted successfully"
                           : "Form updated successfully",
                         1
                       );
-                      if (code !== "") {
-                        Linking.openURL(
-                          `https://gate-demo.assurekit.com/?code=${code}`
-                        );
+                      if (url !== "") {
+                        this.finishForm();
+                        Linking.openURL(url);
                       }
                     },
                     (error) => {
@@ -403,7 +416,7 @@ export default class MotorInsurance extends React.PureComponent {
 
   btnText = () => {
     const { currentPosition } = this.state;
-    const btnText = currentPosition === 1 ? "Submit" : "Next";
+    const btnText = currentPosition === 1 ? "Submit" : this.state.quickQuotes ? 'Submit' : "Next";
     return btnText;
   };
 
@@ -418,7 +431,7 @@ export default class MotorInsurance extends React.PureComponent {
           }}
           value={this.state.name}
           showStarVisible
-          placeholder={`Owner Name`}
+          placeholder={this.state.quickQuotes ? `Full Name` : `Owner Name`}
           returnKeyType={"next"}
           changecolor
           containerstyle={styles.animatedInputCont}
@@ -453,57 +466,61 @@ export default class MotorInsurance extends React.PureComponent {
           keyboardType={"email"}
         />
 
-        <NewDropDown
-          list={floaterList}
-          placeholder={"Owner Types"}
-          starVisible
-          value={this.state.registration_type}
-          selectedItem={(value) => this.setState({ registration_type: value })}
-          style={styles.newdropdowncontainers}
-          textStyle={styles.newdropdowntextstyle}
-        />
-
-        <NewDropDown
-          list={claimRecentList}
-          placeholder={"Any Claim Made Recently"}
-          starVisible
-          value={this.state.claim_type}
-          selectedItem={(value) => this.setState({ claim_type: value })}
-          style={styles.newdropdowncontainers}
-          textStyle={styles.newdropdowntextstyle}
-        />
-
-        <NewDropDown
-          list={claimRecentList}
-          placeholder={"Policy Expiry"}
-          starVisible
-          value={this.state.policy_expiry_type}
-          selectedItem={(value) => this.setState({ policy_expiry_type: value })}
-          style={styles.newdropdowncontainers}
-          textStyle={styles.newdropdowntextstyle}
-        />
-
-        <NewDropDown
-          list={healthRequiredCover}
-          placeholder={"No Claim Bonus"}
-          starVisible
-          value={this.state.noclaim_bonus_type}
-          selectedItem={(value) => {
-            this.setState({ noclaim_bonus_type: value });
-          }}
-          style={styles.newdropdowncontainers}
-          textStyle={styles.newdropdowntextstyle}
-        />
-
-        <NewDropDown
-          list={vehicleType}
-          placeholder={"Vehicle Types"}
-          starVisible
-          value={this.state.vehicle_type}
-          selectedItem={(v) => this.setState({ vehicle_type: v })}
-          style={styles.newdropdowncontainers}
-          textStyle={styles.newdropdowntextstyle}
-        />
+        {!this.state.quickQuotes ? (
+          <View>
+            <NewDropDown
+              list={floaterList}
+              placeholder={"Owner Types"}
+              starVisible
+              value={this.state.registration_type}
+              selectedItem={(value) =>
+                this.setState({ registration_type: value })
+              }
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            />
+            <NewDropDown
+              list={claimRecentList}
+              placeholder={"Any Claim Made Recently"}
+              starVisible
+              value={this.state.claim_type}
+              selectedItem={(value) => this.setState({ claim_type: value })}
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            />
+            <NewDropDown
+              list={claimRecentList}
+              placeholder={"Policy Expiry"}
+              starVisible
+              value={this.state.policy_expiry_type}
+              selectedItem={(value) =>
+                this.setState({ policy_expiry_type: value })
+              }
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            />
+            <NewDropDown
+              list={healthRequiredCover}
+              placeholder={"No Claim Bonus"}
+              starVisible
+              value={this.state.noclaim_bonus_type}
+              selectedItem={(value) => {
+                this.setState({ noclaim_bonus_type: value });
+              }}
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            />
+            <NewDropDown
+              list={vehicleType}
+              placeholder={"Vehicle Types"}
+              starVisible
+              value={this.state.vehicle_type}
+              selectedItem={(v) => this.setState({ vehicle_type: v })}
+              style={styles.newdropdowncontainers}
+              textStyle={styles.newdropdowntextstyle}
+            />
+          </View>
+        ) : null}
       </View>
     );
   };

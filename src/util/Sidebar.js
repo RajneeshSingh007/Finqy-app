@@ -559,24 +559,19 @@ export default class Sidebar extends React.Component {
     this.scrollViewRef = React.createRef();
     this.menuheaderClick = this.menuheaderClick.bind(this);
     this.menuSubHeaderClick = this.menuSubHeaderClick.bind(this);
-    this.scrollMenu = -1;
     this.userType = '';
     this.state = {
       userData: null,
       pic: '',
       name: ``,
       menuList: MainMenuList,
+      scrollItem: -1
     };
   }
 
   componentDidMount() {
     const {navigation} = this.props;
     //this.focusListener = navigation.addListener('didFocus', () => {
-    Pref.getVal(Pref.NEW_HOME_MENUPOSITION, (io) => {
-      if (Helper.nullStringCheck(io) === false) {
-        this.scrollMenu = io;
-      }
-    });
     Pref.getVal(Pref.userData, (parse) => {
       this.setState(
         {
@@ -819,32 +814,39 @@ export default class Sidebar extends React.Component {
     });
   };
 
-  scrollToMenuOutside = () => {
-    const {menuList} = this.state;
-    if (Number(this.scrollMenu) > -1) {
-      let item = null;
-      const nm = Number(this.scrollMenu);
-      let pos = -1;
-      if (nm == 0) {
-        item = Lodash.find(menuList, (io) => io.name === 'Q-Wallet');
-        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Wallet');
-      } else if (nm == 1 && this.userType == 'referral') {
-        item = Lodash.find(menuList, (io) => io.name === 'Dialer');
-        pos = Lodash.findIndex(menuList, (io) => io.name === 'Dialer');
-      } else if (nm == 1) {
-        item = Lodash.find(menuList, (io) => io.name === 'Q-Team Manager');
-        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Team Manager');
-      } else if (nm == 2) {
-        item = Lodash.find(menuList, (io) => io.name === 'Q-Profile');
-        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Profile');
-      } else if (nm == 3) {
-        item = Lodash.find(menuList, (io) => io.name === 'Q-Support');
-        pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Support');
+  scrollToMenuOutside = (scrollItem) => {
+    const menuList = [...this.state.menuList];
+    let item = null;
+    let pos = -1;
+    if (scrollItem == 0) {
+      item = Lodash.find(menuList, (io) => io.name === 'Q-Wallet');
+      pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Wallet');
+    } else if (scrollItem === 5 && this.userType == 'referral') {
+      item = Lodash.find(menuList, (io) => io.name === 'Dialer');
+      pos = Lodash.findIndex(menuList, (io) => io.name === 'Dialer');
+    } else if (scrollItem === 1) {
+      item = menuList.find((io) => io.name.includes('Team'));
+      pos = menuList.findIndex((io) => io.name.includes('Team'));
+    } else if (scrollItem == 2) {
+      item = Lodash.find(menuList, (io) => io.name === 'Q-Profile');
+      pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Profile');
+    } else if (scrollItem == 3) {
+      item = Lodash.find(menuList, (io) => io.name === 'Q-Support');
+      pos = Lodash.findIndex(menuList, (io) => io.name === 'Q-Support');
+    }
+    console.log(pos, item, menuList);
+    if (Helper.nullCheck(item) === false && pos >= 0) {
+      item.expand = false;
+      this.headingclick(item, pos);
+      let subPos = -1;
+      if(scrollItem === 1){
+        const subitem = Lodash.find(item.sub, (io) => io.name === 'Q-Team');
+        subPos = Lodash.findIndex(item.sub, (io) => io.name === 'Q-Team');
+        console.log(subitem, subPos);
+        this.subClick(item, subitem,pos,subPos);
       }
-      if (Helper.nullCheck(item) === false && pos != -1) {
-        item.expand = false;
-        this.headingclick(item, pos);
-        if (
+      setTimeout(() => {
+        if ( 
           this.scrollViewRef &&
           this.scrollViewRef.current &&
           this.scrollViewRef.current.scrollToIndex
@@ -852,19 +854,20 @@ export default class Sidebar extends React.Component {
           this.scrollViewRef.current.scrollToIndex({
             animated: true,
             index: pos,
-            viewOffset: 0.5,
+            viewOffset:0.5,
           });
-          Pref.setVal(Pref.NEW_HOME_MENUPOSITION, '');
         }
-      }
+      }, 60);
     }
   };
 
+
   componentDidUpdate() {
     Pref.getVal(Pref.NEW_HOME_MENUPOSITION, (io) => {
+      console.log(io);
       if (Helper.nullStringCheck(io) === false) {
-        this.scrollMenu = io;
-        this.scrollToMenuOutside();
+        Pref.setVal(Pref.NEW_HOME_MENUPOSITION, '');
+        this.scrollToMenuOutside(Number(io));
       }
     });
   }
@@ -957,6 +960,7 @@ export default class Sidebar extends React.Component {
       NavigationActions.closeDrawer();
     }
   };
+  
 
   renderItem = (item, index) => {
     return (
@@ -1020,110 +1024,22 @@ export default class Sidebar extends React.Component {
             ) : null}
           </View>
         </TouchableWithoutFeedback>
+        
         {item.expand
-          ? item.sub.map((s, i) => {
-              return (
-                <View
-                  style={{
-                    backgroundColor: s.expand ? '#e8e5d7' : 'transparent',
-                    marginStart: s.expand ? 0 : 16,
-                    paddingStart: s.expand ? 16 : 0,
-                  }}>
-                  <TouchableWithoutFeedback
-                    onPress={() => this.subClick(item, s, index, i)}>
-                    <View
-                      styleName="horizontal"
-                      style={{
-                        marginHorizontal: 16,
-                        marginVertical: 8,
-                        paddingVertical: 10,
-                        flex: 1,
-                      }}>
-                      {s.qincludes ? (
-                        <View style={{flex: 0.15}}>
-                          <Image
-                            source={require('../res/images/q.png')}
-                            style={{
-                              width: 24,
-                              height: 24,
-                              //tintColor: '#626161',
-                              resizeMode: 'contain',
-                            }}
-                          />
-                        </View>
-                      ) : null}
-
-                      <View
-                        styleName="horizontal v-center space-between"
-                        style={{flex: 0.9}}>
-                        <View styleName="horizontal v-center">
-                          <Title
-                            styleName="wrap"
-                            style={{
-                              fontSize: 14,
-
-                              letterSpacing: 0.5,
-                              color: !s.expand ? '#97948c' : Pref.PRIMARY_COLOR,
-                              alignSelf: 'flex-start',
-                            }}>{`${s.name.replace('Q-', '')}`}</Title>
-                        </View>
-                        {s.heading ? (
-                          <Icon
-                            name={`chevron-down`}
-                            size={22}
-                            color={'#97948c'}
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                  {s.expand
-                    ? s.sub.map((s) => {
-                        return (
-                          <View
-                            style={{
-                              marginStart: s.expand ? 0 : 16,
-                              paddingStart: s.expand ? 16 : 0,
-                              paddingVertical: 6,
-                            }}>
-                            <Divider styleName="light" style={styles.line} />
-                            <TouchableWithoutFeedback
-                              onPress={() => {
-                                s.options.name = s.name;
-                                NavigationActions.navigate(s.click, s.options);
-                              }}>
-                              <View
-                                styleName="horizontal v-center space-between"
-                                style={{
-                                  marginHorizontal: 16,
-                                  marginVertical: 8,
-                                }}>
-                                <Title
-                                  styleName="wrap"
-                                  style={
-                                    styles.menusubtitle
-                                  }>{`${s.name}`}</Title>
-                                {s.heading ? (
-                                  <Icon
-                                    name={`chevron-right`}
-                                    size={22}
-                                    color={'#97948c'}
-                                  />
-                                ) : null}
-                              </View>
-                            </TouchableWithoutFeedback>
-                          </View>
-                        );
-                      })
-                    : null}
-                  {s.sub !== undefined ? (
-                    i === s.sub.length - 1 ? null : (
-                      <Divider styleName="light" style={styles.line} />
-                    )
-                  ) : null}
-                </View>
-              );
-            })
+          ? item.sub && 
+          <FlatList
+              getItemLayout={(data, index) => ({
+                length: 56,
+                offset: 56 * index,
+                index,
+              })}
+              data={item.sub}
+              extraData={this.state}
+              renderItem={({item:s,index:i}) => this.renderItemSub(s,i,item, index)}
+              keyExtractor={(item, i) => `${i}`}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+            />
           : null}
         {index === this.state.menuList.length - 1 ? null : (
           <Divider styleName="light" style={styles.line} />
@@ -1131,6 +1047,112 @@ export default class Sidebar extends React.Component {
       </View>
     );
   };
+
+
+  renderItemSub = (s, i, item, index) => {
+    if(s === undefined) return null;
+    return (
+      <View
+        style={{
+          backgroundColor: s.expand ? '#e8e5d7' : 'transparent',
+          marginStart: s.expand ? 0 : 16,
+          paddingStart: s.expand ? 16 : 0,
+        }}>
+        <TouchableWithoutFeedback
+          onPress={() => this.subClick(item, s, index, i)}>
+          <View
+            styleName="horizontal"
+            style={{
+              marginHorizontal: 16,
+              marginVertical: 8,
+              paddingVertical: 10,
+              flex: 1,
+            }}>
+            {s.qincludes ? (
+              <View style={{flex: 0.15}}>
+                <Image
+                  source={require('../res/images/q.png')}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    //tintColor: '#626161',
+                    resizeMode: 'contain',
+                  }}
+                />
+              </View>
+            ) : null}
+
+            <View
+              styleName="horizontal v-center space-between"
+              style={{flex: 0.9}}>
+              <View styleName="horizontal v-center">
+                <Title
+                  styleName="wrap"
+                  style={{
+                    fontSize: 14,
+
+                    letterSpacing: 0.5,
+                    color: !s.expand ? '#97948c' : Pref.PRIMARY_COLOR,
+                    alignSelf: 'flex-start',
+                  }}>{`${s.name.replace('Q-', '')}`}</Title>
+              </View>
+              {s.heading ? (
+                <Icon
+                  name={`chevron-down`}
+                  size={22}
+                  color={'#97948c'}
+                />
+              ) : null}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+        {s.expand
+          ? s.sub.map((s) => {
+              return (
+                <View
+                  style={{
+                    marginStart: s.expand ? 0 : 16,
+                    paddingStart: s.expand ? 16 : 0,
+                    paddingVertical: 6,
+                  }}>
+                  <Divider styleName="light" style={styles.line} />
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      s.options.name = s.name;
+                      NavigationActions.navigate(s.click, s.options);
+                    }}>
+                    <View
+                      styleName="horizontal v-center space-between"
+                      style={{
+                        marginHorizontal: 16,
+                        marginVertical: 8,
+                      }}>
+                      <Title
+                        styleName="wrap"
+                        style={
+                          styles.menusubtitle
+                        }>{`${s.name}`}</Title>
+                      {s.heading ? (
+                        <Icon
+                          name={`chevron-right`}
+                          size={22}
+                          color={'#97948c'}
+                        />
+                      ) : null}
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+              );
+            })
+          : null}
+        {s.sub !== undefined ? (
+          i === s.sub.length - 1 ? null : (
+            <Divider styleName="light" style={styles.line} />
+          )
+        ) : null}
+      </View>
+    );
+  }
 
   render() {
     const {menuList} = this.state;

@@ -380,35 +380,31 @@ export default class FinorbitForm extends React.PureComponent {
           //construct form data
 
           //1st form
+          let commonFormsState = null;
           if (commonForms) {
             delete commonForms.maxDate;
             delete commonForms.currentDate;
-            let parseJs = JSON.parse(JSON.stringify(commonForms));
-            if (parseJs.currentlocation === 'Select Current Location *') {
-              parseJs.currentlocation === '';
+            commonFormsState = JSON.parse(JSON.stringify(commonForms));
+            if (commonFormsState.currentlocation === 'Select Current Location *') {
+              commonFormsState.currentlocation === '';
             }
-            Object.entries(parseJs).forEach(([key, value]) => {
+            Object.entries(commonFormsState).forEach(([key, value]) => {
               if (Helper.arrayObjCheck(value, true)) {
                 formData.append(key, value);
               }
             });
-            // for (var key in parseJs) {
-            //   const value = parseJs[key];
-            //   if (Helper.arrayObjCheck(value, true)) {
-            //     formData.append(key, parseJs[key]);
-            //   }
-            // }
           }
 
           //2nd form
+          let specificFormsState = null;
           if (specificForms) {
             delete specificForms.pincode;
             delete specificForms.maxDate;
             delete specificForms.currentDate;
-            let parseJs = JSON.parse(JSON.stringify(specificForms));
+            specificFormsState = JSON.parse(JSON.stringify(specificForms));
             if (
-              Helper.nullCheck(parseJs.floaterItemList) === false &&
-              parseJs.floaterItemList.length > 0
+              Helper.nullCheck(specificFormsState.floaterItemList) === false &&
+              specificFormsState.floaterItemList.length > 0
             ) {
               let keypos = 1;
               const floaterItemList = JSON.parse(
@@ -436,17 +432,11 @@ export default class FinorbitForm extends React.PureComponent {
                 keypos += 1;
               });
             }
-            Object.entries(parseJs).forEach(([key, value]) => {
+            Object.entries(specificFormsState).forEach(([key, value]) => {
               if (Helper.arrayObjCheck(value, true)) {
                 formData.append(key, value);
               }
             });
-            // for (var key in parseJs) {
-            //   const value = parseJs[key];
-            //   if (Helper.arrayObjCheck(value, true)) {
-            //     formData.append(key, parseJs[key]);
-            //   }
-            // }
           }
 
           if (fileListForms) {
@@ -558,14 +548,7 @@ export default class FinorbitForm extends React.PureComponent {
               
               const {response_header} = result;
               const {res_type, res} = response_header;
-              this.setState({progressLoader: false});
               if (res_type === 'success') {
-                Helper.showToastMessage(
-                  editMode === false
-                    ? 'Form submitted successfully'
-                    : 'Form updated successfully',
-                  1,
-                );
                 // if (
                 //   title === `Personal Loan` &&
                 //   Helper.nullCheck(response_header.res_id) === false &&
@@ -583,6 +566,13 @@ export default class FinorbitForm extends React.PureComponent {
                   Helper.nullCheck(res.id) === false &&
                   res.id !== ''
                 ) {
+                  Helper.showToastMessage(
+                    editMode === false
+                      ? 'Form submitted successfully'
+                      : 'Form updated successfully',
+                    1,
+                  );
+                  this.setState({progressLoader: false});
                   const {id, deductible} = res;
                   const cov = Number(specificForms.required_cover);
                   NavigationActions.navigate('GetQuotes', {
@@ -591,7 +581,69 @@ export default class FinorbitForm extends React.PureComponent {
                     editmode: this.state.editMode,
                     deductible: deductible,
                   });
-                } else {
+                } else if ( title === 'Motor Insurance' && specificFormsState !== null &&
+                (specificFormsState.vehicle_type === "Two Wheeler" ||
+                specificFormsState.vehicle_type === "Four Wheeler")
+                ) {
+                  let client_id = "",
+                    client_secret = "";
+                  if (specificFormsState.vehicle_type == "Two Wheeler") {
+                    client_id = Pref.TWO_WHEELER_Client_ID;
+                    client_secret = Pref.TWO_WHEELER_Client_Secret;
+                  } else {
+                    client_id = Pref.FOUR_WHEELER_Client_ID;
+                    client_secret = Pref.FOUR_WHEELER_Client_Secret;
+                  }
+
+                  console.log(client_id, client_secret)
+
+                  const body = {
+                    clientId: client_id,
+                    clientSecret: client_secret,
+                    payload: {
+                      registrationNo: specificFormsState.reg_number,
+                      policyIsExpired: specificFormsState.policy_expiry_type === "Yes" ? true : false,
+                      policyExpiryDate: specificFormsState.expiry_date,
+                      previousClaimFlag: specificFormsState.claim_type,
+                      ownerType: specificFormsState.registration_type,
+                      ownerMobileNo: commonFormsState.mobile,
+                      ownerFullName: commonFormsState.name,
+                    },
+                  };
+
+                  //console.log("body", body);
+
+                  Helper.networkHelper(
+                    Pref.ASSURE_KIT_API,
+                    JSON.stringify(body),
+                    Pref.methodPost,
+                    (result) => {
+                      this.setState({ progressLoader: false });
+                      //console.log(result);
+                      const { url = "" } = result;
+                      if (url !== "") {
+                        Linking.openURL(url);
+                      }
+                      Helper.showToastMessage(
+                        editMode === false
+                          ? "Form submitted successfully"
+                          : "Form updated successfully",
+                        1
+                      );
+                      
+                    },
+                    (error) => {
+                      console.log(error, error);
+                    }
+                  );
+                }else {
+                  Helper.showToastMessage(
+                    editMode === false
+                      ? 'Form submitted successfully'
+                      : 'Form updated successfully',
+                    1,
+                  );
+                  this.setState({progressLoader: false});
                   this.finishForm();
                 }
               } else {

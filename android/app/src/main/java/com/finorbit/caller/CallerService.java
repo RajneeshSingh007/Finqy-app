@@ -19,10 +19,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.finorbit.R;
 import com.finorbit.BuildConfig;
 import com.finorbit.Constants;
 import com.finorbit.MainActivity;
-import com.finorbit.R;
 
 public class CallerService extends Service implements CallPhoneListerner{
 

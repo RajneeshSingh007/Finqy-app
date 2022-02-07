@@ -259,23 +259,23 @@ export const firstFormCheck = (title, commons) => {
   } else if (commons.mobile.match(/^[0-9]*$/g) === null) {
     Helper.showToastMessage('Invalid mobile number', 0);
   }
-  // else if (
-  //     //title !== "Term Insurance" &&
-  //     //title !== "Health Insurance" &&
-  //     //title !== "Fixed Deposit" &&
-  //     //title !== `Life Cum Invt. Plan` &&
-  //     //title !== `Motor Insurance` &&
-  //     //title !== `Mutual Fund` &&
-  //     title !== `Vector Plus` &&
-  //     title !== `Home Loan` &&
-  //     //title !== `Loan Against Property` &&
-  //     //title !== `Personal Loan` &&
-  //     //title !== `Business Loan` &&
-  //     //title !== `Auto Loan` &&
-  //     commons.email === ""
-  // ) {
-  //     Helper.showToastMessage("Email empty", 0);
-  // }
+  else if (
+      //title !== "Term Insurance" &&
+      title === "Health Insurance" &&
+      //title !== "Fixed Deposit" &&
+      //title !== `Life Cum Invt. Plan` &&
+      //title !== `Motor Insurance` &&
+      //title !== `Mutual Fund` &&
+      //title !== `Vector Plus` &&
+      //title !== `Home Loan` &&
+      //title !== `Loan Against Property` &&
+      //title !== `Personal Loan` &&
+      //title !== `Business Loan` &&
+      //title !== `Auto Loan` &&
+      commons.email === ""
+  ) {
+      Helper.showToastMessage("Email empty", 0);
+  }
   else if (
     commons.email !== '' &&
     Helper.emailCheck(commons.email) === false
@@ -414,6 +414,12 @@ export const secondFormCheck = (title, specificForms) => {
   //   Helper.showToastMessage('Please, Select Alcohol Consumption Type', 0);
   // }
   else if (
+    title === `Health Insurance` &&
+    specificForms.policy_type === ``
+  ) {
+    result = false;
+    Helper.showToastMessage('Select Policy Type', 0);
+  }else if (
     title === `Health Insurance` &&
     specificForms.policy_type === `Top Up` &&
     specificForms.deductible === ''
@@ -1123,7 +1129,7 @@ export const secondFormCheck = (title, specificForms) => {
 }) => {
   let result = false;
   if (name === '') {
-    Helper.showToastMessage('Full Name empty', 0);
+    Helper.showToastMessage('Owner Name empty', 0);
   } else if (mobile === '') {
     Helper.showToastMessage('Mobile Number empty', 0);
   } else if (
@@ -2944,7 +2950,8 @@ export const constructObjEditSamadhan = item => {
     premium_amount,
     insurance,
     claim_type,
-    vehicle_type
+    vehicle_type,
+    registration_type
   } = alldata;
   return {
     name: Helper.nullStringCheckWithReturn(name),
@@ -3166,4 +3173,48 @@ export const findGoldPledge = (goldList, karat, desiredAmt) => {
   } else {
     return '';
   }
+};
+
+
+/**
+ * first form check
+ * @param {} title
+ * @param {*} commons
+ */
+ export const quickLeadFormCheck = (state) => {
+  let result = false;
+  if (state.catList === "" || state.catList === `Select Category *` || state.catList === `Select Category`) {
+    alert("Select Category");
+  }else if (state.productName === "" || state.productName === `Select Product *`) {
+    alert("Select Product");
+  }else if (state.name === '') {
+    alert('Full Name empty');
+  } else if (state.mobile === '') {
+    alert('Mobile Number empty');
+  } else if (
+    Number(state.mobile.length) < 10 ||
+    state.mobile === '9876543210' ||
+    state.mobile === '1234567890'
+  ) {
+    alert('Invalid mobile number');
+  } else if (state.mobile.match(/^[0-9]*$/g) === null) {
+    alert('Invalid mobile number');
+  }else if (state.email === '') {
+  alert('Email Empty');
+}else if (state.email !== '' &&
+    Helper.emailCheck(state.email) === false
+  ) {
+    alert('Invalid Email');
+  } else if (
+    state.pincode == ''
+  ) {
+    alert('Please, Enter Current Residence Pincode');
+  } else if (state.pincode !== '' && state.pincode < 6) {
+    alert('Invalid Pincode');
+  }else if (state.dob === "" || state.dob === `Date of Birth *` || state.dob === `Date of Birth`) {
+    alert("Date of Birth empty");
+  }else {
+    result = true;
+  }
+  return result;
 };

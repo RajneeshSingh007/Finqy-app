@@ -32,6 +32,7 @@ export default class DialerCallerForm extends React.PureComponent {
     Pref.getVal(Pref.saveToken, value => {
       this.apiToken = value;
     });
+	this.formLinks = null;
   }
 
   initialState = () => {
@@ -74,6 +75,8 @@ export default class DialerCallerForm extends React.PureComponent {
     //console.log('editEnabled', editEnabled);
 
     this.focusListener = navigation.addListener("didFocus", () => {
+		Pref.getVal(Pref.WEBVIEW_FORMS, (value) => {
+            this.formLinks = value;
       Pref.getVal(Pref.DIALER_DATA, userdatas => {
         const { id, tlid, pname } = userdatas[0].tc;
         activeCallerItem.team_id = tlid;
@@ -95,6 +98,7 @@ export default class DialerCallerForm extends React.PureComponent {
           );
         });
       });
+		});
       this.fetchProduct();
     });
   };
@@ -208,6 +212,7 @@ export default class DialerCallerForm extends React.PureComponent {
               token={this.apiToken}
               formResult={this.formResult}
               startLoader={this.callerformsubmit}
+			  formLinks={this.formLinks}
             />
           </>
         }

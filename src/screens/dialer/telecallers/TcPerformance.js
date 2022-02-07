@@ -59,7 +59,7 @@ export default class TcPerformance extends React.PureComponent {
             barData[0].y = Number(data.inter);
             barData[1].y = Number(data.ntinter);
             barData[2].y = Number(data.wrong);
-            barData[3].y = Number(data.dur.replace(/sec/g, ''));
+            barData[3].y = Number(data.totalSecond);
             barData[4].y = this.state.totalIdleTime;
             this.setState({dashboardData: data, barData: barData});
           }
@@ -92,7 +92,7 @@ export default class TcPerformance extends React.PureComponent {
             if(Number(userID) === Number(id)){
               const {idle} = item.data();
               if (Helper.nullCheck(idle) === false && idle.length > 0) {
-                totalIdleTime += idle.length;
+                totalIdleTime = idle.length;
               }
             }
           }

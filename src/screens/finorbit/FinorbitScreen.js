@@ -23,6 +23,13 @@ export default class FinorbitScreen extends React.PureComponent {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backClick);
+    const filterList = this.state.dataList.map(it => {
+      if(it.name == "Credit Card"){
+        it.name =  'Other Credit Card'
+      }
+      return it;
+    });
+    this.setState({dataList:filterList})
   }
 
   componentWillUnMount() {
@@ -132,10 +139,19 @@ export default class FinorbitScreen extends React.PureComponent {
         (io) =>
           !io.name.includes('Loan') &&
           !io.name.includes('Insurance') &&
-          !io.name.includes('Credit') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse') && !io.name.includes('Insure Check')
+          !io.name.includes('Credit Card') && !io.name.includes('Vector') && !io.name.includes('Policy') && !io.name.includes('Sabse') && !io.name.includes('Insure Check')
       );
     }
-    return filter;
+    //sequence changed
+    const cardobj = Lodash.find(filter, it => it.name === "Other Credit Card");
+    if(cardobj != undefined){
+      const ccobj =  filter[0];
+      const sbiobj =  filter[1];
+      filter[0] = sbiobj;
+      filter[1] = ccobj;
+      return Lodash.orderBy(filter, ['name'], ['desc']);
+    }
+    return Lodash.sortBy(filter, ['name']);
   };
 
   render() {

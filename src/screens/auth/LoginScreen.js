@@ -638,10 +638,17 @@ export default class LoginScreen extends React.PureComponent {
               let certPath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyCertificate.pdf`;
               let agreePath = `${RNFetchBlob.fs.dirs.DownloadDir}/${refercode}_MyAgreement.pdf`;
               
-              this.downloadFile(certPath, () => {
-                const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
-                Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
+              //delete certificate if any exists
+              RNFetchBlob.fs
+              .unlink(certPath)
+              .then(() => {
               })
+              .catch(err => {
+              });
+              //this.downloadFile(certPath, () => {
+                //const cert = `${Pref.CertUrl}?refercode=${refercode}&type=${type}`;
+                //Helper.silentDownloadFileWithFileName(cert, `${refercode}_MyCertificate`, `${refercode}_MyCertificate.pdf`, 'application/pdf', false);
+              //})
               
               this.downloadFile(agreePath, () => {
                 Helper.silentDownloadFileWithFileName(`${Pref.AgreeUrl}`, `${refercode}_MyAgreement`, `${refercode}_MyAgreement.pdf`, 'application/pdf', false);
