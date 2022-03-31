@@ -67,10 +67,11 @@ export default class NewHomeScreen extends React.PureComponent {
       quickQuotes: false,
       showQuickMotorInsuranceForm: false,
       showQuickHealthInsuranceForm: false,
-      showQuickLeadForm:-1,
+      showQuickLeadForm: -1,
       tmlLink: "",
       calLink: "",
       tmpLink: "",
+      dashboardPowerBi: "",
     };
 
     Pref.getVal(Pref.userData, (value) => {
@@ -298,9 +299,17 @@ export default class NewHomeScreen extends React.PureComponent {
       Pref.methodGet,
       parseToken,
       (result) => {
-        const { status, data, tmlLink, tmpLink, calLink,formlink } = result;
+        const {
+          status,
+          data,
+          tmlLink ="",
+          tmpLink="",
+          calLink="",
+          formlink="",
+          powerbi = "",
+        } = result;
         if (status) {
-	      Pref.setVal(Pref.WEBVIEW_FORMS,formlink);
+          Pref.setVal(Pref.WEBVIEW_FORMS, formlink);
           const { banner, testi, video } = data;
           this.setState({
             calLink: calLink,
@@ -312,6 +321,7 @@ export default class NewHomeScreen extends React.PureComponent {
             noVideoData: video.length == 0 ? true : false,
             noTestimonialData: testi.length == 0 ? true : false,
             noBannerData: banner.length == 0 ? true : false,
+            dashboardPowerBi: powerbi,
           });
         } else {
           this.setState({
@@ -426,7 +436,7 @@ export default class NewHomeScreen extends React.PureComponent {
             "New Lead"
           )} */}
           {this.renderManageItem(
-            () => this.setState({showQuickLeadForm:0}),
+            () => this.setState({ showQuickLeadForm: 0 }),
             require("../../res/images/home/newlead.png"),
             "Quick Lead"
           )}
@@ -485,7 +495,11 @@ export default class NewHomeScreen extends React.PureComponent {
           >
             <View></View>
             <View></View>
-            <Image source={centerImage} style={styles.productimage} tintColor={'white'} />
+            <Image
+              source={centerImage}
+              style={styles.productimage}
+              tintColor={"white"}
+            />
             <Title style={styles.producttitle}>{title}</Title>
             <View></View>
           </View>
@@ -520,6 +534,19 @@ export default class NewHomeScreen extends React.PureComponent {
     });
   };
 
+  openPowerBiLink = () => {
+    const { userData, dashboardPowerBi = "" } = this.state;
+    const { refercode, id } = userData;
+    const url = `${dashboardPowerBi}?ref=${refercode}&id=${id}`;
+    //Linking.openURL(url);
+    NavigationActions.navigate("WebForm", {
+      url: url,
+      title: "Dashboard",
+      redirect: "",
+      editMode:false
+    });
+  };
+
   quickQoute = () => {
     this.setState({ quickQuotes: true });
   };
@@ -527,33 +554,33 @@ export default class NewHomeScreen extends React.PureComponent {
   renderProduct = () => {
     return (
       <>
-      <View
-        styleName="horizontal space-between"
-        style={styles.productcontainer}
-      >
-        {this.renderProductItem(
-          () => this.tmponClick(),
-          //this.showAlert('Coming Soon!', 0),
-          require("../../res/images/home/tmp.png"),
-          "Test My Policy",
-          "#eb1d27"
-        )}
-        {this.renderProductItem(
-          () => this.tmlonClick(),
-          //this.showAlert('Coming Soon!', 0),
-          require("../../res/images/home/tml.png"),
-          "Test My Loan",
-          "#292929"
-        )}
-        {this.renderProductItem(
-          () => this.quickQoute(),
-          //this.showAlert('Coming Soon!', 0),
-          require("../../res/images/home/quickquote.png"),
-          "Quick Quote",
-          "#eb1d27"
-        )}
-      </View>
-      {/* <View
+        <View
+          styleName="horizontal space-between"
+          style={styles.productcontainer}
+        >
+          {this.renderProductItem(
+            () => this.tmponClick(),
+            //this.showAlert('Coming Soon!', 0),
+            require("../../res/images/home/tmp.png"),
+            "Test My Policy",
+            "#eb1d27"
+          )}
+          {this.renderProductItem(
+            () => this.tmlonClick(),
+            //this.showAlert('Coming Soon!', 0),
+            require("../../res/images/home/tml.png"),
+            "Test My Loan",
+            "#292929"
+          )}
+          {this.renderProductItem(
+            () => this.quickQoute(),
+            //this.showAlert('Coming Soon!', 0),
+            require("../../res/images/home/quickquote.png"),
+            "Quick Quote",
+            "#eb1d27"
+          )}
+        </View>
+        {/* <View
         styleName="horizontal space-between"
         style={styles.productcontainer}
       >
@@ -566,7 +593,6 @@ export default class NewHomeScreen extends React.PureComponent {
           "#000"
         )}
       </View> */}
-      
       </>
     );
   };
@@ -1200,7 +1226,7 @@ export default class NewHomeScreen extends React.PureComponent {
               </Portal>
             ) : null}
 
-           {this.state.showQuickLeadForm === 0 ? (
+            {this.state.showQuickLeadForm === 0 ? (
               <Portal>
                 <Dialog
                   visible={this.state.showQuickLeadForm == 0}
@@ -1223,14 +1249,16 @@ export default class NewHomeScreen extends React.PureComponent {
                           {`Quick Lead`}
                         </Title>
                         <Pressable
-                          onPress={() => this.setState({ showQuickLeadForm: -1 })}
+                          onPress={() =>
+                            this.setState({ showQuickLeadForm: -1 })
+                          }
                         >
                           <IconChooser name={"x"} size={24} color={"#292929"} />
                         </Pressable>
                       </View>
                       <Pressable
                         style={styles.quickcontainer}
-                        onPress={() => this.setState({showQuickLeadForm:1})}
+                        onPress={() => this.setState({ showQuickLeadForm: 1 })}
                       >
                         <Title
                           styleName="v-center h-center"
@@ -1247,8 +1275,9 @@ export default class NewHomeScreen extends React.PureComponent {
                           },
                         ]}
                         onPress={() => {
-                          this.setState({showQuickLeadForm:-1})
-                          NavigationActions.navigate('FinorbitScreen')}}
+                          this.setState({ showQuickLeadForm: -1 });
+                          NavigationActions.navigate("FinorbitScreen");
+                        }}
                       >
                         <Title
                           styleName="v-center h-center"
@@ -1300,9 +1329,7 @@ export default class NewHomeScreen extends React.PureComponent {
                   <View style={styles.tophcontainers}></View>
                   <View style={styles.bottomhContainer1}>
                     <QuickLead
-                      close={() =>
-                        this.setState({ showQuickLeadForm: -1 })
-                      }
+                      close={() => this.setState({ showQuickLeadForm: -1 })}
                     />
                   </View>
                 </View>
@@ -1323,6 +1350,13 @@ export default class NewHomeScreen extends React.PureComponent {
             )}
             {alertType === 2 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderManage()}
+            <View styleName="horizontal" style={{marginTop:4, marginStart: 4, marginEnd: 4,}}>
+              {this.renderManageItem(
+                () => this.openPowerBiLink(),
+                require("../../res/images/home/dashboard.png"),
+                "Dashboard"
+              )}
+            </View>
             {alertType === 0 ? this.renderAlertMessage(0, alertMessage) : null}
             {this.renderProduct()}
             {alertType === 1 ? this.renderAlertMessage(0, alertMessage) : null}
@@ -1522,7 +1556,7 @@ const styles = StyleSheet.create({
   marketingimages: {
     width: 224,
     height: 184,
-    resizeMode:'stretch',
+    resizeMode: "stretch",
     borderTopEndRadius: 12,
     borderTopStartRadius: 12,
     borderTopLeftRadius: 12,

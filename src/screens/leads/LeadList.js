@@ -1180,6 +1180,12 @@ export default class LeadList extends React.PureComponent {
                 document.getElementsByTagName('head')[0].appendChild(meta);
               }
                           `}
+                          onNavigationStateChange={(event) => {
+                            const { url } = event;
+                            if (url.toLowerCase().includes("thank_you")) {
+                              this.setState({ downloadModal: false })
+                            }
+                          }}
                           // onMessage={(event) =>
                           //   console.log("Received: ", event.nativeEvent.data)
                           // }

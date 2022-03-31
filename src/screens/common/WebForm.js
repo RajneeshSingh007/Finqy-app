@@ -90,7 +90,7 @@ export default class WebForm extends React.PureComponent {
               }
               onNavigationStateChange={(event) => {
                 const { url } = event;
-                if (url.toLowerCase().includes(this.state.redirectUrl)) {
+                if (this.state.redirectUrl.length > 0 &&  url.toLowerCase().includes(this.state.redirectUrl)) {
                   this.finishForm();
                 }
               }}
