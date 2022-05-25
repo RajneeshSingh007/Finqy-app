@@ -9,15 +9,22 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-   install-and-test:
+  test-adhoc:
     runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v3
-      - name: Install npm dependencies
+    steps:
+      - name: Getting the repo
+        uses: actions/checkout@v3
+      - name: Installing node
+        uses: actions/setup-node@v1
+      - name: Install React Native CLI
         run: |
-          npm install yarn
-          yarn
-      - name: Run tests
+          yarn global add react-native-cli
+      - name: Install yarn dependencies
         run: |
-          npm test
+          yarn install
+      - name: Running test
+        run: |
+          yarn lint
+          yarn test
+
 
