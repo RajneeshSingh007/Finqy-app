@@ -22,9 +22,17 @@ jobs:
       - name: Install yarn dependencies
         run: |
           yarn install
-      - name: Running test
+      - name: Building bundle
         run: |
-          yarn lint
-          yarn test
+          yarn react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
+      - name: Build android
+        run: |
+          cd android && ./gradlew
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: android/app/build/outputs/apk/staging/app-staging.apk
+
 
 
