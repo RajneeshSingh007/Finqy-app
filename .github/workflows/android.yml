@@ -25,13 +25,12 @@ jobs:
       - name: Building bundle
         run: |
           yarn react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
+      - name: Change wrapper permissions
+        run: |
+            cd android && chmod +x ./gradlew
       - name: Build android
         run: |
-          cd android
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
+            cd android && ./gradlew build
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
